@@ -26,7 +26,7 @@ void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context)
     {
         return CreateWindowEx(
             0, L"STATIC", name,
-            WS_CHILD | WS_VISIBLE | WS_BORDER,
+            WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPSIBLINGS,
             0,0,0,0,
             hwnd, (HMENU)id, context.hInstance, nullptr
         );
@@ -36,7 +36,7 @@ void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context)
     {
         return CreateWindowEx(
             0, L"STATIC", nullptr,
-            WS_CHILD | WS_VISIBLE,
+            WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
             0,0,0,0,
             hwnd, (HMENU)id, context.hInstance, nullptr
         );
@@ -78,39 +78,37 @@ void win32_program::CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& contex
 void win32_program::HandleDragging(HWND hwnd, LPARAM lParam, Win32Context &context)
 {
     auto& state = GetSectionState();    
-        
+
     if (state.draggingLayerHorizontal)
     {
         int x = GET_X_LPARAM(lParam);
-
         state.layerWidth = std::max(x, defaults::minCollumnWidth);
-        state.layerWidth = std::min(state.layerWidth, state.windowWidth - state.tilesetWidth - 2*defaults::minCollumnWidth);
-
+        state.layerWidth = std::min(state.layerWidth,
+                                    state.windowWidth - state.tilesetWidth - 2*defaults::minCollumnWidth);
         state.layerHorizontalRatio = (float)state.layerWidth / state.windowWidth;
-        
-        SendMessage(hwnd, WM_SIZE, 0, MAKELPARAM(state.windowWidth, state.windowHeight));
+
+        LayoutContent(hwnd, context);
     }
     else if (state.draggingTileset)
     {
         int x = GET_X_LPARAM(lParam);
-
         state.tilesetWidth = std::max(state.windowWidth - x, defaults::minCollumnWidth);
-        state.tilesetWidth = std::min(state.tilesetWidth, state.windowWidth - state.layerWidth - 2*defaults::minCollumnWidth);
-        
+        state.tilesetWidth = std::min(state.tilesetWidth,
+                                      state.windowWidth - state.layerWidth - 2*defaults::minCollumnWidth);
         state.tilesetRatio = (float)state.tilesetWidth / state.windowWidth;
 
-        SendMessage(hwnd, WM_SIZE, 0, MAKELPARAM(state.windowWidth, state.windowHeight));
+        LayoutContent(hwnd, context);
     }
     else if (state.draggingLayerVertical)
     {
         int y = GET_Y_LPARAM(lParam);
         int yLocal = y - state.toolbarOffset;
         state.layerHeight = std::max(yLocal, defaults::minCollumnHeight);
-        state.layerHeight = std::min(state.layerHeight, state.windowHeight - state.toolbarOffset - 2*defaults::minCollumnHeight);
-        
+        state.layerHeight = std::min(state.layerHeight,
+                                     state.windowHeight - state.toolbarOffset - 2*defaults::minCollumnHeight);
         state.layerVerticalRatio = (float)state.layerHeight / state.windowHeight;
 
-        SendMessage(hwnd, WM_SIZE, 0, MAKELPARAM(state.windowWidth, state.windowHeight));
+        LayoutContent(hwnd, context);
     }
 }
 
@@ -185,3 +183,35 @@ void win32_program::HandleResize(HWND hwnd, LPARAM lParam, Win32Context& context
 
     state.toolbarOffset = hTop + hBottom;
 }
+
+void win32_program::LayoutContent(HWND hwnd, Win32Context& context)
+{
+    auto defer = [](HDWP dwp, HWND handle, int x, int y, int w, int h){
+        return DeferWindowPos(
+            dwp, handle, nullptr,
+            x, y, w, h,
+            SWP_NOZORDER
+        );
+    };
+
+    RECT rc;
+    GetClientRect(hwnd, &rc);
+
+    auto& state = GetSectionState();
+    int splitW = 5;
+    int splitH = 5;
+
+    HDWP hdwp = BeginDeferWindowPos(8);
+
+    hdwp = defer(hdwp, context.hLayerListView, 0, state.toolbarOffset, state.layerWidth, state.layerHeight);
+    hdwp = defer(hdwp, context.hSplitBottom, 0, state.toolbarOffset + state.layerHeight, state.layerWidth, splitH);
+    hdwp = defer(hdwp, context.hPackageView, 0, state.toolbarOffset + state.layerHeight + splitH, state.layerWidth, rc.bottom - state.toolbarOffset - state.layerHeight - splitH);
+    hdwp = defer(hdwp, context.hSplitLeft, state.layerWidth, state.toolbarOffset, splitW, rc.bottom - state.toolbarOffset);
+    hdwp = defer(hdwp, context.hMapView, state.layerWidth + splitW, state.toolbarOffset, rc.right - state.layerWidth - state.tilesetWidth - 2*splitW, rc.bottom - state.toolbarOffset);
+    hdwp = defer(hdwp, context.hSplitRight, rc.right - state.tilesetWidth - splitW, state.toolbarOffset, splitW, rc.bottom - state.toolbarOffset);
+
+    hdwp = defer(hdwp, context.hTilesetView, rc.right - state.tilesetWidth, state.toolbarOffset, state.tilesetWidth, rc.bottom - state.toolbarOffset);
+
+    EndDeferWindowPos(hdwp);
+}
+

@@ -34,4 +34,5 @@ namespace win32_program
     void CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& context);
     void HandleResize(HWND hwnd, LPARAM lParam, Win32Context& context);
     void HandleDragging(HWND hwnd, LPARAM lParam, Win32Context& context);
+    void LayoutContent(HWND hwnd, Win32Context& context);
 }

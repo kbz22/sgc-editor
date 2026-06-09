@@ -69,11 +69,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return (LRESULT)GetStockObject(WHITE_BRUSH);
     }
 
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        BeginPaint(hwnd, &ps);
+        // do NOT fill the background
+        EndPaint(hwnd, &ps);
+        return 0;
+    }
+
     case WM_LBUTTONDOWN:
     {
         win32_program::CheckDragging(hwnd, lParam, context);
         return 0;
     }
+
+    case WM_ERASEBKGND:
+        return 1;   // tell Windows "I handled it" (but do nothing)
 
     case WM_LBUTTONUP:
     {
