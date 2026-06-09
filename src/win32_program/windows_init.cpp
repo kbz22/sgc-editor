@@ -1,16 +1,12 @@
 #include "win32_program/windows_init.hpp"
 #include "win32_program/control_setup.hpp"
+#include "win32_program/window_control.hpp"
 #include "win32_helpers/create_helpers.hpp"
 #include "defaults.hpp"
+#include <windowsx.h>
+#include <algorithm>
 
-void InitializeAllControls(win32_program::Win32Context& context)
-{
-    INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
-    InitCommonControlsEx(&icc);
-
-    win32_program::SetupMenuBar(context);
-    win32_program::SetupToolbar(context);
-}
+int toolbarOffset = 0;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -24,29 +20,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         context.hMainWindow = hwnd;       
         
-        InitializeAllControls(context);
+        win32_program::InitializeMenuControls(context);
+        win32_program::CreateMainWindowContents(hwnd, context);
         
         break;
     }
     
     case WM_SIZE:
     {
-        RECT rc;
-        GetClientRect(hwnd, &rc);
+        win32_program::HandleResize(hwnd, lParam, context);
 
-        // --- First rebar ---
-        int hTop = (int)SendMessage(context.hRebarTop, RB_GETBARHEIGHT, 0, 0);
-        SetWindowPos(context.hRebarTop, nullptr,
-            0, 0,
-            rc.right, hTop,
-            SWP_NOZORDER);
-
-        // --- Second rebar ---
-        int hBottom = (int)SendMessage(context.hRebarBottom, RB_GETBARHEIGHT, 0, 0);
-        SetWindowPos(context.hRebarBottom, nullptr,
-            0, hTop,
-            rc.right, hBottom,
-            SWP_NOZORDER);
+        SetWindowText(context.hLayerListView, L"Layer List");
+        SetWindowText(context.hPackageView,   L"Package View");
+        SetWindowText(context.hMapView,       L"Map View");
+        SetWindowText(context.hTilesetView,   L"Tileset");
 
         break;
     }
@@ -74,6 +61,38 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
     }
     break;
+
+    case WM_CTLCOLORSTATIC:
+    {
+        HDC hdc = (HDC)wParam;
+        SetBkMode(hdc, TRANSPARENT);
+        return (LRESULT)GetStockObject(WHITE_BRUSH);
+    }
+
+    case WM_LBUTTONDOWN:
+    {
+        win32_program::CheckDragging(hwnd, lParam, context);
+        return 0;
+    }
+
+    case WM_LBUTTONUP:
+    {
+        auto& state = GetSectionState();
+        
+        state.draggingLayerHorizontal = false;
+        state.draggingTileset = false;
+        state.draggingLayerVertical = false;
+
+        ReleaseCapture();
+        return 0;
+    }
+
+    case WM_MOUSEMOVE:
+    {        
+        win32_program::HandleDragging(hwnd, lParam, context);
+
+        return 0;
+    }
 
     case WM_DESTROY:
         PostQuitMessage(0);
@@ -117,7 +136,7 @@ void win32_program::Init(HINSTANCE hInstance, Win32Context &context)
         0,
         wc.lpszClassName,
         L"SGC Editor",
-        WS_OVERLAPPEDWINDOW,
+        WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         CW_USEDEFAULT, CW_USEDEFAULT,
         defaults::WindowWidth,
         defaults::WindowHeight,

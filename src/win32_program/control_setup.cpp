@@ -13,7 +13,7 @@ void win32_program::SetupMenuBar(Win32Context &context)
     );
 
     context.hToolbarMenu = win32_helpers::CreateToolbar(
-        context.hMainWindow,
+        context.hRebarTop,
         context.hInstance,
         static_cast<types::ctrid_t>(ControlId::Toolbar)
     );
@@ -64,7 +64,7 @@ void win32_program::SetupToolbar(Win32Context &context)
     );
 
     context.hToolbarFunctions = win32_helpers::CreateToolbar(
-        context.hMainWindow,
+        context.hRebarBottom,
         context.hInstance,
         static_cast<types::ctrid_t>(ControlId::Toolbar)
     );
@@ -105,7 +105,7 @@ void win32_program::SetupToolbar(Win32Context &context)
     REBARBANDINFO rb = { sizeof(rb) };
     rb.fMask = RBBIM_CHILD | RBBIM_CHILDSIZE | RBBIM_STYLE;
     rb.hwndChild = context.hToolbarFunctions;
-    rb.cxMinChild = 24;
+    rb.cxMinChild = sz.cx;
     rb.cyMinChild = sz.cy;
     rb.fStyle = RBBS_CHILDEDGE;
 

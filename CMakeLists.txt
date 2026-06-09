@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(sgc_editor LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -47,6 +47,7 @@ add_executable(sgc-editor WIN32
 
     src/win32_program/windows_init.cpp
     src/win32_program/control_setup.cpp
+    src/win32_program/window_control.cpp
 )
 
 # embed manifest in the exe
