@@ -1,6 +1,7 @@
 #include "win32_program/windows_init.hpp"
 #include "win32_program/control_setup.hpp"
 #include "win32_program/window_control.hpp"
+#include "win32_program/controls_fun.hpp"
 #include "win32_helpers/create_helpers.hpp"
 #include "defaults.hpp"
 #include <windowsx.h>
@@ -23,6 +24,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         win32_program::InitializeMenuControls(context);
         win32_program::CreateMainWindowContents(hwnd, context);
         
+        break;
+    }
+
+    case WM_COMMAND:
+    {
+        int id = LOWORD(wParam);
+        int code = HIWORD(wParam);
+        HWND src = (HWND)lParam;
+
+        switch (id)
+        {
+            case static_cast<int>(CommandId::MenuFile):
+                // OnMenuFileClicked();
+                break;
+
+            case static_cast<int>(CommandId::FileNew):
+                win32_program::OnFileNewClicked();
+                // SetWindowText(context.hTilesetView,   L"Hi :)");
+                break;
+        }
+
         break;
     }
     
@@ -85,7 +107,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
 
     case WM_ERASEBKGND:
-        return 1;   // tell Windows "I handled it" (but do nothing)
+        return 1;
 
     case WM_LBUTTONUP:
     {

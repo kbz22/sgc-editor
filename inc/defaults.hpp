@@ -10,6 +10,7 @@ namespace defaults
     constexpr int WindowHeight = 900;
     constexpr int minCollumnWidth = 150;
     constexpr int minCollumnHeight = 100;
+    constexpr int tileSize = 32;
 
     constexpr float initialLayerHorizontalRatio = 0.15f;
     constexpr float initialLayerVerticalRatio = 0.5f;

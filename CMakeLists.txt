@@ -48,6 +48,9 @@ add_executable(sgc-editor WIN32
     src/win32_program/windows_init.cpp
     src/win32_program/control_setup.cpp
     src/win32_program/window_control.cpp
+    src/win32_program/controls_fun.cpp
+
+    src/sgc/sgc_view.cpp
 )
 
 # embed manifest in the exe
