@@ -14,10 +14,11 @@ namespace sgc
     {
         public:
             SgcView(HWND hwnd);
+            ~SgcView();
 
             void Render();
             void Clear();
-            bool LoadTileset(const std::string& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
+            bool LoadTileset(const std::wstring& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
 
         private:
 

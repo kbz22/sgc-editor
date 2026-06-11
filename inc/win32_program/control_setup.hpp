@@ -22,12 +22,12 @@ namespace win32_program
 
     enum class CommandId : types::cmdid_t
     {
-        MenuFile = 2001,
-        MenuEdit = 2002,
+        MenuFile = 1001,
+        MenuEdit = 1002,
 
-        FileNew = 3001,
-        FileOpen = 3002,
-        FileSave = 3003
+        FileNew = 2001,
+        FileOpen = 2002,
+        FileSave = 2003
     };
 
     void SetupMenuBar(Win32Context& context);

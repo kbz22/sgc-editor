@@ -1,21 +1,17 @@
 #pragma once
 
-namespace program {   
+#include <string>
+#include "sgc/sgc_view.hpp"
 
-    enum EditorState
-    {
-        Inactive,
-        NoMap,
-        NoTileset,        
-        Active
-    };
+namespace program {
 
     struct ProgramContext
-    {
-        EditorState editorState;
-
+    {       
+        std::unique_ptr<sgc::SgcView> tilesetView;
     };
 
     ProgramContext& GetProgramContext();
+
+    void StartEditor(std::wstring tilesetPath);
 
 }

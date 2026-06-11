@@ -13,9 +13,26 @@ sgc::SgcView::SgcView(HWND hwnd)
     CreateEmbeddedRenderer();
 }
 
+sgc::SgcView::~SgcView()
+{
+    if (m_sectionWindow != nullptr) {
+        RemoveWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId);
+    }
+
+    if (m_renderer != nullptr) {
+        sdl::DestroyRenderer(m_renderer);
+        m_renderer = nullptr;
+    }
+
+    if (m_sdlWindow != nullptr) {
+        sdl::DestroyWindow(m_sdlWindow);
+        m_sdlWindow = nullptr;
+    }
+}
+
 bool sgc::SgcView::CreateEmbeddedRenderer()
 {
-    if (!sdl::InitVideo()) {
+    if (!m_sdlInitialized && !sdl::InitVideo()) {
         return false;
     }
     m_sdlInitialized = true;
@@ -82,24 +99,29 @@ LRESULT CALLBACK sgc::SgcView::StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-bool sgc::SgcView::LoadTileset(const std::string& path, int tileWidth, int tileHeight)
+bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
 {
-    if(m_renderer == nullptr) {
+    if (m_renderer == nullptr) {
         return false;
     }
 
-    m_tileWidth = tileWidth > 0 ? tileWidth : defaults::tileSize;
+    // Convert wide string (UTF-16) to UTF-8 narrow string
+    int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    std::string utf8Path(sizeNeeded - 1, '\0'); // -1 to remove null terminator
+    WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, utf8Path.data(), sizeNeeded, nullptr, nullptr);
+
+    m_tileWidth  = tileWidth  > 0 ? tileWidth  : defaults::tileSize;
     m_tileHeight = tileHeight > 0 ? tileHeight : defaults::tileSize;
 
-    image::Image image(m_renderer, path);
+    image::Image image(m_renderer, utf8Path);
     const types::uvec2 imageSize = image.GetSize();
     if (imageSize.x == 0 || imageSize.y == 0) {
         return false;
     }
 
-    const types::unsignedint_t gridWidth = imageSize.x / m_tileWidth;
+    const types::unsignedint_t gridWidth  = imageSize.x / m_tileWidth;
     const types::unsignedint_t gridHeight = imageSize.y / m_tileHeight;
-    
+
     std::vector<types::uvec2> tilePositions;
     tilePositions.reserve(static_cast<size_t>(gridWidth) * static_cast<size_t>(gridHeight));
 
@@ -120,9 +142,9 @@ bool sgc::SgcView::LoadTileset(const std::string& path, int tileWidth, int tileH
     );
 
     Render();
-
     return true;
 }
+
 
 void sgc::SgcView::Render()
 {

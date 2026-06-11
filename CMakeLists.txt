@@ -49,8 +49,12 @@ add_executable(sgc-editor WIN32
     src/win32_program/control_setup.cpp
     src/win32_program/window_control.cpp
     src/win32_program/controls_fun.cpp
+    src/win32_program/windows_process.cpp
+
+    src/program/program.cpp
 
     src/sgc/sgc_view.cpp
+    rcs/new_file_dialog.rc
 )
 
 # embed manifest in the exe
@@ -61,6 +65,7 @@ set_source_files_properties(${APP_MANIFEST} PROPERTIES
 
 target_include_directories(sgc-editor PRIVATE
     ${CMAKE_SOURCE_DIR}/inc
+    ${CMAKE_SOURCE_DIR}/rcs
     ${SDL_INCLUDE_PATH}
     ${SGC_INCLUDE_PATH}
 )
