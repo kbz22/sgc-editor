@@ -5,6 +5,10 @@
 #include "win32_program/window_control.hpp"
 #include "win32_program/controls_fun.hpp"
 
+#undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
+
+#include "program/program.hpp"
+
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     using namespace win32_program;
@@ -36,8 +40,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
                 break;
 
             case static_cast<int>(CommandId::FileNew):
-                win32_program::OnFileNewClicked();
-                // SetWindowText(context.hTilesetView,   L"Hi :)");
+                win32_program::OnFileNewClicked();                
                 break;
         }
 
@@ -46,7 +49,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     
     case WM_SIZE:
     {
-        win32_program::HandleResize(hwnd, lParam, context);
+        win32_program::HandleResize(hwnd, lParam, context);        
 
         SetWindowText(context.hLayerListView, L"Layer List");
         SetWindowText(context.hPackageView,   L"Package View");
@@ -120,6 +123,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_MOUSEMOVE:
     {        
         win32_program::HandleDragging(hwnd, lParam, context);
+        program::HandleResize();
         return 0;
     }
 

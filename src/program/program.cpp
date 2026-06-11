@@ -1,5 +1,6 @@
-#include "program/program.hpp"
 #include "win32_program/windows_init.hpp"
+#undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
+#include "program/program.hpp"
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -22,4 +23,12 @@ void program::StartEditor(std::wstring tilesetPath)
 
     programContext.tilesetView = std::make_unique<sgc::SgcView>(win32Context.hTilesetView);
     programContext.tilesetView->LoadTileset(tilesetPath);
+}
+
+void program::HandleResize()
+{
+    auto& programContext = GetProgramContext();
+    if (programContext.tilesetView != nullptr) {
+        programContext.tilesetView->Render();
+    }
 }
