@@ -119,7 +119,7 @@ bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tile
         return false;
     }
 
-    const types::unsignedint_t gridWidth  = imageSize.x / m_tileWidth;
+    /* const types::unsignedint_t gridWidth  = imageSize.x / m_tileWidth;
     const types::unsignedint_t gridHeight = imageSize.y / m_tileHeight;
 
     std::vector<types::uvec2> tilePositions;
@@ -129,19 +129,18 @@ bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tile
         for (types::unsignedint_t col = 0; col < gridWidth; ++col) {
             tilePositions.push_back({ col, row });
         }
-    }
+    } */
 
     auto tileVec2 = types::uvec2(m_tileWidth, m_tileHeight);
     m_tileset = std::make_shared<image::Tileset>(std::move(image), tileVec2);
 
-    m_layer = std::make_unique<image::TiledStaticLayer>(
+   /*  m_layer = std::make_unique<image::TiledStaticLayer>(
         m_tileset,
         std::move(tilePositions),
         types::uvec2{ gridWidth, gridHeight },
         types::vec2{ 0, 0 }
-    );
-
-    Render();
+    ); */    
+    
     return true;
 }
 

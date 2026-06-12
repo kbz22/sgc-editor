@@ -21,7 +21,7 @@ void program::StartEditor(std::wstring tilesetPath)
         programContext.tilesetView.reset();
     }
 
-    programContext.tilesetView = std::make_unique<sgc::SgcView>(win32Context.hTilesetView);
+    programContext.tilesetView = std::make_unique<sgc::TilesetView>(win32Context.hTilesetView);
     programContext.tilesetView->LoadTileset(tilesetPath);
 }
 

@@ -1,13 +1,13 @@
 #pragma once
 
 #include <string>
-#include "sgc/sgc_view.hpp"
+#include "sgc/tileset_view.hpp"
 
 namespace program {
 
     struct ProgramContext
     {       
-        std::unique_ptr<sgc::SgcView> tilesetView;
+        std::unique_ptr<sgc::TilesetView> tilesetView;
     };
 
     ProgramContext& GetProgramContext();
