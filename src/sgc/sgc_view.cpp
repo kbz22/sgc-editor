@@ -72,8 +72,9 @@ void sgc::SgcView::InstallInputSubclass() {
     }
 }
 
-LRESULT CALLBACK sgc::SgcView::StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data) {
-    
+LRESULT CALLBACK sgc::SgcView::StaticPaneProc([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data) 
+{
+       
     switch (msg) {
     case WM_LBUTTONDOWN:
 
@@ -106,14 +107,19 @@ bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tile
     }
 
     // Convert wide string (UTF-16) to UTF-8 narrow string
-    int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, nullptr, 0, nullptr, nullptr);
-    std::string utf8Path(sizeNeeded - 1, '\0'); // -1 to remove null terminator
-    WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, utf8Path.data(), sizeNeeded, nullptr, nullptr);
+    // int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    // std::string utf8Path(sizeNeeded - 1, '\0'); // -1 to remove null terminator
+    // WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, utf8Path.data(), sizeNeeded, nullptr, nullptr);
 
     m_tileWidth  = tileWidth  > 0 ? tileWidth  : defaults::tileSize;
     m_tileHeight = tileHeight > 0 ? tileHeight : defaults::tileSize;
 
-    image::Image image(m_renderer, utf8Path);
+    image::Image image{};
+
+    if (!image.LoadTexture(m_renderer, path)) {
+        return false;
+    }
+
     const types::uvec2 imageSize = image.GetSize();
     if (imageSize.x == 0 || imageSize.y == 0) {
         return false;
@@ -132,7 +138,8 @@ bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tile
     } */
 
     auto tileVec2 = types::uvec2(m_tileWidth, m_tileHeight);
-    m_tileset = std::make_shared<image::Tileset>(std::move(image), tileVec2);
+
+    m_tileset = std::make_shared<image::Tileset>(image, tileVec2);
 
    /*  m_layer = std::make_unique<image::TiledStaticLayer>(
         m_tileset,

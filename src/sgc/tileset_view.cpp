@@ -34,6 +34,8 @@ bool sgc::TilesetView::LoadTileset(const std::wstring& path, int tileWidth, int 
         types::vec2{ 0, 0 }
     );
 
+    m_layer->SetRenderer(m_renderer);
+
     Render();
 
     return true;

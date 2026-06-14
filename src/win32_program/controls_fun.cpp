@@ -11,7 +11,7 @@ void win32_program::OnMenuFileClicked()
 {
 }
 
-INT_PTR CALLBACK NewFileDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
     switch (msg)
     {

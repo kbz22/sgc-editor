@@ -30,8 +30,8 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_COMMAND:
     {
         int id = LOWORD(wParam);
-        int code = HIWORD(wParam);
-        HWND src = (HWND)lParam;
+        // int code = HIWORD(wParam);
+        // HWND src = (HWND)lParam;
 
         switch (id)
         {

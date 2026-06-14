@@ -18,8 +18,7 @@ namespace sgc
             
             bool m_sdlInitialized = false;            
 
-            SDL_Window* m_sdlWindow = nullptr;
-            SDL_Renderer* m_renderer = nullptr;
+            SDL_Window* m_sdlWindow = nullptr;            
 
             static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
             bool CreateEmbeddedRenderer();
@@ -28,8 +27,9 @@ namespace sgc
         protected:
             int m_tileWidth = defaults::tileSize;
             int m_tileHeight = defaults::tileSize;
-            std::shared_ptr<image::Tileset> m_tileset;
-            std::unique_ptr<image::TiledStaticLayer> m_layer;
+            std::shared_ptr<image::Tileset> m_tileset = nullptr;
+            std::unique_ptr<image::TiledStaticLayer> m_layer = nullptr;
+            SDL_Renderer* m_renderer = nullptr;
 
         public:
             SgcView(HWND hwnd);
