@@ -13,7 +13,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 {
     using namespace win32_program;
 
-    Win32Context& context = GetWin32Context();    
+    Win32Context& context = GetWin32Context();
+    
+    static bool capturedMouse = false;
 
     switch (msg)
     {
@@ -50,8 +52,6 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_SIZE:
     {
         win32_program::HandleResize(hwnd, lParam, context);
-        SetCapture(hwnd);
-
         break;
     }
 
@@ -99,7 +99,8 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     {
         if (win32_program::CheckDragging(hwnd, lParam, context))
         {
-            SetCapture(hwnd);            
+            SetCapture(hwnd);
+            capturedMouse = true;   
         }
         break;
     }
@@ -111,15 +112,16 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     {
         auto& state = GetSectionState();
 
-        bool captured = state.draggingLayerHorizontal || state.draggingTileset || state.draggingLayerVertical;
+        capturedMouse |= state.draggingLayerHorizontal || state.draggingTileset || state.draggingLayerVertical;
         
         state.draggingLayerHorizontal = false;
         state.draggingTileset = false;
         state.draggingLayerVertical = false;        
 
-        if (captured)
+        if (capturedMouse)
         {
             ReleaseCapture();
+            capturedMouse = false;
         }
         return 0;
     }

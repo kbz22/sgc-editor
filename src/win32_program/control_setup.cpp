@@ -50,7 +50,7 @@ void win32_program::SetupMenuBar(Win32Context &context)
     rb.cyMinChild = sz.cy;
     rb.fStyle = RBBS_CHILDEDGE;
 
-    SendMessage(context.hRebarTop, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rb);
+    SendMessage(context.hRebarTop, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rb);    
 }
 
 void win32_program::SetupToolbar(Win32Context &context)
