@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
+#include <algorithm>
 
 #include "debug.hpp"
 
@@ -19,15 +20,10 @@ bool sgc::TilesetView::LoadTileset(const std::wstring& path, int tileWidth, int 
         return false;
     }
 
-    m_highlightedTile = image::Rectangle{
-        0,
-        0,
-        static_cast<int>(m_tileWidth),
-        static_cast<int>(m_tileHeight) 
-    };
+    m_highlightedTile = image::Rectangle({ 0, 0 }, { 32, 32 });
 
-    m_highlightedTile.SetColor({ 255, 0, 0, 128 });
-    m_highlightedTile.SetRenderer(m_renderer);
+    m_highlightedTile.SetColor({ 0, 128, 255, 128 });
+    m_highlightedTile.SetRenderer(m_renderer);    
 
     const types::uvec2 imageSize = m_tileset->GetImageSize(); 
 
@@ -67,8 +63,18 @@ LRESULT sgc::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unu
             int x = GET_X_LPARAM(lparam);
             int y = GET_Y_LPARAM(lparam);
 
-            m_highlightedTile.SetPosition({x, y});
-            m_highlightedTile.Draw();
+            auto bounds = m_tileset->GetImageSize();
+
+            if(x > bounds.x || y > bounds.y) {
+                break;
+            }
+
+            m_highlightedTile.SetPosition({
+                (x / m_tileWidth) * m_tileWidth,
+                (y / m_tileHeight) * m_tileHeight
+            }); 
+                
+            Render();
             
             return 0;
         }
@@ -79,4 +85,12 @@ LRESULT sgc::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unu
     }
 
     return DefSubclassProc(hwnd, msg, wparam, lparam);
+}
+
+void sgc::TilesetView::Render()
+{
+    SgcView::DrawAll();    
+    m_highlightedTile.Draw();
+
+    sdl::Render(m_renderer);
 }

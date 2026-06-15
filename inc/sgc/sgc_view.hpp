@@ -32,6 +32,7 @@ namespace sgc
             HWND m_sectionWindow = HWND();
 
             virtual LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+            void DrawAll();
 
         public:
             SgcView(HWND hwnd);

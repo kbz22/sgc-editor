@@ -123,8 +123,7 @@ bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tile
     return true;
 }
 
-
-void sgc::SgcView::Render()
+void sgc::SgcView::DrawAll()
 {
     if (m_renderer == nullptr) {
         return;
@@ -134,7 +133,12 @@ void sgc::SgcView::Render()
 
     if (m_layer != nullptr) {
         m_layer->Draw();
-    }    
+    }  
+}
+
+void sgc::SgcView::Render()
+{
+    DrawAll();
 
     sdl::Render(m_renderer); 
 }

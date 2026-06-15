@@ -21,5 +21,6 @@ namespace sgc
             ~TilesetView();
 
             bool LoadTileset(const std::wstring& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize) override;
+            void Render() override;
     };    
 }
