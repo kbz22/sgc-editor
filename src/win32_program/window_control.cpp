@@ -22,10 +22,17 @@ void win32_program::InitializeMenuControls(win32_program::Win32Context& context)
 
 void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context)
 {
+    WNDCLASSEX wc{};
+    wc.cbSize = sizeof(wc);
+    wc.lpfnWndProc = DefWindowProc;
+    wc.hInstance = context.hInstance;
+    wc.lpszClassName = L"SectionWindow";
+    RegisterClassEx(&wc);
+
     auto makeSection = [&](LPCWSTR name, win32_program::ControlId id)
     {
         return CreateWindowEx(
-            0, L"STATIC", name,
+            0, L"SectionWindow", name,
             WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPSIBLINGS,
             0,0,0,0,
             hwnd, (HMENU)id, context.hInstance, nullptr
@@ -53,26 +60,25 @@ void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context)
 
 }
 
-void win32_program::CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& context)
+bool win32_program::CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& context)
 {
     HWND child = ChildWindowFromPoint(hwnd, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
     auto& state = GetSectionState();
 
     if (child == context.hSplitLeft)
     {
-        state.draggingLayerHorizontal = true;
-        SetCapture(hwnd);
+        state.draggingLayerHorizontal = true;        
     }
     else if (child == context.hSplitRight)
     {
-        state.draggingTileset = true;
-        SetCapture(hwnd);
+        state.draggingTileset = true;        
     }
     else if (child == context.hSplitBottom)
     {
-        state.draggingLayerVertical = true;
-        SetCapture(hwnd);
+        state.draggingLayerVertical = true;        
     }
+
+    return state.draggingLayerHorizontal || state.draggingTileset || state.draggingLayerVertical;
 }
 
 void win32_program::HandleDragging(HWND hwnd, LPARAM lParam, Win32Context &context)

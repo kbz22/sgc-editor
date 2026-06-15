@@ -31,7 +31,7 @@ namespace win32_program
     void InitializeMenuControls(Win32Context& context);
     void CreateMainWindowContents(HWND hwnd, Win32Context& context);
 
-    void CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& context);
+    bool CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& context);
     void HandleResize(HWND hwnd, LPARAM lParam, Win32Context& context);
     void HandleDragging(HWND hwnd, LPARAM lParam, Win32Context& context);
     void LayoutContent(HWND hwnd, Win32Context& context);

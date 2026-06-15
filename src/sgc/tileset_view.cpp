@@ -1,7 +1,13 @@
 #include "sgc/tileset_view.hpp"
+#include <windows.h>
+#include <windowsx.h>
+#include <commctrl.h>
+
+#include "debug.hpp"
 
 sgc::TilesetView::TilesetView(HWND hwnd) : SgcView(hwnd) 
-{}
+{   
+}
 
 sgc::TilesetView::~TilesetView() {
     // nothing to do
@@ -13,7 +19,17 @@ bool sgc::TilesetView::LoadTileset(const std::wstring& path, int tileWidth, int 
         return false;
     }
 
-    const types::uvec2 imageSize = m_tileset->GetImageSize();
+    m_highlightedTile = image::Rectangle{
+        0,
+        0,
+        static_cast<int>(m_tileWidth),
+        static_cast<int>(m_tileHeight) 
+    };
+
+    m_highlightedTile.SetColor({ 255, 0, 0, 128 });
+    m_highlightedTile.SetRenderer(m_renderer);
+
+    const types::uvec2 imageSize = m_tileset->GetImageSize(); 
 
     m_gridWidth  = imageSize.x / m_tileWidth;
     m_gridHeight = imageSize.y / m_tileHeight;
@@ -39,4 +55,28 @@ bool sgc::TilesetView::LoadTileset(const std::wstring& path, int tileWidth, int 
     Render();
 
     return true;
+}
+
+LRESULT sgc::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
+{
+
+    switch (msg)
+    {
+        case WM_LBUTTONDOWN:
+        {
+            int x = GET_X_LPARAM(lparam);
+            int y = GET_Y_LPARAM(lparam);
+
+            m_highlightedTile.SetPosition({x, y});
+            m_highlightedTile.Draw();
+            
+            return 0;
+        }
+
+        case WM_DESTROY:
+            m_sectionWindow = nullptr;
+            break;
+    }
+
+    return DefSubclassProc(hwnd, msg, wparam, lparam);
 }

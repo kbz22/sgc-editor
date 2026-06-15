@@ -1,6 +1,8 @@
 #pragma once
 
 #include <sgc/sgc_view.hpp>
+#include <sgc/image/rectangle.hpp>
+#include "defaults.hpp"
 
 namespace sgc 
 {
@@ -9,6 +11,10 @@ namespace sgc
         private:
             types::unsignedint_t m_gridWidth = 0;
             types::unsignedint_t m_gridHeight = 0;
+            image::Rectangle m_highlightedTile = image::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize };
+
+        protected:
+            LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
 
         public:
             TilesetView(HWND hwnd);

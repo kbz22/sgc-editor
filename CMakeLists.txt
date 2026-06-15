@@ -56,6 +56,8 @@ add_executable(sgc-editor WIN32
     src/sgc/sgc_view.cpp
     src/sgc/tileset_view.cpp
     rcs/new_file_dialog.rc
+
+    src/debug.cpp
 )
 
 # embed manifest in the exe

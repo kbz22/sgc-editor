@@ -13,14 +13,11 @@ namespace sgc
     class SgcView
     {
         private:
-            HWND m_hostWindow = HWND();
-            HWND m_sectionWindow = HWND();
-            
             bool m_sdlInitialized = false;            
 
             SDL_Window* m_sdlWindow = nullptr;            
 
-            static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
+            static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);            
             bool CreateEmbeddedRenderer();
             void InstallInputSubclass();
 
@@ -30,6 +27,11 @@ namespace sgc
             std::shared_ptr<image::Tileset> m_tileset = nullptr;
             std::unique_ptr<image::TiledStaticLayer> m_layer = nullptr;
             SDL_Renderer* m_renderer = nullptr;
+            
+            HWND m_hostWindow = HWND();
+            HWND m_sectionWindow = HWND();
+
+            virtual LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
         public:
             SgcView(HWND hwnd);

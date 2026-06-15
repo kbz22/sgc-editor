@@ -13,7 +13,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 {
     using namespace win32_program;
 
-    Win32Context& context = GetWin32Context();
+    Win32Context& context = GetWin32Context();    
 
     switch (msg)
     {
@@ -49,12 +49,8 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     
     case WM_SIZE:
     {
-        win32_program::HandleResize(hwnd, lParam, context);        
-
-        SetWindowText(context.hLayerListView, L"Layer List");
-        SetWindowText(context.hPackageView,   L"Package View");
-        SetWindowText(context.hMapView,       L"Map View");
-        SetWindowText(context.hTilesetView,   L"Tileset");
+        win32_program::HandleResize(hwnd, lParam, context);
+        SetCapture(hwnd);
 
         break;
     }
@@ -101,8 +97,11 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_LBUTTONDOWN:
     {
-        win32_program::CheckDragging(hwnd, lParam, context);
-        return 0;
+        if (win32_program::CheckDragging(hwnd, lParam, context))
+        {
+            SetCapture(hwnd);            
+        }
+        break;
     }
 
     case WM_ERASEBKGND:
@@ -111,12 +110,17 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_LBUTTONUP:
     {
         auto& state = GetSectionState();
+
+        bool captured = state.draggingLayerHorizontal || state.draggingTileset || state.draggingLayerVertical;
         
         state.draggingLayerHorizontal = false;
         state.draggingTileset = false;
-        state.draggingLayerVertical = false;
+        state.draggingLayerVertical = false;        
 
-        ReleaseCapture();
+        if (captured)
+        {
+            ReleaseCapture();
+        }
         return 0;
     }
 

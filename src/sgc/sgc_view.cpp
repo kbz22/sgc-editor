@@ -35,6 +35,7 @@ bool sgc::SgcView::CreateEmbeddedRenderer()
     if (!m_sdlInitialized && !sdl::InitVideo()) {
         return false;
     }
+   
     m_sdlInitialized = true;
 
     if(m_hostWindow == nullptr) {
@@ -64,38 +65,33 @@ void sgc::SgcView::InstallInputSubclass() {
         return;
     }
 
+    m_sectionWindow = m_hostWindow;
+
     auto native = sdl::GetWin32HWND(m_sdlWindow);
 
     m_sectionWindow = native;
     if (m_sectionWindow != nullptr) {
-        SetWindowSubclass(m_sectionWindow, StaticPaneProc, 0, reinterpret_cast<DWORD_PTR>(this));
+        SetWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId, reinterpret_cast<DWORD_PTR>(this));
     }
+}
+
+LRESULT sgc::SgcView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
+{
+    return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
 LRESULT CALLBACK sgc::SgcView::StaticPaneProc([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data) 
 {
-       
-    switch (msg) {
-    case WM_LBUTTONDOWN:
+    auto* self = reinterpret_cast<SgcView*>(data);
 
-        return 0;
-
-    case WM_MOUSEMOVE:
-
-        break;
-
-    case WM_LBUTTONUP:
-
-        break;
-
-    case WM_CAPTURECHANGED:
-        
-        break;
-
-    default:
-        break;
-
-    }
+        if (self)
+        {
+            return self->HandleMessages(
+                hwnd,
+                msg,
+                wparam,
+                lparam);
+        }
 
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
@@ -105,11 +101,6 @@ bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tile
     if (m_renderer == nullptr) {
         return false;
     }
-
-    // Convert wide string (UTF-16) to UTF-8 narrow string
-    // int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, nullptr, 0, nullptr, nullptr);
-    // std::string utf8Path(sizeNeeded - 1, '\0'); // -1 to remove null terminator
-    // WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, utf8Path.data(), sizeNeeded, nullptr, nullptr);
 
     m_tileWidth  = tileWidth  > 0 ? tileWidth  : defaults::tileSize;
     m_tileHeight = tileHeight > 0 ? tileHeight : defaults::tileSize;
@@ -125,28 +116,9 @@ bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tile
         return false;
     }
 
-    /* const types::unsignedint_t gridWidth  = imageSize.x / m_tileWidth;
-    const types::unsignedint_t gridHeight = imageSize.y / m_tileHeight;
-
-    std::vector<types::uvec2> tilePositions;
-    tilePositions.reserve(static_cast<size_t>(gridWidth) * static_cast<size_t>(gridHeight));
-
-    for (types::unsignedint_t row = 0; row < gridHeight; ++row) {
-        for (types::unsignedint_t col = 0; col < gridWidth; ++col) {
-            tilePositions.push_back({ col, row });
-        }
-    } */
-
     auto tileVec2 = types::uvec2(m_tileWidth, m_tileHeight);
 
-    m_tileset = std::make_shared<image::Tileset>(image, tileVec2);
-
-   /*  m_layer = std::make_unique<image::TiledStaticLayer>(
-        m_tileset,
-        std::move(tilePositions),
-        types::uvec2{ gridWidth, gridHeight },
-        types::vec2{ 0, 0 }
-    ); */    
+    m_tileset = std::make_shared<image::Tileset>(image, tileVec2); 
     
     return true;
 }
