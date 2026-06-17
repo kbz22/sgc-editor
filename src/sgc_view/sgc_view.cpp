@@ -1,4 +1,4 @@
-#include "sgc/sgc_view.hpp"
+#include "sgc_view/sgc_view.hpp"
 #include <sgc/types.hpp>
 #include <sgc/sdl/sdl_win32.hpp>
 #include <commctrl.h>
@@ -7,13 +7,13 @@ namespace {
     constexpr UINT_PTR kTilesetSubclassId = 0x53474331;
 }
 
-sgc::SgcView::SgcView(HWND hwnd)
+sgc_view::SgcView::SgcView(HWND hwnd)
     : m_hostWindow(hwnd)
 {
     CreateEmbeddedRenderer();
 }
 
-sgc::SgcView::~SgcView()
+sgc_view::SgcView::~SgcView()
 {
     if (m_sectionWindow != nullptr) {
         RemoveWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId);
@@ -30,7 +30,7 @@ sgc::SgcView::~SgcView()
     }
 }
 
-bool sgc::SgcView::CreateEmbeddedRenderer()
+bool sgc_view::SgcView::CreateEmbeddedRenderer()
 {
     if (!m_sdlInitialized && !sdl::InitVideo()) {
         return false;
@@ -60,7 +60,7 @@ bool sgc::SgcView::CreateEmbeddedRenderer()
     return true;
 }
 
-void sgc::SgcView::InstallInputSubclass() {
+void sgc_view::SgcView::InstallInputSubclass() {
     if (m_sdlWindow == nullptr) {
         return;
     }
@@ -75,12 +75,12 @@ void sgc::SgcView::InstallInputSubclass() {
     }
 }
 
-LRESULT sgc::SgcView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
+LRESULT sgc_view::SgcView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
 {
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-LRESULT CALLBACK sgc::SgcView::StaticPaneProc([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data) 
+LRESULT CALLBACK sgc_view::SgcView::StaticPaneProc([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data) 
 {
     auto* self = reinterpret_cast<SgcView*>(data);
 
@@ -96,7 +96,7 @@ LRESULT CALLBACK sgc::SgcView::StaticPaneProc([[maybe_unused]] HWND hwnd, [[mayb
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
+bool sgc_view::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
 {
     if (m_renderer == nullptr) {
         return false;
@@ -123,7 +123,7 @@ bool sgc::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tile
     return true;
 }
 
-void sgc::SgcView::DrawAll()
+void sgc_view::SgcView::DrawAll()
 {
     if (m_renderer == nullptr) {
         return;
@@ -136,7 +136,7 @@ void sgc::SgcView::DrawAll()
     }  
 }
 
-void sgc::SgcView::Render()
+void sgc_view::SgcView::Render()
 {
     DrawAll();
 

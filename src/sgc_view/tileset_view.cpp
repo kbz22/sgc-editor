@@ -1,4 +1,4 @@
-#include "sgc/tileset_view.hpp"
+#include "sgc_view/tileset_view.hpp"
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
@@ -6,15 +6,15 @@
 
 #include "debug.hpp"
 
-sgc::TilesetView::TilesetView(HWND hwnd) : SgcView(hwnd) 
+sgc_view::TilesetView::TilesetView(HWND hwnd) : SgcView(hwnd) 
 {   
 }
 
-sgc::TilesetView::~TilesetView() {
+sgc_view::TilesetView::~TilesetView() {
     // nothing to do
 }
 
-bool sgc::TilesetView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
+bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
 {
     if(!SgcView::LoadTileset(path, tileWidth, tileHeight)) {
         return false;
@@ -53,7 +53,7 @@ bool sgc::TilesetView::LoadTileset(const std::wstring& path, int tileWidth, int 
     return true;
 }
 
-LRESULT sgc::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
+LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
 {
 
     switch (msg)
@@ -87,7 +87,7 @@ LRESULT sgc::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unu
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-void sgc::TilesetView::Render()
+void sgc_view::TilesetView::Render()
 {
     SgcView::DrawAll();    
     m_highlightedTile.Draw();

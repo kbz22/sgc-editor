@@ -1,10 +1,10 @@
 #pragma once
 
-#include <sgc/sgc_view.hpp>
+#include <sgc_view/sgc_view.hpp>
 #include <sgc/image/rectangle.hpp>
 #include "defaults.hpp"
 
-namespace sgc 
+namespace sgc_view 
 {
     class TilesetView : public SgcView
     {

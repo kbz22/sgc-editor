@@ -8,7 +8,7 @@
 
 #include <windows.h>
 
-namespace sgc
+namespace sgc_view
 {
     class SgcView
     {
