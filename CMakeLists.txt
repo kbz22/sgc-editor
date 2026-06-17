@@ -89,7 +89,7 @@ target_link_libraries(sgc-editor PRIVATE
     SDL3
     SDL3_image
     SDL3_ttf
-    sdl_game_core
+    sdl-game-core
 )
 
 target_compile_definitions(sgc-editor PRIVATE

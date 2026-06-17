@@ -105,20 +105,20 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int
     m_tileWidth  = tileWidth  > 0 ? tileWidth  : defaults::tileSize;
     m_tileHeight = tileHeight > 0 ? tileHeight : defaults::tileSize;
 
-    image::Image image{};
+    graphics::Image image{};
 
     if (!image.LoadTexture(m_renderer, path)) {
         return false;
     }
 
-    const types::uvec2 imageSize = image.GetSize();
+    const math::uvec2 imageSize = image.GetSize();
     if (imageSize.x == 0 || imageSize.y == 0) {
         return false;
     }
 
-    auto tileVec2 = types::uvec2(m_tileWidth, m_tileHeight);
+    auto tileVec2 = math::uvec2(m_tileWidth, m_tileHeight);
 
-    m_tileset = std::make_shared<image::Tileset>(image, tileVec2); 
+    m_tileset = std::make_shared<graphics::Tileset>(image, tileVec2); 
     
     return true;
 }
@@ -129,7 +129,7 @@ void sgc_view::SgcView::DrawAll()
         return;
     }
 
-    sdl::Clear(m_renderer, types::color_t{ 28, 28, 28, 255 });
+    sdl::Clear(m_renderer, graphics::color{ 28, 28, 28, 255 });
 
     if (m_layer != nullptr) {
         m_layer->Draw();

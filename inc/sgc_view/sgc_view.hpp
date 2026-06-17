@@ -1,8 +1,8 @@
 #pragma once
 
 #include <sgc/sdl/sdl.hpp>
-#include <sgc/image/tileset.hpp>
-#include <sgc/image/tiled_static_layer.hpp>
+#include <sgc/graphics/tileset.hpp>
+#include <sgc/graphics/tiled_static_layer.hpp>
 
 #include "defaults.hpp"
 
@@ -10,6 +10,8 @@
 
 namespace sgc_view
 {
+    using namespace sgc;
+
     class SgcView
     {
         private:
@@ -24,8 +26,8 @@ namespace sgc_view
         protected:
             int m_tileWidth = defaults::tileSize;
             int m_tileHeight = defaults::tileSize;
-            std::shared_ptr<image::Tileset> m_tileset = nullptr;
-            std::unique_ptr<image::TiledStaticLayer> m_layer = nullptr;
+            std::shared_ptr<graphics::Tileset> m_tileset = nullptr;
+            std::unique_ptr<graphics::TiledStaticLayer> m_layer = nullptr;
             SDL_Renderer* m_renderer = nullptr;
             
             HWND m_hostWindow = HWND();

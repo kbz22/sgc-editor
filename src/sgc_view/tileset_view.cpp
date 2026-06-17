@@ -20,30 +20,30 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth,
         return false;
     }
 
-    m_highlightedTile = image::Rectangle({ 0, 0 }, { 32, 32 });
+    m_highlightedTile = graphics::Rectangle({ 0, 0 }, { 32, 32 });
 
     m_highlightedTile.SetColor({ 0, 128, 255, 128 });
     m_highlightedTile.SetRenderer(m_renderer);    
 
-    const types::uvec2 imageSize = m_tileset->GetImageSize(); 
+    const math::uvec2 imageSize = m_tileset->GetImageSize(); 
 
     m_gridWidth  = imageSize.x / m_tileWidth;
     m_gridHeight = imageSize.y / m_tileHeight;
 
-    std::vector<types::uvec2> tilePositions;
+    std::vector<math::uvec2> tilePositions;
     tilePositions.reserve(static_cast<size_t>(m_gridWidth) * static_cast<size_t>(m_gridHeight));
 
-    for (types::unsignedint_t row = 0; row < m_gridHeight; ++row) {
-        for (types::unsignedint_t col = 0; col < m_gridWidth; ++col) {
+    for (math::u64 row = 0; row < m_gridHeight; ++row) {
+        for (math::u64 col = 0; col < m_gridWidth; ++col) {
             tilePositions.push_back({ col, row });
         }
     }
 
-    m_layer = std::make_unique<image::TiledStaticLayer>(
+    m_layer = std::make_unique<graphics::TiledStaticLayer>(
         m_tileset,
         std::move(tilePositions),
-        types::uvec2{ m_gridWidth, m_gridHeight },
-        types::vec2{ 0, 0 }
+        math::uvec2{ m_gridWidth, m_gridHeight },
+        math::vec2{ 0, 0 }
     );
 
     m_layer->SetRenderer(m_renderer);
