@@ -19,9 +19,9 @@ sgc_view::SgcView::~SgcView()
         RemoveWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId);
     }
 
-    if (m_renderer != nullptr) {
-        sdl::DestroyRenderer(m_renderer);
-        m_renderer = nullptr;
+    if (m_renderContext.renderer != nullptr) {
+        sdl::DestroyRenderer(m_renderContext.renderer);
+        m_renderContext.renderer = nullptr;
     }
 
     if (m_sdlWindow != nullptr) {
@@ -48,8 +48,8 @@ bool sgc_view::SgcView::CreateEmbeddedRenderer()
         return false;
     }
 
-    m_renderer = sdl::CreateRenderer(m_sdlWindow);
-    if (m_renderer == nullptr) {
+    m_renderContext.renderer = sdl::CreateRenderer(m_sdlWindow);
+    if (m_renderContext.renderer == nullptr) {
         sdl::DestroyWindow(m_sdlWindow);
         m_sdlWindow = nullptr;
         return false;
@@ -98,7 +98,7 @@ LRESULT CALLBACK sgc_view::SgcView::StaticPaneProc([[maybe_unused]] HWND hwnd, [
 
 bool sgc_view::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
 {
-    if (m_renderer == nullptr) {
+    if (m_renderContext.renderer == nullptr) {
         return false;
     }
 
@@ -107,7 +107,7 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int
 
     graphics::Image image{};
 
-    if (!image.LoadTexture(m_renderer, path)) {
+    if (!image.LoadTexture(m_renderContext.renderer, path)) {
         return false;
     }
 
@@ -125,14 +125,10 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int
 
 void sgc_view::SgcView::DrawAll()
 {
-    if (m_renderer == nullptr) {
-        return;
-    }
-
-    sdl::Clear(m_renderer, graphics::color{ 28, 28, 28, 255 });
+    sdl::Clear(m_renderContext, graphics::color{ 28, 28, 28, 255 });
 
     if (m_layer != nullptr) {
-        m_layer->Draw();
+        m_layer->Draw(this->m_renderContext);
     }  
 }
 
@@ -140,5 +136,5 @@ void sgc_view::SgcView::Render()
 {
     DrawAll();
 
-    sdl::Render(m_renderer); 
+    sdl::Render(m_renderContext); 
 }

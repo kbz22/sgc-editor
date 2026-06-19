@@ -13,7 +13,7 @@ namespace sgc_view
             math::vec2 m_tilePosition = math::vec2{ 0, 0 };
 
         protected:
-            // LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
+            LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
 
         public:
             MapView(HWND hwnd);
@@ -21,6 +21,6 @@ namespace sgc_view
 
             void SetTile(int tileX, int tileY);
 
-            void Render() override;
+            // void Render() override;
     };
 }

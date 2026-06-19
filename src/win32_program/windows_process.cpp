@@ -13,7 +13,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 {
     using namespace win32_program;
 
-    Win32Context& context = GetWin32Context();
+    Win32Context& context = GetWin32Context();    
     
     static bool capturedMouse = false;
 
@@ -42,7 +42,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
                 break;
 
             case static_cast<int>(CommandId::FileNew):
-                win32_program::OnFileNewClicked();                
+                win32_program::OnFileNewClicked();              
                 break;
         }
 

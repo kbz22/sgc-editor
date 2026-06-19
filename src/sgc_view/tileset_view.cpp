@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "debug.hpp"
+#include "program/program.hpp"
 
 sgc_view::TilesetView::TilesetView(HWND hwnd) : SgcView(hwnd) 
 {   
@@ -23,7 +24,6 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth,
     m_highlightedTile = graphics::Rectangle({ 0, 0 }, { 32, 32 });
 
     m_highlightedTile.SetColor({ 0, 128, 255, 128 });
-    m_highlightedTile.SetRenderer(m_renderer);    
 
     const math::uvec2 imageSize = m_tileset->GetImageSize(); 
 
@@ -44,9 +44,7 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth,
         std::move(tilePositions),
         math::uvec2{ m_gridWidth, m_gridHeight },
         math::vec2{ 0, 0 }
-    );
-
-    m_layer->SetRenderer(m_renderer);
+    );    
 
     Render();
 
@@ -55,6 +53,8 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth,
 
 LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
 {
+    using namespace program;
+    ProgramContext& programContext = program::GetProgramContext();
 
     switch (msg)
     {
@@ -72,9 +72,11 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
             m_highlightedTile.SetPosition({
                 (x / m_tileWidth) * m_tileWidth,
                 (y / m_tileHeight) * m_tileHeight
-            }); 
-                
+            });      
+
             Render();
+            programContext.mapView->SetTile(x / m_tileWidth, y / m_tileHeight);
+            programContext.mapView->Render();
             
             return 0;
         }
@@ -90,7 +92,7 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
 void sgc_view::TilesetView::Render()
 {
     SgcView::DrawAll();    
-    m_highlightedTile.Draw();
+    m_highlightedTile.Draw(m_renderContext);
 
-    sdl::Render(m_renderer);
+    sdl::Render(m_renderContext);
 }
