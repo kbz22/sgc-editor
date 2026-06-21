@@ -25,26 +25,41 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth,
 
     m_highlightedTile.SetColor({ 0, 128, 255, 128 });
 
-    const math::uvec2 imageSize = m_tileset->GetImageSize(); 
+    // const math::uvec2 imageSize = m_tileset->GetImageSize(); 
+    const math::uvec2 gridSize = m_tileset->GetSizeInTiles();
 
-    m_gridWidth  = imageSize.x / m_tileWidth;
-    m_gridHeight = imageSize.y / m_tileHeight;
+    // m_gridWidth  = imageSize.x / m_tileWidth;
+    // m_gridHeight = imageSize.y / m_tileHeight;
 
-    std::vector<math::uvec2> tilePositions;
+    /* std::vector<math::uvec2> tilePositions;
     tilePositions.reserve(static_cast<size_t>(m_gridWidth) * static_cast<size_t>(m_gridHeight));
 
     for (math::u64 row = 0; row < m_gridHeight; ++row) {
         for (math::u64 col = 0; col < m_gridWidth; ++col) {
-            tilePositions.push_back({ col, row });
+            tilePositions.push_back({ col, row });            
         }
+    } */
+
+    auto tileStorage = std::make_shared<data::TileContainer>();
+
+    for (uint64_t i = 0; i < gridSize.y * gridSize.x; ++i) {  
+            tileStorage->SetTileAt({ i % gridSize.x, i / gridSize.x }, i);
     }
 
-    m_layer = std::make_unique<graphics::TiledStaticLayer>(
+    /* m_layer = std::make_unique<graphics::TiledStaticLayer>(
         m_tileset,
         std::move(tilePositions),
         math::uvec2{ m_gridWidth, m_gridHeight },
         math::vec2{ 0, 0 }
     );    
+    */
+
+    m_layer = std::make_shared<graphics::TiledLayer>(
+        m_tileset,
+        tileStorage
+    );
+
+    m_tiledImage = std::make_shared<graphics::TiledImage>(m_layer);
 
     Render();
 
@@ -91,7 +106,7 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
 
 void sgc_view::TilesetView::Render()
 {
-    SgcView::DrawAll();    
+    SgcView::DrawAll();
     m_highlightedTile.Draw(m_renderContext);
 
     sdl::Render(m_renderContext);

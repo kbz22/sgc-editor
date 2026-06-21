@@ -36,9 +36,15 @@ void program::HandleResize()
 {
     auto& programContext = GetProgramContext();
     if (programContext.tilesetView != nullptr) {
-        programContext.tilesetView->Render();
+        RECT rect;
+        GetClientRect(win32_program::GetWin32Context().hTilesetView, &rect);
+        programContext.tilesetView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);
+        programContext.tilesetView->Render();        
     }
     if (programContext.mapView != nullptr) {
+        RECT rect;
+        GetClientRect(win32_program::GetWin32Context().hMapView, &rect);
+        programContext.mapView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);
         programContext.mapView->Render();
     }
 }

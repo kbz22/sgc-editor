@@ -1,5 +1,6 @@
 #include "sgc_view/sgc_view.hpp"
 #include <sgc/types.hpp>
+#include <sgc/graphics/viewport.hpp>
 #include <sgc/sdl/sdl_win32.hpp>
 #include <commctrl.h>
 
@@ -127,8 +128,8 @@ void sgc_view::SgcView::DrawAll()
 {
     sdl::Clear(m_renderContext, graphics::color{ 28, 28, 28, 255 });
 
-    if (m_layer != nullptr) {
-        m_layer->Draw(this->m_renderContext);
+    if (m_tiledImage != nullptr) {
+        m_tiledImage->Draw(this->m_renderContext);
     }  
 }
 
@@ -137,4 +138,16 @@ void sgc_view::SgcView::Render()
     DrawAll();
 
     sdl::Render(m_renderContext); 
+}
+
+void sgc_view::SgcView::Clear()
+{
+    sdl::Clear(m_renderContext, graphics::color{ 28, 28, 28, 255 });
+    sdl::Render(m_renderContext);
+}
+
+void sgc_view::SgcView::SetScreenSize(int width, int height)
+{
+    m_renderContext.view.screen = graphics::Viewport{ 0, 0, static_cast<float>(width), static_cast<float>(height) };
+    m_renderContext.view.camera = m_renderContext.view.screen;
 }

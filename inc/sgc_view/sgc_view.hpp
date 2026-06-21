@@ -2,7 +2,8 @@
 
 #include <sgc/sdl/sdl.hpp>
 #include <sgc/graphics/tileset.hpp>
-#include <sgc/graphics/tiled_static_layer.hpp>
+// #include <sgc/graphics/tiled_static_layer.hpp>
+#include <sgc/graphics/tiledimage.hpp>
 
 #include "defaults.hpp"
 
@@ -27,7 +28,8 @@ namespace sgc_view
             int m_tileWidth = defaults::tileSize;
             int m_tileHeight = defaults::tileSize;
             std::shared_ptr<graphics::Tileset> m_tileset = nullptr;
-            std::unique_ptr<graphics::TiledStaticLayer> m_layer = nullptr;            
+            // std::unique_ptr<graphics::TiledStaticLayer> m_layer = nullptr;            
+            std::shared_ptr<graphics::TiledImage> m_tiledImage = nullptr;
             graphics::RenderContext m_renderContext = {};
             
             HWND m_hostWindow = HWND();
@@ -43,6 +45,7 @@ namespace sgc_view
             virtual void Render();
             void Clear();
             virtual bool LoadTileset(const std::wstring& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
+            virtual void SetScreenSize(int width, int height);
         
     };
 }
