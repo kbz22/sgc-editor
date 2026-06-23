@@ -1,7 +1,9 @@
 #pragma once
 
 #include "sgc_view/sgc_view.hpp"
-#include "sgc/types.hpp"
+
+#include <sgc/types.hpp>
+#include <sgc/data/statictilestorage.hpp>
 
 namespace sgc_view
 {
@@ -10,7 +12,7 @@ namespace sgc_view
     class MapView : public SgcView
     {
         private:
-            math::vec2 m_tilePosition = math::vec2{ 0, 0 };
+            std::shared_ptr<data::StaticTileStorage> m_tileStorage = nullptr;
 
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
@@ -21,6 +23,6 @@ namespace sgc_view
 
             void SetTile(int tileX, int tileY);
 
-            // void Render() override;
+            bool LoadTileset(const std::wstring& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
     };
 }

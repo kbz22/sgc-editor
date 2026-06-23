@@ -1,4 +1,7 @@
 #include "sgc_view/tileset_view.hpp"
+
+#include <sgc/data/statictilestorage.hpp>
+
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
@@ -24,35 +27,14 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth,
     m_highlightedTile = graphics::Rectangle({ 0, 0 }, { 32, 32 });
 
     m_highlightedTile.SetColor({ 0, 128, 255, 128 });
-
-    // const math::uvec2 imageSize = m_tileset->GetImageSize(); 
+    
     const math::uvec2 gridSize = m_tileset->GetSizeInTiles();
 
-    // m_gridWidth  = imageSize.x / m_tileWidth;
-    // m_gridHeight = imageSize.y / m_tileHeight;
-
-    /* std::vector<math::uvec2> tilePositions;
-    tilePositions.reserve(static_cast<size_t>(m_gridWidth) * static_cast<size_t>(m_gridHeight));
-
-    for (math::u64 row = 0; row < m_gridHeight; ++row) {
-        for (math::u64 col = 0; col < m_gridWidth; ++col) {
-            tilePositions.push_back({ col, row });            
-        }
-    } */
-
-    auto tileStorage = std::make_shared<data::TileContainer>();
+    auto tileStorage = std::make_shared<data::StaticTileStorage>(math::uvec2{gridSize.x, gridSize.y});
 
     for (uint64_t i = 0; i < gridSize.y * gridSize.x; ++i) {  
             tileStorage->SetTileAt({ i % gridSize.x, i / gridSize.x }, i);
     }
-
-    /* m_layer = std::make_unique<graphics::TiledStaticLayer>(
-        m_tileset,
-        std::move(tilePositions),
-        math::uvec2{ m_gridWidth, m_gridHeight },
-        math::vec2{ 0, 0 }
-    );    
-    */
 
     m_layer = std::make_shared<graphics::TiledLayer>(
         m_tileset,

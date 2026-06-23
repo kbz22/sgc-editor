@@ -12,16 +12,36 @@ sgc_view::MapView::~MapView()
 
 void sgc_view::MapView::SetTile(int tileX, int tileY)
 {
-    m_tilePosition = math::vec2{ tileX, tileY };
-    /* m_layer = std::make_unique<graphics::TiledStaticLayer>(
-        m_tileset,
-        std::vector<math::uvec2>{ { static_cast<math::u64>(tileX), static_cast<math::u64>(tileY) } },
-        math::uvec2{ 1, 1 },
-        math::vec2{ 0, 0 }
-    ); */
+    if (m_tileStorage == nullptr) {
+        return;
+    }
+
+    m_tileStorage->SetTileAt({ 0, 0 }, m_tileset->ToTileId(tileX, tileY));
+
+    Render();    
 }
 
 LRESULT sgc_view::MapView::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     return DefSubclassProc(hwnd, msg, wparam, lparam);
+}
+
+bool sgc_view::MapView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
+{
+    if(!SgcView::LoadTileset(path, tileWidth, tileHeight)) {
+        return false;
+    }
+
+    m_tileStorage = std::make_shared<data::StaticTileStorage>(math::uvec2{1, 1});
+
+    auto layer = std::make_shared<graphics::TiledLayer>(
+        m_tileset,
+        m_tileStorage
+    );
+
+    m_tiledImage = std::make_shared<graphics::TiledImage>(layer);
+
+    Render();
+
+    return true;
 }
