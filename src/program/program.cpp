@@ -8,8 +8,11 @@ program::ProgramContext& program::GetProgramContext()
     return context;
 }
 
-void program::StartEditor(std::wstring tilesetPath)
+void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeight, int chunksSizeX, int chunksSizeY)
 {
+    (void)chunksSizeX;
+    (void)chunksSizeY;
+    
     auto& programContext = GetProgramContext();
     auto& win32Context = win32_program::GetWin32Context();
 
@@ -26,10 +29,10 @@ void program::StartEditor(std::wstring tilesetPath)
     }
 
     programContext.tilesetView = std::make_unique<sgc_view::TilesetView>(win32Context.hTilesetView);
-    programContext.tilesetView->LoadTileset(tilesetPath);
+    programContext.tilesetView->LoadTileset(tilesetPath, tileWidth, tileHeight);
 
     programContext.mapView = std::make_unique<sgc_view::MapView>(win32Context.hMapView);
-    programContext.mapView->LoadTileset(tilesetPath);
+    programContext.mapView->LoadTileset(tilesetPath, tileWidth, tileHeight);
 }
 
 void program::HandleResize()

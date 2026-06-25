@@ -14,7 +14,7 @@ namespace program {
 
     ProgramContext& GetProgramContext();
 
-    void StartEditor(std::wstring tilesetPath);
+    void StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeight, int chunksSizeX, int chunksSizeY);
     void HandleResize();
 
 }

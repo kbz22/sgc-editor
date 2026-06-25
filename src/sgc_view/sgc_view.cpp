@@ -3,7 +3,7 @@
 #include <sgc/graphics/viewport.hpp>
 #include <sgc/sdl/sdl_win32.hpp>
 #include <commctrl.h>
-
+#include "program/except.hpp"
 namespace {
     constexpr UINT_PTR kTilesetSubclassId = 0x53474331;
 }
@@ -103,19 +103,28 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int
         return false;
     }
 
-    m_tileWidth  = tileWidth  > 0 ? tileWidth  : defaults::tileSize;
-    m_tileHeight = tileHeight > 0 ? tileHeight : defaults::tileSize;
+    if(tileWidth <= 0 || tileHeight <= 0) {
+        throw program::TileSizeException("Tile size must be greater than zero.");
+    }
 
     graphics::Image image{};
 
     if (!image.LoadTexture(m_renderContext.renderer, path)) {
-        return false;
+        throw program::AssetLoadException("Failed to load tileset image: " + std::string(path.begin(), path.end()));
     }
 
     const math::uvec2 imageSize = image.GetSize();
     if (imageSize.x == 0 || imageSize.y == 0) {
-        return false;
+        throw program::AssetLoadException("Tileset image has invalid dimensions: " + std::string(path.begin(), path.end()));
     }
+
+    if (imageSize.x % m_tileWidth != 0 || imageSize.y % m_tileHeight != 0) {
+        throw program::TileSizeException("Tileset dimensions are not divisible by tile size.");
+    }
+
+    if (imageSize.x < m_tileWidth || imageSize.y < m_tileHeight) {
+        throw program::TileSizeException("Image is smaller than the specified tile size.");
+    }    
 
     auto tileVec2 = math::uvec2(m_tileWidth, m_tileHeight);
 

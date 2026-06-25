@@ -32,7 +32,7 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth,
 
     auto tileStorage = std::make_shared<data::StaticTileStorage>(math::uvec2{gridSize.x, gridSize.y});
 
-    for (uint64_t i = 0; i < gridSize.y * gridSize.x; ++i) {  
+    for (sgc::tile::TileId i = 0; i < gridSize.y * gridSize.x; ++i) {  
             tileStorage->SetTileAt({ i % gridSize.x, i / gridSize.x }, i);
     }
 

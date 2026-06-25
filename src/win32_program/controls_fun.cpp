@@ -3,6 +3,8 @@
 #include "sgc_view/sgc_view.hpp"
 #include "win32_program/windows_init.hpp"
 #include "program/program.hpp"
+#include "program/except.hpp"
+#include "defaults.hpp"
 
 #include "new_file_dialog.h"
 #include <commdlg.h>
@@ -11,13 +13,14 @@ void win32_program::OnMenuFileClicked()
 {
 }
 
-INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam)
+INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    switch (msg)
+    (void)msg;
+    (void)lParam;
+
+    switch (LOWORD(wParam))
     {
-    case WM_COMMAND:
-        switch (LOWORD(wParam))
-        {
+
         case IDC_BROWSE_BUTTON:
         {
             wchar_t filePath[MAX_PATH] = {0};
@@ -43,7 +46,21 @@ INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] 
             wchar_t buffer[MAX_PATH];
             GetDlgItemText(hDlg, IDC_PATH_EDIT, buffer, MAX_PATH);
             
-            program::StartEditor(buffer);
+            try
+            {
+            program::StartEditor(
+                buffer,
+                GetDlgItemInt(hDlg, IDC_MAP_WIDTH, nullptr, FALSE),
+                GetDlgItemInt(hDlg, IDC_MAP_HEIGHT, nullptr, FALSE),
+                1,
+                1
+            );
+            }
+            catch (const program::TileSizeException& e)
+            {
+                MessageBoxA(hDlg, e.what(), "Error", MB_OK | MB_ICONERROR);
+                return TRUE;
+            }
 
             EndDialog(hDlg, IDOK);
             return TRUE;
@@ -53,9 +70,28 @@ INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] 
         case IDCANCEL:
             EndDialog(hDlg, IDCANCEL);
             return TRUE;
-        }
-        break;
     }
+    
+    return FALSE;
+}
+
+INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam)
+{
+    switch (msg)
+    {
+        case WM_INITDIALOG:
+        {
+            SetDlgItemInt(hDlg, IDC_MAP_WIDTH, defaults::tileSize, FALSE);
+            SetDlgItemInt(hDlg, IDC_MAP_HEIGHT, defaults::tileSize, FALSE);
+            return TRUE;
+        }
+        
+        case WM_COMMAND:
+        {
+            return NewFileDialogCommandHandler(hDlg, msg, wParam, lParam);        
+        }
+    }
+
     return FALSE;
 }
 
@@ -65,8 +101,6 @@ void win32_program::OnFileNewClicked()
     auto& context = GetWin32Context();
 
     if (context.hTilesetView != nullptr) {
-        // sgc_view::SgcView view(context.hTilesetView);
-        // // view.LoadTileset("test_icon.png",24,24);
 
         if(context.hMainWindow != nullptr)
         DialogBox(
