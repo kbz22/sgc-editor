@@ -10,7 +10,8 @@
 #include "debug.hpp"
 #include "program/program.hpp"
 
-sgc_view::TilesetView::TilesetView(HWND hwnd) : SgcView(hwnd) 
+sgc_view::TilesetView::TilesetView(HWND hwnd, int tileWidth, int tileHeight) :
+    SgcView(hwnd, tileWidth, tileHeight) 
 {   
 }
 
@@ -18,15 +19,23 @@ sgc_view::TilesetView::~TilesetView() {
     // nothing to do
 }
 
-bool sgc_view::TilesetView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
+bool sgc_view::TilesetView::LoadTileset(const std::wstring& path)
 {
-    if(!SgcView::LoadTileset(path, tileWidth, tileHeight)) {
+    if(!SgcView::LoadTileset(path)) {
         return false;
     }
 
-    m_highlightedTile = graphics::Rectangle({ 0, 0 }, { 32, 32 });
+    /* m_highlightedTile = graphics::Rectangle(
+        {
+            0,
+            0 
+        }, {
+            static_cast<sgc::math::u64>(m_tileWidth),
+            static_cast<sgc::math::u64>(m_tileHeight)
+        }
+    );
 
-    m_highlightedTile.SetColor({ 0, 128, 255, 128 });
+    m_highlightedTile.SetColor({ 0, 128, 255, 128 }); */
     
     const math::uvec2 gridSize = m_tileset->GetSizeInTiles();
 
@@ -66,15 +75,91 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
                 break;
             }
 
-            m_highlightedTile.SetPosition({
+            /* m_highlightedTile.SetPosition({
                 (x / m_tileWidth) * m_tileWidth,
                 (y / m_tileHeight) * m_tileHeight
-            });      
+            });  */
 
-            Render();
-            programContext.mapView->SetTile(x / m_tileWidth, y / m_tileHeight);
-            programContext.mapView->Render();
+            sgc::math::uvec2 tileSize = m_tileset->GetTileSize();
+            sgc::math::vec2 tilePosition = {
+                static_cast<sgc::math::i64>(x / tileSize.x),
+                static_cast<sgc::math::i64>(y / tileSize.y)
+            };
+
+            m_selectionTileStart = tilePosition;
+            m_selectionTileSize = { 1, 1 };
             
+            programContext.selectionRectangle->SetPosition(
+                {tilePosition.x * static_cast<sgc::math::i64>(tileSize.x),
+                tilePosition.y * static_cast<sgc::math::i64>(tileSize.y)}
+            );
+            programContext.selectionRectangle->SetSize(
+                {m_selectionTileSize.x * static_cast<sgc::math::i64>(tileSize.x), m_selectionTileSize.y * static_cast<sgc::math::i64>(tileSize.y)}
+            );
+            
+            m_selectionActive = true;
+            SetCapture(hwnd);
+
+            Render();           
+            
+            return 0;
+        }
+
+        case WM_MOUSEMOVE:
+        {
+            if (!m_selectionActive) {
+                break;
+            }
+
+            int x = GET_X_LPARAM(lparam);
+            int y = GET_Y_LPARAM(lparam);
+
+            sgc::math::uvec2 tileSize = m_tileset->GetTileSize();
+
+            sgc::math::uvec2 currentTile = {
+                x / tileSize.x,
+                y / tileSize.y
+            };
+
+            sgc::math::uvec2 minTile = {
+                std::min(static_cast<sgc::math::u64>(m_selectionTileStart.x), currentTile.x),
+                std::min(static_cast<sgc::math::u64>(m_selectionTileStart.y), currentTile.y)
+            };
+
+            sgc::math::uvec2 maxTile = {
+                std::max(static_cast<sgc::math::u64>(m_selectionTileStart.x), currentTile.x),
+                std::max(static_cast<sgc::math::u64>(m_selectionTileStart.y), currentTile.y)
+            };
+
+            m_selectionTileSize = {
+                maxTile.x - minTile.x + 1,
+                maxTile.y - minTile.y + 1
+            };
+
+            programContext.selectionRectangle->SetPosition({
+                static_cast<sgc::math::i64>(minTile.x * tileSize.x),
+                static_cast<sgc::math::i64>(minTile.y * tileSize.y)
+            });
+
+            programContext.selectionRectangle->SetSize({
+                m_selectionTileSize.x * tileSize.x,
+                m_selectionTileSize.y * tileSize.y
+            });
+
+            Render();            
+            
+            return 0;
+        } 
+        
+        case WM_LBUTTONUP:
+        {
+            ReleaseCapture();
+
+            if (m_selectionActive)
+            {
+                m_selectionActive = false;
+            }
+
             return 0;
         }
 
@@ -88,8 +173,14 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
 
 void sgc_view::TilesetView::Render()
 {
+    SgcView::Clear();
     SgcView::DrawAll();
-    m_highlightedTile.Draw(m_renderContext);
+
+    program::ProgramContext& programContext = program::GetProgramContext();
+
+    if (programContext.selectionRectangle != nullptr) {
+        programContext.selectionRectangle->Draw(m_renderContext);
+    }
 
     sdl::Render(m_renderContext);
 }

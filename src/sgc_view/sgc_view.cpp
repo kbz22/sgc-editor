@@ -8,8 +8,8 @@ namespace {
     constexpr UINT_PTR kTilesetSubclassId = 0x53474331;
 }
 
-sgc_view::SgcView::SgcView(HWND hwnd)
-    : m_hostWindow(hwnd)
+sgc_view::SgcView::SgcView(HWND hwnd, int tileWidth, int tileHeight)
+    : m_hostWindow(hwnd), m_tileWidth(tileWidth), m_tileHeight(tileHeight)
 {
     CreateEmbeddedRenderer();
 }
@@ -97,13 +97,13 @@ LRESULT CALLBACK sgc_view::SgcView::StaticPaneProc([[maybe_unused]] HWND hwnd, [
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-bool sgc_view::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int tileHeight)
+bool sgc_view::SgcView::LoadTileset(const std::wstring& path)
 {
     if (m_renderContext.renderer == nullptr) {
         return false;
     }
 
-    if(tileWidth <= 0 || tileHeight <= 0) {
+    if(m_tileWidth <= 0 || m_tileHeight <= 0) {
         throw program::TileSizeException("Tile size must be greater than zero.");
     }
 
@@ -135,8 +135,6 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path, int tileWidth, int
 
 void sgc_view::SgcView::DrawAll()
 {
-    sdl::Clear(m_renderContext, graphics::color{ 28, 28, 28, 255 });
-
     if (m_tiledImage != nullptr) {
         m_tiledImage->Draw(this->m_renderContext);
     }  
@@ -151,8 +149,7 @@ void sgc_view::SgcView::Render()
 
 void sgc_view::SgcView::Clear()
 {
-    sdl::Clear(m_renderContext, graphics::color{ 28, 28, 28, 255 });
-    sdl::Render(m_renderContext);
+    sdl::Clear(m_renderContext, graphics::color{ 28, 28, 28, 255 });    
 }
 
 void sgc_view::SgcView::SetScreenSize(int width, int height)

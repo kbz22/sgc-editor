@@ -3,6 +3,7 @@
 #include <string>
 #include "sgc_view/tileset_view.hpp"
 #include "sgc_view/map_view.hpp"
+#include <sgc/graphics/rectangle.hpp>
 
 namespace program {
 
@@ -10,6 +11,7 @@ namespace program {
     {       
         std::unique_ptr<sgc_view::TilesetView> tilesetView;
         std::unique_ptr<sgc_view::MapView> mapView;
+        std::unique_ptr<sgc::graphics::Rectangle> selectionRectangle; 
     };
 
     ProgramContext& GetProgramContext();

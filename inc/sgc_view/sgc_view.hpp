@@ -39,12 +39,12 @@ namespace sgc_view
             void DrawAll();
 
         public:
-            SgcView(HWND hwnd);
+            SgcView(HWND hwnd, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
             ~SgcView();
 
             virtual void Render();
             void Clear();
-            virtual bool LoadTileset(const std::wstring& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
+            virtual bool LoadTileset(const std::wstring& path);
             virtual void SetScreenSize(int width, int height);
         
     };

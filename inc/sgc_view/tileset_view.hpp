@@ -12,17 +12,21 @@ namespace sgc_view
         private:
             math::u64 m_gridWidth = 0;
             math::u64 m_gridHeight = 0;
-            std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
-            graphics::Rectangle m_highlightedTile = graphics::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize };
+            std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;            
+            // graphics::Rectangle m_highlightedTile = graphics::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize };            
+
+            bool m_selectionActive = false;        
+            math::vec2 m_selectionTileStart = { 0, 0 };    
+            math::uvec2 m_selectionTileSize = { 0, 0 };
 
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
 
         public:
-            TilesetView(HWND hwnd);
+            TilesetView(HWND hwnd, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
             ~TilesetView();
 
-            bool LoadTileset(const std::wstring& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize) override;
+            bool LoadTileset(const std::wstring& path) override;
             void Render() override;
     };    
 }

@@ -20,6 +20,10 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
         return;
     }
 
+    if(programContext.selectionRectangle != nullptr) {
+        programContext.selectionRectangle.reset();
+    }
+
     if(programContext.tilesetView != nullptr) {
         programContext.tilesetView.reset();
     }
@@ -28,11 +32,17 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
         programContext.mapView.reset();
     }
 
-    programContext.tilesetView = std::make_unique<sgc_view::TilesetView>(win32Context.hTilesetView);
-    programContext.tilesetView->LoadTileset(tilesetPath, tileWidth, tileHeight);
+    programContext.selectionRectangle = std::make_unique<sgc::graphics::Rectangle>(
+        sgc::math::vec2{ 0, 0 },
+        sgc::math::uvec2{ static_cast<sgc::math::u64>(tileWidth), static_cast<sgc::math::u64>(tileHeight) }
+    );
+    programContext.selectionRectangle->SetColor({ 0, 128, 255, 128 });
 
-    programContext.mapView = std::make_unique<sgc_view::MapView>(win32Context.hMapView);
-    programContext.mapView->LoadTileset(tilesetPath, tileWidth, tileHeight);
+    programContext.tilesetView = std::make_unique<sgc_view::TilesetView>(win32Context.hTilesetView, tileWidth, tileHeight);
+    programContext.tilesetView->LoadTileset(tilesetPath);
+
+    programContext.mapView = std::make_unique<sgc_view::MapView>(win32Context.hMapView, tileWidth, tileHeight);
+    programContext.mapView->LoadTileset(tilesetPath);
 }
 
 void program::HandleResize()

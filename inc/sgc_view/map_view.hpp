@@ -4,6 +4,7 @@
 
 #include <sgc/types.hpp>
 #include <sgc/data/chunkedtilestorage.hpp>
+#include <sgc/graphics/rectangle.hpp>
 
 namespace sgc_view
 {
@@ -13,7 +14,7 @@ namespace sgc_view
     {
         private:
             std::shared_ptr<data::ChunkedTileStorage> m_tileStorage = nullptr;
-            tile::TileId m_currentTileId = 0;
+            graphics::Rectangle m_cursorTile = graphics::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize };            
 
             void AddChunk(sgc::data::ChunkCoord chunkCoord);
             void RemoveChunk(sgc::data::ChunkCoord chunkCoord);            
@@ -22,12 +23,10 @@ namespace sgc_view
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
 
         public:
-            MapView(HWND hwnd);
+            MapView(HWND hwnd, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
             ~MapView();
 
-            void SetTile(int tileX, int tileY);
-            void SetTile(tile::TileId tileId);
-
-            bool LoadTileset(const std::wstring& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
+            bool LoadTileset(const std::wstring& path) override;
+            void Render() override;
     };
 }
