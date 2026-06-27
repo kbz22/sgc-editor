@@ -24,26 +24,35 @@ LRESULT sgc_view::MapView::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LP
         case WM_LBUTTONDOWN:
         {
             auto tileSize = m_tileset->GetTileSize();
-            auto x = static_cast<sgc::math::u64>(GET_X_LPARAM(lparam) / tileSize.x);
-            auto y = static_cast<sgc::math::u64>(GET_Y_LPARAM(lparam) / tileSize.y);
+            // auto x = static_cast<sgc::math::u64>(GET_X_LPARAM(lparam) / tileSize.x);
+            // auto y = static_cast<sgc::math::u64>(GET_Y_LPARAM(lparam) / tileSize.y);
 
-            auto currentTilePosition = programContext.selectionRectangle->GetPosition();
-            //auto currentTileId = m_tileset->ToTileId(static_cast<sgc::math::u64>(currentTilePosition.x / tileSize.x), static_cast<sgc::math::u64>(currentTilePosition.y / tileSize.y));
+            auto mousePos = GetValueInTiles(
+                sgc::math::uvec2{ 
+                    static_cast<sgc::math::u64>(GET_X_LPARAM(lparam)),
+                    static_cast<sgc::math::u64>(GET_Y_LPARAM(lparam))
+                });
+
+            m_selectionTileStart = mousePos;
+
+            auto currentTilePosition = programContext.selectionRectangle->GetPosition();          
 
             auto tileWidth = static_cast<sgc::math::u64>(programContext.selectionRectangle->GetSize().x / tileSize.x);
-            auto tileHeight = static_cast<sgc::math::u64>(programContext.selectionRectangle->GetSize().y / tileSize.y);
+            auto tileHeight = static_cast<sgc::math::u64>(programContext.selectionRectangle->GetSize().y / tileSize.y);            
 
             for(auto _x = 0; _x < tileWidth; ++_x) {
                 for(auto _y = 0; _y < tileHeight; ++_y) {
-                    auto tileX = x + _x;
-                    auto tileY = y + _y;
-                    auto currentTileId = m_tileset->ToTileId(static_cast<sgc::math::u64>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::u64>(currentTilePosition.y / tileSize.y) + _y);
+                    auto tileX = m_selectionTileStart.x + _x;
+                    auto tileY = m_selectionTileStart.y + _y;
+                    auto currentTileId = m_tileset->ToTileId(static_cast<sgc::math::u64>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::u64>(currentTilePosition.y / tileSize.y) + _y);                    
 
                     if(m_tileStorage->GetTileAt({ tileX, tileY }).has_value()) {
                         m_tileStorage->SetTileAt({ tileX, tileY }, currentTileId);
                     }                       
                 }
             }
+
+            m_isPainting = true;            
 
             Render();
             
@@ -52,6 +61,8 @@ LRESULT sgc_view::MapView::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LP
 
         case WM_MOUSEMOVE:
         {
+            bool shouldRender = false;
+
             auto x = GET_X_LPARAM(lparam);
             auto y = GET_Y_LPARAM(lparam);
 
@@ -72,10 +83,47 @@ LRESULT sgc_view::MapView::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LP
                     x_tile,
                     y_tile
                 });
-
-                Render();
+                
+                shouldRender = true;                
             }
 
+            if (!m_isPainting){
+                if(shouldRender) {
+                    Render();
+                }
+                break;
+            }                
+
+            auto cursorTileSize = GetCursorSizeInTiles();
+            auto cursorTilePosition = GetValueInTiles(m_cursorTile.GetPosition());
+            auto mousePositionInTiles = GetValueInTiles(sgc::math::uvec2{ static_cast<sgc::math::u64>(x), static_cast<sgc::math::u64>(y) });            
+            int index = 0;
+
+            for (sgc::math::u64 _x = 0; _x < cursorTileSize.x; ++_x){
+                for (sgc::math::u64 _y = 0; _y < cursorTileSize.y; ++_y){
+                    auto tileMapX = mousePositionInTiles.x + _x;
+                    auto tileMapY = mousePositionInTiles.y + _y;
+
+                    auto tileTilesetX = cursorTilePosition.x + _x;
+                    auto tileTilesetY = cursorTilePosition.y + _y;
+
+                    auto tileId = m_tileset->ToTileId(tileTilesetX, tileTilesetY);
+
+                    m_tileStorage->SetTileAt(
+                        { tileMapX, tileMapY },
+                        tileId
+                    );
+                }
+            }
+
+            Render();
+
+            return 0;
+        }
+
+        case WM_LBUTTONUP:
+        {
+            m_isPainting = false;
             return 0;
         }
 
@@ -141,4 +189,13 @@ void sgc_view::MapView::Render()
     m_cursorTile.Draw(m_renderContext);
 
     sdl::Render(m_renderContext);
+}
+
+sgc::math::uvec2 sgc_view::MapView::GetCursorSizeInTiles() const
+{
+    auto size = m_cursorTile.GetSize();
+    return {
+        static_cast<sgc::math::u64>(size.x / m_tileWidth),
+        static_cast<sgc::math::u64>(size.y / m_tileHeight)
+    };
 }

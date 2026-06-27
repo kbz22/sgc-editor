@@ -157,3 +157,19 @@ void sgc_view::SgcView::SetScreenSize(int width, int height)
     m_renderContext.view.screen = graphics::Viewport{ 0, 0, static_cast<float>(width), static_cast<float>(height) };
     m_renderContext.view.camera = m_renderContext.view.screen;
 }
+
+sgc::math::uvec2 sgc_view::SgcView::GetValueInTiles(sgc::math::uvec2 value) const
+{
+    return {
+        static_cast<sgc::math::u64>(value.x / m_tileWidth),
+        static_cast<sgc::math::u64>(value.y / m_tileHeight)
+    };
+}
+
+sgc::math::vec2 sgc_view::SgcView::GetValueInTiles(sgc::math::vec2 value) const
+{
+    return {
+        static_cast<sgc::math::i64>(value.x / m_tileWidth),
+        static_cast<sgc::math::i64>(value.y / m_tileHeight)
+    };
+}

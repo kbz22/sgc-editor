@@ -6,6 +6,8 @@
 #include <sgc/data/chunkedtilestorage.hpp>
 #include <sgc/graphics/rectangle.hpp>
 
+#include <vector>
+
 namespace sgc_view
 {
     using namespace sgc;
@@ -15,9 +17,13 @@ namespace sgc_view
         private:
             std::shared_ptr<data::ChunkedTileStorage> m_tileStorage = nullptr;
             graphics::Rectangle m_cursorTile = graphics::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize };            
+            bool m_isPainting = false;
+            sgc::math::uvec2 m_selectionTileStart = {0,0};
 
             void AddChunk(sgc::data::ChunkCoord chunkCoord);
-            void RemoveChunk(sgc::data::ChunkCoord chunkCoord);            
+            void RemoveChunk(sgc::data::ChunkCoord chunkCoord);
+            
+            sgc::math::uvec2 GetCursorSizeInTiles() const;            
 
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;

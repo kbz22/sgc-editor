@@ -37,6 +37,8 @@ namespace sgc_view
 
             virtual LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
             void DrawAll();
+            sgc::math::uvec2 GetValueInTiles(sgc::math::uvec2 value) const;
+            sgc::math::vec2 GetValueInTiles(sgc::math::vec2 value) const;
 
         public:
             SgcView(HWND hwnd, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
