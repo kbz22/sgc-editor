@@ -11,7 +11,7 @@ namespace program {
     {       
         std::unique_ptr<sgc_view::TilesetView> tilesetView;
         std::unique_ptr<sgc_view::MapView> mapView;
-        std::unique_ptr<sgc::graphics::Rectangle> selectionRectangle; 
+        std::unique_ptr<sgc::graphics::Rectangle> selectionRectangleOnTileset; 
     };
 
     ProgramContext& GetProgramContext();

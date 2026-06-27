@@ -89,11 +89,11 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
             m_selectionTileStart = tilePosition;
             m_selectionTileSize = { 1, 1 };
             
-            programContext.selectionRectangle->SetPosition(
+            programContext.selectionRectangleOnTileset->SetPosition(
                 {tilePosition.x * static_cast<sgc::math::i64>(tileSize.x),
                 tilePosition.y * static_cast<sgc::math::i64>(tileSize.y)}
             );
-            programContext.selectionRectangle->SetSize(
+            programContext.selectionRectangleOnTileset->SetSize(
                 {m_selectionTileSize.x * static_cast<sgc::math::i64>(tileSize.x), m_selectionTileSize.y * static_cast<sgc::math::i64>(tileSize.y)}
             );
             
@@ -136,12 +136,12 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
                 maxTile.y - minTile.y + 1
             };
 
-            programContext.selectionRectangle->SetPosition({
+            programContext.selectionRectangleOnTileset->SetPosition({
                 static_cast<sgc::math::i64>(minTile.x * tileSize.x),
                 static_cast<sgc::math::i64>(minTile.y * tileSize.y)
             });
 
-            programContext.selectionRectangle->SetSize({
+            programContext.selectionRectangleOnTileset->SetSize({
                 m_selectionTileSize.x * tileSize.x,
                 m_selectionTileSize.y * tileSize.y
             });
@@ -178,8 +178,8 @@ void sgc_view::TilesetView::Render()
 
     program::ProgramContext& programContext = program::GetProgramContext();
 
-    if (programContext.selectionRectangle != nullptr) {
-        programContext.selectionRectangle->Draw(m_renderContext);
+    if (programContext.selectionRectangleOnTileset != nullptr) {
+        programContext.selectionRectangleOnTileset->Draw(m_renderContext);
     }
 
     sdl::Render(m_renderContext);

@@ -35,10 +35,10 @@ LRESULT sgc_view::MapView::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LP
 
             m_selectionTileStart = mousePos;
 
-            auto currentTilePosition = programContext.selectionRectangle->GetPosition();          
+            auto currentTilePosition = programContext.selectionRectangleOnTileset->GetPosition();          
 
-            auto tileWidth = static_cast<sgc::math::u64>(programContext.selectionRectangle->GetSize().x / tileSize.x);
-            auto tileHeight = static_cast<sgc::math::u64>(programContext.selectionRectangle->GetSize().y / tileSize.y);            
+            auto tileWidth = static_cast<sgc::math::u64>(programContext.selectionRectangleOnTileset->GetSize().x / tileSize.x);
+            auto tileHeight = static_cast<sgc::math::u64>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);            
 
             for(auto _x = 0; _x < tileWidth; ++_x) {
                 for(auto _y = 0; _y < tileHeight; ++_y) {
@@ -72,7 +72,7 @@ LRESULT sgc_view::MapView::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LP
             auto position = m_cursorTile.GetPosition();
             if (position.x != x_tile || position.y != y_tile) {
                 
-                auto selection = programContext.selectionRectangle->GetSize();
+                auto selection = programContext.selectionRectangleOnTileset->GetSize();
 
                 m_cursorTile.SetSize({
                     static_cast<sgc::math::u64>(selection.x),
@@ -95,19 +95,22 @@ LRESULT sgc_view::MapView::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LP
             }                
 
             auto cursorTileSize = GetCursorSizeInTiles();
-            auto cursorTilePosition = GetValueInTiles(m_cursorTile.GetPosition());
-            auto mousePositionInTiles = GetValueInTiles(sgc::math::uvec2{ static_cast<sgc::math::u64>(x), static_cast<sgc::math::u64>(y) });            
-            int index = 0;
+            auto cursorTilePositionOnTileset = GetValueInTiles(programContext.selectionRectangleOnTileset->GetPosition());
+            auto mousePositionInTiles = GetValueInTiles(sgc::math::uvec2{ static_cast<sgc::math::u64>(x), static_cast<sgc::math::u64>(y) });                        
 
             for (sgc::math::u64 _x = 0; _x < cursorTileSize.x; ++_x){
                 for (sgc::math::u64 _y = 0; _y < cursorTileSize.y; ++_y){
-                    auto tileMapX = mousePositionInTiles.x + _x;
-                    auto tileMapY = mousePositionInTiles.y + _y;
 
-                    auto tileTilesetX = cursorTilePosition.x + _x;
-                    auto tileTilesetY = cursorTilePosition.y + _y;
+                    auto deltaX = (_x + mousePositionInTiles.x - m_selectionTileStart.x) % cursorTileSize.x;
+                    auto deltaY = (_y + mousePositionInTiles.y - m_selectionTileStart.y) % cursorTileSize.y;
 
-                    auto tileId = m_tileset->ToTileId(tileTilesetX, tileTilesetY);
+                    auto tileMapX = mousePositionInTiles.x + deltaX;
+                    auto tileMapY = mousePositionInTiles.y + deltaY;
+
+                    auto tileId = m_tileset->ToTileId(
+                        cursorTilePositionOnTileset.x + _x,
+                        cursorTilePositionOnTileset.y + _y
+                    );
 
                     m_tileStorage->SetTileAt(
                         { tileMapX, tileMapY },
