@@ -101,15 +101,19 @@ LRESULT sgc_view::MapView::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LP
             for (sgc::math::u64 _x = 0; _x < cursorTileSize.x; ++_x){
                 for (sgc::math::u64 _y = 0; _y < cursorTileSize.y; ++_y){
 
-                    auto deltaX = (_x + mousePositionInTiles.x - m_selectionTileStart.x) % cursorTileSize.x;
-                    auto deltaY = (_y + mousePositionInTiles.y - m_selectionTileStart.y) % cursorTileSize.y;
+                    auto absmod = [](sgc::math::i64 value, sgc::math::i64 mod) -> sgc::math::i64 {
+                        return ((value % mod) + mod) % mod;
+                    };
 
-                    auto tileMapX = mousePositionInTiles.x + deltaX;
-                    auto tileMapY = mousePositionInTiles.y + deltaY;
+                    auto tileMapX = mousePositionInTiles.x + _x;
+                    auto tileMapY = mousePositionInTiles.y + _y;
+
+                    auto deltaX = absmod(tileMapX - m_selectionTileStart.x, cursorTileSize.x);
+                    auto deltaY = absmod(tileMapY - m_selectionTileStart.y, cursorTileSize.y);                    
 
                     auto tileId = m_tileset->ToTileId(
-                        cursorTilePositionOnTileset.x + _x,
-                        cursorTilePositionOnTileset.y + _y
+                        cursorTilePositionOnTileset.x + deltaX,
+                        cursorTilePositionOnTileset.y + deltaY
                     );
 
                     m_tileStorage->SetTileAt(
