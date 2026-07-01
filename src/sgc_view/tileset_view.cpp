@@ -24,25 +24,18 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path)
     if(!SgcView::LoadTileset(path)) {
         return false;
     }
-
-    /* m_highlightedTile = graphics::Rectangle(
-        {
-            0,
-            0 
-        }, {
-            static_cast<sgc::math::u64>(m_tileWidth),
-            static_cast<sgc::math::u64>(m_tileHeight)
-        }
-    );
-
-    m_highlightedTile.SetColor({ 0, 128, 255, 128 }); */
     
     const math::uvec2 gridSize = m_tileset->GetSizeInTiles();
 
     auto tileStorage = std::make_shared<data::StaticTileStorage>(math::uvec2{gridSize.x, gridSize.y});
 
     for (sgc::tile::TileId i = 0; i < gridSize.y * gridSize.x; ++i) {  
-            tileStorage->SetTileAt({ i % gridSize.x, i / gridSize.x }, i);
+        tileStorage->SetTileAt({
+            static_cast<sgc::math::ival>(i % gridSize.x),
+            static_cast<sgc::math::ival>(i / gridSize.x)
+        }, 
+            i
+    );
     }
 
     m_layer = std::make_shared<graphics::TiledLayer>(
@@ -82,19 +75,19 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
 
             sgc::math::uvec2 tileSize = m_tileset->GetTileSize();
             sgc::math::vec2 tilePosition = {
-                static_cast<sgc::math::i64>(x / tileSize.x),
-                static_cast<sgc::math::i64>(y / tileSize.y)
+                static_cast<sgc::math::ival>(x / tileSize.x),
+                static_cast<sgc::math::ival>(y / tileSize.y)
             };
 
             m_selectionTileStart = tilePosition;
             m_selectionTileSize = { 1, 1 };
             
             programContext.selectionRectangleOnTileset->SetPosition(
-                {tilePosition.x * static_cast<sgc::math::i64>(tileSize.x),
-                tilePosition.y * static_cast<sgc::math::i64>(tileSize.y)}
+                {tilePosition.x * static_cast<sgc::math::ival>(tileSize.x),
+                tilePosition.y * static_cast<sgc::math::ival>(tileSize.y)}
             );
             programContext.selectionRectangleOnTileset->SetSize(
-                {m_selectionTileSize.x * static_cast<sgc::math::i64>(tileSize.x), m_selectionTileSize.y * static_cast<sgc::math::i64>(tileSize.y)}
+                {m_selectionTileSize.x * static_cast<sgc::math::ival>(tileSize.x), m_selectionTileSize.y * static_cast<sgc::math::ival>(tileSize.y)}
             );
             
             m_selectionActive = true;
@@ -122,13 +115,13 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
             };
 
             sgc::math::uvec2 minTile = {
-                std::min(static_cast<sgc::math::u64>(m_selectionTileStart.x), currentTile.x),
-                std::min(static_cast<sgc::math::u64>(m_selectionTileStart.y), currentTile.y)
+                std::min(static_cast<sgc::math::uval>(m_selectionTileStart.x), currentTile.x),
+                std::min(static_cast<sgc::math::uval>(m_selectionTileStart.y), currentTile.y)
             };
 
             sgc::math::uvec2 maxTile = {
-                std::max(static_cast<sgc::math::u64>(m_selectionTileStart.x), currentTile.x),
-                std::max(static_cast<sgc::math::u64>(m_selectionTileStart.y), currentTile.y)
+                std::max(static_cast<sgc::math::uval>(m_selectionTileStart.x), currentTile.x),
+                std::max(static_cast<sgc::math::uval>(m_selectionTileStart.y), currentTile.y)
             };
 
             m_selectionTileSize = {
@@ -137,8 +130,8 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
             };
 
             programContext.selectionRectangleOnTileset->SetPosition({
-                static_cast<sgc::math::i64>(minTile.x * tileSize.x),
-                static_cast<sgc::math::i64>(minTile.y * tileSize.y)
+                static_cast<sgc::math::ival>(minTile.x * tileSize.x),
+                static_cast<sgc::math::ival>(minTile.y * tileSize.y)
             });
 
             programContext.selectionRectangleOnTileset->SetSize({

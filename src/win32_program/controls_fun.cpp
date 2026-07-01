@@ -2,9 +2,14 @@
 
 #include "sgc_view/sgc_view.hpp"
 #include "win32_program/windows_init.hpp"
+#include "win32_helpers/file_helpers.hpp"
 #include "program/program.hpp"
 #include "program/except.hpp"
 #include "defaults.hpp"
+
+#include <sgc/data/serialization.hpp> //! temp, testing serialization
+#include <fstream>
+#include <vector>
 
 #include "new_file_dialog.h"
 #include <commdlg.h>
@@ -48,13 +53,13 @@ INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
             
             try
             {
-            program::StartEditor(
-                buffer,
-                GetDlgItemInt(hDlg, IDC_MAP_WIDTH, nullptr, FALSE),
-                GetDlgItemInt(hDlg, IDC_MAP_HEIGHT, nullptr, FALSE),
-                1,
-                1
-            );
+                program::StartEditor(
+                    buffer,
+                    GetDlgItemInt(hDlg, IDC_MAP_WIDTH, nullptr, FALSE),
+                    GetDlgItemInt(hDlg, IDC_MAP_HEIGHT, nullptr, FALSE),
+                    1,
+                    1
+                );
             }
             catch (const program::TileSizeException& e)
             {
@@ -110,4 +115,46 @@ void win32_program::OnFileNewClicked()
             NewFileDialogProc
         );
     }
+}
+
+void win32_program::OnFileSaveClicked()
+{
+    /* using namespace sgc::data;
+
+    auto& contextWin32 = GetWin32Context();
+    auto& contextProgram = program::GetProgramContext();
+
+    auto path = win32_helpers::ShowSaveDialog(contextWin32.hMainWindow);
+    if (!path) return;
+
+    BinaryWriter writer;
+    MapSerializer::Serialize(
+        contextProgram.mapView->GetStorage(),
+        writer
+    );
+
+    const auto& data = writer.Write()
+
+    std::ofstream file(*path, std::ios::binary);
+    file.write(reinterpret_cast<const char*>(data.data()), data.size()); */
+}
+
+void win32_program::OnFileOpenClicked()
+{
+    /* using namespace sgc::data;
+
+    auto& contextWin32 = GetWin32Context();
+    auto& contextProgram = program::GetProgramContext();
+
+    auto path = win32_helpers::ShowOpenDialog(contextWin32.hMainWindow);
+    if (!path) return;
+
+    std::ifstream file(*path, std::ios::binary);
+
+    std::vector<uint8_t> data(
+        std::istreambuf_iterator<char>(file),
+        std::istreambuf_iterator<char>()
+    );
+
+    m_map.Deserialize(reader); */
 }

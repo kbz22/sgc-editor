@@ -10,8 +10,8 @@ namespace sgc_view
     class TilesetView : public SgcView
     {
         private:
-            math::u64 m_gridWidth = 0;
-            math::u64 m_gridHeight = 0;
+            math::uval m_gridWidth = 0;
+            math::uval m_gridHeight = 0;
             std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;            
             // graphics::Rectangle m_highlightedTile = graphics::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize };            
 

@@ -1,6 +1,10 @@
 #include "win32_program/control_setup.hpp"
 #include "win32_helpers/create_helpers.hpp"
 #include "win32_helpers/load_bitmap.hpp"
+#include "win32_models/toolbarbutton.hpp"
+#include <vector>
+
+using namespace win32_models;
 
 void win32_program::SetupMenuBar(Win32Context &context)
 {
@@ -82,21 +86,37 @@ void win32_program::SetupToolbar(Win32Context &context)
     SendMessage(context.hToolbarFunctions, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);        
     SendMessage(context.hToolbarFunctions, TB_SETIMAGELIST, 0, (LPARAM)img);
 
-    TBBUTTON btn = { 
-        0,
-        static_cast<int>(CommandId::FileNew),
-        TBSTATE_ENABLED,
-        BTNS_BUTTON,
-        {0},
-        0,
-        -1
+    std::vector<ToolbarButton> buttons =
+    {
+        {0, CommandId::FileNew,  L"New File"},
+        {1, CommandId::FileOpen, L"Open File"},
+        {2, CommandId::FileSave, L"Save File"}
     };
 
-    btn.dwData = (DWORD_PTR)L"New File";
+    std::vector<TBBUTTON> tbButtons;
+    tbButtons.reserve(buttons.size());
 
-    SendMessage(context.hToolbarFunctions, TB_ADDBUTTONS, 1, (LPARAM)&btn);    
+    for (const auto& b : buttons)
+    {
+        TBBUTTON btn = {};
+
+        btn.iBitmap = b.imageIndex;
+        btn.idCommand = static_cast<int>(b.commandId);
+        btn.fsState = b.enabled ? TBSTATE_ENABLED : 0;
+        btn.fsStyle = BTNS_BUTTON;
+
+        btn.dwData = (DWORD_PTR)L"New File"; //! tmp
+
+        tbButtons.push_back(btn);
+    }
+
+    SendMessage(context.hToolbarFunctions, TB_ADDBUTTONS,
+            (WPARAM)tbButtons.size(),
+            (LPARAM)tbButtons.data());
+
+    // SendMessage(context.hToolbarFunctions, TB_ADDBUTTONS, 1, (LPARAM)&btn);  
+
     SendMessage(context.hToolbarFunctions, TB_SETBUTTONSIZE, 0, MAKELPARAM(30, 30));
-
     SendMessage(context.hToolbarFunctions, TB_AUTOSIZE, 0, 0);
 
     SIZE sz = {};

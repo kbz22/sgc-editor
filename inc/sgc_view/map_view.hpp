@@ -2,7 +2,7 @@
 
 #include "sgc_view/sgc_view.hpp"
 
-#include <sgc/types.hpp>
+#include <sgc/math/vector.hpp>
 #include <sgc/data/chunkedtilestorage.hpp>
 #include <sgc/graphics/rectangle.hpp>
 
@@ -18,7 +18,7 @@ namespace sgc_view
             std::shared_ptr<data::ChunkedTileStorage> m_tileStorage = nullptr;
             graphics::Rectangle m_cursorTile = graphics::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize };            
             bool m_isPainting = false;
-            sgc::math::uvec2 m_selectionTileStart = {0,0};
+            sgc::tile::TilesetPosition2D m_selectionTileStart = {0,0};
 
             void AddChunk(sgc::data::ChunkCoord chunkCoord);
             void RemoveChunk(sgc::data::ChunkCoord chunkCoord);
@@ -34,5 +34,7 @@ namespace sgc_view
 
             bool LoadTileset(const std::wstring& path) override;
             void Render() override;
+
+            std::shared_ptr<sgc::data::ChunkedTileStorage>& GetStorage(); //! tmp
     };
 }

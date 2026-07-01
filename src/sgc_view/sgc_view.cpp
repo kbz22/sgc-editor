@@ -1,5 +1,5 @@
 #include "sgc_view/sgc_view.hpp"
-#include <sgc/types.hpp>
+#include <sgc/math/vector.hpp>
 #include <sgc/graphics/viewport.hpp>
 #include <sgc/sdl/sdl_win32.hpp>
 #include <commctrl.h>
@@ -107,13 +107,14 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path)
         throw program::TileSizeException("Tile size must be greater than zero.");
     }
 
-    graphics::Image image{};
+    // graphics::Image image{};
+    std::shared_ptr<graphics::Image> image = std::make_shared<graphics::Image>();
 
-    if (!image.LoadTexture(m_renderContext.renderer, path)) {
+    if (!image->LoadTexture(m_renderContext.renderer, path)) {
         throw program::AssetLoadException("Failed to load tileset image: " + std::string(path.begin(), path.end()));
     }
 
-    const math::uvec2 imageSize = image.GetSize();
+    const math::uvec2 imageSize = image->GetSize();
     if (imageSize.x == 0 || imageSize.y == 0) {
         throw program::AssetLoadException("Tileset image has invalid dimensions: " + std::string(path.begin(), path.end()));
     }
@@ -126,7 +127,7 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path)
         throw program::TileSizeException("Image is smaller than the specified tile size.");
     }    
 
-    auto tileVec2 = math::uvec2(m_tileWidth, m_tileHeight);
+    auto tileVec2 = graphics::PixelSize2D(m_tileWidth, m_tileHeight);
 
     m_tileset = std::make_shared<graphics::Tileset>(image, tileVec2); 
     
@@ -161,15 +162,15 @@ void sgc_view::SgcView::SetScreenSize(int width, int height)
 sgc::math::uvec2 sgc_view::SgcView::GetValueInTiles(sgc::math::uvec2 value) const
 {
     return {
-        static_cast<sgc::math::u64>(value.x / m_tileWidth),
-        static_cast<sgc::math::u64>(value.y / m_tileHeight)
+        static_cast<sgc::math::uval>(value.x / m_tileWidth),
+        static_cast<sgc::math::uval>(value.y / m_tileHeight)
     };
 }
 
 sgc::math::vec2 sgc_view::SgcView::GetValueInTiles(sgc::math::vec2 value) const
 {
     return {
-        static_cast<sgc::math::i64>(value.x / m_tileWidth),
-        static_cast<sgc::math::i64>(value.y / m_tileHeight)
+        static_cast<sgc::math::ival>(value.x / m_tileWidth),
+        static_cast<sgc::math::ival>(value.y / m_tileHeight)
     };
 }

@@ -34,7 +34,7 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 
     programContext.selectionRectangleOnTileset = std::make_unique<sgc::graphics::Rectangle>(
         sgc::math::vec2{ 0, 0 },
-        sgc::math::uvec2{ static_cast<sgc::math::u64>(tileWidth), static_cast<sgc::math::u64>(tileHeight) }
+        sgc::math::uvec2{ static_cast<sgc::math::uval>(tileWidth), static_cast<sgc::math::uval>(tileHeight) }
     );
     programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
 

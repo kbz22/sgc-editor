@@ -44,6 +44,14 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
             case static_cast<int>(CommandId::FileNew):
                 win32_program::OnFileNewClicked();              
                 break;
+
+            case static_cast<int>(CommandId::FileSave):
+                win32_program::OnFileSaveClicked();
+                break;
+
+            case static_cast<int>(CommandId::FileOpen):
+                win32_program::OnFileOpenClicked();
+                break;
         }
 
         break;
