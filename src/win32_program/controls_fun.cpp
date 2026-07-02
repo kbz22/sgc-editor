@@ -7,7 +7,11 @@
 #include "program/except.hpp"
 #include "defaults.hpp"
 
-#include <sgc/data/serialization.hpp> //! temp, testing serialization
+#include <sgc/asset/chunkedtilestorageserializer.hpp> //! tmp testing serialization
+#include <sgc/asset/chunkedtilestorageassetbuilder.hpp>
+#include <sgc/asset/chunkedtilestorageloader.hpp>
+#include <sgc/data/resourcemanager.hpp>
+
 #include <fstream>
 #include <vector>
 
@@ -119,42 +123,43 @@ void win32_program::OnFileNewClicked()
 
 void win32_program::OnFileSaveClicked()
 {
-    /* using namespace sgc::data;
+    using namespace sgc;
 
     auto& contextWin32 = GetWin32Context();
-    auto& contextProgram = program::GetProgramContext();
+    auto& contextProgram = program::GetProgramContext();    
+    
+    auto storage = contextProgram.mapView->GetStorage();
+    auto asset = asset::AssetBuilder<asset::ChunkedTileStorageAsset>::Build(*storage);    
 
-    auto path = win32_helpers::ShowSaveDialog(contextWin32.hMainWindow);
+    auto bytes = asset::AssetSerializer<asset::ChunkedTileStorageAsset>::Serialize(asset);
+
+    auto path = win32_helpers::ShowSaveDialog(contextWin32.hMainWindow,L"sgcmap");
     if (!path) return;
 
-    BinaryWriter writer;
-    MapSerializer::Serialize(
-        contextProgram.mapView->GetStorage(),
-        writer
-    );
-
-    const auto& data = writer.Write()
-
     std::ofstream file(*path, std::ios::binary);
-    file.write(reinterpret_cast<const char*>(data.data()), data.size()); */
+    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+
 }
 
 void win32_program::OnFileOpenClicked()
 {
-    /* using namespace sgc::data;
-
     auto& contextWin32 = GetWin32Context();
     auto& contextProgram = program::GetProgramContext();
 
-    auto path = win32_helpers::ShowOpenDialog(contextWin32.hMainWindow);
+    auto path = win32_helpers::ShowOpenDialog(contextWin32.hMainWindow,L"sgcmap");
     if (!path) return;
 
     std::ifstream file(*path, std::ios::binary);
+    std::vector<uint8_t> bytes((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-    std::vector<uint8_t> data(
-        std::istreambuf_iterator<char>(file),
-        std::istreambuf_iterator<char>()
+    sgc::data::ResourceContext context;
+    sgc::data::ResourceManager rm;
+
+    auto storage = sgc::asset::AssetLoader<sgc::data::ChunkedTileStorage>::Load(
+        bytes,
+        context,
+        rm
     );
 
-    m_map.Deserialize(reader); */
+    contextProgram.mapView->SetStorage(storage);
 }

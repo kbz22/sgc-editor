@@ -44,6 +44,7 @@ add_executable(sgc-editor WIN32
 
     src/win32_helpers/create_helpers.cpp
     src/win32_helpers/load_bitmap.cpp
+    src/win32_helpers/file_helpers.cpp
 
     src/win32_program/windows_init.cpp
     src/win32_program/control_setup.cpp

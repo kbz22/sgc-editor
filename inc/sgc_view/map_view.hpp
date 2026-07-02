@@ -36,5 +36,6 @@ namespace sgc_view
             void Render() override;
 
             std::shared_ptr<sgc::data::ChunkedTileStorage>& GetStorage(); //! tmp
+            void SetStorage(std::shared_ptr<sgc::data::ChunkedTileStorage> storage); //! tmp
     };
 }

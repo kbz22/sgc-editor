@@ -205,6 +205,20 @@ std::shared_ptr<sgc::data::ChunkedTileStorage> &sgc_view::MapView::GetStorage()
     return m_tileStorage;
 }
 
+void sgc_view::MapView::SetStorage(std::shared_ptr<sgc::data::ChunkedTileStorage> storage)
+{
+    m_tileStorage = storage;
+
+    auto layer = std::make_shared<graphics::TiledLayer>(
+        m_tileset,
+        m_tileStorage
+    );
+
+    m_tiledImage = std::make_shared<graphics::TiledImage>(layer);
+
+    Render();
+}
+
 sgc::math::uvec2 sgc_view::MapView::GetCursorSizeInTiles() const
 {
     auto size = m_cursorTile.GetSize();
