@@ -133,7 +133,12 @@ void win32_program::OnFileSaveClicked()
 
     auto bytes = asset::AssetSerializer<asset::ChunkedTileStorageAsset>::Serialize(asset);
 
-    auto path = win32_helpers::ShowSaveDialog(contextWin32.hMainWindow,L"sgcmap");
+    win32_helpers::FileFilter mapFilter{
+        L"Map Files",
+        {L"sgcmap"}
+    };
+
+    auto path = win32_helpers::ShowSaveDialog(contextWin32.hMainWindow, {mapFilter});
     if (!path) return;
 
     std::ofstream file(*path, std::ios::binary);
@@ -146,7 +151,12 @@ void win32_program::OnFileOpenClicked()
     auto& contextWin32 = GetWin32Context();
     auto& contextProgram = program::GetProgramContext();
 
-    auto path = win32_helpers::ShowOpenDialog(contextWin32.hMainWindow,L"sgcmap");
+    win32_helpers::FileFilter allFilter{
+        L"All Files",
+        {L"*"}
+    };
+
+    auto path = win32_helpers::ShowOpenDialog(contextWin32.hMainWindow, {allFilter});
     if (!path) return;
 
     std::ifstream file(*path, std::ios::binary);
