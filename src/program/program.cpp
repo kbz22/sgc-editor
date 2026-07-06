@@ -1,5 +1,6 @@
 #include "win32_program/windows_init.hpp"
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
+#include "win32_program/control_setup.hpp"
 #include "program/program.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -43,6 +44,8 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 
     programContext.mapView = std::make_unique<sgc_view::MapView>(win32Context.hMapView, tileWidth, tileHeight);
     programContext.mapView->LoadTileset(tilesetPath);
+
+    win32_program::UpdateToolbar(win32Context);
 }
 
 void program::HandleResize()

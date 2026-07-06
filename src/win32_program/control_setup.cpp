@@ -1,3 +1,4 @@
+#include "program/program.hpp"
 #include "win32_program/control_setup.hpp"
 #include "win32_helpers/create_helpers.hpp"
 #include "win32_helpers/load_bitmap.hpp"
@@ -80,17 +81,22 @@ void win32_program::SetupToolbar(Win32Context &context)
 
     HIMAGELIST img = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     HBITMAP hBmp = win32_helpers::LoadPngWIC(L"./testicon2.png");
+
+    HIMAGELIST imgDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+    HBITMAP hBmpDisabled = win32_helpers::LoadPngWIC(L"./testicon2_disabled.png");
     
     ImageList_Add(img, hBmp, NULL);
+    ImageList_Add(imgDisabled, hBmpDisabled, NULL);
 
     SendMessage(context.hToolbarFunctions, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);        
     SendMessage(context.hToolbarFunctions, TB_SETIMAGELIST, 0, (LPARAM)img);
+    SendMessage(context.hToolbarFunctions, TB_SETDISABLEDIMAGELIST, 0, (LPARAM)imgDisabled);
 
     std::vector<ToolbarButton> buttons =
     {
-        {0, CommandId::FileNew,  L"New File"},
-        {1, CommandId::FileOpen, L"Open File"},
-        {2, CommandId::FileSave, L"Save File"}
+        {0, CommandId::FileNew,  L"New File", },
+        {1, CommandId::FileOpen, L"Open File", true},
+        {2, CommandId::FileSave, L"Save File", false}
     };
 
     std::vector<TBBUTTON> tbButtons;
@@ -112,9 +118,7 @@ void win32_program::SetupToolbar(Win32Context &context)
 
     SendMessage(context.hToolbarFunctions, TB_ADDBUTTONS,
             (WPARAM)tbButtons.size(),
-            (LPARAM)tbButtons.data());
-
-    // SendMessage(context.hToolbarFunctions, TB_ADDBUTTONS, 1, (LPARAM)&btn);  
+            (LPARAM)tbButtons.data());     
 
     SendMessage(context.hToolbarFunctions, TB_SETBUTTONSIZE, 0, MAKELPARAM(30, 30));
     SendMessage(context.hToolbarFunctions, TB_AUTOSIZE, 0, 0);
@@ -132,4 +136,17 @@ void win32_program::SetupToolbar(Win32Context &context)
     SendMessage(context.hRebarBottom, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rb);
 
     return;
+}
+
+void win32_program::UpdateToolbar(Win32Context &context)
+{
+    program::ProgramContext& programContext = program::GetProgramContext();
+
+    bool hasMap = (programContext.mapView != nullptr);
+
+    SendMessage(
+        context.hToolbarFunctions,
+        TB_ENABLEBUTTON,
+        static_cast<WPARAM>(CommandId::FileSave),
+        MAKELONG(hasMap, 0));
 }

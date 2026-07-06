@@ -34,4 +34,5 @@ namespace win32_program
 
     void SetupToolbar(Win32Context& context);
 
+    void UpdateToolbar(Win32Context& context);
 }
