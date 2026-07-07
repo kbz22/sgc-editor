@@ -1,6 +1,6 @@
 #pragma once
 
-#include "win32_program/windows_init.hpp"
+/* #include "win32_program/windows_init.hpp" */
 #include "types.hpp"
 
 namespace win32_program
@@ -29,10 +29,4 @@ namespace win32_program
         FileOpen = 2002,
         FileSave = 2003
     };
-
-    void SetupMenuBar(Win32Context& context);
-
-    void SetupToolbar(Win32Context& context);
-
-    void UpdateToolbar(Win32Context& context);
 }

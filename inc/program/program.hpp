@@ -5,6 +5,8 @@
 #include "sgc_view/map_view.hpp"
 #include <sgc/graphics/rectangle.hpp>
 
+#include "win32_section/tileset_section.hpp"
+
 namespace program {
 
     struct ProgramContext
@@ -12,6 +14,8 @@ namespace program {
         std::unique_ptr<sgc_view::TilesetView> tilesetView;
         std::unique_ptr<sgc_view::MapView> mapView;
         std::unique_ptr<sgc::graphics::Rectangle> selectionRectangleOnTileset; 
+
+        std::unique_ptr<win32_section::TilesetSection> tilesetSection;
     };
 
     ProgramContext& GetProgramContext();

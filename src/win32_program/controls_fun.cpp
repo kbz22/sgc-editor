@@ -108,8 +108,10 @@ INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] 
 void win32_program::OnFileNewClicked()
 {
     auto& context = GetWin32Context();
+    auto& programContext = program::GetProgramContext();
 
-    if (context.hTilesetView != nullptr) {
+    // if (context.hTilesetView != nullptr) {
+    if(programContext.tilesetSection != nullptr) {
 
         if(context.hMainWindow != nullptr)
         DialogBox(

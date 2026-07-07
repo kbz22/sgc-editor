@@ -46,13 +46,15 @@ add_executable(sgc-editor WIN32
     src/win32_helpers/load_bitmap.cpp
     src/win32_helpers/file_helpers.cpp
 
-    src/win32_program/windows_init.cpp
-    src/win32_program/control_setup.cpp
+    src/win32_program/windows_init.cpp    
     src/win32_program/window_control.cpp
     src/win32_program/controls_fun.cpp
     src/win32_program/windows_process.cpp
 
     src/program/program.cpp
+
+    src/win32_section/section.cpp
+    src/win32_section/tileset_section.cpp
 
     src/sgc_view/sgc_view.cpp    
     src/sgc_view/tileset_view.cpp

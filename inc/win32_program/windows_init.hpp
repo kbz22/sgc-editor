@@ -5,35 +5,20 @@
 
 #include <map>
 
+#include "win32_program/win32_context.hpp"
 #include "types.hpp"
 
 namespace win32_program
-{
-    struct Win32Context
-    {
-        HINSTANCE hInstance = nullptr;
-
-        HWND hMainWindow = HWND();
-
-        HWND hMapView = HWND();
-        HWND hLayerListView = HWND();
-        HWND hPackageView = HWND();
-        HWND hTilesetView = HWND();
-
-        HWND hSplitLeft = HWND();
-        HWND hSplitRight = HWND();
-        HWND hSplitBottom = HWND();
-
-        HWND hRebarTop = HWND();
-        HWND hRebarBottom = HWND();
-        HWND hToolbarMenu = HWND();
-        HWND hToolbarFunctions = HWND();
-    };
-
-    Win32Context& GetWin32Context();
+{   
 
     void Init(HINSTANCE hInstance, Win32Context& context);        
 
     void Run();
+
+    void SetupMenuBar(Win32Context& context);
+
+    void SetupToolbar(Win32Context& context);
+
+    void UpdateToolbar(Win32Context& context);
 
 }

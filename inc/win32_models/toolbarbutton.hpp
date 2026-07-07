@@ -1,6 +1,6 @@
 #pragma once
 
-#include "win32_program/control_setup.hpp"
+#include "win32_program/windows_controls.hpp"
 #include <string>
 
 namespace win32_models {

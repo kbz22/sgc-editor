@@ -1,6 +1,6 @@
 #include "win32_program/windows_init.hpp"
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
-#include "win32_program/control_setup.hpp"
+#include "win32_program/windows_controls.hpp"
 #include "program/program.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -17,7 +17,7 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     auto& programContext = GetProgramContext();
     auto& win32Context = win32_program::GetWin32Context();
 
-    if(win32Context.hTilesetView == nullptr || win32Context.hMapView == nullptr) {
+    if(programContext.tilesetSection == nullptr || win32Context.hMapView == nullptr) {
         return;
     }
 
@@ -39,8 +39,10 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     );
     programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
 
-    programContext.tilesetView = std::make_unique<sgc_view::TilesetView>(win32Context.hTilesetView, tileWidth, tileHeight);
-    programContext.tilesetView->LoadTileset(tilesetPath);
+    /* programContext.tilesetView = std::make_unique<sgc_view::TilesetView>(win32Context.hTilesetView, tileWidth, tileHeight);
+    programContext.tilesetView->LoadTileset(tilesetPath); */    
+    programContext.tilesetSection->LoadTileset(tilesetPath);
+    win32Context.hTilesetView = programContext.tilesetSection->GetHwnd();
 
     programContext.mapView = std::make_unique<sgc_view::MapView>(win32Context.hMapView, tileWidth, tileHeight);
     programContext.mapView->LoadTileset(tilesetPath);
@@ -51,12 +53,18 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 void program::HandleResize()
 {
     auto& programContext = GetProgramContext();
-    if (programContext.tilesetView != nullptr) {
+    /* if (programContext.tilesetView != nullptr) {
         RECT rect;
         GetClientRect(win32_program::GetWin32Context().hTilesetView, &rect);
         programContext.tilesetView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);
         programContext.tilesetView->Render();        
+    } */
+
+    if (programContext.tilesetSection != nullptr) {
+        programContext.tilesetSection->HandleSectionResize();
+        programContext.tilesetSection->Update();
     }
+
     if (programContext.mapView != nullptr) {
         RECT rect;
         GetClientRect(win32_program::GetWin32Context().hMapView, &rect);

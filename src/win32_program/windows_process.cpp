@@ -1,7 +1,7 @@
 #include "win32_program/windows_process.hpp"
 #include "win32_program/windows_init.hpp"
 
-#include "win32_program/control_setup.hpp"
+#include "win32_program/windows_controls.hpp"
 #include "win32_program/window_control.hpp"
 #include "win32_program/controls_fun.hpp"
 
@@ -12,8 +12,10 @@
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     using namespace win32_program;
+    using namespace program;
 
     Win32Context& context = GetWin32Context();    
+    ProgramContext& programContext = program::GetProgramContext();
     
     static bool capturedMouse = false;
 
@@ -24,7 +26,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         context.hMainWindow = hwnd;       
         
         win32_program::InitializeMenuControls(context);
-        win32_program::CreateMainWindowContents(hwnd, context);
+        win32_program::CreateMainWindowContents(hwnd, context, programContext);
         
         break;
     }

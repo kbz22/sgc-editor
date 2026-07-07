@@ -1,9 +1,11 @@
 #pragma once
 
-#include <sgc/sdl/sdl.hpp>
 #include <sgc/graphics/tileset.hpp>
-// #include <sgc/graphics/tiled_static_layer.hpp>
 #include <sgc/graphics/tiledimage.hpp>
+
+#undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
+
+#include <sgc/sdl/sdl.hpp>
 
 #include "defaults.hpp"
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "win32_program/windows_init.hpp"
+#include "program/program.hpp"
 #include "defaults.hpp"
 #include <windows.h>
 
@@ -29,7 +30,7 @@ namespace win32_program
     SectionState& GetSectionState();
 
     void InitializeMenuControls(Win32Context& context);
-    void CreateMainWindowContents(HWND hwnd, Win32Context& context);
+    void CreateMainWindowContents(HWND hwnd, Win32Context& context, program::ProgramContext& programContext);
 
     bool CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& context);
     void HandleResize(HWND hwnd, LPARAM lParam, Win32Context& context);

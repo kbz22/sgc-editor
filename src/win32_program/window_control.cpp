@@ -1,5 +1,6 @@
 #include "win32_program/window_control.hpp"
-#include "win32_program/control_setup.hpp"
+#include "win32_program/windows_controls.hpp"
+#include "win32_section/section.hpp"
 #include <windowsx.h>
 #include <algorithm>
 #include <commctrl.h>
@@ -20,7 +21,7 @@ void win32_program::InitializeMenuControls(win32_program::Win32Context& context)
     win32_program::SetupToolbar(context);
 }
 
-void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context)
+void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context, program::ProgramContext& programContext)
 {
     WNDCLASSEX wc{};
     wc.cbSize = sizeof(wc);
@@ -52,7 +53,9 @@ void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context)
     context.hLayerListView = makeSection(L"Layer List", win32_program::ControlId::LayerList);
     context.hPackageView   = makeSection(L"Package View", win32_program::ControlId::PackageView);
     context.hMapView       = makeSection(L"Map View", win32_program::ControlId::MapView);
-    context.hTilesetView   = makeSection(L"Tileset", win32_program::ControlId::TilesetView);
+    // context.hTilesetView   = makeSection(L"Tileset", win32_program::ControlId::TilesetView);
+    programContext.tilesetSection = std::make_unique<win32_section::TilesetSection>(context);
+    context.hTilesetView = programContext.tilesetSection->GetHwnd();
 
     context.hSplitLeft = makeSplitter(win32_program::ControlId::SplitLeft);
     context.hSplitRight = makeSplitter(win32_program::ControlId::SplitRight);
