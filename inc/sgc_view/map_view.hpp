@@ -8,6 +8,10 @@
 
 #include <vector>
 
+namespace win32_section {
+    class MapSection;
+}
+
 namespace sgc_view
 {
     using namespace sgc;
@@ -23,7 +27,8 @@ namespace sgc_view
             void AddChunk(sgc::data::ChunkCoord chunkCoord);
             void RemoveChunk(sgc::data::ChunkCoord chunkCoord);
             
-            sgc::math::uvec2 GetCursorSizeInTiles() const;            
+            sgc::math::uvec2 GetCursorSizeInTiles() const;
+            void SetStorage(std::shared_ptr<sgc::data::ChunkedTileStorage> storage);        
 
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
@@ -35,7 +40,6 @@ namespace sgc_view
             bool LoadTileset(const std::wstring& path) override;
             void Render() override;
 
-            std::shared_ptr<sgc::data::ChunkedTileStorage>& GetStorage(); //! tmp
-            void SetStorage(std::shared_ptr<sgc::data::ChunkedTileStorage> storage); //! tmp
+            friend class win32_section::MapSection;
     };
 }

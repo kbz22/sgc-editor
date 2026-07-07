@@ -6,6 +6,7 @@
 #include <sgc/graphics/rectangle.hpp>
 
 #include "win32_section/tileset_section.hpp"
+#include "win32_section/map_section.hpp"
 
 namespace program {
 
@@ -16,6 +17,7 @@ namespace program {
         std::unique_ptr<sgc::graphics::Rectangle> selectionRectangleOnTileset; 
 
         std::unique_ptr<win32_section::TilesetSection> tilesetSection;
+        std::unique_ptr<win32_section::MapSection> mapSection;
     };
 
     ProgramContext& GetProgramContext();

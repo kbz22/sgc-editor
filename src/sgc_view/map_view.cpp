@@ -200,11 +200,6 @@ void sgc_view::MapView::Render()
     sdl::Render(m_renderContext);
 }
 
-std::shared_ptr<sgc::data::ChunkedTileStorage> &sgc_view::MapView::GetStorage()
-{
-    return m_tileStorage;
-}
-
 void sgc_view::MapView::SetStorage(std::shared_ptr<sgc::data::ChunkedTileStorage> storage)
 {
     m_tileStorage = storage;

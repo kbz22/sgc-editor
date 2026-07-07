@@ -52,7 +52,9 @@ void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context, p
 
     context.hLayerListView = makeSection(L"Layer List", win32_program::ControlId::LayerList);
     context.hPackageView   = makeSection(L"Package View", win32_program::ControlId::PackageView);
-    context.hMapView       = makeSection(L"Map View", win32_program::ControlId::MapView);
+    // context.hMapView       = makeSection(L"Map View", win32_program::ControlId::MapView);
+    programContext.mapSection = std::make_unique<win32_section::MapSection>(context);
+    context.hMapView = programContext.mapSection->GetHwnd();
     // context.hTilesetView   = makeSection(L"Tileset", win32_program::ControlId::TilesetView);
     programContext.tilesetSection = std::make_unique<win32_section::TilesetSection>(context);
     context.hTilesetView = programContext.tilesetSection->GetHwnd();

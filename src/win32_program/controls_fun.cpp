@@ -130,10 +130,10 @@ void win32_program::OnFileSaveClicked()
     auto& contextWin32 = GetWin32Context();
     auto& contextProgram = program::GetProgramContext();    
     
-    auto storage = contextProgram.mapView->GetStorage();
-    auto asset = asset::AssetBuilder<asset::ChunkedTileStorageAsset>::Build(*storage);    
+    /* auto storage = contextProgram.mapView->GetStorage();
+    auto asset = asset::AssetBuilder<asset::ChunkedTileStorageAsset>::Build(*storage);   */  
 
-    auto bytes = asset::AssetSerializer<asset::ChunkedTileStorageAsset>::Serialize(asset);
+    // auto bytes = asset::AssetSerializer<asset::ChunkedTileStorageAsset>::Serialize(asset);
 
     win32_helpers::FileFilter mapFilter{
         L"Map Files",
@@ -143,8 +143,10 @@ void win32_program::OnFileSaveClicked()
     auto path = win32_helpers::ShowSaveDialog(contextWin32.hMainWindow, {mapFilter});
     if (!path) return;
 
-    std::ofstream file(*path, std::ios::binary);
-    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+    contextProgram.mapSection->SaveMap(*path);
+
+   /*  std::ofstream file(*path, std::ios::binary);
+    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size()); */
 
 }
 
@@ -161,7 +163,9 @@ void win32_program::OnFileOpenClicked()
     auto path = win32_helpers::ShowOpenDialog(contextWin32.hMainWindow, {allFilter});
     if (!path) return;
 
-    std::ifstream file(*path, std::ios::binary);
+    contextProgram.mapSection->LoadMap(*path);
+
+    /* std::ifstream file(*path, std::ios::binary);
     std::vector<uint8_t> bytes((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
     sgc::data::ResourceContext context;
@@ -171,7 +175,7 @@ void win32_program::OnFileOpenClicked()
         bytes,
         context,
         rm
-    );
+    ); */
 
-    contextProgram.mapView->SetStorage(storage);
+    // contextProgram.mapView->SetStorage(storage);
 }

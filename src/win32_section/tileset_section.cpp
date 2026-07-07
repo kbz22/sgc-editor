@@ -1,8 +1,8 @@
 #include "win32_section/tileset_section.hpp"
 
 win32_section::TilesetSection::TilesetSection(win32_program::Win32Context& context) :
-    Section(L"TilesetView", win32_program::ControlId::TilesetView, context),
-    m_tilesetView(nullptr)
+    Section{L"TilesetView", win32_program::ControlId::TilesetView, context},
+    m_tilesetView{nullptr}
 {}
 
 void win32_section::TilesetSection::Update()

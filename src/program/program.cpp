@@ -44,8 +44,10 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.tilesetSection->LoadTileset(tilesetPath);
     win32Context.hTilesetView = programContext.tilesetSection->GetHwnd();
 
-    programContext.mapView = std::make_unique<sgc_view::MapView>(win32Context.hMapView, tileWidth, tileHeight);
-    programContext.mapView->LoadTileset(tilesetPath);
+    /* programContext.mapView = std::make_unique<sgc_view::MapView>(win32Context.hMapView, tileWidth, tileHeight);
+    programContext.mapView->LoadTileset(tilesetPath); */
+    programContext.mapSection->LoadTileset(tilesetPath);
+    win32Context.hMapView = programContext.mapSection->GetHwnd();
 
     win32_program::UpdateToolbar(win32Context);
 }
@@ -65,10 +67,8 @@ void program::HandleResize()
         programContext.tilesetSection->Update();
     }
 
-    if (programContext.mapView != nullptr) {
-        RECT rect;
-        GetClientRect(win32_program::GetWin32Context().hMapView, &rect);
-        programContext.mapView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);
-        programContext.mapView->Render();
+    if (programContext.mapSection != nullptr) {
+        programContext.mapSection->HandleSectionResize();
+        programContext.mapSection->Update();
     }
 }

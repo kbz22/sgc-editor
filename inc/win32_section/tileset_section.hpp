@@ -9,7 +9,7 @@
 
 namespace win32_section {
 
-    struct TilesetSection : public Section
+    class TilesetSection : public Section
     {
         private:
             std::unique_ptr<sgc_view::TilesetView> m_tilesetView = nullptr;
