@@ -21,7 +21,7 @@ namespace sections {
             Section(LPCWSTR name, win32_program::ControlId id, win32_program::Win32Context& context);
             ~Section();
 
-            virtual void Update(program::EditorState state) = 0;
+            virtual void Update() = 0;
             virtual void HandleSectionResize() = 0;
 
             HWND GetHwnd() const;            

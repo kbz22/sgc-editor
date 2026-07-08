@@ -66,7 +66,7 @@ sections::MenuSection::~MenuSection()
     }
 }
 
-void sections::MenuSection::Update(program::EditorState state)
+void sections::MenuSection::Update()
 {
     return;
 }

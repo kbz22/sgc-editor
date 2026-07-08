@@ -10,7 +10,7 @@ namespace sections {
             PackageSection(win32_program::Win32Context& context);
             ~PackageSection();
 
-            void Update(program::EditorState state) override;
+            void Update() override;
             void HandleSectionResize() override;
     };
 

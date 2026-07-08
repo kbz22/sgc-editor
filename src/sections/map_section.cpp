@@ -11,7 +11,7 @@ sections::MapSection::MapSection(win32_program::Win32Context& context) :
     m_mapView{nullptr}
 {}
 
-void sections::MapSection::Update(program::EditorState state)
+void sections::MapSection::Update()
 {
     if (m_mapView != nullptr) {
         m_mapView->Render();
@@ -77,5 +77,5 @@ void sections::MapSection::HandleSectionResize()
         GetClientRect(GetHwnd(), &rect);
         m_mapView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);        
     }
-    Update(program::EditorState::Resized);
+    Update();
 }
