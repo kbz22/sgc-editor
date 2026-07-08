@@ -57,6 +57,9 @@ add_executable(sgc-editor WIN32
     src/sections/tileset_section.cpp
     src/sections/map_section.cpp
     src/sections/toolbar_section.cpp
+    src/sections/menu_section.cpp
+    src/sections/layers_section.cpp
+    src/sections/package_section.cpp
 
     src/sgc_view/sgc_view.cpp    
     src/sgc_view/tileset_view.cpp

@@ -26,15 +26,36 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         context.hMainWindow = hwnd;       
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
-        InitCommonControlsEx(&icc);        
+        InitCommonControlsEx(&icc);
 
-        win32_program::InitializeMenuControls(context);        
+        WNDCLASSEX wc{};
+        wc.cbSize = sizeof(wc);
+        wc.lpfnWndProc = DefWindowProc;
+        wc.hInstance = context.hInstance;
+        wc.lpszClassName = L"SectionWindow";
+        RegisterClassEx(&wc);
 
         programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(context);
         context.hRebarBottom = programContext.toolbarSection->GetHwnd();
         context.hToolbarFunctions = programContext.toolbarSection->GetHwndToolbar();
 
-        win32_program::CreateMainWindowContents(hwnd, context, programContext);
+        programContext.menuSection = std::make_unique<sections::MenuSection>(context);
+        context.hRebarTop = programContext.menuSection->GetHwnd();
+        context.hToolbarMenu = programContext.menuSection->GetHwndToolbar();
+        
+        programContext.mapSection = std::make_unique<sections::MapSection>(context);
+        context.hMapView = programContext.mapSection->GetHwnd();
+
+        programContext.tilesetSection = std::make_unique<sections::TilesetSection>(context);
+        context.hTilesetView = programContext.tilesetSection->GetHwnd();
+
+        programContext.layersSection = std::make_unique<sections::LayersSection>(context);
+        context.hLayerListView = programContext.layersSection->GetHwnd();
+
+        programContext.packageSection = std::make_unique<sections::PackageSection>(context);
+        context.hPackageView = programContext.packageSection->GetHwnd();
+
+        CreateMainWindowContents(hwnd, context, programContext);
         
         break;
     }

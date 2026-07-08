@@ -12,34 +12,8 @@ win32_program::SectionState& win32_program::GetSectionState()
     return SectionState;
 }
 
-void win32_program::InitializeMenuControls(win32_program::Win32Context& context)
-{
-    /* INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
-    InitCommonControlsEx(&icc); */
-
-    win32_program::SetupMenuBar(context);
-    // win32_program::SetupToolbar(context);
-
-}
-
 void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context, program::ProgramContext& programContext)
 {
-    WNDCLASSEX wc{};
-    wc.cbSize = sizeof(wc);
-    wc.lpfnWndProc = DefWindowProc;
-    wc.hInstance = context.hInstance;
-    wc.lpszClassName = L"SectionWindow";
-    RegisterClassEx(&wc);
-
-    auto makeSection = [&](LPCWSTR name, win32_program::ControlId id)
-    {
-        return CreateWindowEx(
-            0, L"SectionWindow", name,
-            WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPSIBLINGS,
-            0,0,0,0,
-            hwnd, (HMENU)id, context.hInstance, nullptr
-        );
-    };
 
     auto makeSplitter = [&](win32_program::ControlId id)
     {
@@ -50,15 +24,6 @@ void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context, p
             hwnd, (HMENU)id, context.hInstance, nullptr
         );
     };
-
-    context.hLayerListView = makeSection(L"Layer List", win32_program::ControlId::LayerList);
-    context.hPackageView   = makeSection(L"Package View", win32_program::ControlId::PackageView);
-    
-    programContext.mapSection = std::make_unique<sections::MapSection>(context);
-    context.hMapView = programContext.mapSection->GetHwnd();
-    
-    programContext.tilesetSection = std::make_unique<sections::TilesetSection>(context);
-    context.hTilesetView = programContext.tilesetSection->GetHwnd();    
 
     context.hSplitLeft = makeSplitter(win32_program::ControlId::SplitLeft);
     context.hSplitRight = makeSplitter(win32_program::ControlId::SplitRight);

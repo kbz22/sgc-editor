@@ -8,6 +8,9 @@
 #include "sections/tileset_section.hpp"
 #include "sections/map_section.hpp"
 #include "sections/toolbar_section.hpp"
+#include "sections/menu_section.hpp"
+#include "sections/layers_section.hpp"
+#include "sections/package_section.hpp"
 
 #include "program/program_state.hpp"
 
@@ -18,6 +21,9 @@ namespace program {
         std::unique_ptr<sections::TilesetSection> tilesetSection;        
         std::unique_ptr<sections::MapSection> mapSection;
         std::unique_ptr<sections::ToolbarSection> toolbarSection;
+        std::unique_ptr<sections::MenuSection> menuSection;
+        std::unique_ptr<sections::LayersSection> layersSection;
+        std::unique_ptr<sections::PackageSection> packageSection;
 
         std::vector<sections::Section*> sections;
 
