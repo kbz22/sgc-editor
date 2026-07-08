@@ -1,9 +1,9 @@
 #pragma once
 
-#include "win32_section/section.hpp"
+#include "sections/section.hpp"
 #include "sgc_view/map_view.hpp"
 
-namespace win32_section {
+namespace sections {
 
     class MapSection : public Section
     {
@@ -13,7 +13,7 @@ namespace win32_section {
         public:
             MapSection(win32_program::Win32Context& context);
             
-            void Update() override;
+            void Update(program::EditorState state) override;
             void HandleSectionResize() override;
 
             void LoadTileset(const std::filesystem::path& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);

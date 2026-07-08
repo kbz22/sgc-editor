@@ -3,11 +3,11 @@
 #include <filesystem>
 #include <memory>
 
-#include "win32_section/section.hpp"
+#include "sections/section.hpp"
 #include "sgc_view/tileset_view.hpp"
 #include "defaults.hpp"
 
-namespace win32_section {
+namespace sections {
 
     class TilesetSection : public Section
     {
@@ -17,7 +17,7 @@ namespace win32_section {
         public:
             TilesetSection(win32_program::Win32Context& context);
             
-            void Update() override;
+            void Update(program::EditorState state) override;
             void HandleSectionResize() override;
 
             void LoadTileset(const std::filesystem::path& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);

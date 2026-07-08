@@ -8,7 +8,7 @@
 
 #include <vector>
 
-namespace win32_section {
+namespace sections {
     class MapSection;
 }
 
@@ -40,6 +40,6 @@ namespace sgc_view
             bool LoadTileset(const std::wstring& path) override;
             void Render() override;
 
-            friend class win32_section::MapSection;
+            friend class sections::MapSection;
     };
 }

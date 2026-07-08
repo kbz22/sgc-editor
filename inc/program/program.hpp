@@ -5,19 +5,26 @@
 #include "sgc_view/map_view.hpp"
 #include <sgc/graphics/rectangle.hpp>
 
-#include "win32_section/tileset_section.hpp"
-#include "win32_section/map_section.hpp"
+#include "sections/tileset_section.hpp"
+#include "sections/map_section.hpp"
+#include "sections/toolbar_section.hpp"
 
-namespace program {
+#include "program/program_state.hpp"
+
+namespace program {    
 
     struct ProgramContext
-    {       
-        std::unique_ptr<sgc_view::TilesetView> tilesetView;
-        std::unique_ptr<sgc_view::MapView> mapView;
-        std::unique_ptr<sgc::graphics::Rectangle> selectionRectangleOnTileset; 
+    {
+        std::unique_ptr<sections::TilesetSection> tilesetSection;        
+        std::unique_ptr<sections::MapSection> mapSection;
+        std::unique_ptr<sections::ToolbarSection> toolbarSection;
 
-        std::unique_ptr<win32_section::TilesetSection> tilesetSection;
-        std::unique_ptr<win32_section::MapSection> mapSection;
+        std::vector<sections::Section*> sections;
+
+        std::unique_ptr<sgc::graphics::Rectangle> selectionRectangleOnTileset;
+
+        EditorState state = EditorState::Default;
+        std::wstring currentProjectName;
     };
 
     ProgramContext& GetProgramContext();

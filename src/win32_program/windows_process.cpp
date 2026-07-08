@@ -25,7 +25,15 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     {
         context.hMainWindow = hwnd;       
         
-        win32_program::InitializeMenuControls(context);
+        INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
+        InitCommonControlsEx(&icc);        
+
+        win32_program::InitializeMenuControls(context);        
+
+        programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(context);
+        context.hRebarBottom = programContext.toolbarSection->GetHwnd();
+        context.hToolbarFunctions = programContext.toolbarSection->GetHwndToolbar();
+
         win32_program::CreateMainWindowContents(hwnd, context, programContext);
         
         break;

@@ -65,13 +65,13 @@ void win32_program::SetupMenuBar(Win32Context &context)
     context.hRebarTop = win32_helpers::CreateRebar(
         context.hMainWindow,
         context.hInstance,
-        static_cast<types::ctrid_t>(ControlId::Menu)
+        static_cast<types::ctrid_t>(ControlId::MenuRebar)
     );
 
     context.hToolbarMenu = win32_helpers::CreateToolbar(
         context.hRebarTop,
         context.hInstance,
-        static_cast<types::ctrid_t>(ControlId::Toolbar)
+        static_cast<types::ctrid_t>(ControlId::MenuToolbar)
     );
 
     // Required for TBADDBUTTONS to work correctly
@@ -116,13 +116,13 @@ void win32_program::SetupToolbar(Win32Context &context)
     context.hRebarBottom = win32_helpers::CreateRebar(
         context.hMainWindow,
         context.hInstance,
-        static_cast<types::ctrid_t>(ControlId::Menu)
+        static_cast<types::ctrid_t>(ControlId::ToolbarRebar)
     );
 
     context.hToolbarFunctions = win32_helpers::CreateToolbar(
         context.hRebarBottom,
         context.hInstance,
-        static_cast<types::ctrid_t>(ControlId::Toolbar)
+        static_cast<types::ctrid_t>(ControlId::ToolbarToolbar)
     );
 
     LONG style = static_cast<LONG>(SendMessage(context.hToolbarFunctions, TB_GETSTYLE, 0, 0)) | TBSTYLE_FLAT;
@@ -195,7 +195,7 @@ void win32_program::UpdateToolbar(Win32Context &context)
 {
     program::ProgramContext& programContext = program::GetProgramContext();
 
-    bool hasMap = (programContext.mapView != nullptr);
+    bool hasMap = (programContext.mapSection != nullptr);
 
     SendMessage(
         context.hToolbarFunctions,

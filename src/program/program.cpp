@@ -25,27 +25,15 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
         programContext.selectionRectangleOnTileset.reset();
     }
 
-    if(programContext.tilesetView != nullptr) {
-        programContext.tilesetView.reset();
-    }
-
-    if(programContext.mapView != nullptr) {
-        programContext.mapView.reset();
-    }
-
     programContext.selectionRectangleOnTileset = std::make_unique<sgc::graphics::Rectangle>(
         sgc::math::vec2{ 0, 0 },
         sgc::math::uvec2{ static_cast<sgc::math::uval>(tileWidth), static_cast<sgc::math::uval>(tileHeight) }
     );
     programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
 
-    /* programContext.tilesetView = std::make_unique<sgc_view::TilesetView>(win32Context.hTilesetView, tileWidth, tileHeight);
-    programContext.tilesetView->LoadTileset(tilesetPath); */    
     programContext.tilesetSection->LoadTileset(tilesetPath);
     win32Context.hTilesetView = programContext.tilesetSection->GetHwnd();
-
-    /* programContext.mapView = std::make_unique<sgc_view::MapView>(win32Context.hMapView, tileWidth, tileHeight);
-    programContext.mapView->LoadTileset(tilesetPath); */
+    
     programContext.mapSection->LoadTileset(tilesetPath);
     win32Context.hMapView = programContext.mapSection->GetHwnd();
 
@@ -55,20 +43,12 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 void program::HandleResize()
 {
     auto& programContext = GetProgramContext();
-    /* if (programContext.tilesetView != nullptr) {
-        RECT rect;
-        GetClientRect(win32_program::GetWin32Context().hTilesetView, &rect);
-        programContext.tilesetView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);
-        programContext.tilesetView->Render();        
-    } */
 
     if (programContext.tilesetSection != nullptr) {
-        programContext.tilesetSection->HandleSectionResize();
-        programContext.tilesetSection->Update();
+        programContext.tilesetSection->HandleSectionResize();        
     }
 
     if (programContext.mapSection != nullptr) {
-        programContext.mapSection->HandleSectionResize();
-        programContext.mapSection->Update();
+        programContext.mapSection->HandleSectionResize();        
     }
 }

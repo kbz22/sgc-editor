@@ -1,6 +1,6 @@
 #include "win32_program/window_control.hpp"
 #include "win32_program/windows_controls.hpp"
-#include "win32_section/section.hpp"
+#include "sections/section.hpp"
 #include <windowsx.h>
 #include <algorithm>
 #include <commctrl.h>
@@ -14,11 +14,12 @@ win32_program::SectionState& win32_program::GetSectionState()
 
 void win32_program::InitializeMenuControls(win32_program::Win32Context& context)
 {
-    INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
-    InitCommonControlsEx(&icc);
+    /* INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
+    InitCommonControlsEx(&icc); */
 
     win32_program::SetupMenuBar(context);
-    win32_program::SetupToolbar(context);
+    // win32_program::SetupToolbar(context);
+
 }
 
 void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context, program::ProgramContext& programContext)
@@ -52,12 +53,12 @@ void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context, p
 
     context.hLayerListView = makeSection(L"Layer List", win32_program::ControlId::LayerList);
     context.hPackageView   = makeSection(L"Package View", win32_program::ControlId::PackageView);
-    // context.hMapView       = makeSection(L"Map View", win32_program::ControlId::MapView);
-    programContext.mapSection = std::make_unique<win32_section::MapSection>(context);
+    
+    programContext.mapSection = std::make_unique<sections::MapSection>(context);
     context.hMapView = programContext.mapSection->GetHwnd();
-    // context.hTilesetView   = makeSection(L"Tileset", win32_program::ControlId::TilesetView);
-    programContext.tilesetSection = std::make_unique<win32_section::TilesetSection>(context);
-    context.hTilesetView = programContext.tilesetSection->GetHwnd();
+    
+    programContext.tilesetSection = std::make_unique<sections::TilesetSection>(context);
+    context.hTilesetView = programContext.tilesetSection->GetHwnd();    
 
     context.hSplitLeft = makeSplitter(win32_program::ControlId::SplitLeft);
     context.hSplitRight = makeSplitter(win32_program::ControlId::SplitRight);
@@ -98,7 +99,8 @@ void win32_program::HandleDragging(HWND hwnd, LPARAM lParam, Win32Context &conte
                                     state.windowWidth - state.tilesetWidth - 2*defaults::minCollumnWidth);
         state.layerHorizontalRatio = (float)state.layerWidth / state.windowWidth;
 
-        LayoutContent(hwnd, context);
+        // LayoutContent(hwnd, context);
+        HandleResize(hwnd, lParam, context);
     }
     else if (state.draggingTileset)
     {
@@ -108,7 +110,8 @@ void win32_program::HandleDragging(HWND hwnd, LPARAM lParam, Win32Context &conte
                                       state.windowWidth - state.layerWidth - 2*defaults::minCollumnWidth);
         state.tilesetRatio = (float)state.tilesetWidth / state.windowWidth;
 
-        LayoutContent(hwnd, context);
+        // LayoutContent(hwnd, context);
+        HandleResize(hwnd, lParam, context);
     }
     else if (state.draggingLayerVertical)
     {
@@ -119,7 +122,8 @@ void win32_program::HandleDragging(HWND hwnd, LPARAM lParam, Win32Context &conte
                                      state.windowHeight - state.toolbarOffset - 2*defaults::minCollumnHeight);
         state.layerVerticalRatio = (float)state.layerHeight / state.windowHeight;
 
-        LayoutContent(hwnd, context);
+        // LayoutContent(hwnd, context);
+        HandleResize(hwnd, lParam, context);
     }
 }
 
@@ -190,39 +194,7 @@ void win32_program::HandleResize(HWND hwnd, LPARAM lParam, Win32Context& context
     hdwp = defer(hdwp, context.hSplitRight, rc.right - state.tilesetWidth - splitW, state.toolbarOffset, splitW, rc.bottom - state.toolbarOffset);
     hdwp = defer(hdwp, context.hTilesetView, rc.right - state.tilesetWidth, state    .toolbarOffset, state.tilesetWidth, rc.bottom - state.toolbarOffset);
 
-    EndDeferWindowPos(hdwp);
+    EndDeferWindowPos(hdwp);   
 
     state.toolbarOffset = hTop + hBottom;
 }
-
-void win32_program::LayoutContent(HWND hwnd, Win32Context& context)
-{
-    auto defer = [](HDWP dwp, HWND handle, int x, int y, int w, int h){
-        return DeferWindowPos(
-            dwp, handle, nullptr,
-            x, y, w, h,
-            SWP_NOZORDER
-        );
-    };
-
-    RECT rc;
-    GetClientRect(hwnd, &rc);
-
-    auto& state = GetSectionState();
-    int splitW = 5;
-    int splitH = 5;
-
-    HDWP hdwp = BeginDeferWindowPos(8);
-
-    hdwp = defer(hdwp, context.hLayerListView, 0, state.toolbarOffset, state.layerWidth, state.layerHeight);
-    hdwp = defer(hdwp, context.hSplitBottom, 0, state.toolbarOffset + state.layerHeight, state.layerWidth, splitH);
-    hdwp = defer(hdwp, context.hPackageView, 0, state.toolbarOffset + state.layerHeight + splitH, state.layerWidth, rc.bottom - state.toolbarOffset - state.layerHeight - splitH);
-    hdwp = defer(hdwp, context.hSplitLeft, state.layerWidth, state.toolbarOffset, splitW, rc.bottom - state.toolbarOffset);
-    hdwp = defer(hdwp, context.hMapView, state.layerWidth + splitW, state.toolbarOffset, rc.right - state.layerWidth - state.tilesetWidth - 2*splitW, rc.bottom - state.toolbarOffset);
-    hdwp = defer(hdwp, context.hSplitRight, rc.right - state.tilesetWidth - splitW, state.toolbarOffset, splitW, rc.bottom - state.toolbarOffset);
-
-    hdwp = defer(hdwp, context.hTilesetView, rc.right - state.tilesetWidth, state.toolbarOffset, state.tilesetWidth, rc.bottom - state.toolbarOffset);
-
-    EndDeferWindowPos(hdwp);
-}
-

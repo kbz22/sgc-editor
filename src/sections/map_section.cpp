@@ -1,4 +1,4 @@
-#include "win32_section/map_section.hpp"
+#include "sections/map_section.hpp"
 #include <sgc/data/resourcemanager.hpp>
 #include <sgc/asset/assetloader.hpp>
 #include <sgc/asset/chunkedtilestorageserializer.hpp>
@@ -6,19 +6,32 @@
 #include <fstream>
 #include <filesystem>
 
-win32_section::MapSection::MapSection(win32_program::Win32Context& context) :
+sections::MapSection::MapSection(win32_program::Win32Context& context) :
     Section{L"MapView", win32_program::ControlId::MapView, context},
     m_mapView{nullptr}
 {}
 
-void win32_section::MapSection::Update()
+void sections::MapSection::Update(program::EditorState state)
 {
-    if (m_mapView != nullptr) {
-        m_mapView->Render();
+    switch(state){
+
+        case program::EditorState::NewMap:
+        case program::EditorState::MapLoaded:
+        case program::EditorState::Resized:
+        {
+            if (m_mapView != nullptr) {
+                m_mapView->Render();
+            }
+            break;
+        }
+
+        default:
+            break;
+
     }
 }
 
-void win32_section::MapSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight)
+void sections::MapSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight)
 {   
     if(m_mapView != nullptr) {
         m_mapView.reset();
@@ -28,7 +41,7 @@ void win32_section::MapSection::LoadTileset(const std::filesystem::path& path, i
     m_mapView->LoadTileset(path.wstring());
 }
 
-void win32_section::MapSection::LoadMap(const std::filesystem::path& path)
+void sections::MapSection::LoadMap(const std::filesystem::path& path)
 {
     if (m_mapView == nullptr) {
         return;
@@ -51,7 +64,7 @@ void win32_section::MapSection::LoadMap(const std::filesystem::path& path)
     );
 }
 
-void win32_section::MapSection::SaveMap(const std::filesystem::path& path)
+void sections::MapSection::SaveMap(const std::filesystem::path& path)
 {
     if (m_mapView == nullptr) {
         return;
@@ -70,12 +83,12 @@ void win32_section::MapSection::SaveMap(const std::filesystem::path& path)
 
 }
 
-void win32_section::MapSection::HandleSectionResize()
+void sections::MapSection::HandleSectionResize()
 {
     if (m_mapView != nullptr) {
         RECT rect;
         GetClientRect(GetHwnd(), &rect);
         m_mapView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);        
     }
-    Update();
+    Update(program::EditorState::Resized);
 }

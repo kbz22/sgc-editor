@@ -7,13 +7,15 @@ namespace win32_program
 {
     enum class ControlId : types::ctrid_t
     {
-        Menu = 1001,
-        Toolbar = 1002,
+        MenuRebar = 1001,        
+        MenuToolbar = 1002,
+        ToolbarRebar = 1003,
+        ToolbarToolbar = 1004,
 
-        LayerList = 1003,
-        PackageView = 1004,
-        MapView = 1005,
-        TilesetView = 1006,
+        LayerList = 1005,
+        PackageView = 1006,
+        MapView = 1007,
+        TilesetView = 1008,
 
         SplitLeft = 2001,
         SplitRight = 2002,

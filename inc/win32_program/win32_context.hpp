@@ -19,9 +19,9 @@ namespace win32_program {
         HWND hSplitRight = HWND();
         HWND hSplitBottom = HWND();
 
-        HWND hRebarTop = HWND();
-        HWND hRebarBottom = HWND();
+        HWND hRebarTop = HWND();        
         HWND hToolbarMenu = HWND();
+        HWND hRebarBottom = HWND();
         HWND hToolbarFunctions = HWND();
     };
 
