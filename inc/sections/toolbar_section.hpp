@@ -23,7 +23,7 @@ namespace sections {
             ToolbarSection(win32_program::Win32Context& context);
             ~ToolbarSection();
 
-            void Update(program::EditorState state) override;
+            void Update() override;
             void HandleSectionResize() override;
 
             HWND GetHwndToolbar() const;

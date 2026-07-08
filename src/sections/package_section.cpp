@@ -8,7 +8,7 @@ sections::PackageSection::~PackageSection()
 {
 }
 
-void sections::PackageSection::Update(program::EditorState state)
+void sections::PackageSection::Update()
 {
     return;
 }

@@ -98,7 +98,7 @@ sections::ToolbarSection::~ToolbarSection()
     }
 }
 
-void sections::ToolbarSection::Update(program::EditorState state)
+void sections::ToolbarSection::Update()
 {
     return;
 }

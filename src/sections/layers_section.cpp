@@ -8,7 +8,7 @@ sections::LayersSection::~LayersSection()
 {
 }
 
-void sections::LayersSection::Update(program::EditorState state)
+void sections::LayersSection::Update()
 {
     return;
 }

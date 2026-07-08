@@ -13,22 +13,9 @@ sections::MapSection::MapSection(win32_program::Win32Context& context) :
 
 void sections::MapSection::Update(program::EditorState state)
 {
-    switch(state){
-
-        case program::EditorState::NewMap:
-        case program::EditorState::MapLoaded:
-        case program::EditorState::Resized:
-        {
-            if (m_mapView != nullptr) {
-                m_mapView->Render();
-            }
-            break;
-        }
-
-        default:
-            break;
-
-    }
+    if (m_mapView != nullptr) {
+        m_mapView->Render();
+    }    
 }
 
 void sections::MapSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight)

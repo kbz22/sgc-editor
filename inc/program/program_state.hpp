@@ -4,10 +4,9 @@ namespace program {
 
     enum class EditorState {
         Default = 0,
-        HwndInitialized = 1,
-        NewMap = 2,
-        MapLoaded = 3,
-        Resized = 4
+        Ready = 1,
+        MapOpen = 2,
+        PackageOpen = 3
     };
 
 }

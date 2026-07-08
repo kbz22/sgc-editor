@@ -5,25 +5,11 @@ sections::TilesetSection::TilesetSection(win32_program::Win32Context& context) :
     m_tilesetView{nullptr}
 {}
 
-void sections::TilesetSection::Update(program::EditorState state)
+void sections::TilesetSection::Update()
 {
-    switch(state){
-
-        case program::EditorState::NewMap:
-        case program::EditorState::MapLoaded:
-        case program::EditorState::Resized:
-        {
-            if (m_tilesetView != nullptr) {
-                m_tilesetView->Render();
-            }
-            break;
-        }
-
-        default:
-            break;
-
-    }
-    
+    if (m_tilesetView != nullptr) {
+        m_tilesetView->Render();
+    }   
 }
 
 void sections::TilesetSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight)
@@ -48,5 +34,5 @@ void sections::TilesetSection::HandleSectionResize()
         GetClientRect(GetHwnd(), &rect);
         m_tilesetView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);        
     }
-    Update(program::EditorState::Resized);    
+    Update();    
 }

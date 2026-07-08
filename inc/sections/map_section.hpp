@@ -13,7 +13,7 @@ namespace sections {
         public:
             MapSection(win32_program::Win32Context& context);
             
-            void Update(program::EditorState state) override;
+            void Update() override;
             void HandleSectionResize() override;
 
             void LoadTileset(const std::filesystem::path& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);

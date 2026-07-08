@@ -10,7 +10,7 @@ namespace sections {
             LayersSection(win32_program::Win32Context& context);
             ~LayersSection();
 
-            void Update(program::EditorState state) override;
+            void Update() override;
             void HandleSectionResize() override;
     };
 
