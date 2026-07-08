@@ -15,7 +15,7 @@ namespace sections {
             HWND m_hwndToolbar = HWND();
 
         public:
-            MenuSection(win32_program::Win32Context& context);
+            MenuSection(win32_program::MainWindowContext& context);
             ~MenuSection();
 
             void Update() override;

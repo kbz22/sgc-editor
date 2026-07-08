@@ -1,6 +1,6 @@
 #include "sections/tileset_section.hpp"
 
-sections::TilesetSection::TilesetSection(win32_program::Win32Context& context) :
+sections::TilesetSection::TilesetSection(win32_program::MainWindowContext& context) :
     Section{L"TilesetView", win32_program::ControlId::TilesetView, context},
     m_tilesetView{nullptr}
 {}

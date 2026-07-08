@@ -1,6 +1,6 @@
 #include "sections/package_section.hpp"
 
-sections::PackageSection::PackageSection(win32_program::Win32Context& context) :
+sections::PackageSection::PackageSection(win32_program::MainWindowContext& context) :
     Section{L"PackageList", win32_program::ControlId::PackageView, context}
 {}
 

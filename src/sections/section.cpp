@@ -1,6 +1,6 @@
 #include "sections/section.hpp"
 
-sections::Section::Section(LPCWSTR name, win32_program::ControlId id, win32_program::Win32Context &context)
+sections::Section::Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext &context)
 {    
     m_hwnd = CreateWindowEx(
         0, L"SectionWindow", name,

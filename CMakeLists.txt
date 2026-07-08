@@ -50,6 +50,7 @@ add_executable(sgc-editor WIN32
     src/win32_program/window_control.cpp
     src/win32_program/controls_fun.cpp
     src/win32_program/windows_process.cpp
+    src/win32_program/layout_manager.cpp
 
     src/program/program.cpp
 

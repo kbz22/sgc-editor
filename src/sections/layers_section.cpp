@@ -1,6 +1,6 @@
 #include "sections/layers_section.hpp"
 
-sections::LayersSection::LayersSection(win32_program::Win32Context& context) :
+sections::LayersSection::LayersSection(win32_program::MainWindowContext& context) :
     Section{L"LayerList", win32_program::ControlId::LayerList, context}
 {}
 

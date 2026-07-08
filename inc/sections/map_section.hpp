@@ -11,7 +11,7 @@ namespace sections {
             std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;
 
         public:
-            MapSection(win32_program::Win32Context& context);
+            MapSection(win32_program::MainWindowContext& context);
             
             void Update() override;
             void HandleSectionResize() override;

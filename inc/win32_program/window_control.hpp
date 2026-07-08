@@ -24,16 +24,16 @@ namespace win32_program
         int windowWidth = defaults::WindowWidth;
         int windowHeight = defaults::WindowHeight;
 
-        int toolbarOffset = 0;
+        int toolbarOffset = 0;        
     };
 
     SectionState& GetSectionState();
 
-    void InitializeMenuControls(Win32Context& context);
-    void CreateMainWindowContents(HWND hwnd, Win32Context& context, program::ProgramContext& programContext);
+    void InitializeMenuControls(MainWindowContext& context);
+    void CreateMainWindowContents(HWND hwnd, MainWindowContext& context, program::ProgramContext& programContext);
 
-    bool CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& context);
-    void HandleResize(HWND hwnd, LPARAM lParam, Win32Context& context);
-    void HandleDragging(HWND hwnd, LPARAM lParam, Win32Context& context);
+    bool CheckDragging(HWND hwnd, LPARAM lParam, MainWindowContext& context);
+    void HandleResize(HWND hwnd, LPARAM lParam, MainWindowContext& context);
+    void HandleDragging(HWND hwnd, LPARAM lParam, MainWindowContext& context);
     
 }

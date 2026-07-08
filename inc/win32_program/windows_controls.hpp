@@ -17,9 +17,9 @@ namespace win32_program
         MapView = 1007,
         TilesetView = 1008,
 
-        SplitLeft = 2001,
-        SplitRight = 2002,
-        SplitBottom = 2003
+        SplitTilesetMap = 2001,
+        SplitLayerPackage = 2002,
+        SplitLayerMap = 2003
     };
 
     enum class CommandId : types::cmdid_t

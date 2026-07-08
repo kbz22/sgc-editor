@@ -7,7 +7,7 @@ namespace sections {
     class LayersSection : public Section
     {
         public:
-            LayersSection(win32_program::Win32Context& context);
+            LayersSection(win32_program::MainWindowContext& context);
             ~LayersSection();
 
             void Update() override;

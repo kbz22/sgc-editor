@@ -18,7 +18,7 @@ namespace sections {
             Section();
 
         public:
-            Section(LPCWSTR name, win32_program::ControlId id, win32_program::Win32Context& context);
+            Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext& context);
             ~Section();
 
             virtual void Update() = 0;

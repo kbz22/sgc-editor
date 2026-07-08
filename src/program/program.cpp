@@ -14,12 +14,7 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     (void)chunksSizeX;
     (void)chunksSizeY;
     
-    auto& programContext = GetProgramContext();
-    auto& win32Context = win32_program::GetWin32Context();
-
-    if(programContext.tilesetSection == nullptr || win32Context.hMapView == nullptr) {
-        return;
-    }
+    auto& programContext = GetProgramContext();    
 
     if(programContext.selectionRectangleOnTileset != nullptr) {
         programContext.selectionRectangleOnTileset.reset();
@@ -32,17 +27,13 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
 
     programContext.tilesetSection->LoadTileset(tilesetPath);
-    win32Context.hTilesetView = programContext.tilesetSection->GetHwnd();
-    
-    programContext.mapSection->LoadTileset(tilesetPath);
-    win32Context.hMapView = programContext.mapSection->GetHwnd();
 
-    win32_program::UpdateToolbar(win32Context);
+    programContext.mapSection->LoadTileset(tilesetPath);
 }
 
 void program::HandleResize()
 {
-    auto& programContext = GetProgramContext();
+    /* auto& programContext = GetProgramContext();
 
     if (programContext.tilesetSection != nullptr) {
         programContext.tilesetSection->HandleSectionResize();        
@@ -50,5 +41,5 @@ void program::HandleResize()
 
     if (programContext.mapSection != nullptr) {
         programContext.mapSection->HandleSectionResize();        
-    }
+    } */
 }

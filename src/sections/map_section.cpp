@@ -6,7 +6,7 @@
 #include <fstream>
 #include <filesystem>
 
-sections::MapSection::MapSection(win32_program::Win32Context& context) :
+sections::MapSection::MapSection(win32_program::MainWindowContext& context) :
     Section{L"MapView", win32_program::ControlId::MapView, context},
     m_mapView{nullptr}
 {}

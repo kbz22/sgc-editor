@@ -12,10 +12,10 @@ win32_program::SectionState& win32_program::GetSectionState()
     return SectionState;
 }
 
-void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context, program::ProgramContext& programContext)
+void win32_program::CreateMainWindowContents(HWND hwnd, MainWindowContext &context, program::ProgramContext& programContext)
 {
 
-    auto makeSplitter = [&](win32_program::ControlId id)
+    /* auto makeSplitter = [&](win32_program::ControlId id)
     {
         return CreateWindowEx(
             0, L"STATIC", nullptr,
@@ -27,16 +27,16 @@ void win32_program::CreateMainWindowContents(HWND hwnd, Win32Context &context, p
 
     context.hSplitLeft = makeSplitter(win32_program::ControlId::SplitLeft);
     context.hSplitRight = makeSplitter(win32_program::ControlId::SplitRight);
-    context.hSplitBottom = makeSplitter(win32_program::ControlId::SplitBottom);
+    context.hSplitBottom = makeSplitter(win32_program::ControlId::SplitBottom); */
 
 }
 
-bool win32_program::CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& context)
+bool win32_program::CheckDragging(HWND hwnd, LPARAM lParam, MainWindowContext& context)
 {
     HWND child = ChildWindowFromPoint(hwnd, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
     auto& state = GetSectionState();
 
-    if (child == context.hSplitLeft)
+    /* if (child == context.hSplitLeft)
     {
         state.draggingLayerHorizontal = true;        
     }
@@ -47,12 +47,12 @@ bool win32_program::CheckDragging(HWND hwnd, LPARAM lParam, Win32Context& contex
     else if (child == context.hSplitBottom)
     {
         state.draggingLayerVertical = true;        
-    }
+    } */
 
     return state.draggingLayerHorizontal || state.draggingTileset || state.draggingLayerVertical;
 }
 
-void win32_program::HandleDragging(HWND hwnd, LPARAM lParam, Win32Context &context)
+void win32_program::HandleDragging(HWND hwnd, LPARAM lParam, MainWindowContext &context)
 {
     auto& state = GetSectionState();    
 
@@ -92,9 +92,9 @@ void win32_program::HandleDragging(HWND hwnd, LPARAM lParam, Win32Context &conte
     }
 }
 
-void win32_program::HandleResize(HWND hwnd, LPARAM lParam, Win32Context& context)
+void win32_program::HandleResize(HWND hwnd, LPARAM lParam, MainWindowContext& context)
 {
-    auto defer = [](HDWP dwp, HWND handle, int x, int y, int w, int h){
+    /* auto defer = [](HDWP dwp, HWND handle, int x, int y, int w, int h){
         return DeferWindowPos(
             dwp, handle, nullptr,
             x, y, w, h,
@@ -161,5 +161,5 @@ void win32_program::HandleResize(HWND hwnd, LPARAM lParam, Win32Context& context
 
     EndDeferWindowPos(hdwp);   
 
-    state.toolbarOffset = hTop + hBottom;
+    state.toolbarOffset = hTop + hBottom; */
 }

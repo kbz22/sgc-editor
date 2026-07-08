@@ -15,7 +15,7 @@ namespace sections {
             std::unique_ptr<sgc_view::TilesetView> m_tilesetView = nullptr;
         
         public:
-            TilesetSection(win32_program::Win32Context& context);
+            TilesetSection(win32_program::MainWindowContext& context);
             
             void Update() override;
             void HandleSectionResize() override;

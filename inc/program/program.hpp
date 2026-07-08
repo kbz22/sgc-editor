@@ -12,6 +12,7 @@
 #include "sections/layers_section.hpp"
 #include "sections/package_section.hpp"
 
+#include "win32_program/win32_context.hpp"
 #include "program/program_state.hpp"
 
 namespace program {    
@@ -31,6 +32,8 @@ namespace program {
 
         EditorState state = EditorState::Default;
         std::wstring currentProjectName;
+
+        std::unique_ptr<win32_program::MainWindowContext> MainWindowContext;
     };
 
     ProgramContext& GetProgramContext();

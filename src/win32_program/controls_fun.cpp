@@ -106,18 +106,17 @@ INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] 
 
 
 void win32_program::OnFileNewClicked()
-{
-    auto& context = GetWin32Context();
+{    
     auto& programContext = program::GetProgramContext();
 
     // if (context.hTilesetView != nullptr) {
     if(programContext.tilesetSection != nullptr) {
 
-        if(context.hMainWindow != nullptr)
+        if(programContext.MainWindowContext->hMainWindow != nullptr)
         DialogBox(
-            context.hInstance,            
+            programContext.MainWindowContext->hInstance,            
             MAKEINTRESOURCE(IDD_NEWFILE_DIALOG),
-            context.hMainWindow,
+            programContext.MainWindowContext->hMainWindow,
             NewFileDialogProc
         );
     }
@@ -127,7 +126,7 @@ void win32_program::OnFileSaveClicked()
 {
     using namespace sgc;
 
-    auto& contextWin32 = GetWin32Context();
+    auto& contextWin32 = GetMainWindowContext();
     auto& contextProgram = program::GetProgramContext();    
     
     /* auto storage = contextProgram.mapView->GetStorage();
@@ -152,7 +151,7 @@ void win32_program::OnFileSaveClicked()
 
 void win32_program::OnFileOpenClicked()
 {
-    auto& contextWin32 = GetWin32Context();
+    auto& contextWin32 = GetMainWindowContext();
     auto& contextProgram = program::GetProgramContext();
 
     win32_helpers::FileFilter allFilter{

@@ -8,22 +8,51 @@
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
 #include "program/program.hpp"
+#include "win32_program/layout_manager.hpp"
+
+#include <windows.h>
+#include <CommCtrl.h>
+
+win32_program::LayoutManager& GetLayoutManager()
+{
+    static win32_program::LayoutManager layoutManager(        
+        program::GetProgramContext()
+    );
+
+    return layoutManager;
+}
+
+void HandleResize(HWND hwnd, LPARAM lParam)
+{
+    auto& layoutManager = GetLayoutManager();
+    auto& programContext = program::GetProgramContext();
+
+    layoutManager.HandleResize(
+        hwnd,
+        lParam
+    );
+
+    for(auto section : programContext.sections) {
+        section->HandleSectionResize();
+        section->Update();
+    }
+}
 
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    using namespace win32_program;
+{    
     using namespace program;
 
-    Win32Context& context = GetWin32Context();    
-    ProgramContext& programContext = program::GetProgramContext();
+    ProgramContext& programContext = GetProgramContext();    
     
     static bool capturedMouse = false;
 
     switch (msg)
     {
     case WM_CREATE:
-    {
-        context.hMainWindow = hwnd;       
+    {        
+        programContext.MainWindowContext->hMainWindow = hwnd;
+
+        auto &context = *programContext.MainWindowContext;
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
         InitCommonControlsEx(&icc);
@@ -36,26 +65,22 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         RegisterClassEx(&wc);
 
         programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(context);
-        context.hRebarBottom = programContext.toolbarSection->GetHwnd();
-        context.hToolbarFunctions = programContext.toolbarSection->GetHwndToolbar();
+        programContext.sections.push_back(programContext.toolbarSection.get());
 
         programContext.menuSection = std::make_unique<sections::MenuSection>(context);
-        context.hRebarTop = programContext.menuSection->GetHwnd();
-        context.hToolbarMenu = programContext.menuSection->GetHwndToolbar();
+        programContext.sections.push_back(programContext.menuSection.get());
         
         programContext.mapSection = std::make_unique<sections::MapSection>(context);
-        context.hMapView = programContext.mapSection->GetHwnd();
+        programContext.sections.push_back(programContext.mapSection.get());        
 
         programContext.tilesetSection = std::make_unique<sections::TilesetSection>(context);
-        context.hTilesetView = programContext.tilesetSection->GetHwnd();
+        programContext.sections.push_back(programContext.tilesetSection.get());
 
         programContext.layersSection = std::make_unique<sections::LayersSection>(context);
-        context.hLayerListView = programContext.layersSection->GetHwnd();
+        programContext.sections.push_back(programContext.layersSection.get());
 
         programContext.packageSection = std::make_unique<sections::PackageSection>(context);
-        context.hPackageView = programContext.packageSection->GetHwnd();
-
-        CreateMainWindowContents(hwnd, context, programContext);
+        programContext.sections.push_back(programContext.packageSection.get());       
         
         break;
     }
@@ -89,26 +114,38 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     }
     
     case WM_SIZE:
-    {
-        win32_program::HandleResize(hwnd, lParam, context);
+    {        
+        auto& layoutManager = GetLayoutManager();
+        layoutManager.HandleResize(hwnd, lParam);
         break;
     }
 
     case WM_NOTIFY:
     {
-        LPNMHDR nm = (LPNMHDR)lParam;
+        LPNMHDR nm = (LPNMHDR)lParam;        
 
         if (nm->code == TTN_GETDISPINFO)
         {
             NMTTDISPINFO* info = (NMTTDISPINFO*)nm;
 
             // Convert command ID → button index
-            int index = (int)SendMessage(context.hToolbarFunctions, TB_COMMANDTOINDEX, info->hdr.idFrom, 0);
+            int index = static_cast<int>(
+                SendMessage(
+                    programContext.toolbarSection->GetHwndToolbar(),
+                    TB_COMMANDTOINDEX,
+                    info->hdr.idFrom,
+                    0
+                ));
 
             if (index >= 0)
             {
                 TBBUTTON btn{};
-                SendMessage(context.hToolbarFunctions, TB_GETBUTTON, index, (LPARAM)&btn);
+                SendMessage(
+                    programContext.toolbarSection->GetHwndToolbar(),
+                    TB_GETBUTTON,
+                    index,
+                    (LPARAM)&btn
+                );
 
                 info->lpszText = (LPWSTR)btn.dwData;
             }
@@ -136,11 +173,11 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_LBUTTONDOWN:
     {
-        if (win32_program::CheckDragging(hwnd, lParam, context))
+        /* if (win32_program::CheckDragging(hwnd, lParam, context))
         {
             SetCapture(hwnd);
             capturedMouse = true;   
-        }
+        } */
         break;
     }
 
@@ -167,8 +204,8 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_MOUSEMOVE:
     {        
-        win32_program::HandleDragging(hwnd, lParam, context);
-        program::HandleResize();
+        /* win32_program::HandleDragging(hwnd, lParam, context);
+        program::HandleResize(); */
         return 0;
     }
 

@@ -5,7 +5,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 
-sections::ToolbarSection::ToolbarSection(win32_program::Win32Context& context)    
+sections::ToolbarSection::ToolbarSection(win32_program::MainWindowContext& context)    
 {
     using namespace win32_program;
 
