@@ -173,11 +173,12 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_LBUTTONDOWN:
     {
-        /* if (win32_program::CheckDragging(hwnd, lParam, context))
+        auto& layoutManager = GetLayoutManager();
+        if (layoutManager.GetDraggedSplitter(hwnd, lParam) != DraggedSplitter::None)
         {
             SetCapture(hwnd);
-            capturedMouse = true;   
-        } */
+            capturedMouse = true;
+        }
         break;
     }
 
@@ -186,13 +187,8 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_LBUTTONUP:
     {
-        auto& state = GetSectionState();
-
-        capturedMouse |= state.draggingLayerHorizontal || state.draggingTileset || state.draggingLayerVertical;
-        
-        state.draggingLayerHorizontal = false;
-        state.draggingTileset = false;
-        state.draggingLayerVertical = false;        
+        auto& layoutManager = GetLayoutManager();
+        layoutManager.ResetDraggedSplitter();
 
         if (capturedMouse)
         {
@@ -204,8 +200,16 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_MOUSEMOVE:
     {        
-        /* win32_program::HandleDragging(hwnd, lParam, context);
-        program::HandleResize(); */
+        auto& layoutManager = GetLayoutManager();
+        auto draggedSplitter = layoutManager.GetDraggedSplitter(hwnd, lParam);
+
+        if (draggedSplitter != DraggedSplitter::None && capturedMouse)
+        {
+            layoutManager.HandleDragging(hwnd, lParam);
+            // layoutManager.HandleResize(hwnd, lParam);
+            HandleResize(hwnd, lParam);
+        }
+
         return 0;
     }
 

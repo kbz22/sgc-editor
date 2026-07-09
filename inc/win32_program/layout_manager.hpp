@@ -30,13 +30,16 @@ namespace win32_program {
             int m_toolbarOffset = 0;
             int m_splitH = 5;
             int m_splitW = 5;
+            int m_windowWidth = 0;
+            int m_windowHeight = 0;
 
             program::ProgramContext& m_programContext;            
 
         public:
             LayoutManager(program::ProgramContext& programContext = program::GetProgramContext());              
 
-            void CheckDragging(HWND hwnd, LPARAM lParam);
+            DraggedSplitter GetDraggedSplitter(HWND hwnd, LPARAM lParam);
+            void ResetDraggedSplitter();
             void HandleResize(HWND hwnd, LPARAM lParam);
             void HandleDragging(HWND hwnd, LPARAM lParam);
             
