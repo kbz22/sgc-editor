@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sgc/data/itilestorage.hpp>
-#include <sgc/graphics/tiledimage.hpp>s
+#include <sgc/graphics/tiledimage.hpp>
 #include <vector>
 
 namespace program {
