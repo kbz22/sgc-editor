@@ -1,5 +1,4 @@
-#include "win32_program/windows_controls.hpp"
-#include "win32_program/window_control.hpp"
+#include "win32_program/windows_init.hpp"
 #include "win32_program/controls_fun.hpp"
 #include "win32_program/windows_process.hpp"
 #include "program/program.hpp"
