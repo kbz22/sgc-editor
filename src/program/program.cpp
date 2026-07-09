@@ -29,6 +29,11 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.tilesetSection->LoadTileset(tilesetPath);
 
     programContext.mapSection->LoadTileset(tilesetPath);
+
+    programContext.mapSection->HandleSectionResize();
+    programContext.tilesetSection->HandleSectionResize();
+    programContext.mapSection->Update();
+    programContext.tilesetSection->Update(); 
 }
 
 void program::HandleResize()

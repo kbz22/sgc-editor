@@ -6,8 +6,6 @@
 #include <sgc/data/chunkedtilestorage.hpp>
 #include <sgc/graphics/rectangle.hpp>
 
-#include <vector>
-
 namespace sections {
     class MapSection;
 }

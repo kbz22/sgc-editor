@@ -56,7 +56,7 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
     ProgramContext& programContext = program::GetProgramContext();
 
     switch (msg)
-    {
+    {        
         case WM_LBUTTONDOWN:
         {
             int x = GET_X_LPARAM(lparam);
@@ -67,11 +67,6 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
             if(x > bounds.x || y > bounds.y) {
                 break;
             }
-
-            /* m_highlightedTile.SetPosition({
-                (x / m_tileWidth) * m_tileWidth,
-                (y / m_tileHeight) * m_tileHeight
-            });  */
 
             sgc::math::uvec2 tileSize = m_tileset->GetTileSize();
             sgc::math::vec2 tilePosition = {
