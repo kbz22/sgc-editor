@@ -43,7 +43,7 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path)
         tileStorage
     );
 
-    m_tiledImage = std::make_shared<graphics::TiledImage>(m_layer);
+    m_drawableImage = std::make_shared<graphics::TiledImage>(m_layer);
 
     Render();
 

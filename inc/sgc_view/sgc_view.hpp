@@ -29,9 +29,8 @@ namespace sgc_view
         protected:
             int m_tileWidth = defaults::tileSize;
             int m_tileHeight = defaults::tileSize;
-            std::shared_ptr<graphics::Tileset> m_tileset = nullptr;
-            // std::unique_ptr<graphics::TiledStaticLayer> m_layer = nullptr;            
-            std::shared_ptr<graphics::TiledImage> m_tiledImage = nullptr;
+            std::shared_ptr<graphics::Tileset> m_tileset = nullptr;                    
+            std::shared_ptr<graphics::IDrawable> m_drawableImage = nullptr;
             graphics::RenderContext m_renderContext = {};
             
             HWND m_hostWindow = HWND();

@@ -136,8 +136,8 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path)
 
 void sgc_view::SgcView::DrawAll()
 {
-    if (m_tiledImage != nullptr) {
-        m_tiledImage->Draw(this->m_renderContext);
+    if (m_drawableImage != nullptr) {
+        m_drawableImage->Draw(this->m_renderContext);
     }  
 }
 

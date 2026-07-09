@@ -165,7 +165,7 @@ bool sgc_view::MapView::LoadTileset(const std::wstring& path)
         m_tileStorage
     );
 
-    m_tiledImage = std::make_shared<graphics::TiledImage>(layer);
+    m_drawableImage = std::make_shared<graphics::TiledImage>(layer);
 
     Render();
 
@@ -209,7 +209,7 @@ void sgc_view::MapView::SetStorage(std::shared_ptr<sgc::data::ChunkedTileStorage
         m_tileStorage
     );
 
-    m_tiledImage = std::make_shared<graphics::TiledImage>(layer);
+    m_drawableImage = std::make_shared<graphics::TiledImage>(layer);
 
     Render();
 }
