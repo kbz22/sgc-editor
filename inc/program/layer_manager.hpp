@@ -28,7 +28,8 @@ namespace program {
             void AddLayer(Layer entry);
             void InsertLayer(Layer entry, size_t index);
             void RemoveLayer(size_t index);
-            void SetActiveLayerIndex(size_t index);            
+            void SetActiveLayerIndex(size_t index);
+            void SetBaseLayerIndex(size_t index);     
 
             std::vector<Layer> GetLayers() const;
             size_t GetActiveLayerIndex() const;

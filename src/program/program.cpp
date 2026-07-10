@@ -2,6 +2,8 @@
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 #include "win32_program/windows_controls.hpp"
 #include "program/program.hpp"
+#include "program/layer_manager.hpp"
+#include <sgc/data/chunkedtilestorage.hpp>
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -33,7 +35,21 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.mapSection->HandleSectionResize();
     programContext.tilesetSection->HandleSectionResize();
     programContext.mapSection->Update();
-    programContext.tilesetSection->Update(); 
+    programContext.tilesetSection->Update();
+
+    programContext.layerManager = std::make_unique<program::LayerManager>();
+
+    programContext.layerManager->AddLayer({
+        std::make_shared<sgc::data::ChunkedTileStorage>(),
+        L"Layer 0"
+    });
+    programContext.layerManager->SetActiveLayerIndex(0);
+    programContext.layerManager->SetBaseLayerIndex(0);
+    programContext.layerManager->GetLayers()[0]
+        .storage->SetTileAt({ 0, 0 }, 1);
+
+    programContext.mapSection->Refresh();
+    programContext.mapSection->Update();
 }
 
 void program::HandleResize()

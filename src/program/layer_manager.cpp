@@ -49,6 +49,15 @@ void program::LayerManager::SetActiveLayerIndex(size_t index)
     m_activeLayerIndex = index;
 }
 
+void program::LayerManager::SetBaseLayerIndex(size_t index)
+{
+    if (index >= m_layers.size()) {
+        throw std::out_of_range("Index is out of range for setting base layer.");
+    }
+
+    m_baseLayerIndex = index;
+}
+
 std::vector<program::Layer> program::LayerManager::GetLayers() const
 {
     return m_layers;

@@ -22,6 +22,8 @@ namespace sections {
             void Update() override;
             void HandleSectionResize() override;
 
+            void Refresh();
+
             void LoadTileset(const std::filesystem::path& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
             void LoadMap(const std::filesystem::path& path);
             void SaveMap(const std::filesystem::path& path);

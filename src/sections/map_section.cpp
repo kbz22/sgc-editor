@@ -15,10 +15,18 @@ sections::MapSection::MapSection(win32_program::MainWindowContext& context) :
 {}
 
 void sections::MapSection::Update()
-{
-    if (m_mapView != nullptr) {
+{    
+    if (m_mapView != nullptr) {        
         m_mapView->Render();
     }    
+}
+
+void sections::MapSection::Refresh()
+{    
+    auto& layerManager = program::GetProgramContext().layerManager;
+    if (layerManager != nullptr && m_mapView != nullptr) {
+        m_mapView->Refresh(*layerManager);
+    }
 }
 
 void sections::MapSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight)
@@ -107,15 +115,21 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto tileWidth = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().x / tileSize.x);
             auto tileHeight = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);            
 
+            auto currentLayer = programContext.layerManager->GetLayers()[programContext.layerManager->GetActiveLayerIndex()];
+
+            if(currentLayer.storage == nullptr) { //! check this out
+                return 0;
+            }
+
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {
                     auto tileX = static_cast<sgc::math::ival>(m_selectionTileStart.x + _x);
                     auto tileY = static_cast<sgc::math::ival>(m_selectionTileStart.y + _y);
                     auto currentTileId = tileset->ToTileId(static_cast<sgc::math::uval>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::uval>(currentTilePosition.y / tileSize.y) + _y);                    
 
-                    /* if(m_tileStorage->GetTileAt({ tileX, tileY }).has_value()) {
-                        m_tileStorage->SetTileAt({ tileX, tileY }, currentTileId);
-                    }  */                      
+                    if(currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
+                        currentLayer.storage->SetTileAt({ tileX, tileY }, currentTileId);
+                    }
                 }
             }
 
@@ -166,6 +180,12 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(programContext.selectionRectangleOnTileset->GetPosition());
             auto mousePositionInTiles = m_mapView->PixelsToTiles(sgc::math::uvec2{ static_cast<sgc::math::uval>(x), static_cast<sgc::math::uval>(y) });
 
+            auto currentLayer = programContext.layerManager->GetLayers()[programContext.layerManager->GetActiveLayerIndex()];
+
+            if(currentLayer.storage == nullptr) { //! check this out
+                return 0;
+            }
+
             for (sgc::math::ival _x = 0; _x < static_cast<sgc::math::ival>(cursorTileSize.x); ++_x){
                 for (sgc::math::ival _y = 0; _y < static_cast<sgc::math::ival>(cursorTileSize.y); ++_y){
 
@@ -190,10 +210,12 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         cursorTilePositionOnTileset.y + deltaY
                     );
 
-                    /* m_tileStorage->SetTileAt(
-                        { tileMapX, tileMapY },
-                        tileId
-                    ); */
+                    if(currentLayer.storage->GetTileAt({ tileMapX, tileMapY }).has_value()) {
+                        currentLayer.storage->SetTileAt(
+                            { tileMapX, tileMapY },
+                            tileId
+                        );
+                    }
                 }
             }
 
