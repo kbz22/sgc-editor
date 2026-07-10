@@ -56,7 +56,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             auto tileset = m_tilesetView->GetTileset();
             auto bounds = tileset->GetImageSize();
 
-            if(x > bounds.x || y > bounds.y) {
+            if(x < 0 || y < 0 || x >= bounds.x || y >= bounds.y) {
                 break;
             }
 
@@ -94,13 +94,25 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             int x = GET_X_LPARAM(lparam);
             int y = GET_Y_LPARAM(lparam);
 
+            x = std::max(x, 0); // in case a negative slips in
+            y = std::max(y, 0);
+
             auto tileset = m_tilesetView->GetTileset();
-            sgc::math::uvec2 tileSize = tileset->GetTileSize();
+            auto tileSize = tileset->GetTileSize();
+            auto imageSize = tileset->GetImageSize();
+
+            sgc::math::uvec2 tileCount = {
+                imageSize.x / tileSize.x,
+                imageSize.y / tileSize.y
+            };
 
             sgc::math::uvec2 currentTile = {
-                x / tileSize.x,
-                y / tileSize.y
+                static_cast<sgc::math::uval>(x / tileSize.x),
+                static_cast<sgc::math::uval>(y / tileSize.y)
             };
+
+            currentTile.x = std::min(currentTile.x, tileCount.x - 1);
+            currentTile.y = std::min(currentTile.y, tileCount.y - 1);
 
             sgc::math::uvec2 minTile = {
                 std::min(static_cast<sgc::math::uval>(m_selectionTileStart.x), currentTile.x),
