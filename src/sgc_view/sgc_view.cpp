@@ -4,9 +4,6 @@
 #include <sgc/sdl/sdl_win32.hpp>
 #include <commctrl.h>
 #include "program/except.hpp"
-namespace {
-    constexpr UINT_PTR kTilesetSubclassId = 0x53474331;
-}
 
 sgc_view::SgcView::SgcView(HWND hwnd, int tileWidth, int tileHeight)
     : m_hostWindow(hwnd), m_tileWidth(tileWidth), m_tileHeight(tileHeight)
@@ -16,10 +13,6 @@ sgc_view::SgcView::SgcView(HWND hwnd, int tileWidth, int tileHeight)
 
 sgc_view::SgcView::~SgcView()
 {
-    if (m_sectionWindow != nullptr) {
-        RemoveWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId);
-    }
-
     if (m_renderContext.renderer != nullptr) {
         sdl::DestroyRenderer(m_renderContext.renderer);
         m_renderContext.renderer = nullptr;
@@ -56,12 +49,12 @@ bool sgc_view::SgcView::CreateEmbeddedRenderer()
         return false;
     }
 
-    InstallInputSubclass();
+    // InstallInputSubclass();
 
     return true;
 }
 
-void sgc_view::SgcView::InstallInputSubclass() {
+/* void sgc_view::SgcView::InstallInputSubclass() {
     if (m_sdlWindow == nullptr) {
         return;
     }
@@ -74,33 +67,17 @@ void sgc_view::SgcView::InstallInputSubclass() {
     if (m_sectionWindow != nullptr) {
         SetWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId, reinterpret_cast<DWORD_PTR>(this));
     }
-}
+} */
 
-LRESULT sgc_view::SgcView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
+/* LRESULT sgc_view::SgcView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
 {
     return DefSubclassProc(hwnd, msg, wparam, lparam);
-}
+} */
 
-LRESULT CALLBACK sgc_view::SgcView::StaticPaneProc([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data) 
-{
-    auto* self = reinterpret_cast<SgcView*>(data);
-
-        if (self)
-        {
-            return self->HandleMessages(
-                hwnd,
-                msg,
-                wparam,
-                lparam);
-        }
-
-    return DefSubclassProc(hwnd, msg, wparam, lparam);
-}
-
-bool sgc_view::SgcView::LoadTileset(const std::wstring& path)
+std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::LoadTileset(const std::filesystem::path& path)
 {
     if (m_renderContext.renderer == nullptr) {
-        return false;
+        return nullptr;
     }
 
     if(m_tileWidth <= 0 || m_tileHeight <= 0) {
@@ -111,12 +88,12 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path)
     std::shared_ptr<graphics::Image> image = std::make_shared<graphics::Image>();
 
     if (!image->LoadTexture(m_renderContext.renderer, path)) {
-        throw program::AssetLoadException("Failed to load tileset image: " + std::string(path.begin(), path.end()));
+        throw program::AssetLoadException("Failed to load tileset image: " + path.string());
     }
 
     const math::uvec2 imageSize = image->GetSize();
     if (imageSize.x == 0 || imageSize.y == 0) {
-        throw program::AssetLoadException("Tileset image has invalid dimensions: " + std::string(path.begin(), path.end()));
+        throw program::AssetLoadException("Tileset image has invalid dimensions: " + path.string());
     }
 
     if (imageSize.x % m_tileWidth != 0 || imageSize.y % m_tileHeight != 0) {
@@ -129,9 +106,9 @@ bool sgc_view::SgcView::LoadTileset(const std::wstring& path)
 
     auto tileVec2 = graphics::PixelSize2D(m_tileWidth, m_tileHeight);
 
-    m_tileset = std::make_shared<graphics::Tileset>(image, tileVec2); 
+    auto tileset = std::make_shared<graphics::Tileset>(image, tileVec2); 
     
-    return true;
+    return tileset;
 }
 
 void sgc_view::SgcView::DrawAll()
@@ -159,7 +136,7 @@ void sgc_view::SgcView::SetScreenSize(int width, int height)
     m_renderContext.view.camera = m_renderContext.view.screen;
 }
 
-sgc::math::uvec2 sgc_view::SgcView::GetValueInTiles(sgc::math::uvec2 value) const
+sgc::math::uvec2 sgc_view::SgcView::PixelsToTiles(sgc::math::uvec2 value) const
 {
     return {
         static_cast<sgc::math::uval>(value.x / m_tileWidth),
@@ -167,10 +144,24 @@ sgc::math::uvec2 sgc_view::SgcView::GetValueInTiles(sgc::math::uvec2 value) cons
     };
 }
 
-sgc::math::vec2 sgc_view::SgcView::GetValueInTiles(sgc::math::vec2 value) const
+sgc::math::vec2 sgc_view::SgcView::PixelsToTiles(sgc::math::vec2 value) const
 {
     return {
         static_cast<sgc::math::ival>(value.x / m_tileWidth),
         static_cast<sgc::math::ival>(value.y / m_tileHeight)
     };
 }
+
+sgc::graphics::PixelSize2D sgc_view::SgcView::GetTileSize() const
+{
+    return {
+        static_cast<sgc::math::uval>(m_tileWidth),
+        static_cast<sgc::math::uval>(m_tileHeight)
+    };
+}
+
+std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::GetTileset() const
+{
+    return m_tileset;
+}
+

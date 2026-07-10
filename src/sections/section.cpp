@@ -1,4 +1,9 @@
 #include "sections/section.hpp"
+#include <commctrl.h>
+
+namespace {
+    constexpr UINT_PTR kTilesetSubclassId = 0x53474331;
+}
 
 sections::Section::Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext &context)
 {    
@@ -21,8 +26,10 @@ sections::Section::~Section()
 {
     if (m_hwnd)
     {
-        DestroyWindow(m_hwnd);
+        DestroyWindow(m_hwnd);        
         m_hwnd = nullptr;
+
+        // RemoveWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId);
     }
 }
 
@@ -36,4 +43,24 @@ void sections::Section::SetHwnd(HWND hwnd, HWND parentHwnd)
     m_hwnd = hwnd;
     m_parentHwnd = parentHwnd;
 }
-    
+
+LRESULT CALLBACK sections::Section::StaticPaneProc([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data) 
+{
+    auto* self = reinterpret_cast<Section*>(data);
+
+    if (self)
+    {
+        return self->HandleMessages(
+            hwnd,
+            msg,
+            wparam,
+            lparam);
+    }
+
+    return DefSubclassProc(hwnd, msg, wparam, lparam);
+}
+
+LRESULT sections::Section::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
+{
+    return DefSubclassProc(hwnd, msg, wparam, lparam);
+}

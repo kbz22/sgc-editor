@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 #include <windows.h>
 #include "win32_program/win32_context.hpp"
@@ -13,9 +13,14 @@ namespace sections {
             HWND m_hwnd = HWND();
             HWND m_parentHwnd = HWND();
 
+            void InstallInputSubclass();
+            static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
+
         protected:
             void SetHwnd(HWND hwnd, HWND parentHwnd);
             Section();
+
+            virtual LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
         public:
             Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext& context);

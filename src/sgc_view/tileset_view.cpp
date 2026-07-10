@@ -6,23 +6,17 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <algorithm>
+#include <stdexcept>
 
 #include "debug.hpp"
 #include "program/program.hpp"
 
-sgc_view::TilesetView::TilesetView(HWND hwnd, int tileWidth, int tileHeight) :
+sgc_view::TilesetView::TilesetView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth, int tileHeight) :
     SgcView(hwnd, tileWidth, tileHeight) 
-{   
-}
-
-sgc_view::TilesetView::~TilesetView() {
-    // nothing to do
-}
-
-bool sgc_view::TilesetView::LoadTileset(const std::wstring& path)
 {
-    if(!SgcView::LoadTileset(path)) {
-        return false;
+    m_tileset = LoadTileset(tilesetPath);
+    if(!m_tileset) {
+        throw std::runtime_error("Failed to load tileset from path: " + tilesetPath.string());
     }
     
     const math::uvec2 gridSize = m_tileset->GetSizeInTiles();
@@ -44,13 +38,13 @@ bool sgc_view::TilesetView::LoadTileset(const std::wstring& path)
     );
 
     m_drawableImage = std::make_shared<graphics::TiledImage>(m_layer);
-
-    Render();
-
-    return true;
 }
 
-LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
+sgc_view::TilesetView::~TilesetView() {
+    // nothing to do
+}
+
+/* LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
 {
     using namespace program;
     ProgramContext& programContext = program::GetProgramContext();
@@ -157,7 +151,7 @@ LRESULT sgc_view::TilesetView::HandleMessages([[maybe_unused]] HWND hwnd, [[mayb
     }
 
     return DefSubclassProc(hwnd, msg, wparam, lparam);
-}
+} */
 
 void sgc_view::TilesetView::Render()
 {

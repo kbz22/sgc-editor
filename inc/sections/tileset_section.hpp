@@ -2,6 +2,8 @@
 
 #include <filesystem>
 #include <memory>
+#include <windows.h>
+#include <sgc/math/vector.hpp>
 
 #include "sections/section.hpp"
 #include "sgc_view/tileset_view.hpp"
@@ -13,6 +15,11 @@ namespace sections {
     {
         private:
             std::unique_ptr<sgc_view::TilesetView> m_tilesetView = nullptr;
+
+            LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+            bool m_selectionActive = false;        
+            sgc::math::vec2 m_selectionTileStart = { 0, 0 };    
+            sgc::math::uvec2 m_selectionTileSize = { 0, 0 };
         
         public:
             TilesetSection(win32_program::MainWindowContext& context);

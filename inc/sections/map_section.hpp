@@ -2,6 +2,7 @@
 
 #include "sections/section.hpp"
 #include "sgc_view/map_view.hpp"
+#include <windows.h>
 
 namespace sections {
 
@@ -9,6 +10,11 @@ namespace sections {
     {
         private:
             std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;
+            bool m_isPainting = false;
+            sgc::tile::TilesetPosition2D m_selectionTileStart = {0,0};
+
+        protected:
+            LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
 
         public:
             MapSection(win32_program::MainWindowContext& context);

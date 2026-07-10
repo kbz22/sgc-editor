@@ -52,7 +52,7 @@ add_executable(sgc-editor WIN32
     src/win32_program/layout_manager.cpp
 
     src/program/program.cpp
-    src/program/layer_container.cpp
+    src/program/layer_manager.cpp
 
     src/sections/section.cpp
     src/sections/tileset_section.cpp

@@ -1,12 +1,12 @@
-#include "program/layer_container.hpp"
+#include "program/layer_manager.hpp"
 #include <stdexcept>
 
-void program::LayerContainer::AddLayer(LayerEntry entry)
+void program::LayerManager::AddLayer(Layer entry)
 {
     m_layers.push_back(entry);
 }
 
-void program::LayerContainer::InsertLayer(LayerEntry entry, size_t index)
+void program::LayerManager::InsertLayer(Layer entry, size_t index)
 {
     if (index > m_layers.size()) {
         throw std::out_of_range("Index is out of range for inserting layer.");
@@ -15,7 +15,7 @@ void program::LayerContainer::InsertLayer(LayerEntry entry, size_t index)
     m_layers.insert(m_layers.begin() + index, entry);
 }
 
-void program::LayerContainer::RemoveLayer(size_t index)
+void program::LayerManager::RemoveLayer(size_t index)
 {
     if(index >= m_layers.size()) {
         throw std::out_of_range("Index is out of range for removing layer.");
@@ -40,7 +40,7 @@ void program::LayerContainer::RemoveLayer(size_t index)
     m_layers.erase(m_layers.begin() + index);
 }
 
-void program::LayerContainer::SetActiveLayerIndex(size_t index)
+void program::LayerManager::SetActiveLayerIndex(size_t index)
 {
     if (index >= m_layers.size()) {
         throw std::out_of_range("Index is out of range for setting active layer.");
@@ -49,12 +49,17 @@ void program::LayerContainer::SetActiveLayerIndex(size_t index)
     m_activeLayerIndex = index;
 }
 
-size_t program::LayerContainer::GetActiveLayerIndex() const
+std::vector<program::Layer> program::LayerManager::GetLayers() const
+{
+    return m_layers;
+}
+
+size_t program::LayerManager::GetActiveLayerIndex() const
 {
     return m_activeLayerIndex;
 }
 
-size_t program::LayerContainer::GetBaseLayerIndex() const
+size_t program::LayerManager::GetBaseLayerIndex() const
 {
     return m_baseLayerIndex;
 }

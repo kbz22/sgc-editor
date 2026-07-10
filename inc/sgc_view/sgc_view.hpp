@@ -6,10 +6,10 @@
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
 #include <sgc/sdl/sdl.hpp>
+#include <windows.h>
+#include <filesystem>
 
 #include "defaults.hpp"
-
-#include <windows.h>
 
 namespace sgc_view
 {
@@ -20,35 +20,39 @@ namespace sgc_view
         private:
             bool m_sdlInitialized = false;            
 
-            SDL_Window* m_sdlWindow = nullptr;            
-
-            static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);            
+            SDL_Window* m_sdlWindow = nullptr;
+            
             bool CreateEmbeddedRenderer();
-            void InstallInputSubclass();
+            // void InstallInputSubclass();
 
         protected:
             int m_tileWidth = defaults::tileSize;
             int m_tileHeight = defaults::tileSize;
-            std::shared_ptr<graphics::Tileset> m_tileset = nullptr;                    
+            std::shared_ptr<graphics::Tileset> m_tileset = nullptr;        
             std::shared_ptr<graphics::IDrawable> m_drawableImage = nullptr;
             graphics::RenderContext m_renderContext = {};
             
             HWND m_hostWindow = HWND();
             HWND m_sectionWindow = HWND();
+            
+            void DrawAll();            
 
-            virtual LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-            void DrawAll();
-            sgc::math::uvec2 GetValueInTiles(sgc::math::uvec2 value) const;
-            sgc::math::vec2 GetValueInTiles(sgc::math::vec2 value) const;
+            std::shared_ptr<graphics::Tileset> LoadTileset(const std::filesystem::path& path);
 
         public:
             SgcView(HWND hwnd, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
             ~SgcView();
-
-            virtual void Render();
-            void Clear();
-            virtual bool LoadTileset(const std::wstring& path);
+            
             virtual void SetScreenSize(int width, int height);
+            virtual void Render();
+
+            std::shared_ptr<graphics::Tileset> GetTileset() const;
+            sgc::graphics::PixelSize2D GetTileSize() const;
+            
+            sgc::math::uvec2 PixelsToTiles(sgc::math::uvec2 value) const;
+            sgc::math::vec2 PixelsToTiles(sgc::math::vec2 value) const;
+
+            void Clear();
         
     };
 }

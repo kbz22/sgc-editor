@@ -15,6 +15,8 @@
 #include "win32_program/win32_context.hpp"
 #include "program/program_state.hpp"
 
+#include "program/layer_manager.hpp"
+
 namespace program {    
 
     struct ProgramContext
@@ -34,6 +36,8 @@ namespace program {
         std::wstring currentProjectName;
 
         std::unique_ptr<win32_program::MainWindowContext> MainWindowContext;
+
+        std::unique_ptr<program::LayerManager> layerManager;
     };
 
     ProgramContext& GetProgramContext();
