@@ -28,6 +28,7 @@ void sections::MapSection::LoadTileset(const std::filesystem::path& path, int ti
     }
     
     m_mapView = std::make_unique<sgc_view::MapView>(GetHwnd(), path, tileWidth, tileHeight);    
+    AttachView(*m_mapView);
 }
 
 void sections::MapSection::LoadMap(const std::filesystem::path& path)
@@ -142,13 +143,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 auto selection = programContext.selectionRectangleOnTileset->GetSize();
 
                 m_mapView->SetCursorSizeInPixels({
-                    static_cast<sgc::math::uval>(selection.x) * tileSize.x,
-                    static_cast<sgc::math::uval>(selection.y) * tileSize.y
+                    static_cast<sgc::math::uval>(selection.x),
+                    static_cast<sgc::math::uval>(selection.y)
                 });
 
                 m_mapView->SetCursorPositionInPixels({
-                    x_tile * static_cast<sgc::math::ival>(tileSize.x),
-                    y_tile * static_cast<sgc::math::ival>(tileSize.y)
+                    x_tile,
+                    y_tile
                 });
                 
                 shouldUpdate = true;                
