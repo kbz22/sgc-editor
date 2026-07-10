@@ -165,3 +165,7 @@ std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::GetTileset() const
     return m_tileset;
 }
 
+SDL_Window* sgc_view::SgcView::GetSdlWindow() const
+{
+    return m_sdlWindow;
+}

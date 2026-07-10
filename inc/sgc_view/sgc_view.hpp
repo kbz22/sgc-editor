@@ -11,6 +11,11 @@
 
 #include "defaults.hpp"
 
+namespace sections {
+    class MapSection;
+    class TilesetSection;
+}
+
 namespace sgc_view
 {
     using namespace sgc;
@@ -32,7 +37,7 @@ namespace sgc_view
             std::shared_ptr<graphics::IDrawable> m_drawableImage = nullptr;
             graphics::RenderContext m_renderContext = {};
             
-            HWND m_hostWindow = HWND();
+            HWND m_hostWindow = HWND(); //! remove the rest of win32 stuff once all is moved to section
             HWND m_sectionWindow = HWND();
             
             void DrawAll();            
@@ -48,11 +53,14 @@ namespace sgc_view
 
             std::shared_ptr<graphics::Tileset> GetTileset() const;
             sgc::graphics::PixelSize2D GetTileSize() const;
+            SDL_Window* GetSdlWindow() const;
             
             sgc::math::uvec2 PixelsToTiles(sgc::math::uvec2 value) const;
             sgc::math::vec2 PixelsToTiles(sgc::math::vec2 value) const;
 
             void Clear();
-        
+            
+            friend class sections::MapSection;
+            friend class sections::TilesetSection;
     };
 }

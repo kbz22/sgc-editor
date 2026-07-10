@@ -1,4 +1,5 @@
 #include "sections/section.hpp"
+#include <sgc/sdl/sdl_win32.hpp>
 #include <commctrl.h>
 
 namespace {
@@ -26,11 +27,10 @@ sections::Section::~Section()
 {
     if (m_hwnd)
     {
+        RemoveWindowSubclass(m_hwnd, StaticPaneProc, kTilesetSubclassId);
         DestroyWindow(m_hwnd);        
         m_hwnd = nullptr;
-
-        // RemoveWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId);
-    }
+    }    
 }
 
 HWND sections::Section::GetHwnd() const
@@ -63,4 +63,14 @@ LRESULT CALLBACK sections::Section::StaticPaneProc([[maybe_unused]] HWND hwnd, [
 LRESULT sections::Section::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
 {
     return DefSubclassProc(hwnd, msg, wparam, lparam);
+}
+
+void sections::Section::AttachView(sgc_view::SgcView& view)
+{
+    m_hwnd = sgc::sdl::GetWin32HWND(view.GetSdlWindow());
+
+    if (m_hwnd != nullptr) {
+        SetWindowSubclass(m_hwnd, StaticPaneProc, kTilesetSubclassId, reinterpret_cast<DWORD_PTR>(this));
+    }
+    
 }

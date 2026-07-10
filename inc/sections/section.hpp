@@ -3,7 +3,9 @@
 #include <windows.h>
 #include "win32_program/win32_context.hpp"
 #include "win32_program/windows_controls.hpp"
+#include "sgc_view/sgc_view.hpp"
 #include "program/program_state.hpp"
+#include <sgc/sdl/sdl.hpp>
 
 namespace sections {
 
@@ -12,8 +14,7 @@ namespace sections {
         private:
             HWND m_hwnd = HWND();
             HWND m_parentHwnd = HWND();
-
-            void InstallInputSubclass();
+            
             static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
 
         protected:
@@ -21,6 +22,7 @@ namespace sections {
             Section();
 
             virtual LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+            void AttachView(sgc_view::SgcView& view);
 
         public:
             Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext& context);

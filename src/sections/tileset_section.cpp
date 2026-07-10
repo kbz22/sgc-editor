@@ -23,6 +23,7 @@ void sections::TilesetSection::LoadTileset(const std::filesystem::path& path, in
     }
     
     m_tilesetView = std::make_unique<sgc_view::TilesetView>(GetHwnd(), path, tileWidth, tileHeight);
+    AttachView(*m_tilesetView);
 }
 
 void sections::TilesetSection::ClearTileset()
