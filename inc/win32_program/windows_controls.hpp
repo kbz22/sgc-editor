@@ -1,6 +1,5 @@
 #pragma once
 
-/* #include "win32_program/windows_init.hpp" */
 #include "types.hpp"
 
 namespace win32_program

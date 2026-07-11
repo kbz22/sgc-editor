@@ -51,16 +51,3 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.mapSection->Refresh();
     programContext.mapSection->Update();
 }
-
-void program::HandleResize()
-{
-    /* auto& programContext = GetProgramContext();
-
-    if (programContext.tilesetSection != nullptr) {
-        programContext.tilesetSection->HandleSectionResize();        
-    }
-
-    if (programContext.mapSection != nullptr) {
-        programContext.mapSection->HandleSectionResize();        
-    } */
-}

@@ -49,30 +49,8 @@ bool sgc_view::SgcView::CreateEmbeddedRenderer()
         return false;
     }
 
-    // InstallInputSubclass();
-
     return true;
 }
-
-/* void sgc_view::SgcView::InstallInputSubclass() {
-    if (m_sdlWindow == nullptr) {
-        return;
-    }
-
-    m_sectionWindow = m_hostWindow;
-
-    auto native = sdl::GetWin32HWND(m_sdlWindow);
-
-    m_sectionWindow = native;
-    if (m_sectionWindow != nullptr) {
-        SetWindowSubclass(m_sectionWindow, StaticPaneProc, kTilesetSubclassId, reinterpret_cast<DWORD_PTR>(this));
-    }
-} */
-
-/* LRESULT sgc_view::SgcView::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
-{
-    return DefSubclassProc(hwnd, msg, wparam, lparam);
-} */
 
 std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::LoadTileset(const std::filesystem::path& path)
 {
@@ -83,8 +61,7 @@ std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::LoadTileset(const std
     if(m_tileWidth <= 0 || m_tileHeight <= 0) {
         throw program::TileSizeException("Tile size must be greater than zero.");
     }
-
-    // graphics::Image image{};
+        
     std::shared_ptr<graphics::Image> image = std::make_shared<graphics::Image>();
 
     if (!image->LoadTexture(m_renderContext.renderer, path)) {

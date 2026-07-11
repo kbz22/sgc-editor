@@ -14,11 +14,7 @@ namespace sgc_view
         private:
             math::uval m_gridWidth = 0;
             math::uval m_gridHeight = 0;
-            std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;            
-            // graphics::Rectangle m_highlightedTile = graphics::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize };                        
-
-        /* protected:
-            LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override; */
+            std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
 
         public:
             TilesetView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
