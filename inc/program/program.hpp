@@ -35,7 +35,7 @@ namespace program {
         EditorState state = EditorState::Default;
         std::wstring currentProjectName;
 
-        std::unique_ptr<win32_program::MainWindowContext> MainWindowContext;
+        std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
 
         std::unique_ptr<program::LayerManager> layerManager;
     };

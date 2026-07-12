@@ -49,9 +49,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     {
     case WM_CREATE:
     {        
-        programContext.MainWindowContext->hMainWindow = hwnd;
+        programContext.mainWindowContext->hMainWindow = hwnd;
 
-        auto &context = *programContext.MainWindowContext;
+        auto &context = *programContext.mainWindowContext;
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
         InitCommonControlsEx(&icc);

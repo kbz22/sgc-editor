@@ -12,7 +12,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     program::ProgramContext& programContext = program::GetProgramContext();
 
     ShowWindow(
-        programContext.MainWindowContext->hMainWindow,
+        programContext.mainWindowContext->hMainWindow,
         nCmdShow
     );
 

@@ -28,8 +28,8 @@ win32_program::MainWindowContext& win32_program::GetMainWindowContext()
 void win32_program::Init(HINSTANCE hInstance)
 {    
     program::ProgramContext& programContext = program::GetProgramContext();
-    programContext.MainWindowContext = std::make_unique<win32_program::MainWindowContext>();
-    programContext.MainWindowContext->hInstance = hInstance;
+    programContext.mainWindowContext = std::make_unique<win32_program::MainWindowContext>();
+    programContext.mainWindowContext->hInstance = hInstance;
 
     WNDCLASSEX wc = {};
     wc.cbSize = sizeof(WNDCLASSEX);

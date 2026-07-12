@@ -112,11 +112,11 @@ void win32_program::OnFileNewClicked()
     // if (context.hTilesetView != nullptr) {
     if(programContext.tilesetSection != nullptr) {
 
-        if(programContext.MainWindowContext->hMainWindow != nullptr)
+        if(programContext.mainWindowContext->hMainWindow != nullptr)
         DialogBox(
-            programContext.MainWindowContext->hInstance,            
+            programContext.mainWindowContext->hInstance,            
             MAKEINTRESOURCE(IDD_NEWFILE_DIALOG),
-            programContext.MainWindowContext->hMainWindow,
+            programContext.mainWindowContext->hMainWindow,
             NewFileDialogProc
         );
     }

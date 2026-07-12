@@ -1,12 +1,12 @@
 #include "program/layer_manager.hpp"
 #include <stdexcept>
 
-void program::LayerManager::AddLayer(Layer entry)
+void program::LayerManager::AddLayer(LayerItem entry)
 {
     m_layers.push_back(entry);
 }
 
-void program::LayerManager::InsertLayer(Layer entry, size_t index)
+void program::LayerManager::InsertLayer(LayerItem entry, size_t index)
 {
     if (index > m_layers.size()) {
         throw std::out_of_range("Index is out of range for inserting layer.");
@@ -58,7 +58,7 @@ void program::LayerManager::SetBaseLayerIndex(size_t index)
     m_baseLayerIndex = index;
 }
 
-std::vector<program::Layer> program::LayerManager::GetLayers() const
+std::vector<program::LayerItem> program::LayerManager::GetLayers() const
 {
     return m_layers;
 }

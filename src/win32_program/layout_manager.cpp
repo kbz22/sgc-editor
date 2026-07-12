@@ -12,7 +12,7 @@ win32_program::LayoutManager::LayoutManager(program::ProgramContext& programCont
             0, L"STATIC", nullptr,
             WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
             0,0,0,0,
-            programContext.MainWindowContext->hMainWindow, (HMENU)id, programContext.MainWindowContext->hInstance, nullptr
+            programContext.mainWindowContext->hMainWindow, (HMENU)id, programContext.mainWindowContext->hInstance, nullptr
         );
     };
 
@@ -21,7 +21,7 @@ win32_program::LayoutManager::LayoutManager(program::ProgramContext& programCont
     m_layerMapSplitter = makeSplitter(win32_program::ControlId::SplitLayerMap);
 
     RECT rc;
-    GetClientRect(programContext.MainWindowContext->hMainWindow, &rc);
+    GetClientRect(programContext.mainWindowContext->hMainWindow, &rc);
 
     m_windowWidth  = rc.right;
     m_windowHeight = rc.bottom;
