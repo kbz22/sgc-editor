@@ -44,9 +44,9 @@ void sections::Section::SetHwnd(HWND hwnd, HWND parentHwnd)
     m_parentHwnd = parentHwnd;
 }
 
-LRESULT CALLBACK sections::Section::StaticPaneProc([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data) 
+LRESULT CALLBACK sections::Section::StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data) 
 {
-    auto* self = reinterpret_cast<Section*>(data);
+    auto *self = reinterpret_cast<Section*>(data);
 
     if (self)
     {
@@ -60,7 +60,7 @@ LRESULT CALLBACK sections::Section::StaticPaneProc([[maybe_unused]] HWND hwnd, [
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-LRESULT sections::Section::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)
+LRESULT sections::Section::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }

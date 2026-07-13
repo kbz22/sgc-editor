@@ -37,6 +37,15 @@ void HandleResize(HWND hwnd, LPARAM lParam)
     }
 }
 
+void UpdateAllSections()
+{
+    auto& programContext = program::GetProgramContext();
+
+    for(auto section : programContext.sections) {
+        section->Update();
+    }
+}
+
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {    
     using namespace program;
@@ -79,8 +88,10 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         programContext.sections.push_back(programContext.layersSection.get());
 
         programContext.packageSection = std::make_unique<sections::PackageSection>(context);
-        programContext.sections.push_back(programContext.packageSection.get());       
+        programContext.sections.push_back(programContext.packageSection.get());   
         
+        HandleResize(hwnd, lParam);
+
         break;
     }
 

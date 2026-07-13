@@ -50,16 +50,7 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, LPARAM lParam)
         SendMessage(hRebarBottom, RB_GETBARHEIGHT, 0, 0)
     );
 
-    m_toolbarOffset = hTop + hBottom;
-
-    HDWP hdwp = BeginDeferWindowPos(2);
-    hdwp = DeferWindowPos(hdwp, hRebarTop,    nullptr,
-                        0, 0, rc.right, 0,
-                        SWP_NOZORDER);
-    hdwp = DeferWindowPos(hdwp, hRebarBottom, nullptr,
-                        0, 0, rc.right, 0,
-                        SWP_NOZORDER);
-    EndDeferWindowPos(hdwp);    
+    m_toolbarOffset = hTop + hBottom;    
 
     m_windowWidth = rc.right;
     m_windowHeight = rc.bottom;
@@ -79,7 +70,9 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, LPARAM lParam)
         // Fix by shrinking tileset first
         int shrink = defaults::minCollumnWidth - middle;
         tilesetWidth = std::max(defaults::minCollumnWidth, tilesetWidth - shrink);
-    }    
+    }
+
+    HDWP hdwp;
 
     hdwp = BeginDeferWindowPos(1);    
     hdwp = defer(hdwp, hRebarBottom, 0, hTop, rc.right, hBottom);
