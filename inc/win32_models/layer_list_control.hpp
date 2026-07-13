@@ -9,7 +9,11 @@
 
 namespace win32_models {
 
-    using ListItem = program::LayerItem;
+    struct ListItem
+    {        
+        std::wstring name;
+        bool visible = true;
+    };
 
     enum class MouseTarget {
         None,
@@ -39,6 +43,7 @@ namespace win32_models {
 
             void DrawEntry(HDC hdc, int index, const RECT& rect);
             void SetHoveredIndexAtPoint(int x, int y);
+            void UpdateScrollInfo();
 
         public:
             LayerListControl(HWND hwndParent, HINSTANCE hInstance, int x, int y, int width, int height);

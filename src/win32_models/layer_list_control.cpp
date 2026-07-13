@@ -77,7 +77,7 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
     for(int i=0; i<12; ++i) {
         item.name = L"Layer " + std::to_wstring(i + 1);
         m_layers.push_back(item);
-    } 
+    }
 }
 
 win32_models::LayerListControl::~LayerListControl()
@@ -253,7 +253,36 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                     m_maxScroll);
 
             InvalidateRect(hwnd, nullptr, TRUE);
+            UpdateScrollInfo();
             return 0;
+        }
+
+        case WM_VSCROLL:
+        {
+            int action = LOWORD(wparam);
+
+            switch(action)
+            {
+                case SB_LINEUP:
+                    m_scrollOffsetPixels -= m_rowHeight;
+                    break;
+
+                case SB_LINEDOWN:
+                    m_scrollOffsetPixels += m_rowHeight;
+                    break;
+
+                case SB_THUMBPOSITION:
+                case SB_THUMBTRACK:
+                    m_scrollOffsetPixels = HIWORD(wparam);
+                    break;
+            }
+
+            // ClampScroll();
+            UpdateScrollInfo();
+
+            InvalidateRect(hwnd,nullptr,FALSE);
+
+            break;
         }
 
         case WM_MOUSEMOVE:
@@ -337,6 +366,8 @@ void win32_models::LayerListControl::Resize(int x, int y, int width, int height)
         height,
         TRUE
     );
+
+    UpdateScrollInfo();
 }
 
 void win32_models::LayerListControl::Resize(int width, int height)
@@ -345,8 +376,18 @@ void win32_models::LayerListControl::Resize(int width, int height)
 }
 
 void win32_models::LayerListControl::Refresh(program::LayerManager& layerManager)
-{
-    m_layers = layerManager.GetLayers();    
+{    
+    m_layers.clear();
+    for(auto &layer : layerManager.GetLayers())
+    {
+        ListItem item;
+        item.name = layer.name;
+        item.visible = layer.visible;
+
+        m_layers.push_back(item);
+    }
+
+    UpdateScrollInfo();
 }
 
 void win32_models::LayerListControl::SetSelectedLayer(size_t layerIndex)
@@ -384,4 +425,25 @@ void win32_models::LayerListControl::SetHoveredIndexAtPoint([[maybe_unused]] int
     }
 
     return;
+}
+
+void win32_models::LayerListControl::UpdateScrollInfo()
+{
+    RECT clientRect;
+    GetClientRect(m_hwnd, &clientRect);
+
+    SCROLLINFO si = {};
+    si.cbSize = sizeof(si);
+    si.fMask = SIF_RANGE | SIF_PAGE | SIF_POS;
+    si.nMin = 0;
+    si.nMax = m_layers.size() * m_rowHeight;
+    si.nPage = clientRect.bottom - clientRect.top;
+    si.nPos = m_scrollOffsetPixels;
+
+    SetScrollInfo(
+        m_hwnd,
+        SB_VERT,
+        &si,
+        TRUE
+    );
 }
