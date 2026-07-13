@@ -11,6 +11,12 @@ namespace win32_models {
 
     using ListItem = program::LayerItem;
 
+    enum class MouseTarget {
+        None,
+        Entry,
+        EyeButton
+    };
+
     class LayerListControl
     {
         private:
@@ -20,8 +26,9 @@ namespace win32_models {
             std::vector<ListItem> m_layers;
             size_t m_selectedLayerIndex = 0;
             size_t m_hoveredLayerIndex = 0;
-            bool m_isMouseOverAnyEntry = false;
+            MouseTarget m_mouseOver = MouseTarget::None;
             static bool m_isLayerListProcRegistered;
+            HBRUSH m_brushHighlightHover = nullptr;
 
             int m_rowHeight = 32;
             int m_scrollOffsetPixels = 0;

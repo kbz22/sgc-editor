@@ -42,6 +42,27 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
         0,
         reinterpret_cast<DWORD_PTR>(this)
     );
+
+    {
+    COLORREF c = GetSysColor(COLOR_HIGHLIGHT);
+
+    BYTE r = GetRValue(c);
+    BYTE g = GetGValue(c);
+    BYTE b = GetBValue(c);
+
+    auto Lerp = [](BYTE a, BYTE b, float t)
+    {
+        return (BYTE)(a + (b - a) * t);
+    };
+
+    COLORREF hover =
+        RGB(
+            Lerp(r, 255, 0.25f),
+            Lerp(g, 255, 0.25f),
+            Lerp(b, 255, 0.25f));
+            
+    m_brushHighlightHover = CreateSolidBrush(hover);
+    }
     
     m_imageList = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     HBITMAP hBmp = win32_helpers::LoadPngWIC(L"./layerlist_icons.png");
@@ -56,7 +77,7 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
     for(int i=0; i<12; ++i) {
         item.name = L"Layer " + std::to_wstring(i + 1);
         m_layers.push_back(item);
-    }    
+    } 
 }
 
 win32_models::LayerListControl::~LayerListControl()
@@ -96,36 +117,82 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
         (index + 1) * m_rowHeight - m_scrollOffsetPixels
     };
 
-    HBRUSH brush;
+    int deltaIconHeight = (m_rowHeight - 24) / 2;
+
+    RECT eyeButtonRect =
+    {
+        4,
+        row.top + deltaIconHeight,
+        4 + 24,
+        row.bottom - deltaIconHeight
+    };
+
+    HBRUSH brushRect;
+    HBRUSH brushEyeButton;    
 
     if (index == m_selectedLayerIndex)
     {
-        brush = GetSysColorBrush(COLOR_HIGHLIGHT);
+        brushRect = GetSysColorBrush(COLOR_HIGHLIGHT);
+        brushEyeButton = GetSysColorBrush(COLOR_HIGHLIGHT);
+
+        if(m_mouseOver == MouseTarget::EyeButton && index == m_hoveredLayerIndex)
+        {
+            brushEyeButton = m_brushHighlightHover;
+        }        
     }
-    else if (index == m_hoveredLayerIndex)
+    else switch (m_mouseOver)
     {
-        brush = GetSysColorBrush(COLOR_BTNFACE);
-    }
-    else
-    {
-        brush = GetSysColorBrush(COLOR_WINDOW);
+        case MouseTarget::Entry:
+            if (index == m_hoveredLayerIndex)
+            {
+                brushRect = GetSysColorBrush(COLOR_BTNFACE);
+            }
+            else
+            {
+                brushRect = GetSysColorBrush(COLOR_WINDOW);
+            }
+            brushEyeButton = brushRect;
+            break;
+
+        case MouseTarget::EyeButton:
+            if (index == m_hoveredLayerIndex)
+            {
+                brushEyeButton = GetSysColorBrush(COLOR_BTNFACE);
+            }
+            else
+            {
+                brushEyeButton = GetSysColorBrush(COLOR_WINDOW);
+            }
+            brushRect = GetSysColorBrush(COLOR_WINDOW);
+            break;
+
+        default:
+            brushRect = GetSysColorBrush(COLOR_WINDOW);
+            brushEyeButton = brushRect;
+            break;
     }
 
     FillRect(
         hdc,
-        &row,
-        // m_selectedLayerIndex == index ? GetSysColorBrush(COLOR_HIGHLIGHT) : GetSysColorBrush(COLOR_WINDOW)
-        brush
+        &row,        
+        brushRect
+    );
+
+    FillRect(
+        hdc,
+        &eyeButtonRect,        
+        brushEyeButton
     );
 
     row.top += 2;
+    brushEyeButton = GetSysColorBrush(COLOR_WINDOW);    
 
     ImageList_Draw(
         m_imageList,
-        0,
+        layer.visible ? 0 : 1,
         hdc,
-        row.left + 4,
-        row.top + 2,
+        eyeButtonRect.left,
+        eyeButtonRect.top,
         ILD_NORMAL
     );
 
@@ -195,10 +262,11 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             int y = GET_Y_LPARAM(lparam);
 
             auto prevHoveredIndex = m_hoveredLayerIndex;
+            auto previousTarget = m_mouseOver;
 
             SetHoveredIndexAtPoint(x, y);
 
-            if(prevHoveredIndex != m_hoveredLayerIndex && m_isMouseOverAnyEntry)
+            if(prevHoveredIndex != m_hoveredLayerIndex || previousTarget != m_mouseOver)
             {
                 InvalidateRect(hwnd, nullptr, TRUE);
             }
@@ -217,7 +285,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
         case WM_MOUSELEAVE:
         {
             m_hoveredLayerIndex = 0;
-            m_isMouseOverAnyEntry = false;
+            m_mouseOver = MouseTarget::None;
 
             InvalidateRect(hwnd, nullptr, FALSE);
 
@@ -231,12 +299,23 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
 
             SetHoveredIndexAtPoint(x, y);
 
-            if (!m_isMouseOverAnyEntry)
+            switch (m_mouseOver)
             {
-                return 0;
-            }
+                case MouseTarget::Entry:
+                    m_selectedLayerIndex = m_hoveredLayerIndex;
+                    break;
 
-            m_selectedLayerIndex = m_hoveredLayerIndex;
+                case MouseTarget::EyeButton:
+                    if (m_hoveredLayerIndex < m_layers.size())
+                    {
+                        auto& layer = m_layers[m_hoveredLayerIndex];
+                        layer.visible = !layer.visible;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
 
             InvalidateRect(hwnd, nullptr, FALSE);
 
@@ -290,13 +369,19 @@ void win32_models::LayerListControl::SetHoveredIndexAtPoint([[maybe_unused]] int
     if (index < 0 || index >= static_cast<int>(m_layers.size()))
     {
         m_hoveredLayerIndex = 0;
-        m_isMouseOverAnyEntry = false;
+        m_mouseOver = MouseTarget::None;
 
         return;
     }
-    
+
     m_hoveredLayerIndex = index;
-    m_isMouseOverAnyEntry = true;
+
+    if(x < 32 && x > 0) {        
+        m_mouseOver = MouseTarget::EyeButton;
+    }
+    else {
+        m_mouseOver = MouseTarget::Entry;
+    }
 
     return;
 }
