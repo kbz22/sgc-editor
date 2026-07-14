@@ -27,9 +27,11 @@ namespace win32_models {
             HWND m_hwnd;
             HIMAGELIST m_imageList = nullptr;
             HIMAGELIST m_imageListDisabled = nullptr;
+            int m_imageListIndexOpen = 0;
+            int m_imageListIndexClosed = 1;
             std::vector<ListItem> m_layers;
             size_t m_selectedLayerIndex = 0;
-            size_t m_hoveredLayerIndex = 0;
+            size_t m_hoveredLayerIndex = 0;            
             MouseTarget m_mouseOver = MouseTarget::None;
             static bool m_isLayerListProcRegistered;
             HBRUSH m_brushHighlightHover = nullptr;
@@ -54,6 +56,7 @@ namespace win32_models {
             void Refresh(program::LayerManager& layerManager);
 
             void SetSelectedLayer(size_t layerIndex);
+            void SetHImageList(HIMAGELIST imageList, HIMAGELIST imageListDisabled, int indexOpen = 0, int indexClosed = 1);
 
             size_t GetSelectedLayer() const;        
     };

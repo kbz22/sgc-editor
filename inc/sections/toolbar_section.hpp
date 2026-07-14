@@ -7,6 +7,10 @@
 #include <windows.h>
 #include <vector>
 
+namespace program {
+    struct ProgramContext;
+}
+
 namespace sections {
 
     class ToolbarSection : public Section
@@ -20,7 +24,7 @@ namespace sections {
             HWND m_hwndToolbar;
 
         public:
-            ToolbarSection(win32_program::MainWindowContext& context);
+            ToolbarSection(program::ProgramContext& programContext);
             ~ToolbarSection();
 
             void Update() override;

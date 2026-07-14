@@ -21,6 +21,7 @@ namespace defaults
     const std::wstring_view NewFileTooltip = L"New File";
 
     // Assets
-    const std::wstring_view ToolbarIconPath = L"./testicon2.png";
+    const std::wstring_view IconsPath = L"./toolbar_icons.png";
+    const std::wstring_view DisabledIconsPath = L"./toolbar_icons_disabled.png";
     
 }

@@ -1,18 +1,27 @@
 #include "sections/layers_section.hpp"
 #include <commctrl.h>
+#include "program/program.hpp"
 
-sections::LayersSection::LayersSection(win32_program::MainWindowContext& context) :
-    Section{L"LayerList", win32_program::ControlId::LayerList, context}    
+sections::LayersSection::LayersSection(program::ProgramContext& programContext) :
+    Section{L"LayerList", win32_program::ControlId::LayerList, *programContext.mainWindowContext}    
 {
     RECT rect;
     GetClientRect(GetHwnd(), &rect);
+
     m_layerListControl = std::make_unique<win32_models::LayerListControl>(
         GetHwnd(),
-        context.hInstance,
+        programContext.mainWindowContext->hInstance,
         0,
         0,
         rect.right - rect.left,
         rect.bottom - rect.top
+    );
+
+    m_layerListControl->SetHImageList(
+        programContext.toolbarIcons,
+        programContext.toolbarIconsDisabled,
+        13,
+        14
     );
 }
 
@@ -29,7 +38,7 @@ void sections::LayersSection::HandleSectionResize()
 {
     RECT rect;
     GetClientRect(GetHwnd(), &rect);
-    
+
     m_layerListControl->Resize(
         rect.right - rect.left,
         rect.bottom - rect.top

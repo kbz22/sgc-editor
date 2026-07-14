@@ -1,9 +1,7 @@
 #pragma once
 
-#include <string>
 #include "sgc_view/tileset_view.hpp"
 #include "sgc_view/map_view.hpp"
-#include <sgc/graphics/rectangle.hpp>
 
 #include "sections/tileset_section.hpp"
 #include "sections/map_section.hpp"
@@ -14,10 +12,13 @@
 
 #include "win32_program/win32_context.hpp"
 #include "program/program_state.hpp"
-
 #include "program/layer_manager.hpp"
 
-namespace program {    
+#include <sgc/graphics/rectangle.hpp>
+#include <commctrl.h>
+#include <string>
+
+namespace program {
 
     struct ProgramContext
     {
@@ -38,6 +39,9 @@ namespace program {
         std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
 
         std::unique_ptr<program::LayerManager> layerManager;
+
+        HIMAGELIST toolbarIcons;
+        HIMAGELIST toolbarIconsDisabled;
     };
 
     ProgramContext& GetProgramContext();

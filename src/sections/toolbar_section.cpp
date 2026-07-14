@@ -1,13 +1,16 @@
 #include "sections/toolbar_section.hpp"
 #include "win32_helpers/create_helpers.hpp"
 #include "win32_helpers/load_bitmap.hpp"
+#include "program/program.hpp"
 
 #include <windowsx.h>
 #include <commctrl.h>
 
-sections::ToolbarSection::ToolbarSection(win32_program::MainWindowContext& context)    
+sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext)
 {
     using namespace win32_program;
+
+    MainWindowContext &context = *programContext.mainWindowContext;
 
     auto hwndRebar = win32_helpers::CreateRebar(
         context.hMainWindow,
@@ -26,18 +29,18 @@ sections::ToolbarSection::ToolbarSection(win32_program::MainWindowContext& conte
 
     SendMessage(hwndToolbar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
 
-    HIMAGELIST img = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+    /* HIMAGELIST img = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     HBITMAP hBmp = win32_helpers::LoadPngWIC(L"./testicon2.png");
 
     HIMAGELIST imgDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     HBITMAP hBmpDisabled = win32_helpers::LoadPngWIC(L"./testicon2_disabled.png");
     
     ImageList_Add(img, hBmp, NULL);
-    ImageList_Add(imgDisabled, hBmpDisabled, NULL);
+    ImageList_Add(imgDisabled, hBmpDisabled, NULL); */
 
     SendMessage(hwndToolbar, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);        
-    SendMessage(hwndToolbar, TB_SETIMAGELIST, 0, (LPARAM)img);
-    SendMessage(hwndToolbar, TB_SETDISABLEDIMAGELIST, 0, (LPARAM)imgDisabled);
+    SendMessage(hwndToolbar, TB_SETIMAGELIST, 0, (LPARAM)programContext.toolbarIcons);
+    SendMessage(hwndToolbar, TB_SETDISABLEDIMAGELIST, 0, (LPARAM)programContext.toolbarIconsDisabled);
 
     std::vector<win32_models::ToolbarButton> buttons =
     {

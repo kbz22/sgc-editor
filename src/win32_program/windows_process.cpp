@@ -9,8 +9,12 @@
 #include "program/program.hpp"
 #include "win32_program/layout_manager.hpp"
 
+#include "win32_helpers/load_bitmap.hpp"
+
 #include <windows.h>
 #include <CommCtrl.h>
+
+#include "defaults.hpp"
 
 win32_program::LayoutManager& GetLayoutManager()
 {
@@ -46,6 +50,20 @@ void UpdateAllSections()
     }
 }
 
+void LoadToolbarIcons()
+{
+    auto& programContext = program::GetProgramContext();
+
+    programContext.toolbarIcons = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+    programContext.toolbarIconsDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+
+    HBITMAP hBmp = win32_helpers::LoadPngWIC(defaults::IconsPath.data());
+    HBITMAP hBmpDisabled = win32_helpers::LoadPngWIC(defaults::DisabledIconsPath.data());
+
+    ImageList_Add(programContext.toolbarIcons, hBmp, NULL);
+    ImageList_Add(programContext.toolbarIconsDisabled, hBmpDisabled, NULL);
+}
+
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {    
     using namespace program;
@@ -58,6 +76,8 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     {
     case WM_CREATE:
     {        
+        LoadToolbarIcons();
+
         programContext.mainWindowContext->hMainWindow = hwnd;
 
         auto &context = *programContext.mainWindowContext;
@@ -72,7 +92,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         wc.lpszClassName = L"SectionWindow";
         RegisterClassEx(&wc);
 
-        programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(context);
+        programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(programContext);
         programContext.sections.push_back(programContext.toolbarSection.get());
 
         programContext.menuSection = std::make_unique<sections::MenuSection>(context);
@@ -84,7 +104,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         programContext.tilesetSection = std::make_unique<sections::TilesetSection>(context);
         programContext.sections.push_back(programContext.tilesetSection.get());
 
-        programContext.layersSection = std::make_unique<sections::LayersSection>(context);
+        programContext.layersSection = std::make_unique<sections::LayersSection>(programContext);
         programContext.sections.push_back(programContext.layersSection.get());
 
         programContext.packageSection = std::make_unique<sections::PackageSection>(context);

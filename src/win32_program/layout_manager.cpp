@@ -27,7 +27,7 @@ win32_program::LayoutManager::LayoutManager(program::ProgramContext& programCont
     m_windowHeight = rc.bottom;
 }
 
-void win32_program::LayoutManager::HandleResize(HWND hwnd, LPARAM lParam)
+void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPARAM lParam)
 {
     auto defer = [](HDWP dwp, HWND handle, int x, int y, int w, int h){
         return DeferWindowPos(
@@ -116,7 +116,7 @@ void win32_program::LayoutManager::ResetDraggedSplitter()
     m_draggedSplitter = DraggedSplitter::None;
 }
 
-void win32_program::LayoutManager::HandleDragging(HWND hwnd, LPARAM lParam)
+void win32_program::LayoutManager::HandleDragging([[maybe_unused]] HWND hwnd, LPARAM lParam)
 {
     const int x = GET_X_LPARAM(lParam);
     const int y = GET_Y_LPARAM(lParam);

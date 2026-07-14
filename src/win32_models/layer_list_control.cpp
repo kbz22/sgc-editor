@@ -64,14 +64,14 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
     m_brushHighlightHover = CreateSolidBrush(hover);
     }
     
-    m_imageList = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+    /* m_imageList = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     HBITMAP hBmp = win32_helpers::LoadPngWIC(L"./layerlist_icons.png");
 
     m_imageListDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     HBITMAP hBmpDisabled = win32_helpers::LoadPngWIC(L"./layerlist_icons_disabled.png");
 
     ImageList_Add(m_imageList, hBmp, NULL);
-    ImageList_Add(m_imageListDisabled, hBmpDisabled, NULL);
+    ImageList_Add(m_imageListDisabled, hBmpDisabled, NULL); */
 
     ListItem item;
     for(int i=0; i<12; ++i) {
@@ -189,7 +189,7 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
 
     ImageList_Draw(
         m_imageList,
-        layer.visible ? 0 : 1,
+        layer.visible ? m_imageListIndexOpen : m_imageListIndexClosed,
         hdc,
         eyeButtonRect.left,
         eyeButtonRect.top,
@@ -446,4 +446,12 @@ void win32_models::LayerListControl::UpdateScrollInfo()
         &si,
         TRUE
     );
+}
+
+void win32_models::LayerListControl::SetHImageList(HIMAGELIST imageList, HIMAGELIST imageListDisabled, int indexOpen, int indexClosed)
+{
+    m_imageListIndexOpen = indexOpen;
+    m_imageListIndexClosed = indexClosed;
+    m_imageList = imageList;
+    m_imageListDisabled = imageListDisabled;
 }
