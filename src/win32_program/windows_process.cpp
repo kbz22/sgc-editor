@@ -152,15 +152,15 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
                 break;
 
             case static_cast<int>(CommandId::LayerRemove):  
-                // win32_program::OnLayerRemoveClicked();
+                win32_program::OnLayerRemoveClicked();
                 break;
 
             case static_cast<int>(CommandId::LayerMoveUp):
-                // win32_program::OnLayerMoveUpClicked();
+                win32_program::OnLayerMoveUpClicked();
                 break;
             
             case static_cast<int>(CommandId::LayerMoveDown):
-                // win32_program::OnLayerMoveDownClicked();
+                win32_program::OnLayerMoveDownClicked();
                 break;
         }
 

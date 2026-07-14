@@ -196,3 +196,49 @@ void win32_program::OnLayerAddClicked()
         programContext.layersSection->Update();
     }
 }
+
+void win32_program::OnLayerRemoveClicked()
+{
+    auto& programContext = program::GetProgramContext();
+
+    if(programContext.layerManager != nullptr) {
+        auto activeIndex = programContext.layerManager->GetActiveLayerIndex();
+        programContext.layerManager->RemoveLayer(activeIndex);
+
+        programContext.mapSection->Refresh(*programContext.layerManager);
+        programContext.mapSection->Update();
+
+        programContext.layersSection->Refresh(*programContext.layerManager);
+        programContext.layersSection->Update();
+    }
+}
+
+void win32_program::OnLayerMoveUpClicked()
+{
+    auto& programContext = program::GetProgramContext();
+
+    if(programContext.layerManager != nullptr) {
+        programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), -1);
+
+        programContext.mapSection->Refresh(*programContext.layerManager);
+        programContext.mapSection->Update();
+
+        programContext.layersSection->Refresh(*programContext.layerManager);
+        programContext.layersSection->Update();
+    }
+}
+
+void win32_program::OnLayerMoveDownClicked()
+{
+    auto& programContext = program::GetProgramContext();
+
+    if(programContext.layerManager != nullptr) {
+        programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), 1);
+
+        programContext.mapSection->Refresh(*programContext.layerManager);
+        programContext.mapSection->Update();
+
+        programContext.layersSection->Refresh(*programContext.layerManager);
+        programContext.layersSection->Update();
+    }
+}

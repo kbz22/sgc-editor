@@ -73,3 +73,37 @@ size_t program::LayerManager::GetBaseLayerIndex() const
 {
     return m_baseLayerIndex;
 }
+
+void program::LayerManager::MoveLayer(size_t fromIndex, int movement)
+{
+    if (fromIndex >= m_layers.size()) {
+        throw std::out_of_range("fromIndex is out of range for moving layer.");
+    }
+
+    int toIndex = static_cast<int>(fromIndex) + movement;
+
+    if (toIndex < 0 || toIndex >= static_cast<int>(m_layers.size())) {
+        throw std::out_of_range("toIndex is out of range for moving layer.");
+    }
+
+    auto layer = m_layers[fromIndex];
+    m_layers.erase(m_layers.begin() + fromIndex);
+    m_layers.insert(m_layers.begin() + toIndex, layer);
+
+    // Update active and base layer indices if necessary
+    if (m_activeLayerIndex == fromIndex) {
+        m_activeLayerIndex = toIndex;
+    } else if (m_activeLayerIndex > fromIndex && m_activeLayerIndex <= toIndex) {
+        --m_activeLayerIndex;
+    } else if (m_activeLayerIndex < fromIndex && m_activeLayerIndex >= toIndex) {
+        ++m_activeLayerIndex;
+    }
+
+    if (m_baseLayerIndex == fromIndex) {
+        m_baseLayerIndex = toIndex;
+    } else if (m_baseLayerIndex > fromIndex && m_baseLayerIndex <= toIndex) {
+        --m_baseLayerIndex;
+    } else if (m_baseLayerIndex < fromIndex && m_baseLayerIndex >= toIndex) {
+        ++m_baseLayerIndex;
+    }
+}
