@@ -30,6 +30,8 @@ namespace program {
             void InsertLayer(LayerItem entry, size_t index);
             void RemoveLayer(size_t index);
             void MoveLayer(size_t fromIndex, int movement);
+            void MoveActiveLayer(int movement);
+            
             void SetActiveLayerIndex(size_t index);
             void SetBaseLayerIndex(size_t index);     
 

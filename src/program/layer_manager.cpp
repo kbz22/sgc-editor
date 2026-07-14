@@ -74,6 +74,21 @@ size_t program::LayerManager::GetBaseLayerIndex() const
     return m_baseLayerIndex;
 }
 
+void program::LayerManager::MoveActiveLayer(int movement)
+{
+    MoveLayer(m_activeLayerIndex, movement);
+
+    m_activeLayerIndex = static_cast<size_t>(static_cast<int>(m_activeLayerIndex) + movement);
+
+    if(m_activeLayerIndex >= m_layers.size()) {
+        m_activeLayerIndex = m_layers.size() - 1;
+    }
+
+    if(m_activeLayerIndex < 0) {
+        m_activeLayerIndex = 0;
+    }
+}
+
 void program::LayerManager::MoveLayer(size_t fromIndex, int movement)
 {
     if (fromIndex >= m_layers.size()) {
@@ -89,21 +104,4 @@ void program::LayerManager::MoveLayer(size_t fromIndex, int movement)
     auto layer = m_layers[fromIndex];
     m_layers.erase(m_layers.begin() + fromIndex);
     m_layers.insert(m_layers.begin() + toIndex, layer);
-
-    // Update active and base layer indices if necessary
-    if (m_activeLayerIndex == fromIndex) {
-        m_activeLayerIndex = toIndex;
-    } else if (m_activeLayerIndex > fromIndex && m_activeLayerIndex <= toIndex) {
-        --m_activeLayerIndex;
-    } else if (m_activeLayerIndex < fromIndex && m_activeLayerIndex >= toIndex) {
-        ++m_activeLayerIndex;
-    }
-
-    if (m_baseLayerIndex == fromIndex) {
-        m_baseLayerIndex = toIndex;
-    } else if (m_baseLayerIndex > fromIndex && m_baseLayerIndex <= toIndex) {
-        --m_baseLayerIndex;
-    } else if (m_baseLayerIndex < fromIndex && m_baseLayerIndex >= toIndex) {
-        ++m_baseLayerIndex;
-    }
 }

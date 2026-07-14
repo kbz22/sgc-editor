@@ -57,12 +57,13 @@ namespace win32_models {
             void Resize(int x, int y, int width, int height);
             void Resize(int width, int height);
             void Refresh(program::LayerManager& layerManager);
+            void Redraw();
 
             void SetSelectedLayer(size_t layerIndex);
             void SetHImageList(HIMAGELIST imageList, HIMAGELIST imageListDisabled, int indexOpen = 0, int indexClosed = 1);
 
             size_t GetSelectedLayer() const;
-            
+
             void RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback);
     };
 

@@ -218,11 +218,17 @@ void win32_program::OnLayerMoveUpClicked()
     auto& programContext = program::GetProgramContext();
 
     if(programContext.layerManager != nullptr) {
-        programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), -1);
+        try {
+            // programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), -1);
+            programContext.layerManager->MoveActiveLayer(-1);
+        } catch (const std::out_of_range& e) {
+            //! no need to note the out of range error
+        }        
 
         programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
 
+        programContext.layersSection->SetSelectedLayer(programContext.layerManager->GetActiveLayerIndex());
         programContext.layersSection->Refresh(*programContext.layerManager);
         programContext.layersSection->Update();
     }
@@ -233,11 +239,17 @@ void win32_program::OnLayerMoveDownClicked()
     auto& programContext = program::GetProgramContext();
 
     if(programContext.layerManager != nullptr) {
-        programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), 1);
+        try {
+            // programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), 1);
+            programContext.layerManager->MoveActiveLayer(1);
+        } catch (const std::out_of_range& e) {
+            //! no need to note the out of range error
+        }
 
         programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
 
+        programContext.layersSection->SetSelectedLayer(programContext.layerManager->GetActiveLayerIndex());
         programContext.layersSection->Refresh(*programContext.layerManager);
         programContext.layersSection->Update();
     }

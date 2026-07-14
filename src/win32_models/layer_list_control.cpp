@@ -369,6 +369,12 @@ void win32_models::LayerListControl::Resize(int x, int y, int width, int height)
     );
 
     UpdateScrollInfo();
+    InvalidateRect(m_hwnd, nullptr, TRUE);
+}
+
+void win32_models::LayerListControl::Redraw()
+{
+    InvalidateRect(m_hwnd, nullptr, TRUE);
 }
 
 void win32_models::LayerListControl::Resize(int width, int height)
