@@ -5,6 +5,7 @@
 
 #include <windows.h>
 #include <string>
+#include <functional>
 #include <CommCtrl.h>
 
 namespace win32_models {
@@ -40,6 +41,8 @@ namespace win32_models {
             int m_scrollOffsetPixels = 0;
             int m_maxScroll = 0;
 
+            std::function<void(size_t)> m_selectedLayerChangeCallback = nullptr;
+
             static LRESULT CALLBACK LayerListStaticProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
             LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
@@ -58,7 +61,9 @@ namespace win32_models {
             void SetSelectedLayer(size_t layerIndex);
             void SetHImageList(HIMAGELIST imageList, HIMAGELIST imageListDisabled, int indexOpen = 0, int indexClosed = 1);
 
-            size_t GetSelectedLayer() const;        
+            size_t GetSelectedLayer() const;
+            
+            void RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback);
     };
 
 }

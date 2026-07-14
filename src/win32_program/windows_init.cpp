@@ -1,5 +1,5 @@
 #include "win32_program/windows_init.hpp"
-#include "win32_program/controls_fun.hpp"
+#include "win32_program/toolbar_functions.hpp"
 #include "win32_program/windows_process.hpp"
 #include "program/program.hpp"
 #include "defaults.hpp"

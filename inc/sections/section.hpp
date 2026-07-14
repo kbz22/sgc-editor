@@ -4,7 +4,6 @@
 #include "win32_program/win32_context.hpp"
 #include "win32_program/windows_controls.hpp"
 #include "sgc_view/sgc_view.hpp"
-#include "program/program_state.hpp"
 #include <sgc/sdl/sdl.hpp>
 
 namespace sections {

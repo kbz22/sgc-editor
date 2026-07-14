@@ -11,7 +11,6 @@
 #include "sections/package_section.hpp"
 
 #include "win32_program/win32_context.hpp"
-#include "program/program_state.hpp"
 #include "program/layer_manager.hpp"
 
 #include <sgc/graphics/rectangle.hpp>
@@ -32,8 +31,7 @@ namespace program {
         std::vector<sections::Section*> sections;
 
         std::unique_ptr<sgc::graphics::Rectangle> selectionRectangleOnTileset;
-
-        EditorState state = EditorState::Default;
+        
         std::wstring currentProjectName;
 
         std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;

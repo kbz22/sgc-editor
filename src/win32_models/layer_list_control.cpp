@@ -73,11 +73,11 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
     ImageList_Add(m_imageList, hBmp, NULL);
     ImageList_Add(m_imageListDisabled, hBmpDisabled, NULL); */
 
-    ListItem item;
+    /* ListItem item;
     for(int i=0; i<12; ++i) {
         item.name = L"Layer " + std::to_wstring(i + 1);
         m_layers.push_back(item);
-    }
+    } */
 }
 
 win32_models::LayerListControl::~LayerListControl()
@@ -331,7 +331,8 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             switch (m_mouseOver)
             {
                 case MouseTarget::Entry:
-                    m_selectedLayerIndex = m_hoveredLayerIndex;
+                    // m_selectedLayerIndex = m_hoveredLayerIndex;
+                    SetSelectedLayer(m_hoveredLayerIndex);
                     break;
 
                 case MouseTarget::EyeButton:
@@ -395,6 +396,10 @@ void win32_models::LayerListControl::SetSelectedLayer(size_t layerIndex)
     if (layerIndex < m_layers.size())
     {
         m_selectedLayerIndex = layerIndex;
+
+        if (m_selectedLayerChangeCallback) {
+            m_selectedLayerChangeCallback(layerIndex);
+        }
     }
 }
 
@@ -454,4 +459,9 @@ void win32_models::LayerListControl::SetHImageList(HIMAGELIST imageList, HIMAGEL
     m_imageListIndexClosed = indexClosed;
     m_imageList = imageList;
     m_imageListDisabled = imageListDisabled;
+}
+
+void win32_models::LayerListControl::RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback)
+{
+    m_selectedLayerChangeCallback = callback;
 }

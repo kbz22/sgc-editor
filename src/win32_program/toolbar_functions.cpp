@@ -1,4 +1,4 @@
-#include "win32_program/controls_fun.hpp"
+#include "win32_program/toolbar_functions.hpp"
 
 #include "sgc_view/sgc_view.hpp"
 #include "win32_program/windows_init.hpp"
@@ -17,10 +17,6 @@
 
 #include "new_file_dialog.h"
 #include <commdlg.h>
-
-void win32_program::OnMenuFileClicked()
-{
-}
 
 INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -177,4 +173,26 @@ void win32_program::OnFileOpenClicked()
     ); */
 
     // contextProgram.mapView->SetStorage(storage);
+}
+
+void win32_program::OnLayerAddClicked()
+{
+    auto& programContext = program::GetProgramContext();
+
+    if(programContext.layerManager != nullptr) {
+
+        auto storage = std::make_shared<sgc::data::ChunkedTileStorage>();
+        storage->SetTileAt({0, 0}, 0);
+
+        programContext.layerManager->AddLayer({
+            storage,
+            L"New Layer"
+        });
+
+        programContext.mapSection->Refresh(*programContext.layerManager);
+        programContext.mapSection->Update();
+
+        programContext.layersSection->Refresh(*programContext.layerManager);
+        programContext.layersSection->Update();
+    }
 }

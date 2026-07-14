@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <functional>
 #include "sections/section.hpp"
 #include "win32_models/layer_list_control.hpp"
 
@@ -24,6 +25,9 @@ namespace sections {
 
             void Update() override;
             void HandleSectionResize() override;
+
+            void Refresh(program::LayerManager& layerManager);            
+            void RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback);
     };
 
 }

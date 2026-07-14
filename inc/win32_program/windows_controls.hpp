@@ -28,6 +28,14 @@ namespace win32_program
 
         FileNew = 2001,
         FileOpen = 2002,
-        FileSave = 2003
+        FileSave = 2003,
+
+        EditUndo = 3001,
+        EditRedo = 3002,
+
+        LayerAdd = 4001,
+        LayerRemove = 4002,
+        LayerMoveUp = 4003,
+        LayerMoveDown = 4004
     };
 }

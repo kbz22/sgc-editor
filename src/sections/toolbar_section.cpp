@@ -29,30 +29,14 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
 
     SendMessage(hwndToolbar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
 
-    /* HIMAGELIST img = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
-    HBITMAP hBmp = win32_helpers::LoadPngWIC(L"./testicon2.png");
-
-    HIMAGELIST imgDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
-    HBITMAP hBmpDisabled = win32_helpers::LoadPngWIC(L"./testicon2_disabled.png");
-    
-    ImageList_Add(img, hBmp, NULL);
-    ImageList_Add(imgDisabled, hBmpDisabled, NULL); */
-
     SendMessage(hwndToolbar, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);        
     SendMessage(hwndToolbar, TB_SETIMAGELIST, 0, (LPARAM)programContext.toolbarIcons);
     SendMessage(hwndToolbar, TB_SETDISABLEDIMAGELIST, 0, (LPARAM)programContext.toolbarIconsDisabled);
 
-    std::vector<win32_models::ToolbarButton> buttons =
-    {
-        {0, CommandId::FileNew,  L"New File", true},
-        {1, CommandId::FileOpen, L"Open File", true},
-        {2, CommandId::FileSave, L"Save File", false}
-    };
-
     std::vector<TBBUTTON> tbButtons;
-    tbButtons.reserve(buttons.size());
+    tbButtons.reserve(m_buttons.size());
 
-    for (const auto& b : buttons)
+    for (const auto& b : m_buttons)
     {
         TBBUTTON btn = {};
 
@@ -70,7 +54,7 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
             (WPARAM)tbButtons.size(),
             (LPARAM)tbButtons.data());     
 
-    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(30, 30));
+    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(24, 24));
     SendMessage(hwndToolbar, TB_AUTOSIZE, 0, 0);
 
     SIZE sz = {};

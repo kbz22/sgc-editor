@@ -2,7 +2,7 @@
 #include "win32_program/windows_init.hpp"
 
 #include "win32_program/windows_controls.hpp"
-#include "win32_program/controls_fun.hpp"
+#include "win32_program/toolbar_functions.hpp"
 
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
@@ -138,6 +138,30 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
             case static_cast<int>(CommandId::FileOpen):
                 win32_program::OnFileOpenClicked();
                 break;
+
+            case static_cast<int>(CommandId::EditUndo):
+                // win32_program::OnEditUndoClicked();
+                break;
+
+            case static_cast<int>(CommandId::EditRedo):
+                // win32_program::OnEditRedoClicked();
+                break;
+
+            case static_cast<int>(CommandId::LayerAdd):
+                win32_program::OnLayerAddClicked();
+                break;
+
+            case static_cast<int>(CommandId::LayerRemove):  
+                // win32_program::OnLayerRemoveClicked();
+                break;
+
+            case static_cast<int>(CommandId::LayerMoveUp):
+                // win32_program::OnLayerMoveUpClicked();
+                break;
+            
+            case static_cast<int>(CommandId::LayerMoveDown):
+                // win32_program::OnLayerMoveDownClicked();
+                break;
         }
 
         break;
@@ -145,8 +169,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     
     case WM_SIZE:
     {        
-        auto& layoutManager = GetLayoutManager();
-        layoutManager.HandleResize(hwnd, lParam);
+        // auto& layoutManager = GetLayoutManager();
+        // layoutManager.HandleResize(hwnd, lParam);
+        HandleResize(hwnd, lParam);
         break;
     }
 

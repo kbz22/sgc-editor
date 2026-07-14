@@ -31,7 +31,15 @@ sections::LayersSection::~LayersSection()
 
 void sections::LayersSection::Update()
 {
+    HandleSectionResize();
     return;
+}
+
+void sections::LayersSection::Refresh(program::LayerManager& layerManager)
+{
+    if(m_layerListControl != nullptr) {
+        m_layerListControl->Refresh(layerManager);
+    }
 }
 
 void sections::LayersSection::HandleSectionResize()
@@ -45,4 +53,11 @@ void sections::LayersSection::HandleSectionResize()
     );
 
     return;
+}
+
+void sections::LayersSection::RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback)
+{
+    if(m_layerListControl != nullptr) {
+        m_layerListControl->RegisterSelectedLayerChangeCallback(callback);
+    }
 }

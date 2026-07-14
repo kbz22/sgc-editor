@@ -2,8 +2,9 @@
 #include <stdexcept>
 
 void program::LayerManager::AddLayer(LayerItem entry)
-{
-    m_layers.push_back(entry);
+{    
+    // m_layers.push_back(entry);
+    m_layers.insert(m_layers.begin() + m_activeLayerIndex, entry);
 }
 
 void program::LayerManager::InsertLayer(LayerItem entry, size_t index)

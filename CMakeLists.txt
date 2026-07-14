@@ -49,7 +49,7 @@ add_executable(sgc-editor WIN32
     src/win32_models/layer_list_control.cpp
 
     src/win32_program/windows_init.cpp        
-    src/win32_program/controls_fun.cpp
+    src/win32_program/toolbar_functions.cpp
     src/win32_program/windows_process.cpp
     src/win32_program/layout_manager.cpp
 

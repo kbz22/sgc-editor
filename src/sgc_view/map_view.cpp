@@ -51,11 +51,11 @@ void sgc_view::MapView::Refresh(program::LayerManager& layerManager)
     auto layers = layerManager.GetLayers();
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
 
-    for(auto layer : layers) {
+    for(auto layer = layers.rbegin(); layer != layers.rend(); ++layer) {
 
         auto tiledLayer = std::make_shared<graphics::TiledLayer>(
             m_tileset,
-            layer.storage
+            layer->storage
         );
 
         auto tiledImage = std::make_shared<graphics::TiledImage>(tiledLayer);

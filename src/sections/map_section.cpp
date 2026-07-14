@@ -21,11 +21,10 @@ void sections::MapSection::Update()
     }    
 }
 
-void sections::MapSection::Refresh()
+void sections::MapSection::Refresh(program::LayerManager& layerManager)
 {    
-    auto& layerManager = program::GetProgramContext().layerManager;
-    if (layerManager != nullptr && m_mapView != nullptr) {
-        m_mapView->Refresh(*layerManager);
+    if (m_mapView != nullptr) {
+        m_mapView->Refresh(layerManager);
     }
 }
 
