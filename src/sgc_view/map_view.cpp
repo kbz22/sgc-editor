@@ -53,6 +53,10 @@ void sgc_view::MapView::Refresh(program::LayerManager& layerManager)
 
     for(auto layer = layers.rbegin(); layer != layers.rend(); ++layer) {
 
+        if(layer->visible == false) {
+            continue;
+        }
+
         auto tiledLayer = std::make_shared<graphics::TiledLayer>(
             m_tileset,
             layer->storage

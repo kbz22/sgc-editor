@@ -57,6 +57,7 @@ namespace sgc_view
             
             sgc::math::uvec2 PixelsToTiles(sgc::math::uvec2 value) const;
             sgc::math::vec2 PixelsToTiles(sgc::math::vec2 value) const;
+            sgc::math::fvec2 PixelsToTiles(sgc::math::fvec2 value) const;
 
             void Clear();
             

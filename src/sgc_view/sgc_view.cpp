@@ -129,6 +129,14 @@ sgc::math::vec2 sgc_view::SgcView::PixelsToTiles(sgc::math::vec2 value) const
     };
 }
 
+sgc::math::fvec2 sgc_view::SgcView::PixelsToTiles(sgc::math::fvec2 value) const
+{
+    return {
+        value.x / static_cast<float>(m_tileWidth),
+        value.y / static_cast<float>(m_tileHeight)
+    };
+}
+
 sgc::graphics::PixelSize2D sgc_view::SgcView::GetTileSize() const
 {
     return {

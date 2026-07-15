@@ -105,12 +105,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto tileSize = tileset->GetTileSize();
 
             auto mousePos = m_mapView->PixelsToTiles(
-                sgc::math::uvec2{ 
-                    static_cast<sgc::math::uval>(GET_X_LPARAM(lparam)),
-                    static_cast<sgc::math::uval>(GET_Y_LPARAM(lparam))
-                });
-
-            m_selectionTileStart = mousePos;
+            sgc::math::uvec2{ 
+                static_cast<sgc::math::uval>(GET_X_LPARAM(lparam)),
+                static_cast<sgc::math::uval>(GET_Y_LPARAM(lparam))
+            });            
 
             auto currentTilePosition = programContext.selectionRectangleOnTileset->GetPosition();          
 
@@ -123,10 +121,14 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 return 0;
             }
 
+            auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
+
+            m_selectionTileStart = cursorPositionOnMap;
+
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {
-                    auto tileX = static_cast<sgc::math::ival>(m_selectionTileStart.x + _x);
-                    auto tileY = static_cast<sgc::math::ival>(m_selectionTileStart.y + _y);
+                    auto tileX = cursorPositionOnMap.x + _x;
+                    auto tileY = cursorPositionOnMap.y + _y;
                     auto currentTileId = tileset->ToTileId(static_cast<sgc::math::uval>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::uval>(currentTilePosition.y / tileSize.y) + _y);                    
 
                     if(currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
@@ -167,9 +169,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             bool shouldUpdate = false;
 
             auto cameraPosition = m_mapView->GetCameraPositionSingles();
-
-            auto x = GET_X_LPARAM(lparam);
-            auto y = GET_Y_LPARAM(lparam);
 
             auto screenPosition = sgc::math::fvec2{
                 static_cast<float>(GET_X_LPARAM(lparam)),
@@ -214,42 +213,48 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             }                
 
             auto cursorTileSize = m_mapView->GetCursorSizeInTiles();
-            auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(programContext.selectionRectangleOnTileset->GetPosition());
-            auto mousePositionInTiles = m_mapView->PixelsToTiles(sgc::math::uvec2{ static_cast<sgc::math::uval>(x), static_cast<sgc::math::uval>(y) });
 
-            auto currentLayer = programContext.layerManager->GetLayers()[programContext.layerManager->GetActiveLayerIndex()];
+            auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(
+                programContext.selectionRectangleOnTileset->GetPosition()
+            );
 
-            if(currentLayer.storage == nullptr) { //! check this out
+            auto currentLayer = programContext.layerManager->
+                GetLayers()[programContext.layerManager->GetActiveLayerIndex()];
+
+            if (currentLayer.storage == nullptr) {
                 return 0;
             }
 
-            for (sgc::math::ival _x = 0; _x < static_cast<sgc::math::ival>(cursorTileSize.x); ++_x){
-                for (sgc::math::ival _y = 0; _y < static_cast<sgc::math::ival>(cursorTileSize.y); ++_y){
+            auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
-                    auto absmod = [](sgc::math::ival value, sgc::math::ival mod) -> sgc::math::ival {
-                        return ((value % mod) + mod) % mod;
-                    };
+            auto absmod = [](sgc::math::ival value, sgc::math::ival mod) -> sgc::math::ival {
+                return ((value % mod) + mod) % mod;
+            };
 
-                    auto tileMapX = static_cast<sgc::math::ival>(mousePositionInTiles.x) + _x;
-                    auto tileMapY = static_cast<sgc::math::ival>(mousePositionInTiles.y) + _y;
+            for (sgc::math::ival x = 0; x < static_cast<sgc::math::ival>(cursorTileSize.x); ++x){
+                for (sgc::math::ival y = 0; y < static_cast<sgc::math::ival>(cursorTileSize.y); ++y){
+
+                    auto tileMapX = cursorPositionOnMap.x + x;
+                    auto tileMapY = cursorPositionOnMap.y + y;
 
                     auto deltaX = absmod(
-                        tileMapX - static_cast<sgc::math::ival>(m_selectionTileStart.x),
-                        static_cast<sgc::math::ival>(cursorTileSize.x)
+                        tileMapX - m_selectionTileStart.x,
+                        cursorTileSize.x
                     );
+
                     auto deltaY = absmod(
-                        tileMapY - static_cast<sgc::math::ival>(m_selectionTileStart.y),
-                        static_cast<sgc::math::ival>(cursorTileSize.y)
-                    );                    
+                        tileMapY - m_selectionTileStart.y,
+                        cursorTileSize.y
+                    );
 
                     auto tileId = m_mapView->GetTileset()->ToTileId(
                         cursorTilePositionOnTileset.x + deltaX,
                         cursorTilePositionOnTileset.y + deltaY
                     );
 
-                    if(currentLayer.storage->GetTileAt({ tileMapX, tileMapY }).has_value()) {
+                    if (currentLayer.storage->GetTileAt({tileMapX, tileMapY}).has_value()){
                         currentLayer.storage->SetTileAt(
-                            { tileMapX, tileMapY },
+                            {tileMapX, tileMapY},
                             tileId
                         );
                     }
