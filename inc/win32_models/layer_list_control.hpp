@@ -42,6 +42,7 @@ namespace win32_models {
             int m_maxScroll = 0;
 
             std::function<void(size_t)> m_selectedLayerChangeCallback = nullptr;
+            std::function<void(size_t, bool)> m_layerVisibilityChangeCallback = nullptr;
 
             static LRESULT CALLBACK LayerListStaticProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
             LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -65,6 +66,7 @@ namespace win32_models {
             size_t GetSelectedLayer() const;
 
             void RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback);
+            void RegisterLayerVisibilityChangeCallback(std::function<void(size_t, bool)> callback);
     };
 
 }

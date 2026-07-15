@@ -315,8 +315,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
 
             switch (m_mouseOver)
             {
-                case MouseTarget::Entry:
-                    // m_selectedLayerIndex = m_hoveredLayerIndex;
+                case MouseTarget::Entry:                    
                     SetSelectedLayer(m_hoveredLayerIndex);
                     break;
 
@@ -325,6 +324,10 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                     {
                         auto& layer = m_layers[m_hoveredLayerIndex];
                         layer.visible = !layer.visible;
+
+                        if (m_layerVisibilityChangeCallback) {
+                            m_layerVisibilityChangeCallback(m_hoveredLayerIndex, layer.visible);
+                        }
                     }
                     break;
 
@@ -455,4 +458,9 @@ void win32_models::LayerListControl::SetHImageList(HIMAGELIST imageList, HIMAGEL
 void win32_models::LayerListControl::RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback)
 {
     m_selectedLayerChangeCallback = callback;
+}
+
+void win32_models::LayerListControl::RegisterLayerVisibilityChangeCallback(std::function<void(size_t, bool)> callback)
+{
+    m_layerVisibilityChangeCallback = callback;
 }

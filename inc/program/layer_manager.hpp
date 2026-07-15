@@ -33,7 +33,8 @@ namespace program {
             void MoveActiveLayer(int movement);
             
             void SetActiveLayerIndex(size_t index);
-            void SetBaseLayerIndex(size_t index);     
+            void SetBaseLayerIndex(size_t index);
+            void SetLayerVisibility(size_t index, bool visible);  
 
             std::vector<LayerItem> GetLayers() const;
             size_t GetActiveLayerIndex() const;

@@ -65,6 +65,13 @@ void sections::LayersSection::RegisterSelectedLayerChangeCallback(std::function<
     }
 }
 
+void sections::LayersSection::RegisterLayerVisibilityChangeCallback(std::function<void(size_t, bool)> callback)
+{
+    if(m_layerListControl != nullptr) {
+        m_layerListControl->RegisterLayerVisibilityChangeCallback(callback);
+    }
+}
+
 void sections::LayersSection::SetSelectedLayer(size_t layerIndex)
 {
     if(m_layerListControl != nullptr) {

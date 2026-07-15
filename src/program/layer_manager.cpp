@@ -59,6 +59,15 @@ void program::LayerManager::SetBaseLayerIndex(size_t index)
     m_baseLayerIndex = index;
 }
 
+void program::LayerManager::SetLayerVisibility(size_t index, bool visible)
+{
+    if (index >= m_layers.size()) {
+        throw std::out_of_range("Index is out of range for setting layer visibility.");
+    }
+
+    m_layers[index].visible = visible;
+}
+
 std::vector<program::LayerItem> program::LayerManager::GetLayers() const
 {
     return m_layers;

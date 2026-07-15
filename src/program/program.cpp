@@ -86,9 +86,15 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 
             programContext.mapSection->Refresh(*programContext.layerManager);
             programContext.mapSection->Update();
+        }
+    });
 
-            programContext.layersSection->Refresh(*programContext.layerManager);
-            programContext.layersSection->Update();
+    programContext.layersSection->RegisterLayerVisibilityChangeCallback([&programContext](size_t index, bool visible) {
+        if(programContext.layerManager != nullptr) {
+            programContext.layerManager->SetLayerVisibility(index, visible);
+
+            programContext.mapSection->Refresh(*programContext.layerManager);
+            programContext.mapSection->Update();
         }
     });
 
