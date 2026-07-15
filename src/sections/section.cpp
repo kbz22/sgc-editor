@@ -6,10 +6,26 @@ namespace {
     constexpr UINT_PTR kTilesetSubclassId = 0x53474331;
 }
 
+bool sections::Section::m_registered = false;
+
 sections::Section::Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext &context)
 {    
+
+    const wchar_t* className = L"SectionWindow";
+
+    if(!m_registered) {
+        WNDCLASSEX wc{};
+        wc.cbSize = sizeof(wc);
+        wc.lpfnWndProc = DefaultSectionProc;
+        wc.hInstance = context.hInstance;
+        wc.lpszClassName = className;
+        RegisterClassEx(&wc);
+
+        m_registered = true;
+    }
+
     m_hwnd = CreateWindowEx(
-        0, L"SectionWindow", name,
+        0, className, name,
         WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPSIBLINGS,
         0,0,0,0,
         context.hMainWindow, (HMENU)id, context.hInstance, nullptr
@@ -83,7 +99,7 @@ void sections::Section::Redraw()
     }
 }
 
-LRESULT CALLBACK sections::DefaultSectionProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK sections::Section::DefaultSectionProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {

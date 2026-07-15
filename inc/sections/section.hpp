@@ -13,8 +13,11 @@ namespace sections {
         private:
             HWND m_hwnd = HWND();
             HWND m_parentHwnd = HWND();
+
+            static bool m_registered;
             
-            static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);            
+            static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
+            static LRESULT CALLBACK DefaultSectionProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
         protected:
             void SetHwnd(HWND hwnd, HWND parentHwnd);
@@ -32,8 +35,6 @@ namespace sections {
             virtual void HandleSectionResize() = 0;            
 
             HWND GetHwnd() const;            
-    };
-
-    LRESULT CALLBACK DefaultSectionProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+    };    
 
 }

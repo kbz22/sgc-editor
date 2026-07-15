@@ -86,14 +86,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         auto &context = *programContext.mainWindowContext;
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
-        InitCommonControlsEx(&icc);
-
-        WNDCLASSEX wc{};
-        wc.cbSize = sizeof(wc);
-        wc.lpfnWndProc = sections::DefaultSectionProc;
-        wc.hInstance = context.hInstance;
-        wc.lpszClassName = L"SectionWindow";
-        RegisterClassEx(&wc);
+        InitCommonControlsEx(&icc);        
 
         StartDefault();
         HandleResize(hwnd, lParam);        
@@ -154,9 +147,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     }
     
     case WM_SIZE:
-    {        
-        // auto& layoutManager = GetLayoutManager();
-        // layoutManager.HandleResize(hwnd, lParam);
+    {    
         HandleResize(hwnd, lParam);
         break;
     }
@@ -194,15 +185,6 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         return (LRESULT)GetStockObject(WHITE_BRUSH);
     }
 
-    /* case WM_PAINT:
-    {
-        PAINTSTRUCT ps;
-        BeginPaint(hwnd, &ps);
-        // do NOT fill the background
-        EndPaint(hwnd, &ps);
-        return 0;
-    } */
-
     case WM_LBUTTONDOWN:
     {
         auto& layoutManager = GetLayoutManager();
@@ -213,10 +195,6 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         }
         break;
     }
-
-    case WM_ERASEBKGND:
-        // return 1;
-        return DefWindowProc(hwnd, msg, wParam, lParam);
 
     case WM_LBUTTONUP:
     {
