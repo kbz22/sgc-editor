@@ -10,6 +10,9 @@
 #include "sections/layers_section.hpp"
 #include "sections/package_section.hpp"
 
+#include "locale/command_manager.hpp"
+#include "locale/string_manager.hpp"
+
 #include "win32_program/win32_context.hpp"
 #include "program/layer_manager.hpp"
 
@@ -40,6 +43,9 @@ namespace program {
 
         HIMAGELIST toolbarIcons;
         HIMAGELIST toolbarIconsDisabled;
+
+        locale::CommandManager commandManager{};
+        locale::StringManager stringManager{};
     };
 
     ProgramContext& GetProgramContext();

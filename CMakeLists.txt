@@ -73,6 +73,7 @@ add_executable(sgc-editor WIN32
     src/debug.cpp
 
     src/locale/command_manager.cpp
+    src/locale/string_manager.cpp
 )
 
 # embed manifest in the exe

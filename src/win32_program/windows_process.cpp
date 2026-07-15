@@ -9,7 +9,6 @@
 #include "program/program.hpp"
 #include "win32_program/layout_manager.hpp"
 #include "win32_helpers/load_bitmap.hpp"
-#include "locale/command_manager.hpp"
 
 #include <windows.h>
 #include <CommCtrl.h>
@@ -154,8 +153,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_NOTIFY:
     {
-        auto *nm = reinterpret_cast<LPNMHDR>(lParam);
-        auto commandManager = locale::CommandManager{};
+        auto *nm = reinterpret_cast<LPNMHDR>(lParam);        
 
         if (nm->code == TTN_GETDISPINFO)
         {
@@ -163,11 +161,13 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
             CommandId command = static_cast<CommandId>(info->hdr.idFrom);
 
-            const auto& commandInfo = commandManager.Get(command);
+            const auto& commandInfo = programContext.commandManager.Get(command);
+
+            const auto& text = programContext.stringManager.Get(commandInfo.tooltip);
 
             wcscpy_s(
                 info->szText,
-                commandInfo.tooltip.c_str()
+                text.c_str()
             );
 
             info->lpszText = info->szText;

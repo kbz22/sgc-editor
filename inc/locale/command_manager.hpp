@@ -1,6 +1,7 @@
 #pragma once
 
 #include "locale/command_info.hpp"
+#include "locale/stringid.hpp"
 #include "win32_program/windows_controls.hpp"
 #include <vector>
 
@@ -10,20 +11,20 @@ namespace locale {
     {
         private:
         std::vector<CommandInfo> m_commands = {
-            { win32_program::CommandId::FileNew,  L"New file" },
-            { win32_program::CommandId::FileOpen, L"Open file" },
-            { win32_program::CommandId::FileSave, L"Save file" },
-            { win32_program::CommandId::EditUndo, L"Undo" },
-            { win32_program::CommandId::EditRedo, L"Redo" },
-            { win32_program::CommandId::LayerAdd, L"Add layer" },
-            { win32_program::CommandId::LayerRemove, L"Remove layer" },
-            { win32_program::CommandId::LayerMoveUp, L"Move active layer up" },
-            { win32_program::CommandId::LayerMoveDown, L"Move active layer down" },
-            { win32_program::CommandId::EditorLayerModeNonActiveTransparent, L"Non-active layers transparent" },
-            { win32_program::CommandId::EditorLayerModeSingleLayer, L"Single layer mode" },
-            { win32_program::CommandId::EditorLayerModeSingleImage, L"Single image mode" },
-            { win32_program::CommandId::EditorChunkModeFixedSize, L"Fixed size chunk mode" },
-            { win32_program::CommandId::EditorChunkModeFree, L"Free chunk mode" }
+            { win32_program::CommandId::FileNew,  StringId::TooltipFileNew },
+            { win32_program::CommandId::FileOpen, StringId::TooltipFileOpen },
+            { win32_program::CommandId::FileSave, StringId::TooltipFileSave },
+            { win32_program::CommandId::EditUndo, StringId::TooltipEditUndo },
+            { win32_program::CommandId::EditRedo, StringId::TooltipEditRedo },
+            { win32_program::CommandId::LayerAdd, StringId::TooltipLayerAdd },
+            { win32_program::CommandId::LayerRemove, StringId::TooltipLayerRemove },
+            { win32_program::CommandId::LayerMoveUp, StringId::TooltipLayerMoveUp },
+            { win32_program::CommandId::LayerMoveDown, StringId::TooltipLayerMoveDown },
+            { win32_program::CommandId::EditorLayerModeNonActiveTransparent, StringId::TooltipEditorLayerModeNonActiveTransparent },
+            { win32_program::CommandId::EditorLayerModeSingleLayer, StringId::TooltipEditorLayerModeSingleLayer },
+            { win32_program::CommandId::EditorLayerModeSingleImage, StringId::TooltipEditorLayerModeSingleImage },
+            { win32_program::CommandId::EditorChunkModeFixedSize, StringId::TooltipEditorChunkModeFixedSize },
+            { win32_program::CommandId::EditorChunkModeFree, StringId::TooltipEditorChunkModeFree }
         };
 
         public:
