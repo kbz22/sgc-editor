@@ -68,6 +68,7 @@ sections::MenuSection::~MenuSection()
 
 void sections::MenuSection::Update()
 {
+    Redraw();
     return;
 }
 

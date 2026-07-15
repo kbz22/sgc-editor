@@ -16,6 +16,7 @@ sections::MapSection::MapSection(win32_program::MainWindowContext& context) :
 
 void sections::MapSection::Update()
 {    
+    Redraw();
     if (m_mapView != nullptr) {        
         m_mapView->Render();
     }    

@@ -87,6 +87,7 @@ sections::ToolbarSection::~ToolbarSection()
 
 void sections::ToolbarSection::Update()
 {
+    Redraw();
     return;
 }
 

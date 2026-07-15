@@ -36,7 +36,10 @@ void HandleResize(HWND hwnd, LPARAM lParam)
     );
 
     for(auto section : programContext.sections) {
-        section->HandleSectionResize();
+        section->HandleSectionResize();        
+    }
+
+    for(auto section : programContext.sections) {
         section->Update();
     }
 }

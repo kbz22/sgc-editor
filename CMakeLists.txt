@@ -55,6 +55,7 @@ add_executable(sgc-editor WIN32
 
     src/program/program.cpp
     src/program/layer_manager.cpp
+    src/program/scene.cpp
 
     src/sections/section.cpp
     src/sections/tileset_section.cpp

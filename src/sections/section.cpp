@@ -74,3 +74,10 @@ void sections::Section::AttachView(sgc_view::SgcView& view)
     }
     
 }
+
+void sections::Section::Redraw()
+{
+    if (m_hwnd != nullptr) {
+        InvalidateRect(m_hwnd, nullptr, TRUE);        
+    }
+}

@@ -10,6 +10,7 @@ sections::PackageSection::~PackageSection()
 
 void sections::PackageSection::Update()
 {
+    Redraw();
     return;
 }
 

@@ -31,9 +31,10 @@ sections::LayersSection::~LayersSection()
 
 void sections::LayersSection::Update()
 {
+    Redraw();
     if(m_layerListControl != nullptr) {
-        m_layerListControl->Redraw();
-    }
+        m_layerListControl->Redraw();        
+    }    
     return;
 }
 

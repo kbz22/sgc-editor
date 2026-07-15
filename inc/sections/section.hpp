@@ -22,13 +22,14 @@ namespace sections {
 
             virtual LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
             void AttachView(sgc_view::SgcView& view);
+            void Redraw();
 
         public:
             Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext& context);
             ~Section();
 
             virtual void Update() = 0;
-            virtual void HandleSectionResize() = 0;
+            virtual void HandleSectionResize() = 0;            
 
             HWND GetHwnd() const;            
     };

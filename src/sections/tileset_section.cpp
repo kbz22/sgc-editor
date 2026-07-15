@@ -11,9 +11,10 @@ sections::TilesetSection::TilesetSection(win32_program::MainWindowContext& conte
 
 void sections::TilesetSection::Update()
 {
+    Redraw();
     if (m_tilesetView != nullptr) {
         m_tilesetView->Render();
-    }   
+    }    
 }
 
 void sections::TilesetSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight)

@@ -62,22 +62,7 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
             Lerp(b, 255, 0.25f));
             
     m_brushHighlightHover = CreateSolidBrush(hover);
-    }
-    
-    /* m_imageList = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
-    HBITMAP hBmp = win32_helpers::LoadPngWIC(L"./layerlist_icons.png");
-
-    m_imageListDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
-    HBITMAP hBmpDisabled = win32_helpers::LoadPngWIC(L"./layerlist_icons_disabled.png");
-
-    ImageList_Add(m_imageList, hBmp, NULL);
-    ImageList_Add(m_imageListDisabled, hBmpDisabled, NULL); */
-
-    /* ListItem item;
-    for(int i=0; i<12; ++i) {
-        item.name = L"Layer " + std::to_wstring(i + 1);
-        m_layers.push_back(item);
-    } */
+    }    
 }
 
 win32_models::LayerListControl::~LayerListControl()
