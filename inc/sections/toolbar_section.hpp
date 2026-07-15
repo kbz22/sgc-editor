@@ -17,15 +17,24 @@ namespace sections {
     {
         private:            
             std::vector<win32_models::ToolbarButton> m_buttons = {
-                {0, win32_program::CommandId::FileNew,  L"New File", true},
-                {1, win32_program::CommandId::FileOpen, L"Open File", true},
-                {2, win32_program::CommandId::FileSave, L"Save File", false},
-                {11, win32_program::CommandId::EditUndo, L"Undo", true},
-                {12, win32_program::CommandId::EditRedo, L"Redo", true},
-                {7, win32_program::CommandId::LayerAdd, L"Add Layer", true},
-                {8, win32_program::CommandId::LayerRemove, L"Remove Layer", true},
-                {10, win32_program::CommandId::LayerMoveUp, L"Move Layer Up", true},
-                {9, win32_program::CommandId::LayerMoveDown, L"Move Layer Down", true}
+                {0, win32_program::CommandId::FileNew, true},
+                {1, win32_program::CommandId::FileOpen, true},
+                {2, win32_program::CommandId::FileSave, false},
+                {0, win32_program::CommandId::NA, false, true},
+                {11, win32_program::CommandId::EditUndo, true},
+                {12, win32_program::CommandId::EditRedo, true},
+                {0, win32_program::CommandId::NA, false, true},
+                {7, win32_program::CommandId::LayerAdd, true},
+                {8, win32_program::CommandId::LayerRemove, true},
+                {10, win32_program::CommandId::LayerMoveUp, true},
+                {9, win32_program::CommandId::LayerMoveDown, true},
+                {0, win32_program::CommandId::NA, false, true},
+                {4, win32_program::CommandId::EditorLayerModeNonActiveTransparent, true},
+                {5, win32_program::CommandId::EditorLayerModeSingleLayer, true},
+                {6, win32_program::CommandId::EditorLayerModeSingleImage, true},
+                {0, win32_program::CommandId::NA, false, true},
+                {16, win32_program::CommandId::EditorChunkModeFixedSize, true},
+                {15, win32_program::CommandId::EditorChunkModeFree, true}
             };
             HWND m_hwndToolbar;
 

@@ -8,8 +8,8 @@
 
 #include "program/program.hpp"
 #include "win32_program/layout_manager.hpp"
-
 #include "win32_helpers/load_bitmap.hpp"
+#include "locale/command_manager.hpp"
 
 #include <windows.h>
 #include <CommCtrl.h>
@@ -90,30 +90,13 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
         WNDCLASSEX wc{};
         wc.cbSize = sizeof(wc);
-        wc.lpfnWndProc = DefWindowProc;
+        wc.lpfnWndProc = sections::DefaultSectionProc;
         wc.hInstance = context.hInstance;
         wc.lpszClassName = L"SectionWindow";
         RegisterClassEx(&wc);
 
-        programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(programContext);
-        programContext.sections.push_back(programContext.toolbarSection.get());
-
-        programContext.menuSection = std::make_unique<sections::MenuSection>(context);
-        programContext.sections.push_back(programContext.menuSection.get());
-        
-        programContext.mapSection = std::make_unique<sections::MapSection>(context);
-        programContext.sections.push_back(programContext.mapSection.get());        
-
-        programContext.tilesetSection = std::make_unique<sections::TilesetSection>(context);
-        programContext.sections.push_back(programContext.tilesetSection.get());
-
-        programContext.layersSection = std::make_unique<sections::LayersSection>(programContext);
-        programContext.sections.push_back(programContext.layersSection.get());
-
-        programContext.packageSection = std::make_unique<sections::PackageSection>(context);
-        programContext.sections.push_back(programContext.packageSection.get());   
-        
-        HandleResize(hwnd, lParam);
+        StartDefault();
+        HandleResize(hwnd, lParam);        
 
         break;
     }
@@ -180,38 +163,29 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_NOTIFY:
     {
-        LPNMHDR nm = (LPNMHDR)lParam;        
+        auto *nm = reinterpret_cast<LPNMHDR>(lParam);
+        auto commandManager = locale::CommandManager{};
 
         if (nm->code == TTN_GETDISPINFO)
         {
-            NMTTDISPINFO* info = (NMTTDISPINFO*)nm;
+            auto* info = reinterpret_cast<NMTTDISPINFO*>(lParam);
 
-            // Convert command ID → button index
-            int index = static_cast<int>(
-                SendMessage(
-                    programContext.toolbarSection->GetHwndToolbar(),
-                    TB_COMMANDTOINDEX,
-                    info->hdr.idFrom,
-                    0
-                ));
+            CommandId command = static_cast<CommandId>(info->hdr.idFrom);
 
-            if (index >= 0)
-            {
-                TBBUTTON btn{};
-                SendMessage(
-                    programContext.toolbarSection->GetHwndToolbar(),
-                    TB_GETBUTTON,
-                    index,
-                    (LPARAM)&btn
-                );
+            const auto& commandInfo = commandManager.Get(command);
 
-                info->lpszText = (LPWSTR)btn.dwData;
-            }
+            wcscpy_s(
+                info->szText,
+                commandInfo.tooltip.c_str()
+            );
+
+            info->lpszText = info->szText;
 
             return TRUE;
         }
-    }
-    break;
+
+        break;
+    }   
 
     case WM_CTLCOLORSTATIC:
     {
@@ -220,14 +194,14 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         return (LRESULT)GetStockObject(WHITE_BRUSH);
     }
 
-    case WM_PAINT:
+    /* case WM_PAINT:
     {
         PAINTSTRUCT ps;
         BeginPaint(hwnd, &ps);
         // do NOT fill the background
         EndPaint(hwnd, &ps);
         return 0;
-    }
+    } */
 
     case WM_LBUTTONDOWN:
     {
@@ -241,7 +215,8 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     }
 
     case WM_ERASEBKGND:
-        return 1;
+        // return 1;
+        return DefWindowProc(hwnd, msg, wParam, lParam);
 
     case WM_LBUTTONUP:
     {
@@ -263,8 +238,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
         if (draggedSplitter != DraggedSplitter::None && capturedMouse)
         {
-            layoutManager.HandleDragging(hwnd, lParam);
-            // layoutManager.HandleResize(hwnd, lParam);
+            layoutManager.HandleDragging(hwnd, lParam);            
             HandleResize(hwnd, lParam);
         }
 

@@ -54,8 +54,7 @@ add_executable(sgc-editor WIN32
     src/win32_program/layout_manager.cpp
 
     src/program/program.cpp
-    src/program/layer_manager.cpp
-    src/program/scene.cpp
+    src/program/layer_manager.cpp    
 
     src/sections/section.cpp
     src/sections/tileset_section.cpp
@@ -72,6 +71,8 @@ add_executable(sgc-editor WIN32
     rcs/new_file_dialog.rc
 
     src/debug.cpp
+
+    src/locale/command_manager.cpp
 )
 
 # embed manifest in the exe

@@ -9,6 +9,10 @@
 #include "sgc_view/tileset_view.hpp"
 #include "defaults.hpp"
 
+namespace program {
+    struct ProgramContext;
+}
+
 namespace sections {
 
     class TilesetSection : public Section
@@ -22,7 +26,7 @@ namespace sections {
             sgc::math::uvec2 m_selectionTileSize = { 0, 0 };
         
         public:
-            TilesetSection(win32_program::MainWindowContext& context);
+            TilesetSection(program::ProgramContext& programContext);
             
             void Update() override;
             void HandleSectionResize() override;

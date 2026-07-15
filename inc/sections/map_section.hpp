@@ -4,6 +4,10 @@
 #include "sgc_view/map_view.hpp"
 #include <windows.h>
 
+namespace program {
+    struct ProgramContext;
+}
+
 namespace sections {
 
     class MapSection : public Section
@@ -17,7 +21,7 @@ namespace sections {
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
 
         public:
-            MapSection(win32_program::MainWindowContext& context);
+            MapSection(program::ProgramContext& programContext);
             
             void Update() override;
             void HandleSectionResize() override;

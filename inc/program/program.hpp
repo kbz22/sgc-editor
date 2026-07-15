@@ -36,7 +36,7 @@ namespace program {
 
         std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
 
-        std::unique_ptr<program::LayerManager> layerManager;
+        std::unique_ptr<program::LayerManager> layerManager;        
 
         HIMAGELIST toolbarIcons;
         HIMAGELIST toolbarIconsDisabled;
@@ -44,7 +44,7 @@ namespace program {
 
     ProgramContext& GetProgramContext();
 
-    void StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeight, int chunksSizeX, int chunksSizeY);
-    void HandleResize();
+    void StartDefault();
+    void StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeight, int chunksSizeX, int chunksSizeY);    
 
 }

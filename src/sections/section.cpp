@@ -78,6 +78,28 @@ void sections::Section::AttachView(sgc_view::SgcView& view)
 void sections::Section::Redraw()
 {
     if (m_hwnd != nullptr) {
-        InvalidateRect(m_hwnd, nullptr, TRUE);        
+        InvalidateRect(m_hwnd, nullptr, TRUE);
+        UpdateWindow(m_hwnd);
     }
+}
+
+LRESULT CALLBACK sections::DefaultSectionProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    switch (msg)
+    {
+        case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            RECT rc;
+
+            GetClientRect(hwnd, &rc);
+            FillRect(hdc, &rc, (HBRUSH)(COLOR_WINDOW + 1));
+
+            EndPaint(hwnd, &ps);
+            return 0;
+        }
+    }
+
+    return DefWindowProc(hwnd, msg, wparam, lparam);
 }

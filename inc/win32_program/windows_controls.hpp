@@ -23,6 +23,8 @@ namespace win32_program
 
     enum class CommandId : types::cmdid_t
     {
+        NA,
+
         MenuFile = 1001,
         MenuEdit = 1002,
 
@@ -36,6 +38,13 @@ namespace win32_program
         LayerAdd = 4001,
         LayerRemove = 4002,
         LayerMoveUp = 4003,
-        LayerMoveDown = 4004
+        LayerMoveDown = 4004,
+
+        EditorLayerModeNonActiveTransparent = 5001,
+        EditorLayerModeSingleLayer = 5002,
+        EditorLayerModeSingleImage = 5003,
+
+        EditorChunkModeFixedSize = 6001,
+        EditorChunkModeFree = 6002 
     };
 }

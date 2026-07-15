@@ -14,7 +14,7 @@ namespace sections {
             HWND m_hwnd = HWND();
             HWND m_parentHwnd = HWND();
             
-            static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
+            static LRESULT CALLBACK StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);            
 
         protected:
             void SetHwnd(HWND hwnd, HWND parentHwnd);
@@ -33,5 +33,7 @@ namespace sections {
 
             HWND GetHwnd() const;            
     };
+
+    LRESULT CALLBACK DefaultSectionProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 }

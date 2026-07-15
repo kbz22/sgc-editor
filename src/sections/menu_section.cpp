@@ -1,21 +1,24 @@
 #include "sections/menu_section.hpp"
 #include "win32_helpers/create_helpers.hpp"
+#include "program/program.hpp"
 #include <windows.h>
 #include <commctrl.h>
 
-sections::MenuSection::MenuSection(win32_program::MainWindowContext& context)    
+sections::MenuSection::MenuSection(program::ProgramContext& programContext)    
 {
     using namespace win32_program;
 
+    auto win32context = programContext.mainWindowContext.get();
+
     auto hwndRebar = win32_helpers::CreateRebar(
-        context.hMainWindow,
-        context.hInstance,
+        win32context->hMainWindow,
+        win32context->hInstance,
         static_cast<types::ctrid_t>(ControlId::MenuRebar)
     );
 
     auto hwndToolbar = win32_helpers::CreateToolbar(
         hwndRebar,
-        context.hInstance,
+        win32context->hInstance,
         static_cast<types::ctrid_t>(ControlId::MenuToolbar)
     );
 
@@ -53,7 +56,7 @@ sections::MenuSection::MenuSection(win32_program::MainWindowContext& context)
 
     SendMessage(hwndRebar, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rb);
 
-    SetHwnd(hwndRebar, context.hMainWindow);
+    SetHwnd(hwndRebar, win32context->hMainWindow);
     m_hwndToolbar = hwndToolbar;
 }
 

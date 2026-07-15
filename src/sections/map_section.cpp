@@ -9,8 +9,8 @@
 #include <windowsx.h>
 #include <commctrl.h>
 
-sections::MapSection::MapSection(win32_program::MainWindowContext& context) :
-    Section{L"MapView", win32_program::ControlId::MapView, context},
+sections::MapSection::MapSection(program::ProgramContext& programContext) :
+    Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
     m_mapView{nullptr}
 {}
 
@@ -228,7 +228,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
         {
             m_isPainting = false;
             return 0;
-        }
+        }        
     }
 
     return DefSubclassProc(hwnd, msg, wparam, lparam);

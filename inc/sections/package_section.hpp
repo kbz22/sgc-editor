@@ -2,12 +2,16 @@
 
 #include "sections/section.hpp"
 
+namespace program {
+    struct ProgramContext;
+}
+
 namespace sections {
 
     class PackageSection : public Section
     {
         public:
-            PackageSection(win32_program::MainWindowContext& context);
+            PackageSection(program::ProgramContext& programContext);
             ~PackageSection();
 
             void Update() override;

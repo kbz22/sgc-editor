@@ -6,6 +6,10 @@
 #include <vector>
 #include <windows.h>
 
+namespace program {
+    struct ProgramContext;
+}
+
 namespace sections {
 
     class MenuSection : public Section
@@ -15,7 +19,7 @@ namespace sections {
             HWND m_hwndToolbar = HWND();
 
         public:
-            MenuSection(win32_program::MainWindowContext& context);
+            MenuSection(program::ProgramContext& programContext);
             ~MenuSection();
 
             void Update() override;

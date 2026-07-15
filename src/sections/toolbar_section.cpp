@@ -43,7 +43,7 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
         btn.iBitmap = b.imageIndex;
         btn.idCommand = static_cast<int>(b.commandId);
         btn.fsState = b.enabled ? TBSTATE_ENABLED : 0;
-        btn.fsStyle = BTNS_BUTTON;
+        btn.fsStyle = b.seperator ? BTNS_SEP : BTNS_BUTTON;
 
         btn.dwData = (DWORD_PTR)L"New File"; //! tmp
 

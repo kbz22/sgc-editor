@@ -4,8 +4,8 @@
 #include <commctrl.h>
 #include <algorithm>
 
-sections::TilesetSection::TilesetSection(win32_program::MainWindowContext& context) :
-    Section{L"TilesetView", win32_program::ControlId::TilesetView, context},
+sections::TilesetSection::TilesetSection(program::ProgramContext& programContext) :
+    Section{L"TilesetView", win32_program::ControlId::TilesetView, *programContext.mainWindowContext},
     m_tilesetView{nullptr}
 {}
 
@@ -154,6 +154,25 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
                 m_selectionActive = false;
             }
 
+            return 0;
+        }
+
+        case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+
+            HDC hdc = BeginPaint(hwnd, &ps);
+
+            RECT clientRect;
+            GetClientRect(hwnd, &clientRect);            
+
+            FillRect(
+                hdc,
+                &ps.rcPaint,
+                (HBRUSH)(COLOR_WINDOW + 1)
+            );
+
+            EndPaint(hwnd, &ps);
             return 0;
         }
     }
