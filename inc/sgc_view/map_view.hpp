@@ -31,11 +31,17 @@ namespace sgc_view
 
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
+            void SetCameraPositionSingles(float x, float y);
 
-            sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
+            void ChangeCameraPositionSingles(float deltaX, float deltaY);
+            void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
+
+            sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;            
             sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;
             sgc::tile::TileSize2D GetCursorSizeInTiles() const;
+            sgc::math::fvec2 GetCameraPositionSingles() const;
+            sgc::graphics::View GetView() const;
 
             friend class sections::MapSection;
     };

@@ -4,10 +4,12 @@
 #include <sgc/asset/assetloader.hpp>
 #include <sgc/asset/chunkedtilestorageserializer.hpp>
 #include <sgc/asset/chunkedtilestorageassetbuilder.hpp>
+#include <sgc/coordinates/screenworld.hpp>
 #include <fstream>
 #include <filesystem>
 #include <windowsx.h>
 #include <commctrl.h>
+#include <cmath>
 
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
     Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
@@ -142,14 +144,49 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_MOUSEMOVE:
         {
+
+            if(m_isPanning) {
+                auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
+                auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
+
+                auto deltaX = x - m_lastMousePos.x;
+                auto deltaY = y - m_lastMousePos.y;
+
+                m_mapView->ChangeCameraPositionSingles(
+                    static_cast<float>(deltaX),
+                    static_cast<float>(deltaY)
+                );
+
+                m_lastMousePos.x = x;
+                m_lastMousePos.y = y;
+
+                Update();
+                return 0;
+            }
+
             bool shouldUpdate = false;
+
+            auto cameraPosition = m_mapView->GetCameraPositionSingles();
 
             auto x = GET_X_LPARAM(lparam);
             auto y = GET_Y_LPARAM(lparam);
-            auto tileSize = m_mapView->GetTileSize();
 
-            auto x_tile = static_cast<sgc::math::ival>(x - (x % tileSize.x));
-            auto y_tile = static_cast<sgc::math::ival>(y - (y % tileSize.y));
+            auto screenPosition = sgc::math::fvec2{
+                static_cast<float>(GET_X_LPARAM(lparam)),
+                static_cast<float>(GET_Y_LPARAM(lparam))
+            };
+
+            auto view = m_mapView->GetView();
+            auto worldPosition = sgc::coordinates::ScreenToWorld(screenPosition, view);
+
+            auto tileSize = m_mapView->GetTileSize();
+            auto x_tile = static_cast<sgc::math::ival>(
+                std::floor(worldPosition.x / tileSize.x) * tileSize.x
+            );
+
+            auto y_tile = static_cast<sgc::math::ival>(
+                std::floor(worldPosition.y / tileSize.y) * tileSize.y
+            );
 
             auto position = m_mapView->GetCursorPositionInTiles();
             if (position.x != x_tile || position.y != y_tile) {
@@ -228,7 +265,30 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
         {
             m_isPainting = false;
             return 0;
-        }        
+        }
+
+        case WM_MBUTTONUP:
+        {
+            if (m_isPanning)
+            {
+                m_isPanning = false;
+                ReleaseCapture();
+            }
+
+            return 0;
+        }
+
+        case WM_MBUTTONDOWN:
+        {
+            m_isPanning = true;
+
+            m_lastMousePos.x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
+            m_lastMousePos.y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
+
+            SetCapture(hwnd);
+
+            return 0;
+        }
     }
 
     return DefSubclassProc(hwnd, msg, wparam, lparam);

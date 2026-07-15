@@ -116,3 +116,37 @@ sgc::tile::TileSize2D sgc_view::MapView::GetCursorSizeInTiles() const
         static_cast<sgc::math::uval>(pixelSize.y) / m_tileHeight
     };
 }
+
+void sgc_view::MapView::SetCameraPositionSingles(float x, float y)
+{
+    m_renderContext.view.camera.x = x;
+    m_renderContext.view.camera.y = y;
+}
+
+void sgc_view::MapView::ChangeCameraPositionSingles(float deltaX, float deltaY)
+{
+    m_renderContext.view.camera.x -= deltaX;
+    m_renderContext.view.camera.y -= deltaY;
+}
+
+void sgc_view::MapView::ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta)
+{
+    auto currentPosition = m_cursorTile.GetPosition();
+    m_cursorTile.SetPosition({
+        currentPosition.x - delta.x,
+        currentPosition.y - delta.y
+    });
+}
+
+sgc::math::fvec2 sgc_view::MapView::GetCameraPositionSingles() const
+{
+    return {
+        m_renderContext.view.camera.x,
+        m_renderContext.view.camera.y
+    };
+}
+
+sgc::graphics::View sgc_view::MapView::GetView() const
+{
+    return m_renderContext.view;
+}
