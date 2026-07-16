@@ -68,7 +68,7 @@ std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::LoadTileset(const std
         throw program::AssetLoadException("Failed to load tileset image: " + path.string());
     }
 
-    const math::uvec2 imageSize = image->GetSize();
+    const math::vec2 imageSize = image->GetSize();
     if (imageSize.x == 0 || imageSize.y == 0) {
         throw program::AssetLoadException("Tileset image has invalid dimensions: " + path.string());
     }

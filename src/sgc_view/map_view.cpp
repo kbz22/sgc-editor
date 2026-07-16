@@ -19,8 +19,8 @@ sgc_view::MapView::MapView(HWND hwnd, std::filesystem::path tilesetPath, int til
         0,
         0
     }, {
-        static_cast<sgc::math::uval>(m_tileWidth),
-        static_cast<sgc::math::uval>(m_tileHeight)
+        m_tileWidth,
+        m_tileHeight
     });
 
     m_cursorTile.SetColor({ 255, 255, 255, 64 });
@@ -51,6 +51,22 @@ void sgc_view::MapView::Refresh(program::LayerManager& layerManager)
     auto layers = layerManager.GetLayers();
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
 
+    if(!layers.empty() && layerManager.IsSingleLayerMode()){       
+
+        auto activeLayerIndex = layerManager.GetActiveLayerIndex();
+        auto layer = layers[activeLayerIndex];
+        layers.clear();
+
+        auto tiledLayer = std::make_shared<graphics::TiledLayer>(
+            m_tileset,
+            layer.storage
+        );
+
+        auto tiledImage = std::make_shared<graphics::TiledImage>(tiledLayer);
+
+        drawables.push_back(tiledImage);
+    }
+
     for(auto layer = layers.rbegin(); layer != layers.rend(); ++layer) {
 
         if(layer->visible == false) {
@@ -64,6 +80,8 @@ void sgc_view::MapView::Refresh(program::LayerManager& layerManager)
 
         auto tiledImage = std::make_shared<graphics::TiledImage>(tiledLayer);
 
+        tiledImage->SetAlpha(layer->transparency);
+
         drawables.push_back(tiledImage);
     }
 
@@ -72,7 +90,6 @@ void sgc_view::MapView::Refresh(program::LayerManager& layerManager)
     m_drawableImage = layer;
 
     Render();
-    
 }
 
 void sgc_view::MapView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position)
@@ -116,8 +133,8 @@ sgc::tile::TileSize2D sgc_view::MapView::GetCursorSizeInTiles() const
     auto pixelSize = m_cursorTile.GetSize();
     
     return {
-        static_cast<sgc::math::uval>(pixelSize.x) / m_tileWidth,
-        static_cast<sgc::math::uval>(pixelSize.y) / m_tileHeight
+        pixelSize.x / m_tileWidth,
+        pixelSize.y / m_tileHeight
     };
 }
 

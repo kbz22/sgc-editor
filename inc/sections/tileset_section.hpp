@@ -23,7 +23,7 @@ namespace sections {
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
             bool m_selectionActive = false;        
             sgc::math::vec2 m_selectionTileStart = { 0, 0 };    
-            sgc::math::uvec2 m_selectionTileSize = { 0, 0 };
+            sgc::math::vec2 m_selectionTileSize = { 0, 0 };
         
         public:
             TilesetSection(program::ProgramContext& programContext);

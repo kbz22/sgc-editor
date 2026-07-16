@@ -182,12 +182,14 @@ void win32_program::OnLayerAddClicked()
     if(programContext.layerManager != nullptr) {
 
         auto storage = std::make_shared<sgc::data::ChunkedTileStorage>();
-        storage->SetTileAt({0, 0}, 0);
+        storage->SetTileAt({0, 0}, 0);        
 
         programContext.layerManager->AddLayer({
             storage,
             L"New Layer"
         });
+
+        UpdateEditorLayerMode(programContext.editorLayerMode);
 
         programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
@@ -204,6 +206,8 @@ void win32_program::OnLayerRemoveClicked()
     if(programContext.layerManager != nullptr) {
         auto activeIndex = programContext.layerManager->GetActiveLayerIndex();
         programContext.layerManager->RemoveLayer(activeIndex);
+
+        UpdateEditorLayerMode(programContext.editorLayerMode);
 
         programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
@@ -223,7 +227,9 @@ void win32_program::OnLayerMoveUpClicked()
             programContext.layerManager->MoveActiveLayer(-1);
         } catch (const std::out_of_range& e) {
             //! no need to note the out of range error
-        }        
+        }
+        
+        UpdateEditorLayerMode(programContext.editorLayerMode);
 
         programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
@@ -246,6 +252,8 @@ void win32_program::OnLayerMoveDownClicked()
             //! no need to note the out of range error
         }
 
+        UpdateEditorLayerMode(programContext.editorLayerMode);
+
         programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
 
@@ -253,4 +261,46 @@ void win32_program::OnLayerMoveDownClicked()
         programContext.layersSection->Refresh(*programContext.layerManager);
         programContext.layersSection->Update();
     }
+}
+
+void win32_program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
+{
+    auto& programContext = program::GetProgramContext();
+
+    programContext.editorLayerMode = newMode;
+    
+    switch(newMode) {
+
+        case program::EditorLayerMode::SingleLayer:
+        {
+            programContext.layerManager->SetSingleLayerMode(true);            
+            break;
+        }
+
+        case program::EditorLayerMode::MultiLayer:
+        {
+            programContext.layerManager->SetSingleLayerMode(false);
+            program::MultiLayerModeSetup(programContext);
+            break;
+        }
+
+        case program::EditorLayerMode::SingleImage:
+        {
+            programContext.layerManager->SetSingleLayerMode(false);
+            program::SingleImageModeSetup(programContext);
+            break;
+        }
+    }
+
+    programContext.mapSection->Refresh(*programContext.layerManager);
+    programContext.mapSection->Update();
+}
+
+void win32_program::UpdateEditorChunkMode(program::EditorChunkMode newMode)
+{
+    auto& programContext = program::GetProgramContext();
+
+    programContext.editorChunkMode = newMode;
+
+    programContext.mapSection->SetCheckTileBeforePainting(newMode == program::EditorChunkMode::FixedChunks);
 }

@@ -114,3 +114,27 @@ void program::LayerManager::MoveLayer(size_t fromIndex, int movement)
     m_layers.erase(m_layers.begin() + fromIndex);
     m_layers.insert(m_layers.begin() + toIndex, layer);
 }
+
+size_t program::LayerManager::GetSize() const
+{
+    return m_layers.size();
+}
+
+void program::LayerManager::SetSingleLayerMode(bool singleLayerMode)
+{
+    m_singleLayerMode = singleLayerMode;
+}
+
+void program::LayerManager::SetLayerTransparency(size_t index, uint8_t transparency)
+{
+    if (index >= m_layers.size()) {
+        throw std::out_of_range("Index is out of range for setting layer transparency.");
+    }
+
+    m_layers[index].transparency = transparency;
+}
+
+bool program::LayerManager::IsSingleLayerMode() const
+{
+    return m_singleLayerMode;
+}

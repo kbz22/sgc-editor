@@ -142,31 +142,24 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
                 break;
 
             case static_cast<int>(CommandId::EditorLayerModeNonActiveTransparent):
-                programContext.editorLayerMode = EditorLayerMode::MultiLayer;
-                UpdateAllSections();
+                UpdateEditorLayerMode(EditorLayerMode::MultiLayer);
                 break;
 
             case static_cast<int>(CommandId::EditorLayerModeSingleLayer):
-                programContext.editorLayerMode = EditorLayerMode::SingleLayer;
-                UpdateAllSections();
+                UpdateEditorLayerMode(EditorLayerMode::SingleLayer);
                 break;
 
             case static_cast<int>(CommandId::EditorLayerModeSingleImage):
-                programContext.editorLayerMode = EditorLayerMode::SingleImage;
-                UpdateAllSections();
-                break;
+                UpdateEditorLayerMode(EditorLayerMode::SingleImage);
+                break;                
 
             case static_cast<int>(CommandId::EditorChunkModeFixedSize):
-                programContext.editorChunkMode = EditorChunkMode::FixedChunks;
-                UpdateAllSections();
+                UpdateEditorChunkMode(EditorChunkMode::FixedChunks);
                 break;
 
             case static_cast<int>(CommandId::EditorChunkModeFree):
-                programContext.editorChunkMode = EditorChunkMode::DynamicChunks;
-                UpdateAllSections();
-                break;
-
-            
+                UpdateEditorChunkMode(EditorChunkMode::DynamicChunks);
+                break;            
         }
 
         break;

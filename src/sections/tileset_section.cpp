@@ -61,7 +61,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
                 break;
             }
 
-            sgc::math::uvec2 tileSize = tileset->GetTileSize();
+            sgc::math::vec2 tileSize = tileset->GetTileSize();
             sgc::math::vec2 tilePosition = {
                 static_cast<sgc::math::ival>(x / tileSize.x),
                 static_cast<sgc::math::ival>(y / tileSize.y)
@@ -71,11 +71,13 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             m_selectionTileSize = { 1, 1 };
             
             programContext.selectionRectangleOnTileset->SetPosition(
-                {tilePosition.x * static_cast<sgc::math::ival>(tileSize.x),
-                tilePosition.y * static_cast<sgc::math::ival>(tileSize.y)}
+                {tilePosition.x * tileSize.x,
+                tilePosition.y * tileSize.y}
             );
-            programContext.selectionRectangleOnTileset->SetSize(
-                {m_selectionTileSize.x * static_cast<sgc::math::ival>(tileSize.x), m_selectionTileSize.y * static_cast<sgc::math::ival>(tileSize.y)}
+            programContext.selectionRectangleOnTileset->SetSize({
+                m_selectionTileSize.x * tileSize.x,
+                m_selectionTileSize.y * tileSize.y
+            }
             );
             
             m_selectionActive = true;
@@ -102,27 +104,27 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             auto tileSize = tileset->GetTileSize();
             auto imageSize = tileset->GetImageSize();
 
-            sgc::math::uvec2 tileCount = {
+            sgc::math::vec2 tileCount = {
                 imageSize.x / tileSize.x,
                 imageSize.y / tileSize.y
             };
 
-            sgc::math::uvec2 currentTile = {
-                static_cast<sgc::math::uval>(x / tileSize.x),
-                static_cast<sgc::math::uval>(y / tileSize.y)
+            sgc::math::vec2 currentTile = {
+                x / tileSize.x,
+                y / tileSize.y
             };
 
             currentTile.x = std::min(currentTile.x, tileCount.x - 1);
             currentTile.y = std::min(currentTile.y, tileCount.y - 1);
 
-            sgc::math::uvec2 minTile = {
-                std::min(static_cast<sgc::math::uval>(m_selectionTileStart.x), currentTile.x),
-                std::min(static_cast<sgc::math::uval>(m_selectionTileStart.y), currentTile.y)
+            sgc::math::vec2 minTile = {
+                std::min(m_selectionTileStart.x, currentTile.x),
+                std::min(m_selectionTileStart.y, currentTile.y)
             };
 
-            sgc::math::uvec2 maxTile = {
-                std::max(static_cast<sgc::math::uval>(m_selectionTileStart.x), currentTile.x),
-                std::max(static_cast<sgc::math::uval>(m_selectionTileStart.y), currentTile.y)
+            sgc::math::vec2 maxTile = {
+                std::max(m_selectionTileStart.x, currentTile.x),
+                std::max(m_selectionTileStart.y, currentTile.y)
             };
 
             m_selectionTileSize = {

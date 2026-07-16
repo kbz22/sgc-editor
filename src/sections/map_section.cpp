@@ -105,10 +105,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto tileSize = tileset->GetTileSize();
 
             auto mousePos = m_mapView->PixelsToTiles(
-            sgc::math::uvec2{ 
-                static_cast<sgc::math::uval>(GET_X_LPARAM(lparam)),
-                static_cast<sgc::math::uval>(GET_Y_LPARAM(lparam))
-            });            
+            sgc::math::vec2{ 
+                GET_X_LPARAM(lparam),
+                GET_Y_LPARAM(lparam)
+            });
 
             auto currentTilePosition = programContext.selectionRectangleOnTileset->GetPosition();          
 
@@ -122,6 +122,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             }
 
             auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
+            bool refreshNeeded = false;
 
             m_selectionTileStart = cursorPositionOnMap;
 
@@ -131,7 +132,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     auto tileY = cursorPositionOnMap.y + _y;
                     auto currentTileId = tileset->ToTileId(static_cast<sgc::math::uval>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::uval>(currentTilePosition.y / tileSize.y) + _y);                    
 
-                    if(currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
+                    if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
                         currentLayer.storage->SetTileAt({ tileX, tileY }, currentTileId);
                     }
                 }
@@ -139,7 +140,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             m_isPainting = true;            
 
-            Update();
+            Update();            
             
             return 0;
         }
@@ -193,8 +194,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 auto selection = programContext.selectionRectangleOnTileset->GetSize();
 
                 m_mapView->SetCursorSizeInPixels({
-                    static_cast<sgc::math::uval>(selection.x),
-                    static_cast<sgc::math::uval>(selection.y)
+                    selection.x,
+                    selection.y
                 });
 
                 m_mapView->SetCursorPositionInPixels({
@@ -252,7 +253,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         cursorTilePositionOnTileset.y + deltaY
                     );
 
-                    if (currentLayer.storage->GetTileAt({tileMapX, tileMapY}).has_value()){
+                    if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({tileMapX, tileMapY}).has_value()){
                         currentLayer.storage->SetTileAt(
                             {tileMapX, tileMapY},
                             tileId
@@ -297,4 +298,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
     }
 
     return DefSubclassProc(hwnd, msg, wparam, lparam);
+}
+
+void sections::MapSection::SetCheckTileBeforePainting(bool check)
+{
+    m_checkTileBeforePainting = check;
 }

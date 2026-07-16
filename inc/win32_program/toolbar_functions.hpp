@@ -1,5 +1,7 @@
 #pragma once
 
+#include "program/editor_mode.hpp"
+
 namespace win32_program
 {    
     void OnFileNewClicked();
@@ -13,4 +15,7 @@ namespace win32_program
     void OnLayerRemoveClicked();
     void OnLayerMoveUpClicked();
     void OnLayerMoveDownClicked();
+
+    void UpdateEditorLayerMode(program::EditorLayerMode newMode);
+    void UpdateEditorChunkMode(program::EditorChunkMode newMode);
 }

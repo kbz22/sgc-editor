@@ -16,6 +16,7 @@ namespace sections {
             std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;
             bool m_isPainting = false;
             bool m_isPanning = false;
+            bool m_checkTileBeforePainting = true;
             sgc::math::vec2 m_lastMousePos = { 0, 0 };
             sgc::math::vec2 m_selectionTileStart = { 0, 0 };
 
@@ -33,8 +34,8 @@ namespace sections {
             void LoadTileset(const std::filesystem::path& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
             void LoadMap(const std::filesystem::path& path);
             void SaveMap(const std::filesystem::path& path);
-
-            void SetTile(sgc::tile::TilesetPosition2D tilePos, sgc::tile::TileId tileId);
+            
+            void SetCheckTileBeforePainting(bool check);
     };
 
 }

@@ -4,6 +4,7 @@
 #include "win32_program/layout_manager.hpp"
 #include "program/program.hpp"
 #include "program/layer_manager.hpp"
+#include "win32_program/toolbar_functions.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
 
 program::ProgramContext& program::GetProgramContext()
@@ -66,7 +67,7 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 
     programContext.selectionRectangleOnTileset = std::make_unique<sgc::graphics::Rectangle>(
         sgc::math::vec2{ 0, 0 },
-        sgc::math::uvec2{ static_cast<sgc::math::uval>(tileWidth), static_cast<sgc::math::uval>(tileHeight) }
+        sgc::math::vec2{ tileWidth, tileHeight }
     );
     programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
 
@@ -102,6 +103,10 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
         if(programContext.layerManager != nullptr) {
             programContext.layerManager->SetActiveLayerIndex(index);
 
+            if(programContext.editorLayerMode == EditorLayerMode::MultiLayer) {
+                MultiLayerModeSetup(programContext);
+            }
+
             programContext.mapSection->Refresh(*programContext.layerManager);
             programContext.mapSection->Update();
         }
@@ -124,5 +129,10 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     }
 
     programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorLayerModeSingleImage, true);
+    programContext.editorLayerMode = EditorLayerMode::SingleImage;
     programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorChunkModeFree, true);
+    programContext.editorChunkMode = EditorChunkMode::DynamicChunks;
+
+    win32_program::UpdateEditorLayerMode(programContext.editorLayerMode);
+    win32_program::UpdateEditorChunkMode(programContext.editorChunkMode);
 }

@@ -19,9 +19,9 @@ sgc_view::TilesetView::TilesetView(HWND hwnd, std::filesystem::path tilesetPath,
         throw std::runtime_error("Failed to load tileset from path: " + tilesetPath.string());
     }
     
-    const math::uvec2 gridSize = m_tileset->GetSizeInTiles();
+    const math::vec2 gridSize = m_tileset->GetSizeInTiles();
 
-    auto tileStorage = std::make_shared<data::StaticTileStorage>(math::uvec2{gridSize.x, gridSize.y});
+    auto tileStorage = std::make_shared<data::StaticTileStorage>(math::vec2{gridSize.x, gridSize.y});
 
     for (sgc::tile::TileId i = 0; i < gridSize.y * gridSize.x; ++i) {  
         tileStorage->SetTileAt({

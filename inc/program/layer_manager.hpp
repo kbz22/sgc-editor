@@ -13,6 +13,7 @@ namespace program {
         std::shared_ptr<sgc::data::ITileStorage> storage;        
         std::wstring name;
         bool visible = true;
+        uint8_t transparency = 255;
     };
 
     class LayerManager
@@ -21,6 +22,7 @@ namespace program {
             std::vector<LayerItem> m_layers;
             size_t m_activeLayerIndex = 0;
             size_t m_baseLayerIndex = 0;
+            bool m_singleLayerMode = false;
 
         public:
             LayerManager() = default;
@@ -34,11 +36,15 @@ namespace program {
             
             void SetActiveLayerIndex(size_t index);
             void SetBaseLayerIndex(size_t index);
-            void SetLayerVisibility(size_t index, bool visible);  
+            void SetLayerVisibility(size_t index, bool visible);
+            void SetLayerTransparency(size_t index, uint8_t transparency);
+            void SetSingleLayerMode(bool singleLayerMode);
 
             std::vector<LayerItem> GetLayers() const;
             size_t GetActiveLayerIndex() const;
             size_t GetBaseLayerIndex() const;
+            size_t GetSize() const;
+            bool IsSingleLayerMode() const;
     };        
 
 }
