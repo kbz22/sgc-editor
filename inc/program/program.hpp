@@ -15,6 +15,7 @@
 
 #include "win32_program/win32_context.hpp"
 #include "program/layer_manager.hpp"
+#include "program/editor_mode.hpp"
 
 #include <sgc/graphics/rectangle.hpp>
 #include <commctrl.h>
@@ -46,6 +47,9 @@ namespace program {
 
         locale::CommandManager commandManager{};
         locale::StringManager stringManager{};
+
+        program::EditorLayerMode editorLayerMode = program::EditorLayerMode::MultiLayer;
+        program::EditorChunkMode editorChunkMode = program::EditorChunkMode::DynamicChunks;
     };
 
     ProgramContext& GetProgramContext();

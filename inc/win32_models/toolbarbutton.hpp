@@ -8,11 +8,11 @@ namespace win32_models {
     struct ToolbarButton
     {
         int imageIndex;
-        win32_program::CommandId commandId;
-        // std::wstring tooltip;
+        win32_program::CommandId commandId;        
 
         bool enabled = true;
-        bool seperator = false;
+        bool seperator = false;        
+        bool grouped = false;
     };   
 
 }

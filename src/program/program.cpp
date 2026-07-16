@@ -12,15 +12,33 @@ program::ProgramContext& program::GetProgramContext()
     return context;
 }
 
+std::vector<win32_program::CommandId> g_editorButtons {
+    win32_program::CommandId::EditUndo,
+    win32_program::CommandId::EditRedo,
+    win32_program::CommandId::LayerAdd,
+    win32_program::CommandId::LayerRemove,
+    win32_program::CommandId::LayerMoveUp,
+    win32_program::CommandId::LayerMoveDown,
+    win32_program::CommandId::EditorLayerModeNonActiveTransparent,
+    win32_program::CommandId::EditorLayerModeSingleLayer,
+    win32_program::CommandId::EditorLayerModeSingleImage,
+    win32_program::CommandId::EditorChunkModeFixedSize,
+    win32_program::CommandId::EditorChunkModeFree
+};
+
 void program::StartDefault()
 {
-    auto& programContext = GetProgramContext();
+    auto& programContext = GetProgramContext();    
+
+    programContext.menuSection = std::make_unique<sections::MenuSection>(programContext);
+    programContext.sections.push_back(programContext.menuSection.get());
 
     programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(programContext);
     programContext.sections.push_back(programContext.toolbarSection.get());
 
-    programContext.menuSection = std::make_unique<sections::MenuSection>(programContext);
-    programContext.sections.push_back(programContext.menuSection.get());
+    for(auto editorButton : g_editorButtons) {
+        programContext.toolbarSection->SetButtonEnabled(editorButton, false);
+    }
 
     programContext.mapSection = std::make_unique<sections::MapSection>(programContext);
     programContext.sections.push_back(programContext.mapSection.get());        
@@ -100,4 +118,11 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 
     programContext.layersSection->Refresh(*programContext.layerManager);
     programContext.layersSection->Update();
+
+    for(auto editorButton : g_editorButtons) {
+        programContext.toolbarSection->SetButtonEnabled(editorButton, true);
+    }
+
+    programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorLayerModeSingleImage, true);
+    programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorChunkModeFree, true);
 }

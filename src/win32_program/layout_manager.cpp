@@ -68,13 +68,6 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
     
     UpdateRebarLayout(hwnd, rc.right); // this is important to do before relaying the sections    
 
-    /* int hTop = static_cast<int>(
-        SendMessage(hRebarTop, RB_GETBARHEIGHT, 0, 0)
-    );
-    int hBottom = static_cast<int>(
-        SendMessage(hRebarBottom, RB_GETBARHEIGHT, 0, 0)
-    );   */ 
-
     int hTop = m_menuBarHeight;
     int hBottom = m_toolbarHeight;
     m_toolbarOffset = hTop + hBottom;

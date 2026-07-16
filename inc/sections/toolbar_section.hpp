@@ -20,21 +20,21 @@ namespace sections {
                 {0, win32_program::CommandId::FileNew, true},
                 {1, win32_program::CommandId::FileOpen, true},
                 {2, win32_program::CommandId::FileSave, false},
-                {0, win32_program::CommandId::NA, false, true},
+                {0, win32_program::CommandId::NotApplicable, false, true},
                 {11, win32_program::CommandId::EditUndo, true},
                 {12, win32_program::CommandId::EditRedo, true},
-                {0, win32_program::CommandId::NA, false, true},
+                {0, win32_program::CommandId::NotApplicable, false, true},
                 {7, win32_program::CommandId::LayerAdd, true},
                 {8, win32_program::CommandId::LayerRemove, true},
                 {10, win32_program::CommandId::LayerMoveUp, true},
                 {9, win32_program::CommandId::LayerMoveDown, true},
-                {0, win32_program::CommandId::NA, false, true},
-                {4, win32_program::CommandId::EditorLayerModeNonActiveTransparent, true},
-                {5, win32_program::CommandId::EditorLayerModeSingleLayer, true},
-                {6, win32_program::CommandId::EditorLayerModeSingleImage, true},
-                {0, win32_program::CommandId::NA, false, true},
-                {16, win32_program::CommandId::EditorChunkModeFixedSize, true},
-                {15, win32_program::CommandId::EditorChunkModeFree, true}
+                {0, win32_program::CommandId::NotApplicable, false, true},
+                {4, win32_program::CommandId::EditorLayerModeNonActiveTransparent, true, false, true},
+                {5, win32_program::CommandId::EditorLayerModeSingleLayer, true, false, true},
+                {6, win32_program::CommandId::EditorLayerModeSingleImage, true, false, true},
+                {0, win32_program::CommandId::NotApplicable, false, true},
+                {16, win32_program::CommandId::EditorChunkModeFixedSize, true, false, true},
+                {15, win32_program::CommandId::EditorChunkModeFree, true, false, true}
             };
             HWND m_hwndToolbar;
 
@@ -44,6 +44,9 @@ namespace sections {
 
             void Update() override;
             void HandleSectionResize() override;
+
+            void SetGroupedButtonState(win32_program::CommandId commandId, bool checked = true);
+            void SetButtonEnabled(win32_program::CommandId commandId, bool enabled);
 
             HWND GetHwndToolbar() const;
     };

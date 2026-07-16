@@ -140,6 +140,33 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
             case static_cast<int>(CommandId::LayerMoveDown):
                 win32_program::OnLayerMoveDownClicked();
                 break;
+
+            case static_cast<int>(CommandId::EditorLayerModeNonActiveTransparent):
+                programContext.editorLayerMode = EditorLayerMode::MultiLayer;
+                UpdateAllSections();
+                break;
+
+            case static_cast<int>(CommandId::EditorLayerModeSingleLayer):
+                programContext.editorLayerMode = EditorLayerMode::SingleLayer;
+                UpdateAllSections();
+                break;
+
+            case static_cast<int>(CommandId::EditorLayerModeSingleImage):
+                programContext.editorLayerMode = EditorLayerMode::SingleImage;
+                UpdateAllSections();
+                break;
+
+            case static_cast<int>(CommandId::EditorChunkModeFixedSize):
+                programContext.editorChunkMode = EditorChunkMode::FixedChunks;
+                UpdateAllSections();
+                break;
+
+            case static_cast<int>(CommandId::EditorChunkModeFree):
+                programContext.editorChunkMode = EditorChunkMode::DynamicChunks;
+                UpdateAllSections();
+                break;
+
+            
         }
 
         break;

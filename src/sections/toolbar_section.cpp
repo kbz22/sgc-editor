@@ -42,10 +42,10 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
 
         btn.iBitmap = b.imageIndex;
         btn.idCommand = static_cast<int>(b.commandId);
-        btn.fsState = b.enabled ? TBSTATE_ENABLED : 0;
-        btn.fsStyle = b.seperator ? BTNS_SEP : BTNS_BUTTON;
+        btn.fsState = b.enabled ? TBSTATE_ENABLED : 0;        
 
-        btn.dwData = (DWORD_PTR)L"New File"; //! tmp
+        btn.fsStyle = b.seperator ? BTNS_SEP : BTNS_BUTTON;
+        btn.fsStyle = b.grouped ? BTNS_CHECKGROUP : btn.fsStyle;
 
         tbButtons.push_back(btn);
     }
@@ -94,6 +94,25 @@ void sections::ToolbarSection::Update()
 void sections::ToolbarSection::HandleSectionResize()
 {
     return;
+}
+
+void sections::ToolbarSection::SetGroupedButtonState(win32_program::CommandId commandId, bool checked)
+{
+    switch(commandId)
+    {
+        case win32_program::CommandId::EditorLayerModeNonActiveTransparent:
+        case win32_program::CommandId::EditorLayerModeSingleLayer:
+        case win32_program::CommandId::EditorLayerModeSingleImage:
+        case win32_program::CommandId::EditorChunkModeFixedSize:
+        case win32_program::CommandId::EditorChunkModeFree:
+            SendMessage(m_hwndToolbar, TB_CHECKBUTTON, static_cast<int>(commandId), MAKELPARAM(checked, 0));
+            break;
+    }    
+}
+
+void sections::ToolbarSection::SetButtonEnabled(win32_program::CommandId commandId, bool enabled)
+{
+    SendMessage(m_hwndToolbar, TB_ENABLEBUTTON, static_cast<int>(commandId), MAKELPARAM(enabled, 0));
 }
 
 HWND sections::ToolbarSection::GetHwndToolbar() const

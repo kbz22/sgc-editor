@@ -23,7 +23,7 @@ namespace win32_program
 
     enum class CommandId : types::cmdid_t
     {
-        NA,
+        NotApplicable,
 
         MenuFile = 1001,
         MenuEdit = 1002,
@@ -45,6 +45,7 @@ namespace win32_program
         EditorLayerModeSingleImage = 5003,
 
         EditorChunkModeFixedSize = 6001,
-        EditorChunkModeFree = 6002 
+        EditorChunkModeFree = 6002
     };
+    
 }
