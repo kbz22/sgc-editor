@@ -32,8 +32,12 @@ namespace win32_program {
             int m_splitW = 5;
             int m_windowWidth = 0;
             int m_windowHeight = 0;
+            int m_menuBarHeight = 0;
+            int m_toolbarHeight = 0;
 
-            program::ProgramContext& m_programContext;            
+            program::ProgramContext& m_programContext; 
+            
+            void UpdateRebarLayout(HWND hwnd, int width);
 
         public:
             LayoutManager(program::ProgramContext& programContext = program::GetProgramContext());              

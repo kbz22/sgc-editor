@@ -25,7 +25,30 @@ win32_program::LayoutManager::LayoutManager(program::ProgramContext& programCont
 
     m_windowWidth  = rc.right;
     m_windowHeight = rc.bottom;
+
+    auto hRebarTop = m_programContext.menuSection->GetHwnd();
+    auto hRebarBottom = m_programContext.toolbarSection->GetHwnd();
+    
+    int hTop = static_cast<int>(
+        SendMessage(hRebarTop, RB_GETBARHEIGHT, 0, 0)
+    );
+    int hBottom = static_cast<int>(
+        SendMessage(hRebarBottom, RB_GETBARHEIGHT, 0, 0)
+    );
+
+    m_menuBarHeight = hTop;
+    m_toolbarHeight = hBottom;
 }
+
+// Rebar heights are queried once during initialization.
+//
+// Querying RB_GETBARHEIGHT during every layout caused intermittent
+// overlap/flickering while resizing because the rebar performs its
+// own internal layout asynchronously.
+//
+// These controls have fixed heights in this application, so caching
+// them avoids fighting the rebar's layout logic.
+// chat gpt wrote this for me isn't he nice :)
 
 void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPARAM lParam)
 {
@@ -41,16 +64,20 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
     GetClientRect(hwnd, &rc);
 
     auto hRebarTop = m_programContext.menuSection->GetHwnd();
-    auto hRebarBottom = m_programContext.toolbarSection->GetHwnd();
+    auto hRebarBottom = m_programContext.toolbarSection->GetHwnd();  
+    
+    UpdateRebarLayout(hwnd, rc.right); // this is important to do before relaying the sections    
 
-    int hTop = static_cast<int>(
+    /* int hTop = static_cast<int>(
         SendMessage(hRebarTop, RB_GETBARHEIGHT, 0, 0)
     );
     int hBottom = static_cast<int>(
         SendMessage(hRebarBottom, RB_GETBARHEIGHT, 0, 0)
-    );
+    );   */ 
 
-    m_toolbarOffset = hTop + hBottom;    
+    int hTop = m_menuBarHeight;
+    int hBottom = m_toolbarHeight;
+    m_toolbarOffset = hTop + hBottom;
 
     m_windowWidth = rc.right;
     m_windowHeight = rc.bottom;
@@ -70,16 +97,14 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
         // Fix by shrinking tileset first
         int shrink = defaults::minCollumnWidth - middle;
         tilesetWidth = std::max(defaults::minCollumnWidth, tilesetWidth - shrink);
-    }
+    }    
 
-    HDWP hdwp;
-
-    hdwp = BeginDeferWindowPos(1);    
-    hdwp = defer(hdwp, hRebarBottom, 0, hTop, rc.right, hBottom);
-    EndDeferWindowPos(hdwp);
+    HDWP hdwp; 
     
-    hdwp = BeginDeferWindowPos(7);
+    hdwp = BeginDeferWindowPos(9);
 
+    hdwp = defer(hdwp, hRebarTop, 0, 0, rc.right, hTop);
+    hdwp = defer(hdwp, hRebarBottom, 0, hTop, rc.right, hBottom);
     hdwp = defer(hdwp, m_programContext.layersSection->GetHwnd(), 0, m_toolbarOffset, layerWidth, layerHeight);
     hdwp = defer(hdwp, m_layerPackageSplitter, 0, m_toolbarOffset + layerHeight, layerWidth, m_splitH);
     hdwp = defer(hdwp, m_programContext.packageSection->GetHwnd(), 0, m_toolbarOffset + layerHeight + m_splitH, layerWidth, rc.bottom - m_toolbarOffset - layerHeight - m_splitH);
@@ -167,4 +192,31 @@ void win32_program::LayoutManager::HandleDragging([[maybe_unused]] HWND hwnd, LP
     m_layersPackageViewRatio = static_cast<float>(leftWidth) / clientWidth;
     m_tilesetMapRatio = static_cast<float>(tilesetWidth) / clientWidth;
     m_layersMapViewRatio = static_cast<float>(topHeight) / clientHeight;
+}
+
+void win32_program::LayoutManager::UpdateRebarLayout(HWND hwnd, int width)
+{
+    HDWP hdwp = BeginDeferWindowPos(2);
+
+    hdwp = DeferWindowPos(
+        hdwp,
+        m_programContext.menuSection->GetHwnd(),
+        nullptr,
+        0, 0,
+        width,
+        m_menuBarHeight,
+        SWP_NOZORDER
+    );
+
+    hdwp = DeferWindowPos(
+        hdwp,
+        m_programContext.toolbarSection->GetHwnd(),
+        nullptr,
+        0, m_menuBarHeight,
+        width,
+        m_toolbarHeight,
+        SWP_NOZORDER
+    );
+
+    EndDeferWindowPos(hdwp);
 }

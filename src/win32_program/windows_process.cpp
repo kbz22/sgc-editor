@@ -27,7 +27,7 @@ win32_program::LayoutManager& GetLayoutManager()
 void HandleResize(HWND hwnd, LPARAM lParam)
 {
     auto& layoutManager = GetLayoutManager();
-    auto& programContext = program::GetProgramContext();
+    auto& programContext = program::GetProgramContext();    
 
     layoutManager.HandleResize(
         hwnd,
@@ -148,7 +148,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_SIZE:
     {    
         HandleResize(hwnd, lParam);
-        break;
+        return TRUE;
     }
 
     case WM_NOTIFY:
