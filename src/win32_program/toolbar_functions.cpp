@@ -86,6 +86,7 @@ INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] 
     {
         case WM_INITDIALOG:
         {
+            // Set the dialog's default values for width and height
             SetDlgItemInt(hDlg, IDC_MAP_WIDTH, defaults::tileSize, FALSE);
             SetDlgItemInt(hDlg, IDC_MAP_HEIGHT, defaults::tileSize, FALSE);
             return TRUE;

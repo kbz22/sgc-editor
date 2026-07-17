@@ -20,10 +20,10 @@ namespace sgc_view
     class MapView : public SgcView
     {
         private:            
-            graphics::Rectangle m_cursorTile = graphics::Rectangle{ 0, 0, defaults::tileSize, defaults::tileSize }; 
+            graphics::Rectangle m_cursorTile;
 
         public:
-            MapView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
+            MapView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth, int tileHeight);
             ~MapView();
             
             void Render() override;

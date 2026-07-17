@@ -17,7 +17,7 @@ namespace sgc_view
             std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
 
         public:
-            TilesetView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
+            TilesetView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth, int tileHeight);
             ~TilesetView();
 
             void Render() override;

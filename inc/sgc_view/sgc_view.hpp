@@ -31,8 +31,8 @@ namespace sgc_view
             // void InstallInputSubclass();
 
         protected:
-            int m_tileWidth = defaults::tileSize;
-            int m_tileHeight = defaults::tileSize;
+            int m_tileWidth;
+            int m_tileHeight;
             std::shared_ptr<graphics::Tileset> m_tileset = nullptr;        
             std::shared_ptr<graphics::IDrawable> m_drawableImage = nullptr;
             graphics::RenderContext m_renderContext = {};
@@ -45,7 +45,7 @@ namespace sgc_view
             std::shared_ptr<graphics::Tileset> LoadTileset(const std::filesystem::path& path);
 
         public:
-            SgcView(HWND hwnd, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
+            SgcView(HWND hwnd, int tileWidth, int tileHeight);
             ~SgcView();
             
             virtual void SetScreenSize(int width, int height);

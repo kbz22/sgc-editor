@@ -8,20 +8,21 @@
 #include <sgc/graphics/renderlayer.hpp>
 
 sgc_view::MapView::MapView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth, int tileHeight) :
-    SgcView(hwnd, tileWidth, tileHeight)
+    SgcView(hwnd, tileWidth, tileHeight),
+    m_cursorTile({0,0},{tileWidth,tileHeight})
 {
     m_tileset = LoadTileset(tilesetPath);
     if(m_tileset == nullptr) {
         throw std::runtime_error("Failed to load tileset from path: " + tilesetPath.string());        
     }
 
-    m_cursorTile = graphics::Rectangle({
+    /* m_cursorTile = graphics::Rectangle({
         0,
         0
-    }, {
+    },{
         m_tileWidth,
         m_tileHeight
-    });
+    }); */
 
     m_cursorTile.SetColor({ 255, 255, 255, 64 });
 

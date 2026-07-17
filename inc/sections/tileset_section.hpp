@@ -31,7 +31,7 @@ namespace sections {
             void Update() override;
             void HandleSectionResize() override;
 
-            void LoadTileset(const std::filesystem::path& path, int tileWidth = defaults::tileSize, int tileHeight = defaults::tileSize);
+            void LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight);
             void ClearTileset();
     };
 

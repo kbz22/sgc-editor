@@ -71,9 +71,9 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     );
     programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
 
-    programContext.tilesetSection->LoadTileset(tilesetPath);
+    programContext.tilesetSection->LoadTileset(tilesetPath, tileWidth, tileHeight);
 
-    programContext.mapSection->LoadTileset(tilesetPath);
+    programContext.mapSection->LoadTileset(tilesetPath, tileWidth, tileHeight);
 
     programContext.mapSection->HandleSectionResize();
     programContext.tilesetSection->HandleSectionResize();
