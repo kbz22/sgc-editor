@@ -7,7 +7,7 @@
 
 namespace locale {
 
-    class CommandManager
+    class CommandLookup
     {
         private:
         std::vector<CommandInfo> m_commands = {

@@ -341,8 +341,10 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
         }
 
         default:
-            return DefSubclassProc(hwnd, msg, wparam, lparam);
+            break;
     }
+
+    return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
 void win32_models::LayerListControl::Resize(int x, int y, int width, int height)
@@ -435,7 +437,7 @@ void win32_models::LayerListControl::UpdateScrollInfo()
     si.cbSize = sizeof(si);
     si.fMask = SIF_RANGE | SIF_PAGE | SIF_POS;
     si.nMin = 0;
-    si.nMax = m_layers.size() * m_rowHeight;
+    si.nMax = static_cast<int>(m_layers.size() * m_rowHeight);
     si.nPage = clientRect.bottom - clientRect.top;
     si.nPos = m_scrollOffsetPixels;
 

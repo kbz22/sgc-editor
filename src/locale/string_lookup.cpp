@@ -1,7 +1,7 @@
-#include "locale/string_manager.hpp"
+#include "locale/string_lookup.hpp"
 #include <stdexcept>
 
-locale::StringManager::StringManager()
+locale::StringLookup::StringLookup()
 {
     m_strings =
     {
@@ -25,7 +25,7 @@ locale::StringManager::StringManager()
     };
 }
 
-const std::wstring& locale::StringManager::Get(StringId id) const
+const std::wstring& locale::StringLookup::Get(StringId id) const
 {
     auto it = m_strings.find(id);
     if (it != m_strings.end())

@@ -1,5 +1,8 @@
 #include "sections/map_section.hpp"
 #include "program/program.hpp"
+#include "command/paint_tiles_command.hpp"
+#include "command/command_manager.hpp"
+
 #include <sgc/data/resourcemanager.hpp>
 #include <sgc/asset/assetloader.hpp>
 #include <sgc/asset/chunkedtilestorageserializer.hpp>
@@ -122,9 +125,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             }
 
             auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
-            bool refreshNeeded = false;
 
             m_selectionTileStart = cursorPositionOnMap;
+            
+            std::vector<command::TileChange> tileChanges;            
 
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {
@@ -132,13 +136,26 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     auto tileY = cursorPositionOnMap.y + _y;
                     auto currentTileId = tileset->ToTileId(static_cast<sgc::math::uval>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::uval>(currentTilePosition.y / tileSize.y) + _y);                    
 
-                    if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
+                    /* if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
                         currentLayer.storage->SetTileAt({ tileX, tileY }, currentTileId);
-                    }
+                    } */
+                    command::TileChange change{
+                        { tileX, tileY },
+                        currentLayer.storage->GetTileAt({ tileX, tileY }),
+                        currentTileId
+                    };
+                    tileChanges.push_back(change);
                 }
             }
 
-            m_isPainting = true;            
+            m_isPainting = true;
+
+            programContext.commandManager->Execute(
+                std::make_unique<command::PaintTilesCommand>(
+                    tileChanges,
+                    *currentLayer.storage
+                )
+            );
 
             Update();            
             

@@ -10,8 +10,10 @@
 #include "sections/layers_section.hpp"
 #include "sections/package_section.hpp"
 
-#include "locale/command_manager.hpp"
-#include "locale/string_manager.hpp"
+#include "locale/command_lookup.hpp"
+#include "locale/string_lookup.hpp"
+
+#include "command/command_manager.hpp"
 
 #include "win32_program/win32_context.hpp"
 #include "program/layer_manager.hpp"
@@ -40,13 +42,14 @@ namespace program {
 
         std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
 
-        std::unique_ptr<program::LayerManager> layerManager;        
+        std::unique_ptr<program::LayerManager> layerManager;
+        std::unique_ptr<command::CommandManager> commandManager{};      
 
         HIMAGELIST toolbarIcons;
         HIMAGELIST toolbarIconsDisabled;
 
-        locale::CommandManager commandManager{};
-        locale::StringManager stringManager{};
+        locale::CommandLookup commandLookup{};
+        locale::StringLookup stringLookup{};
 
         program::EditorLayerMode editorLayerMode = program::EditorLayerMode::MultiLayer;
         program::EditorChunkMode editorChunkMode = program::EditorChunkMode::DynamicChunks;

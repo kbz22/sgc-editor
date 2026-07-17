@@ -1,7 +1,7 @@
-#include "locale/command_manager.hpp"
+#include "locale/command_lookup.hpp"
 #include <stdexcept>
 
-const locale::CommandInfo& locale::CommandManager::Get(win32_program::CommandId id) const
+const locale::CommandInfo& locale::CommandLookup::Get(win32_program::CommandId id) const
 {
     for (const auto& command : m_commands)
     {

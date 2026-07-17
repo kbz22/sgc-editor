@@ -82,7 +82,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
         programContext.mainWindowContext->hMainWindow = hwnd;
 
-        auto &context = *programContext.mainWindowContext;
+        programContext.commandManager = std::make_unique<command::CommandManager>();
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
         InitCommonControlsEx(&icc);        
@@ -118,7 +118,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
                 break;
 
             case static_cast<int>(CommandId::EditUndo):
-                // win32_program::OnEditUndoClicked();
+                win32_program::OnEditUndoClicked();
                 break;
 
             case static_cast<int>(CommandId::EditRedo):
@@ -181,9 +181,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
             CommandId command = static_cast<CommandId>(info->hdr.idFrom);
 
-            const auto& commandInfo = programContext.commandManager.Get(command);
+            const auto& commandInfo = programContext.commandLookup.Get(command);
 
-            const auto& text = programContext.stringManager.Get(commandInfo.tooltip);
+            const auto& text = programContext.stringLookup.Get(commandInfo.tooltip);
 
             wcscpy_s(
                 info->szText,

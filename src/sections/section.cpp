@@ -60,7 +60,7 @@ void sections::Section::SetHwnd(HWND hwnd, HWND parentHwnd)
     m_parentHwnd = parentHwnd;
 }
 
-LRESULT CALLBACK sections::Section::StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data) 
+LRESULT CALLBACK sections::Section::StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data) 
 {
     auto *self = reinterpret_cast<Section*>(data);
 

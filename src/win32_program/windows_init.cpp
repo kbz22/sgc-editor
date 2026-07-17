@@ -50,7 +50,12 @@ void win32_program::Init(HINSTANCE hInstance)
         defaults::WindowWidth,
         defaults::WindowHeight,
         nullptr, nullptr, hInstance, nullptr
-    );    
+    );
+
+    if (hwnd == nullptr)
+    {
+        MessageBox(nullptr, L"Failed to create main window.", L"Error", MB_OK | MB_ICONERROR);        
+    }
 
     return;
 }

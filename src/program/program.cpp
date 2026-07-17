@@ -130,8 +130,8 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 
     programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorLayerModeSingleImage, true);
     programContext.editorLayerMode = EditorLayerMode::SingleImage;
-    programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorChunkModeFree, true);
-    programContext.editorChunkMode = EditorChunkMode::DynamicChunks;
+    programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorChunkModeFixedSize, true);
+    programContext.editorChunkMode = EditorChunkMode::FixedChunks;
 
     win32_program::UpdateEditorLayerMode(programContext.editorLayerMode);
     win32_program::UpdateEditorChunkMode(programContext.editorChunkMode);

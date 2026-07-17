@@ -45,7 +45,12 @@ namespace win32_program
         EditorLayerModeSingleImage = 5003,
 
         EditorChunkModeFixedSize = 6001,
-        EditorChunkModeFree = 6002
+        EditorChunkModeFree = 6002,
+
+        EditorPaintModeSingle = 7001,
+        EditorPaintModeRectangle = 7002,
+        EditorPaintModeLine = 7003,
+        EditorPaintModeFill = 7004
     };
     
 }

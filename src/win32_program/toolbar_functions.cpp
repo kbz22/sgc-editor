@@ -175,6 +175,17 @@ void win32_program::OnFileOpenClicked()
     // contextProgram.mapView->SetStorage(storage);
 }
 
+void win32_program::OnEditUndoClicked()
+{
+    auto& programContext = program::GetProgramContext();
+
+    if(programContext.commandManager != nullptr) {
+        programContext.commandManager->Undo();
+    }
+
+    programContext.mapSection->Update();
+}
+
 void win32_program::OnLayerAddClicked()
 {
     auto& programContext = program::GetProgramContext();
@@ -225,7 +236,7 @@ void win32_program::OnLayerMoveUpClicked()
         try {
             // programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), -1);
             programContext.layerManager->MoveActiveLayer(-1);
-        } catch (const std::out_of_range& e) {
+        } catch ([[maybe_unused]]const std::out_of_range& e) {
             //! no need to note the out of range error
         }
         
@@ -248,7 +259,7 @@ void win32_program::OnLayerMoveDownClicked()
         try {
             // programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), 1);
             programContext.layerManager->MoveActiveLayer(1);
-        } catch (const std::out_of_range& e) {
+        } catch ([[maybe_unused]]const std::out_of_range& e) {
             //! no need to note the out of range error
         }
 

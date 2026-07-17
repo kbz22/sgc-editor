@@ -16,13 +16,13 @@ namespace locale {
         }
     };
 
-    class StringManager
+    class StringLookup
     {
         private:
             std::unordered_map<StringId, std::wstring, EnumClassHash> m_strings;
 
         public:
-            StringManager();
+            StringLookup();
             const std::wstring& Get(StringId id) const;
     
     };

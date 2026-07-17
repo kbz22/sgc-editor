@@ -187,7 +187,7 @@ void win32_program::LayoutManager::HandleDragging([[maybe_unused]] HWND hwnd, LP
     m_layersMapViewRatio = static_cast<float>(topHeight) / clientHeight;
 }
 
-void win32_program::LayoutManager::UpdateRebarLayout(HWND hwnd, int width)
+void win32_program::LayoutManager::UpdateRebarLayout([[maybe_unused]] HWND hwnd, int width)
 {
     HDWP hdwp = BeginDeferWindowPos(2);
 
