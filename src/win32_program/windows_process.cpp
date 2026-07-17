@@ -122,7 +122,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
                 break;
 
             case static_cast<int>(CommandId::EditRedo):
-                // win32_program::OnEditRedoClicked();
+                win32_program::OnEditRedoClicked();
                 break;
 
             case static_cast<int>(CommandId::LayerAdd):

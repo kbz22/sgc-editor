@@ -186,6 +186,17 @@ void win32_program::OnEditUndoClicked()
     programContext.mapSection->Update();
 }
 
+void win32_program::OnEditRedoClicked()
+{
+    auto& programContext = program::GetProgramContext();
+
+    if(programContext.commandManager != nullptr) {
+        programContext.commandManager->Redo();
+    }
+
+    programContext.mapSection->Update();
+}
+
 void win32_program::OnLayerAddClicked()
 {
     auto& programContext = program::GetProgramContext();
