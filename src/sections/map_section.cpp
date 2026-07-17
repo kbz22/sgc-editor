@@ -139,12 +139,17 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     /* if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
                         currentLayer.storage->SetTileAt({ tileX, tileY }, currentTileId);
                     } */
-                    command::TileChange change{
-                        { tileX, tileY },
-                        currentLayer.storage->GetTileAt({ tileX, tileY }),
-                        currentTileId
-                    };
-                    tileChanges.push_back(change);
+
+                    if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
+
+                        command::TileChange change{
+                            { tileX, tileY },
+                            currentLayer.storage->GetTileAt({ tileX, tileY }),
+                            currentTileId
+                        };
+                        tileChanges.push_back(change);
+
+                    }                    
                 }
             }
 
