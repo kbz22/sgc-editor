@@ -1,3 +1,5 @@
-assets
+assets/*
+!assets/toolbar_icons.png
+!assets/toolbar_icons_disabled.png
 build
 dlls
