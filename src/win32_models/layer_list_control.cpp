@@ -384,6 +384,8 @@ void win32_models::LayerListControl::Refresh(program::LayerManager& layerManager
         m_layers.push_back(item);
     }
 
+    SetSelectedLayer(layerManager.GetActiveLayerIndex());
+
     UpdateScrollInfo();
 }
 

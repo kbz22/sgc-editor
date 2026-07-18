@@ -17,6 +17,7 @@ namespace command {
             ~CommandManager() = default;
 
             void Execute(std::unique_ptr<ICommand> command);
+            void Commit(std::unique_ptr<ICommand> command);
             void Undo();
             void Redo();
 

@@ -128,7 +128,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             m_selectionTileStart = cursorPositionOnMap;
             
-            std::vector<command::TileChange> tileChanges;            
+            std::vector<command::TileChange> tileChanges;
+            
+            if(m_paintStrokeCommand != nullptr) {
+                m_paintStrokeCommand.reset();                
+            }
+
+            m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(*currentLayer.storage);
 
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {
@@ -147,7 +153,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                             currentLayer.storage->GetTileAt({ tileX, tileY }),
                             currentTileId
                         };
-                        tileChanges.push_back(change);
+                        // tileChanges.push_back(change);
+                        m_paintStrokeCommand->ExecuteTileChange(change);
 
                     }                    
                 }
@@ -155,12 +162,12 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             m_isPainting = true;
 
-            programContext.commandManager->Execute(
+            /* programContext.commandManager->Execute(
                 std::make_unique<command::PaintTilesCommand>(
                     tileChanges,
                     *currentLayer.storage
                 )
-            );
+            ); */
 
             Update();            
             
@@ -275,12 +282,23 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         cursorTilePositionOnTileset.y + deltaY
                     );
 
-                    if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({tileMapX, tileMapY}).has_value()){
+                    /* if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({tileMapX, tileMapY}).has_value()){
                         currentLayer.storage->SetTileAt(
                             {tileMapX, tileMapY},
                             tileId
                         );
-                    }
+                    } */
+                   if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileMapX, tileMapY }).has_value()) {
+
+                        command::TileChange change{
+                            { tileMapX, tileMapY },
+                            currentLayer.storage->GetTileAt({ tileMapX, tileMapY }),
+                            tileId
+                        };
+                        // tileChanges.push_back(change);
+                        m_paintStrokeCommand->ExecuteTileChange(change);
+
+                    }  
                 }
             }
 
@@ -292,6 +310,14 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
         case WM_LBUTTONUP:
         {
             m_isPainting = false;
+
+            if(m_paintStrokeCommand != nullptr) {
+                programContext.commandManager->Commit(
+                    std::move(m_paintStrokeCommand)
+                );
+                // m_paintStrokeCommand.reset();
+            }
+
             return 0;
         }
 

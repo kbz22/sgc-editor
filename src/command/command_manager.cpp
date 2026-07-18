@@ -7,6 +7,12 @@ void command::CommandManager::Execute(std::unique_ptr<ICommand> command)
     m_redoStack.clear();
 }
 
+void command::CommandManager::Commit(std::unique_ptr<ICommand> command)
+{
+    m_undoStack.push_back(std::move(command));
+    m_redoStack.clear();
+}
+
 void command::CommandManager::Undo()
 {
     if (!CanUndo()) {

@@ -1,22 +1,26 @@
 #include "program/layer_manager.hpp"
 #include <stdexcept>
 
-void program::LayerManager::AddLayer(LayerItem entry)
+size_t program::LayerManager::AddLayer(LayerItem entry)
 {    
     // m_layers.push_back(entry);
     m_layers.insert(m_layers.begin() + m_activeLayerIndex, entry);
+
+    return m_activeLayerIndex;
 }
 
-void program::LayerManager::InsertLayer(LayerItem entry, size_t index)
+size_t program::LayerManager::InsertLayer(LayerItem entry, size_t index)
 {
     if (index > m_layers.size()) {
         throw std::out_of_range("Index is out of range for inserting layer.");
     }
 
     m_layers.insert(m_layers.begin() + index, entry);
+
+    return index;
 }
 
-void program::LayerManager::RemoveLayer(size_t index)
+std::shared_ptr<sgc::data::ITileStorage> program::LayerManager::RemoveLayer(size_t index)
 {
     if(index >= m_layers.size()) {
         throw std::out_of_range("Index is out of range for removing layer.");
@@ -38,7 +42,10 @@ void program::LayerManager::RemoveLayer(size_t index)
         }
     }
 
+    auto storage = m_layers[index].storage;
     m_layers.erase(m_layers.begin() + index);
+
+    return storage;
 }
 
 void program::LayerManager::SetActiveLayerIndex(size_t index)

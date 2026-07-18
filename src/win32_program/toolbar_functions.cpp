@@ -18,6 +18,10 @@
 #include "new_file_dialog.h"
 #include <commdlg.h>
 
+#include "command/layer_add_command.hpp"
+#include "command/layer_remove_command.hpp"
+#include "command/layer_move_command.hpp"
+
 INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     (void)msg;
@@ -204,21 +208,25 @@ void win32_program::OnLayerAddClicked()
 
     if(programContext.layerManager != nullptr) {
 
-        auto storage = std::make_shared<sgc::data::ChunkedTileStorage>();
-        storage->SetTileAt({0, 0}, 0);        
+        /* auto storage = std::make_shared<sgc::data::ChunkedTileStorage>();
+        storage->SetTileAt({0, 0}, 0);
 
         programContext.layerManager->AddLayer({
             storage,
             L"New Layer"
         });
+ */
+        programContext.commandManager->Execute(
+            std::make_unique<command::LayerAddCommand>()
+        );
 
         UpdateEditorLayerMode(programContext.editorLayerMode);
 
-        programContext.mapSection->Refresh(*programContext.layerManager);
+        /* programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
 
         programContext.layersSection->Refresh(*programContext.layerManager);
-        programContext.layersSection->Update();
+        programContext.layersSection->Update(); */
     }
 }
 
@@ -227,16 +235,20 @@ void win32_program::OnLayerRemoveClicked()
     auto& programContext = program::GetProgramContext();
 
     if(programContext.layerManager != nullptr) {
-        auto activeIndex = programContext.layerManager->GetActiveLayerIndex();
-        programContext.layerManager->RemoveLayer(activeIndex);
+        /* auto activeIndex = programContext.layerManager->GetActiveLayerIndex();
+        programContext.layerManager->RemoveLayer(activeIndex); */
+
+        programContext.commandManager->Execute(
+            std::make_unique<command::LayerRemoveCommand>()
+        );
 
         UpdateEditorLayerMode(programContext.editorLayerMode);
 
-        programContext.mapSection->Refresh(*programContext.layerManager);
+        /* programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
 
         programContext.layersSection->Refresh(*programContext.layerManager);
-        programContext.layersSection->Update();
+        programContext.layersSection->Update(); */
     }
 }
 
@@ -245,21 +257,25 @@ void win32_program::OnLayerMoveUpClicked()
     auto& programContext = program::GetProgramContext();
 
     if(programContext.layerManager != nullptr) {
-        try {
+        /* try {
             // programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), -1);
             programContext.layerManager->MoveActiveLayer(-1);
         } catch ([[maybe_unused]]const std::out_of_range& e) {
             //! no need to note the out of range error
-        }
+        } */
+
+        programContext.commandManager->Execute(
+            std::make_unique<command::LayerMoveCommand>(-1)
+        );
         
         UpdateEditorLayerMode(programContext.editorLayerMode);
 
-        programContext.mapSection->Refresh(*programContext.layerManager);
+        /* programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
 
         programContext.layersSection->SetSelectedLayer(programContext.layerManager->GetActiveLayerIndex());
         programContext.layersSection->Refresh(*programContext.layerManager);
-        programContext.layersSection->Update();
+        programContext.layersSection->Update(); */
     }
 }
 
@@ -268,21 +284,25 @@ void win32_program::OnLayerMoveDownClicked()
     auto& programContext = program::GetProgramContext();
 
     if(programContext.layerManager != nullptr) {
-        try {
+        /* try {
             // programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), 1);
-            programContext.layerManager->MoveActiveLayer(1);
+        programContext.layerManager->MoveActiveLayer(1);
         } catch ([[maybe_unused]]const std::out_of_range& e) {
             //! no need to note the out of range error
-        }
+        } */
+
+        programContext.commandManager->Execute(
+            std::make_unique<command::LayerMoveCommand>(1)
+        );
 
         UpdateEditorLayerMode(programContext.editorLayerMode);
 
-        programContext.mapSection->Refresh(*programContext.layerManager);
+        /* programContext.mapSection->Refresh(*programContext.layerManager);
         programContext.mapSection->Update();
 
         programContext.layersSection->SetSelectedLayer(programContext.layerManager->GetActiveLayerIndex());
         programContext.layersSection->Refresh(*programContext.layerManager);
-        programContext.layersSection->Update();
+        programContext.layersSection->Update(); */
     }
 }
 

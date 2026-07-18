@@ -1,20 +1,12 @@
 #pragma once
 
 #include "command/icommand.hpp"
-#include <sgc/math/value.hpp>
-#include <sgc/graphics/tileset.hpp>
+#include "command/tile_change.hpp"
 #include <sgc/data/itilestorage.hpp>
 #include <vector>
-#include <memory>
 #include <optional>
 
-namespace command {
-
-    struct TileChange {
-        sgc::math::vec2 position;
-        std::optional<sgc::tile::TileId> previousTileId;
-        std::optional<sgc::tile::TileId> newTileId;
-    };
+namespace command {    
 
     class PaintTilesCommand : public ICommand {
 

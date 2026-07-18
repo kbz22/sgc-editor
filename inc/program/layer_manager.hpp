@@ -28,9 +28,9 @@ namespace program {
             LayerManager() = default;
             ~LayerManager() = default;
             
-            void AddLayer(LayerItem entry);
-            void InsertLayer(LayerItem entry, size_t index);
-            void RemoveLayer(size_t index);
+            size_t AddLayer(LayerItem entry);
+            size_t InsertLayer(LayerItem entry, size_t index);
+            std::shared_ptr<sgc::data::ITileStorage> RemoveLayer(size_t index);
             void MoveLayer(size_t fromIndex, int movement);
             void MoveActiveLayer(int movement);
             
