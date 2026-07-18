@@ -81,7 +81,9 @@ add_executable(sgc-editor WIN32
     src/command/paint_stroke_command.cpp
     src/command/layer_add_command.cpp
     src/command/layer_remove_command.cpp
-    src/command/layer_move_command.cpp    
+    src/command/layer_move_command.cpp
+    
+    src/action/action.cpp
 )
 
 # embed manifest in the exe
