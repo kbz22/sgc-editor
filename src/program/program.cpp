@@ -14,6 +14,8 @@
 #include "action/layer_add_action.hpp"
 #include "action/layer_remove_action.hpp"
 #include "action/layer_move_action.hpp"
+#include "action/change_layer_mode_action.hpp"
+#include "action/change_chunk_mode_action.hpp"
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -21,33 +23,32 @@ program::ProgramContext& program::GetProgramContext()
     return context;
 }
 
-std::vector<win32_program::CommandId> g_editorButtons {
-    win32_program::CommandId::EditUndo,
-    win32_program::CommandId::EditRedo,
-    win32_program::CommandId::LayerAdd,
-    win32_program::CommandId::LayerRemove,
-    win32_program::CommandId::LayerMoveUp,
-    win32_program::CommandId::LayerMoveDown,
-    win32_program::CommandId::EditorLayerModeNonActiveTransparent,
-    win32_program::CommandId::EditorLayerModeSingleLayer,
-    win32_program::CommandId::EditorLayerModeSingleImage,
-    win32_program::CommandId::EditorChunkModeFixedSize,
-    win32_program::CommandId::EditorChunkModeFree
+std::vector<action::ActionType> g_activeEditorButtons {
+    action::ActionType::Undo,
+    action::ActionType::Redo,
+    action::ActionType::AddLayer,
+    action::ActionType::RemoveLayer,
+    action::ActionType::MoveLayer,
+    action::ActionType::LayerModeMultilayer,
+    action::ActionType::LayerModeSingleLayer,
+    action::ActionType::LayerModeSingleImage,
+    action::ActionType::ChunkModeFixedSize,
+    action::ActionType::ChunkModeFree
 };
 
 void program::StartDefault()
 {
     auto& programContext = GetProgramContext();    
 
+    programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
+    programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, false);
+    programContext.actionManager->ActionSetChecked(action::ActionType::ChunkModeFixedSize, false);    
+
     programContext.menuSection = std::make_unique<sections::MenuSection>(programContext);
     programContext.sections.push_back(programContext.menuSection.get());
 
     programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(programContext);
-    programContext.sections.push_back(programContext.toolbarSection.get());
-
-    /* for(auto editorButton : g_editorButtons) {
-        programContext.toolbarSection->SetButtonEnabled(editorButton, false);
-    } */
+    programContext.sections.push_back(programContext.toolbarSection.get());    
 
     programContext.mapSection = std::make_unique<sections::MapSection>(programContext);
     programContext.sections.push_back(programContext.mapSection.get());        
@@ -67,7 +68,13 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     (void)chunksSizeX;
     (void)chunksSizeY;
     
-    auto& programContext = GetProgramContext();    
+    auto& programContext = GetProgramContext();
+
+    programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, true);
+    programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, true);
+    programContext.actionManager->ActionSetChecked(action::ActionType::ChunkModeFixedSize, true);
+
+    programContext.toolbarSection->Refresh();    
 
     if(programContext.selectionRectangleOnTileset != nullptr) {
         programContext.selectionRectangleOnTileset.reset();
@@ -132,15 +139,6 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.layersSection->Refresh(*programContext.layerManager);
     programContext.layersSection->Update();
 
-    for(auto editorButton : g_editorButtons) {
-        programContext.toolbarSection->SetButtonEnabled(editorButton, true);
-    }
-
-    programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorLayerModeSingleImage, true);
-    programContext.editorLayerMode = EditorLayerMode::SingleImage;
-    programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorChunkModeFixedSize, true);
-    programContext.editorChunkMode = EditorChunkMode::FixedChunks;
-
     program::UpdateEditorLayerMode(programContext.editorLayerMode);
     program::UpdateEditorChunkMode(programContext.editorChunkMode);
 }
@@ -162,5 +160,10 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::LayerRemoveAction>());
     programContext.actionManager->Register(std::make_unique<action::LayerMoveAction>(-1));
     programContext.actionManager->Register(std::make_unique<action::LayerMoveAction>(1));
+    programContext.actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::MultiLayer));
+    programContext.actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::SingleLayer));
+    programContext.actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::SingleImage));
+    programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::FixedChunks));
+    programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::DynamicChunks));
 
 }

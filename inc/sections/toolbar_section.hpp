@@ -37,16 +37,16 @@ namespace sections {
                 {15, win32_program::CommandId::EditorChunkModeFree, true, false, true}
             }; */
             HWND m_hwndToolbar;
+            program::ProgramContext& m_programContext;
 
         public:
             ToolbarSection(program::ProgramContext& programContext);
             ~ToolbarSection();
 
-            void Update() override;
+            void Update() override;            
             void HandleSectionResize() override;
 
-            void SetGroupedButtonState(win32_program::CommandId commandId, bool checked = true);
-            void SetButtonEnabled(win32_program::CommandId commandId, bool enabled);
+            void Refresh();            
 
             HWND GetHwndToolbar() const;
     };

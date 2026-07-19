@@ -9,8 +9,7 @@ namespace action {
 
     class ActionManager
     {
-        private:
-            std::unordered_map<ActionType, Action*> m_actionLookup;
+        private:            
             std::vector<std::unique_ptr<Action>> m_actions;
 
         public:
@@ -19,7 +18,12 @@ namespace action {
             Action* Find(ActionType actionType);
 
             std::vector<Action*> GetToolbarActions() const;
-            std::vector<Action*> GetMenuActions(MenuId menu) const;                   
+            std::vector<Action*> GetMenuActions(MenuId menu) const;
+
+            void ActionSetEnabled(ActionType actionType, bool enabled);
+            void ActionSetEnabled(const std::vector<ActionType>& actionTypes, bool enabled);
+            void ActionSetChecked(ActionType actionType, bool checked);
+
     };
 
 }

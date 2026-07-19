@@ -6,7 +6,8 @@
 #include <windowsx.h>
 #include <commctrl.h>
 
-sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext)
+sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext) :
+    m_programContext(programContext)
 {
     using namespace win32_program;
 
@@ -132,26 +133,18 @@ void sections::ToolbarSection::HandleSectionResize()
     return;
 }
 
-void sections::ToolbarSection::SetGroupedButtonState(win32_program::CommandId commandId, bool checked)
-{
-    switch(commandId)
-    {
-        case win32_program::CommandId::EditorLayerModeNonActiveTransparent:
-        case win32_program::CommandId::EditorLayerModeSingleLayer:
-        case win32_program::CommandId::EditorLayerModeSingleImage:
-        case win32_program::CommandId::EditorChunkModeFixedSize:
-        case win32_program::CommandId::EditorChunkModeFree:
-            SendMessage(m_hwndToolbar, TB_CHECKBUTTON, static_cast<int>(commandId), MAKELPARAM(checked, 0));
-            break;
-    }    
-}
-
-void sections::ToolbarSection::SetButtonEnabled(win32_program::CommandId commandId, bool enabled)
-{
-    SendMessage(m_hwndToolbar, TB_ENABLEBUTTON, static_cast<int>(commandId), MAKELPARAM(enabled, 0));
-}
-
 HWND sections::ToolbarSection::GetHwndToolbar() const
 {
     return m_hwndToolbar;
+}
+
+void sections::ToolbarSection::Refresh()
+{
+    auto toolbarActions = m_programContext.actionManager->GetToolbarActions();
+
+    for (const auto& action : toolbarActions)
+    {
+        SendMessage(m_hwndToolbar, TB_ENABLEBUTTON, static_cast<int>(action->GetType()), MAKELPARAM(action->IsEnabled(), 0));
+        SendMessage(m_hwndToolbar, TB_CHECKBUTTON, static_cast<int>(action->GetType()), MAKELPARAM(action->IsChecked(), 0));
+    }
 }

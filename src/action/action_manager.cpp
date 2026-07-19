@@ -1,17 +1,16 @@
 #include "action/action_manager.hpp"
 
 void action::ActionManager::Register(std::unique_ptr<Action> action)
-{
-    m_actionLookup[action->GetType()] = action.get();
+{    
     m_actions.push_back(std::move(action));
 }
 
 action::Action* action::ActionManager::Find(ActionType actionType)
 {
-    auto it = m_actionLookup.find(actionType);
-
-    if (it != m_actionLookup.end()) {
-        return it->second;
+    for (const auto& action : m_actions) {
+        if (action->GetType() == actionType) {
+            return action.get();
+        }
     }
 
     return nullptr;
@@ -19,16 +18,16 @@ action::Action* action::ActionManager::Find(ActionType actionType)
 
 void action::ActionManager::Execute(ActionType actionType, program::ProgramContext& context)
 {
-    auto it = m_actionLookup.find(actionType);
-    if (it == m_actionLookup.end())
+    Action* action = Find(actionType);
+    if (action == nullptr)
         return;
 
-    Action& action = *it->second;
+    Action& actionRef = *action;
 
-    if (!action.IsEnabled())
+    if (!actionRef.IsEnabled())
         return;
 
-    action.Execute(context);
+    actionRef.Execute(context);
 }
 
 std::vector<action::Action*> action::ActionManager::GetToolbarActions() const
@@ -57,4 +56,28 @@ std::vector<action::Action*> action::ActionManager::GetMenuActions(MenuId menu) 
     }
 
     return menuActions;
+}
+
+void action::ActionManager::ActionSetEnabled(ActionType actionType, bool enabled)
+{
+    for(auto &action : m_actions) {
+        if(action->GetType() == actionType) {
+            action->SetEnabled(enabled);
+        }
+    }
+}
+
+void action::ActionManager::ActionSetEnabled(const std::vector<ActionType>& actionTypes, bool enabled)
+{
+    for(auto &actionType : actionTypes) {
+        ActionSetEnabled(actionType, enabled);
+    }
+}
+
+void action::ActionManager::ActionSetChecked(ActionType actionType, bool checked)
+{
+    Action* action = Find(actionType);
+    if (action != nullptr) {
+        action->SetChecked(checked);
+    }
 }
