@@ -20,7 +20,7 @@ namespace locale {
             { win32_program::CommandId::LayerRemove, StringId::TooltipLayerRemove },
             { win32_program::CommandId::LayerMoveUp, StringId::TooltipLayerMoveUp },
             { win32_program::CommandId::LayerMoveDown, StringId::TooltipLayerMoveDown },
-            { win32_program::CommandId::EditorLayerModeNonActiveTransparent, StringId::TooltipEditorLayerModeNonActiveTransparent },
+            { win32_program::CommandId::EditorLayerModeNonActiveTransparent, StringId::TooltipEditorLayerModeMultilayer },
             { win32_program::CommandId::EditorLayerModeSingleLayer, StringId::TooltipEditorLayerModeSingleLayer },
             { win32_program::CommandId::EditorLayerModeSingleImage, StringId::TooltipEditorLayerModeSingleImage },
             { win32_program::CommandId::EditorChunkModeFixedSize, StringId::TooltipEditorChunkModeFixedSize },

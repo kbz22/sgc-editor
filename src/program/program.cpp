@@ -7,6 +7,10 @@
 #include "win32_program/toolbar_functions.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
 
+#include "action/new_file_action.hpp"
+#include "action/undo_action.hpp"
+#include "action/redo_action.hpp"
+
 program::ProgramContext& program::GetProgramContext()
 {
     static ProgramContext context = {};
@@ -37,9 +41,9 @@ void program::StartDefault()
     programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(programContext);
     programContext.sections.push_back(programContext.toolbarSection.get());
 
-    for(auto editorButton : g_editorButtons) {
+    /* for(auto editorButton : g_editorButtons) {
         programContext.toolbarSection->SetButtonEnabled(editorButton, false);
-    }
+    } */
 
     programContext.mapSection = std::make_unique<sections::MapSection>(programContext);
     programContext.sections.push_back(programContext.mapSection.get());        
@@ -135,4 +139,19 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
 
     win32_program::UpdateEditorLayerMode(programContext.editorLayerMode);
     win32_program::UpdateEditorChunkMode(programContext.editorChunkMode);
+}
+
+void program::RegisterActions()
+{
+    auto& programContext = GetProgramContext();
+
+    if(programContext.actionManager == nullptr) {
+        programContext.actionManager = std::make_unique<action::ActionManager>();
+    }
+
+    programContext.actionManager->Register(std::make_unique<action::NewFileAction>());
+    // programContext.actionManager->Register(std::make_unique<action::OpenFileAction>());
+    // programContext.actionManager->Register(std::make_unique<action::SaveFileAction>());
+    programContext.actionManager->Register(std::make_unique<action::UndoAction>());
+    programContext.actionManager->Register(std::make_unique<action::RedoAction>());
 }

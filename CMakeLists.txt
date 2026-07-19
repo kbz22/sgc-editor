@@ -86,6 +86,10 @@ add_executable(sgc-editor WIN32
     src/action/action.cpp
     src/action/action_manager.cpp
     src/action/new_file_action.cpp
+    # src/action/open_file_action.cpp
+    # src/action/save_file_action.cpp
+    src/action/undo_action.cpp
+    src/action/redo_action.cpp
 )
 
 # embed manifest in the exe

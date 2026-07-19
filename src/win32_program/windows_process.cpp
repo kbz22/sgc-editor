@@ -87,10 +87,10 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         programContext.commandManager = std::make_unique<command::CommandManager>();
         programContext.actionManager = std::make_unique<action::ActionManager>();
 
-        programContext.actionManager->Register(std::make_unique<action::NewFileAction>());
+        RegisterActions();
 
-        auto menulist = programContext.actionManager->GetMenuActions(action::MenuId::File);
-        auto toolbarlist = programContext.actionManager->GetToolbarActions();
+        // auto menulist = programContext.actionManager->GetMenuActions(action::MenuId::File);
+        // auto toolbarlist = programContext.actionManager->GetToolbarActions();
         //! creating list works. I will finish testing tomorrow
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
@@ -108,14 +108,18 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         // int code = HIWORD(wParam);
         // HWND src = (HWND)lParam;
 
-        switch (id)
+        programContext.actionManager->Execute(
+            static_cast<action::ActionType>(id), programContext
+        );
+
+        /* switch (id)
         {
             case static_cast<int>(CommandId::MenuFile):
                 // OnMenuFileClicked();
                 break;
 
             case static_cast<int>(CommandId::FileNew):
-                /* win32_program::OnFileNewClicked(); */
+                win32_program::OnFileNewClicked();
                 break;
 
             case static_cast<int>(CommandId::FileSave):
@@ -169,7 +173,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
             case static_cast<int>(CommandId::EditorChunkModeFree):
                 UpdateEditorChunkMode(EditorChunkMode::DynamicChunks);
                 break;            
-        }
+        } */
 
         break;
     }
@@ -188,11 +192,12 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         {
             auto* info = reinterpret_cast<NMTTDISPINFO*>(lParam);
 
-            CommandId command = static_cast<CommandId>(info->hdr.idFrom);
+            // CommandId command = static_cast<CommandId>(info->hdr.idFrom);
+            // const auto& commandInfo = programContext.commandLookup.Get(command);
+            // const auto& text = programContext.stringLookup.Get(commandInfo.tooltip);
 
-            const auto& commandInfo = programContext.commandLookup.Get(command);
-
-            const auto& text = programContext.stringLookup.Get(commandInfo.tooltip);
+            auto action = programContext.actionManager->Find(static_cast<action::ActionType>(info->hdr.idFrom));
+            auto text = programContext.stringLookup.Get(action->GetTooltipStringId());
 
             wcscpy_s(
                 info->szText,

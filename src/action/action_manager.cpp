@@ -37,7 +37,7 @@ std::vector<action::Action*> action::ActionManager::GetToolbarActions() const
 
     for (const auto& action : m_actions) {
         Action* ptr = action.get();
-        if (ptr->GetToolbarImageIndex() >= 0) {
+        if (ptr->IsToolbarItem()) {
             toolbarActions.push_back(ptr);
         }
     }

@@ -4,6 +4,8 @@ namespace locale
 {
     enum class StringId
     {
+        TextMissing,
+
         TooltipFileNew,
         TooltipFileOpen,
         TooltipFileSave,
@@ -13,13 +15,29 @@ namespace locale
         TooltipLayerRemove,
         TooltipLayerMoveUp,
         TooltipLayerMoveDown,
-        TooltipEditorLayerModeNonActiveTransparent,
+        TooltipEditorLayerModeMultilayer,
         TooltipEditorLayerModeSingleLayer,
         TooltipEditorLayerModeSingleImage,
         TooltipEditorChunkModeFixedSize,
         TooltipEditorChunkModeFree,
 
-        MenuFile,
-        MenuEdit
+        NameFile,
+        NameEdit,
+        NameNewFile,
+        NameOpenFile,
+        NameSaveFile,
+        NameUndo,
+        NameRedo,
+        NameAddLayer,
+        NameRemoveLayer,
+        NameMoveLayerUp,
+        NameMoveLayerDown,
+        NameSelectEditorLayerMode,
+        NameEditorLayerModeMultilayer,
+        NameEditorLayerModeSingleLayer,
+        NameEditorLayerModeSingleImage,
+        NameSelectEditorChunkMode,
+        NameEditorChunkModeFixedSize,
+        NameEditorChunkModeFree
     };
 }

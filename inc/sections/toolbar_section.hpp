@@ -16,7 +16,7 @@ namespace sections {
     class ToolbarSection : public Section
     {
         private:            
-            std::vector<win32_models::ToolbarButton> m_buttons = {
+            /* std::vector<win32_models::ToolbarButton> m_buttons = {
                 {0, win32_program::CommandId::FileNew, true},
                 {1, win32_program::CommandId::FileOpen, true},
                 {2, win32_program::CommandId::FileSave, false},
@@ -35,7 +35,7 @@ namespace sections {
                 {0, win32_program::CommandId::NotApplicable, false, true},
                 {16, win32_program::CommandId::EditorChunkModeFixedSize, true, false, true},
                 {15, win32_program::CommandId::EditorChunkModeFree, true, false, true}
-            };
+            }; */
             HWND m_hwndToolbar;
 
         public:

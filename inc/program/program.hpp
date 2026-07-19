@@ -60,6 +60,8 @@ namespace program {
 
     ProgramContext& GetProgramContext();
 
+    void RegisterActions();
+
     void StartDefault();
     void StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeight, int chunksSizeX, int chunksSizeY);    
 

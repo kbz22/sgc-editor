@@ -33,10 +33,44 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
     SendMessage(hwndToolbar, TB_SETIMAGELIST, 0, (LPARAM)programContext.toolbarIcons);
     SendMessage(hwndToolbar, TB_SETDISABLEDIMAGELIST, 0, (LPARAM)programContext.toolbarIconsDisabled);
 
-    std::vector<TBBUTTON> tbButtons;
-    tbButtons.reserve(m_buttons.size());
-
+    auto addSeperator = [](std::vector<TBBUTTON>& buttons) {
+        TBBUTTON sepButton = {};
+        sepButton.iBitmap = 0;
+        sepButton.idCommand = static_cast<int>(action::ActionType::Default);
+        sepButton.fsState = 0;
+        sepButton.fsStyle = BTNS_SEP;
+        buttons.push_back(sepButton);
+    }; 
     
+    auto toolbarActions = programContext.actionManager->GetToolbarActions();
+
+    std::sort(toolbarActions.begin(), toolbarActions.end(), [](const action::Action* a, const action::Action* b) {
+        return a->GetToolbarOrder() < b->GetToolbarOrder();
+    });    
+
+    std::vector<TBBUTTON> tbButtons;
+    tbButtons.reserve(100);
+    action::GroupId lastGroupId = toolbarActions[0]->GetGroupId();    
+
+    for (const auto& action : toolbarActions)
+    {
+        if (action->GetGroupId() != lastGroupId) {
+            addSeperator(tbButtons);            
+        }
+
+        TBBUTTON btn = {};
+
+        btn.iBitmap = action->GetToolbarImageIndex();
+        btn.idCommand = static_cast<int>(action->GetType());
+        btn.fsState = action->IsEnabled() ? TBSTATE_ENABLED : 0;   
+        
+        action::GroupId groupId = action->GetGroupId();
+             
+        btn.fsStyle = action->IsCheckGroupItem() ? BTNS_CHECKGROUP : btn.fsStyle;
+
+        lastGroupId = groupId;
+        tbButtons.push_back(btn);
+    }
 
     /* for (const auto& b : m_buttons)
     {

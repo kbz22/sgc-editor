@@ -1,0 +1,27 @@
+#include "action/undo_action.hpp"
+#include "program/program.hpp"
+
+action::UndoAction::UndoAction()
+{
+    m_actionType = ActionType::Undo;
+    m_enabled = true;
+    m_checked = false;
+
+    m_actionDescription.imageIndex = 11;
+    m_actionDescription.toolbarOrder = 400;
+    m_actionDescription.menuOrder = 100;
+    m_actionDescription.checkGroupItem = false;
+    m_actionDescription.groupId = GroupId::UndoRedo;
+    m_actionDescription.menuId = MenuId::Edit;
+    m_actionDescription.tooltipStringId = locale::StringId::TooltipEditUndo;
+    m_actionDescription.nameStringId = locale::StringId::NameUndo;
+}
+
+void action::UndoAction::Execute(program::ProgramContext& context)
+{
+    if(context.commandManager != nullptr) {
+        context.commandManager->Undo();
+    }
+
+    context.mapSection->Update();
+}

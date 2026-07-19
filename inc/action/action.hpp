@@ -22,21 +22,25 @@ namespace action {
             win32_program::CommandId m_commandId; //! tmp - to be fully replaced by ActionType
 
         public:
-            ~Action() = default;
+            virtual ~Action() = default;
 
             ActionType GetType() const;
-            // std::wstring GetName(program::ProgramContext const& context) const; //!
-            std::wstring GetTooltip(program::ProgramContext const& context) const;
 
             bool IsEnabled() const;         
             bool IsChecked() const;
+            bool IsCheckGroupItem() const;
+            bool IsToolbarItem() const;
 
             void SetEnabled(bool enabled);            
             void SetChecked(bool checked);
 
             int GetToolbarImageIndex() const;
+            int GetToolbarOrder() const;
+            int GetMenuIndex() const;
             GroupId GetGroupId() const;
             MenuId GetMenuId() const;
+            locale::StringId GetTooltipStringId() const;
+            locale::StringId GetNameStringId() const;
 
             win32_program::CommandId GetCommandId() const;
 
