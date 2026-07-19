@@ -5,7 +5,6 @@ namespace action {
     enum class ActionType
     {
         Default = 0,
-        Seperator = 1,
 
         NewFile = 1001,
         OpenFile,

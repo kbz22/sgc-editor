@@ -36,7 +36,9 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
     std::vector<TBBUTTON> tbButtons;
     tbButtons.reserve(m_buttons.size());
 
-    for (const auto& b : m_buttons)
+    
+
+    /* for (const auto& b : m_buttons)
     {
         TBBUTTON btn = {};
 
@@ -48,7 +50,7 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
         btn.fsStyle = b.grouped ? BTNS_CHECKGROUP : btn.fsStyle;
 
         tbButtons.push_back(btn);
-    }
+    } */
 
     SendMessage(hwndToolbar, TB_ADDBUTTONS,
             (WPARAM)tbButtons.size(),

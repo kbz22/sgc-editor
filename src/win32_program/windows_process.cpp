@@ -15,6 +15,8 @@
 
 #include "defaults.hpp"
 
+#include "action/new_file_action.hpp"
+
 win32_program::LayoutManager& GetLayoutManager()
 {
     static win32_program::LayoutManager layoutManager(        
@@ -83,9 +85,16 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         programContext.mainWindowContext->hMainWindow = hwnd;
 
         programContext.commandManager = std::make_unique<command::CommandManager>();
+        programContext.actionManager = std::make_unique<action::ActionManager>();
+
+        programContext.actionManager->Register(std::make_unique<action::NewFileAction>());
+
+        auto menulist = programContext.actionManager->GetMenuActions(action::MenuId::File);
+        auto toolbarlist = programContext.actionManager->GetToolbarActions();
+        //! creating list works. I will finish testing tomorrow
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
-        InitCommonControlsEx(&icc);        
+        InitCommonControlsEx(&icc);
 
         StartDefault();
         HandleResize(hwnd, lParam);        
@@ -106,7 +115,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
                 break;
 
             case static_cast<int>(CommandId::FileNew):
-                win32_program::OnFileNewClicked();              
+                /* win32_program::OnFileNewClicked(); */
                 break;
 
             case static_cast<int>(CommandId::FileSave):

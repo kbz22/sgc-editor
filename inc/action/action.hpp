@@ -1,19 +1,23 @@
 #pragma once
 
 #include "action/action_types.hpp"
+#include "action/action_description.hpp"
 #include "win32_program/windows_controls.hpp"
-#include "program/program.hpp"
 #include <string>
+
+namespace program {
+    struct ProgramContext;
+}
 
 namespace action {
 
     class Action 
     {
-        private:
+        protected:
             ActionType m_actionType = ActionType::Default;
+            ActionDescription m_actionDescription{};
             bool m_enabled = false;            
-            bool m_grouped = false;
-            bool m_checked = false;
+            bool m_checked = false;         
 
             win32_program::CommandId m_commandId; //! tmp - to be fully replaced by ActionType
 
@@ -24,15 +28,19 @@ namespace action {
             // std::wstring GetName(program::ProgramContext const& context) const; //!
             std::wstring GetTooltip(program::ProgramContext const& context) const;
 
-            bool IsEnabled() const;
-            bool IsSeperator() const;
-            bool IsGrouped() const;
+            bool IsEnabled() const;         
             bool IsChecked() const;
 
             void SetEnabled(bool enabled);            
             void SetChecked(bool checked);
 
+            int GetToolbarImageIndex() const;
+            GroupId GetGroupId() const;
+            MenuId GetMenuId() const;
+
             win32_program::CommandId GetCommandId() const;
+
+            virtual void Execute(program::ProgramContext& context) = 0;
     };
 
 }

@@ -22,7 +22,7 @@
 #include "command/layer_remove_command.hpp"
 #include "command/layer_move_command.hpp"
 
-INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+/* INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     (void)msg;
     (void)lParam;
@@ -103,10 +103,10 @@ INT_PTR CALLBACK NewFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] 
     }
 
     return FALSE;
-}
+} */
 
 
-void win32_program::OnFileNewClicked()
+/* void win32_program::OnFileNewClicked()
 {    
     auto& programContext = program::GetProgramContext();
 
@@ -121,7 +121,7 @@ void win32_program::OnFileNewClicked()
             NewFileDialogProc
         );
     }
-}
+} */
 
 void win32_program::OnFileSaveClicked()
 {

@@ -84,6 +84,8 @@ add_executable(sgc-editor WIN32
     src/command/layer_move_command.cpp
     
     src/action/action.cpp
+    src/action/action_manager.cpp
+    src/action/new_file_action.cpp
 )
 
 # embed manifest in the exe
