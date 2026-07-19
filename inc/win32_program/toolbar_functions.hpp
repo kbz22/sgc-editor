@@ -15,7 +15,4 @@ namespace win32_program
     void OnLayerRemoveClicked();
     void OnLayerMoveUpClicked();
     void OnLayerMoveDownClicked();
-
-    void UpdateEditorLayerMode(program::EditorLayerMode newMode);
-    void UpdateEditorChunkMode(program::EditorChunkMode newMode);
 }

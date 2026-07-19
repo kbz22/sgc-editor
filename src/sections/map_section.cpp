@@ -131,10 +131,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             std::vector<command::TileChange> tileChanges;
             
             if(m_paintStrokeCommand != nullptr) {
-                m_paintStrokeCommand.reset();                
+                m_paintStrokeCommand.reset();
             }
 
-            m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(*currentLayer.storage);
+            // m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(*currentLayer.storage);
+            m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(programContext.layerManager->GetActiveLayerIndex());
 
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {

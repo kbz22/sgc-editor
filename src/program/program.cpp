@@ -4,12 +4,16 @@
 #include "win32_program/layout_manager.hpp"
 #include "program/program.hpp"
 #include "program/layer_manager.hpp"
+#include "program/editor_update.hpp"
 #include "win32_program/toolbar_functions.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
 
 #include "action/new_file_action.hpp"
 #include "action/undo_action.hpp"
 #include "action/redo_action.hpp"
+#include "action/layer_add_action.hpp"
+#include "action/layer_remove_action.hpp"
+#include "action/layer_move_action.hpp"
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -137,8 +141,8 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.toolbarSection->SetGroupedButtonState(win32_program::CommandId::EditorChunkModeFixedSize, true);
     programContext.editorChunkMode = EditorChunkMode::FixedChunks;
 
-    win32_program::UpdateEditorLayerMode(programContext.editorLayerMode);
-    win32_program::UpdateEditorChunkMode(programContext.editorChunkMode);
+    program::UpdateEditorLayerMode(programContext.editorLayerMode);
+    program::UpdateEditorChunkMode(programContext.editorChunkMode);
 }
 
 void program::RegisterActions()
@@ -154,4 +158,9 @@ void program::RegisterActions()
     // programContext.actionManager->Register(std::make_unique<action::SaveFileAction>());
     programContext.actionManager->Register(std::make_unique<action::UndoAction>());
     programContext.actionManager->Register(std::make_unique<action::RedoAction>());
+    programContext.actionManager->Register(std::make_unique<action::LayerAddAction>());
+    programContext.actionManager->Register(std::make_unique<action::LayerRemoveAction>());
+    programContext.actionManager->Register(std::make_unique<action::LayerMoveAction>(-1));
+    programContext.actionManager->Register(std::make_unique<action::LayerMoveAction>(1));
+
 }

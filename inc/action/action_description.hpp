@@ -9,7 +9,7 @@ namespace action {
         None,
         File,
         Edit,
-        Layer,
+        Map,
         View
     };
 

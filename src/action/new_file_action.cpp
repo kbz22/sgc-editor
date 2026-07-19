@@ -12,8 +12,6 @@ action::NewFileAction::NewFileAction()
     m_enabled = true;
     m_checked = false;
 
-    // m_commandId = win32_program::CommandId::FileNew; //!
-
     m_actionDescription.imageIndex = 0;
     m_actionDescription.toolbarOrder = 100;
     m_actionDescription.menuOrder = 100;

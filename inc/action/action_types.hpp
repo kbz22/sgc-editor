@@ -16,8 +16,7 @@ namespace action {
 
         AddLayer,
         RemoveLayer,
-        MoveLayerUp,
-        MoveLayerDown,
+        MoveLayer,
 
         LayerModeMultilayer,
         LayerModeSingleLayer,

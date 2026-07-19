@@ -56,6 +56,7 @@ add_executable(sgc-editor WIN32
     src/program/program.cpp
     src/program/layer_manager.cpp
     src/program/editor_mode.cpp
+    src/program/editor_update.cpp
 
     src/sections/section.cpp
     src/sections/tileset_section.cpp
@@ -90,6 +91,9 @@ add_executable(sgc-editor WIN32
     # src/action/save_file_action.cpp
     src/action/undo_action.cpp
     src/action/redo_action.cpp
+    src/action/layer_add_action.cpp
+    src/action/layer_remove_action.cpp
+    src/action/layer_move_action.cpp
 )
 
 # embed manifest in the exe

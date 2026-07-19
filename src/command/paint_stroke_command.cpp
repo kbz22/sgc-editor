@@ -1,7 +1,8 @@
 #include "command/paint_stroke_command.hpp"
+#include "program/program.hpp"
 
-command::PaintStrokeCommand::PaintStrokeCommand(sgc::data::ITileStorage &tileStorage) :
-    m_tileStorage{tileStorage}
+command::PaintStrokeCommand::PaintStrokeCommand(size_t activeLayerIndex) :
+    m_activeLayerIndex{activeLayerIndex}
 {}
 
 void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange)
@@ -14,19 +15,24 @@ void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange
         existingTileChange.newTileId = tileChange.newTileId;
     }
 
-    m_tileStorage.SetTileAt(tileChange.position, tileChange.newTileId);
+    // m_tileStorage.SetTileAt(tileChange.position, tileChange.newTileId);
+    auto &layerManager = program::GetProgramContext().layerManager;
+    layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);
 }
 
 void command::PaintStrokeCommand::Execute()
 {
+    auto &layerManager = program::GetProgramContext().layerManager;
     for (const auto& [position, change] : m_tileChanges) {
-        m_tileStorage.SetTileAt(position, change.newTileId);
+        //   m_tileStorage.SetTileAt(position, change.newTileId);
+        layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.newTileId);
     }
 }
 
 void command::PaintStrokeCommand::Undo()
 {
+    auto &layerManager = program::GetProgramContext().layerManager;
     for (const auto& [position, change] : m_tileChanges) {
-        m_tileStorage.SetTileAt(position, change.previousTileId);
-    }
+        // m_tileStorage.SetTileAt(position, change.previousTileId);
+        layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.previousTileId);    }
 }
