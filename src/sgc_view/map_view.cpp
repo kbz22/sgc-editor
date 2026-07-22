@@ -16,14 +16,6 @@ sgc_view::MapView::MapView(HWND hwnd, std::filesystem::path tilesetPath, int til
         throw std::runtime_error("Failed to load tileset from path: " + tilesetPath.string());        
     }
 
-    /* m_cursorTile = graphics::Rectangle({
-        0,
-        0
-    },{
-        m_tileWidth,
-        m_tileHeight
-    }); */
-
     m_cursorTile.SetColor({ 255, 255, 255, 64 });
 
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;    

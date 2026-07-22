@@ -73,20 +73,6 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
         tbButtons.push_back(btn);
     }
 
-    /* for (const auto& b : m_buttons)
-    {
-        TBBUTTON btn = {};
-
-        btn.iBitmap = b.imageIndex;
-        btn.idCommand = static_cast<int>(b.commandId);
-        btn.fsState = b.enabled ? TBSTATE_ENABLED : 0;        
-
-        btn.fsStyle = b.seperator ? BTNS_SEP : BTNS_BUTTON;
-        btn.fsStyle = b.grouped ? BTNS_CHECKGROUP : btn.fsStyle;
-
-        tbButtons.push_back(btn);
-    } */
-
     SendMessage(hwndToolbar, TB_ADDBUTTONS,
             (WPARAM)tbButtons.size(),
             (LPARAM)tbButtons.data());     

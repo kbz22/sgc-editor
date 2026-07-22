@@ -88,10 +88,6 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         programContext.actionManager = std::make_unique<action::ActionManager>();
 
         RegisterActions();
-
-        // auto menulist = programContext.actionManager->GetMenuActions(action::MenuId::File);
-        // auto toolbarlist = programContext.actionManager->GetToolbarActions();
-        //! creating list works. I will finish testing tomorrow
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
         InitCommonControlsEx(&icc);
@@ -105,75 +101,10 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_COMMAND:
     {
         int id = LOWORD(wParam);
-        // int code = HIWORD(wParam);
-        // HWND src = (HWND)lParam;
 
         programContext.actionManager->Execute(
             static_cast<action::ActionType>(id), programContext
         );
-
-        /* switch (id)
-        {
-            case static_cast<int>(CommandId::MenuFile):
-                // OnMenuFileClicked();
-                break;
-
-            case static_cast<int>(CommandId::FileNew):
-                win32_program::OnFileNewClicked();
-                break;
-
-            case static_cast<int>(CommandId::FileSave):
-                win32_program::OnFileSaveClicked();
-                break;
-
-            case static_cast<int>(CommandId::FileOpen):
-                win32_program::OnFileOpenClicked();
-                break;
-
-            case static_cast<int>(CommandId::EditUndo):
-                win32_program::OnEditUndoClicked();
-                break;
-
-            case static_cast<int>(CommandId::EditRedo):
-                win32_program::OnEditRedoClicked();
-                break;
-
-            case static_cast<int>(CommandId::LayerAdd):
-                win32_program::OnLayerAddClicked();
-                break;
-
-            case static_cast<int>(CommandId::LayerRemove):  
-                win32_program::OnLayerRemoveClicked();
-                break;
-
-            case static_cast<int>(CommandId::LayerMoveUp):
-                win32_program::OnLayerMoveUpClicked();
-                break;
-            
-            case static_cast<int>(CommandId::LayerMoveDown):
-                win32_program::OnLayerMoveDownClicked();
-                break;
-
-            case static_cast<int>(CommandId::EditorLayerModeNonActiveTransparent):
-                UpdateEditorLayerMode(EditorLayerMode::MultiLayer);
-                break;
-
-            case static_cast<int>(CommandId::EditorLayerModeSingleLayer):
-                UpdateEditorLayerMode(EditorLayerMode::SingleLayer);
-                break;
-
-            case static_cast<int>(CommandId::EditorLayerModeSingleImage):
-                UpdateEditorLayerMode(EditorLayerMode::SingleImage);
-                break;                
-
-            case static_cast<int>(CommandId::EditorChunkModeFixedSize):
-                UpdateEditorChunkMode(EditorChunkMode::FixedChunks);
-                break;
-
-            case static_cast<int>(CommandId::EditorChunkModeFree):
-                UpdateEditorChunkMode(EditorChunkMode::DynamicChunks);
-                break;            
-        } */
 
         break;
     }

@@ -7,8 +7,7 @@ void command::LayerMoveCommand::Execute()
     auto& programContext = program::GetProgramContext();
 
     if(programContext.layerManager != nullptr) {
-        try {
-            // programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), -1);
+        try {            
             programContext.layerManager->MoveActiveLayer(m_movement);
         } catch ([[maybe_unused]]const std::out_of_range& e) {
             //! no need to note the out of range error
@@ -28,8 +27,7 @@ void command::LayerMoveCommand::Undo()
     auto& programContext = program::GetProgramContext();
 
     if(programContext.layerManager != nullptr) {
-        try {
-            // programContext.layerManager->MoveLayer(programContext.layerManager->GetActiveLayerIndex(), -1);
+        try {            
             programContext.layerManager->MoveActiveLayer(-m_movement);
         } catch ([[maybe_unused]]const std::out_of_range& e) {
             //! no need to note the out of range error

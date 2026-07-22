@@ -134,18 +134,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 m_paintStrokeCommand.reset();
             }
 
-            // m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(*currentLayer.storage);
             m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(programContext.layerManager->GetActiveLayerIndex());
 
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {
                     auto tileX = cursorPositionOnMap.x + _x;
                     auto tileY = cursorPositionOnMap.y + _y;
-                    auto currentTileId = tileset->ToTileId(static_cast<sgc::math::uval>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::uval>(currentTilePosition.y / tileSize.y) + _y);                    
-
-                    /* if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
-                        currentLayer.storage->SetTileAt({ tileX, tileY }, currentTileId);
-                    } */
+                    auto currentTileId = tileset->ToTileId(static_cast<sgc::math::uval>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::uval>(currentTilePosition.y / tileSize.y) + _y);
 
                     if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
 
@@ -153,8 +148,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                             { tileX, tileY },
                             currentLayer.storage->GetTileAt({ tileX, tileY }),
                             currentTileId
-                        };
-                        // tileChanges.push_back(change);
+                        };                        
                         m_paintStrokeCommand->ExecuteTileChange(change);
 
                     }                    
@@ -283,12 +277,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         cursorTilePositionOnTileset.y + deltaY
                     );
 
-                    /* if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({tileMapX, tileMapY}).has_value()){
-                        currentLayer.storage->SetTileAt(
-                            {tileMapX, tileMapY},
-                            tileId
-                        );
-                    } */
                    if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileMapX, tileMapY }).has_value()) {
 
                         command::TileChange change{
@@ -296,7 +284,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                             currentLayer.storage->GetTileAt({ tileMapX, tileMapY }),
                             tileId
                         };
-                        // tileChanges.push_back(change);
+                        
                         m_paintStrokeCommand->ExecuteTileChange(change);
 
                     }  

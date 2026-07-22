@@ -15,7 +15,6 @@ void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange
         existingTileChange.newTileId = tileChange.newTileId;
     }
 
-    // m_tileStorage.SetTileAt(tileChange.position, tileChange.newTileId);
     auto &layerManager = program::GetProgramContext().layerManager;
     layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);
 }
@@ -23,8 +22,7 @@ void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange
 void command::PaintStrokeCommand::Execute()
 {
     auto &layerManager = program::GetProgramContext().layerManager;
-    for (const auto& [position, change] : m_tileChanges) {
-        //   m_tileStorage.SetTileAt(position, change.newTileId);
+    for (const auto& [position, change] : m_tileChanges) {        
         layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.newTileId);
     }
 }

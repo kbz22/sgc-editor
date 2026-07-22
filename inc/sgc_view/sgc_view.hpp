@@ -27,8 +27,7 @@ namespace sgc_view
 
             SDL_Window* m_sdlWindow = nullptr;
             
-            bool CreateEmbeddedRenderer();
-            // void InstallInputSubclass();
+            bool CreateEmbeddedRenderer();            
 
         protected:
             int m_tileWidth;
