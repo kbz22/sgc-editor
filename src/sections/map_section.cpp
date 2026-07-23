@@ -96,6 +96,24 @@ void sections::MapSection::HandleSectionResize()
     Update();
 }
 
+bool g_mouseCaptured = false;
+
+void SetCaptureHelper(HWND hwnd)
+{
+    if (!g_mouseCaptured) {
+        SetCapture(hwnd);
+        g_mouseCaptured = true;
+    }
+}
+
+void ReleaseCaptureHelper()
+{
+    if (g_mouseCaptured) {
+        ReleaseCapture();
+        g_mouseCaptured = false;
+    }
+}
+
 LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 { 
     program::ProgramContext& programContext = program::GetProgramContext();
@@ -104,6 +122,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
     {
         case WM_LBUTTONDOWN:
         {
+            if(g_mouseCaptured) {
+                break;
+            }
+
             auto tileset = m_mapView->GetTileset();
             auto tileSize = tileset->GetTileSize();
 
@@ -156,13 +178,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             }
 
             m_isPainting = true;
-
-            /* programContext.commandManager->Execute(
-                std::make_unique<command::PaintTilesCommand>(
-                    tileChanges,
-                    *currentLayer.storage
-                )
-            ); */
+            SetCaptureHelper(hwnd);        
 
             Update();            
             
@@ -298,13 +314,16 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_LBUTTONUP:
         {
-            m_isPainting = false;
+            if(m_isPainting) {
+                m_isPainting = false;
 
-            if(m_paintStrokeCommand != nullptr) {
-                programContext.commandManager->Commit(
-                    std::move(m_paintStrokeCommand)
-                );
-                // m_paintStrokeCommand.reset();
+                if(m_paintStrokeCommand != nullptr) {
+                    programContext.commandManager->Commit(
+                        std::move(m_paintStrokeCommand)
+                    );
+                }
+
+                ReleaseCaptureHelper();
             }
 
             return 0;
@@ -315,7 +334,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             if (m_isPanning)
             {
                 m_isPanning = false;
-                ReleaseCapture();
+                ReleaseCaptureHelper();
             }
 
             return 0;
@@ -323,12 +342,16 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_MBUTTONDOWN:
         {
+            if(g_mouseCaptured) {
+                break;
+            }
+
             m_isPanning = true;
 
             m_lastMousePos.x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
             m_lastMousePos.y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
-            SetCapture(hwnd);
+            SetCaptureHelper(hwnd);
 
             return 0;
         }
