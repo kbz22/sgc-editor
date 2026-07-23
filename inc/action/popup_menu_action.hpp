@@ -30,6 +30,8 @@ namespace action {
             void SetItems(std::vector<Action*> items);
             void BuildMenu(program::ProgramContext &context);
             HMENU GetHMenu() const;
+
+            void RefreshMenu();
     };
 
 }

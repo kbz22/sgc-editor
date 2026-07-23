@@ -24,6 +24,7 @@ locale::StringLookup::StringLookup()
         {StringId::NameEdit, L"Edit"},
         {StringId::NameMap, L"Map"},
         {StringId::NameView, L"View"},
+        {StringId::NameHelp, L"Help"},
 
         {StringId::NameNewFile, L"New"},
         {StringId::NameOpenFile, L"Open"},
@@ -46,15 +47,16 @@ locale::StringLookup::StringLookup()
     };
 }
 
-const std::wstring& locale::StringLookup::Get(StringId id) const
+const std::optional<std::wstring> locale::StringLookup::Get(StringId id) const
 {
     auto it = m_strings.find(id);
+
+    std::optional<std::wstring> result = std::nullopt;
+
     if (it != m_strings.end())
     {
-        return it->second;
+        result = std::optional<std::wstring>{it->second};
     }
-    else
-    {
-        return m_strings.at(StringId::TextMissing);
-    }
+
+    return result;
 }

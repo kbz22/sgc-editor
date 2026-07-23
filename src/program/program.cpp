@@ -33,7 +33,8 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::Redo,
     action::ActionType::AddLayer,
     action::ActionType::RemoveLayer,
-    action::ActionType::MoveLayer,
+    action::ActionType::MoveLayerUp,
+    action::ActionType::MoveLayerDown,
     action::ActionType::LayerModeMultilayer,
     action::ActionType::LayerModeSingleLayer,
     action::ActionType::LayerModeSingleImage,
@@ -51,6 +52,7 @@ void program::StartDefault()
 
     programContext.menuSection = std::make_unique<sections::MenuSection>(programContext);
     programContext.sections.push_back(programContext.menuSection.get());
+    programContext.menuSection->Refresh(programContext);
 
     programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(programContext);
     programContext.sections.push_back(programContext.toolbarSection.get());    

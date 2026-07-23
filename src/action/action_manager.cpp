@@ -63,6 +63,7 @@ void action::ActionManager::ActionSetEnabled(ActionType actionType, bool enabled
     for(auto &action : m_actions) {
         if(action->GetType() == actionType) {
             action->SetEnabled(enabled);
+            break;
         }
     }
 }
@@ -76,8 +77,9 @@ void action::ActionManager::ActionSetEnabled(const std::vector<ActionType>& acti
 
 void action::ActionManager::ActionSetChecked(ActionType actionType, bool checked)
 {
-    Action* action = Find(actionType);
-    if (action != nullptr) {
-        action->SetChecked(checked);
+    for(auto &action : m_actions) {
+        if(action->GetType() == actionType) {
+            action->SetChecked(checked);
+        }
     }
 }

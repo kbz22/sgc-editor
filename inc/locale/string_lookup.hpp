@@ -4,6 +4,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <optional>
 
 namespace locale {
 
@@ -23,7 +24,7 @@ namespace locale {
 
         public:
             StringLookup();
-            const std::wstring& Get(StringId id) const;
+            const std::optional<std::wstring> Get(StringId id) const;
     
     };
 

@@ -15,6 +15,6 @@ action::HelpMenuAction::HelpMenuAction()
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::Default;
     m_actionDescription.menuId = MenuId::Help;
-    m_actionDescription.tooltipStringId = locale::StringId::TextMissing;    
+    m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameHelp;
 }

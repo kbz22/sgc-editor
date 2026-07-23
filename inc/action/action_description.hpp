@@ -1,6 +1,7 @@
 #pragma once
 
 #include "locale/stringid.hpp"
+#include <optional>
 
 namespace action {
 
@@ -37,7 +38,7 @@ namespace action {
         GroupId groupId = GroupId::Default;
         MenuId menuId = MenuId::None;
 
-        locale::StringId tooltipStringId = locale::StringId::TextMissing;
+        std::optional<locale::StringId> tooltipStringId = std::nullopt;
         locale::StringId nameStringId = locale::StringId::TextMissing;        
     };
 

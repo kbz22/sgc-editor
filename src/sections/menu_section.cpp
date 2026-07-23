@@ -53,13 +53,17 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
         }
 
         auto &menuNameText = programContext.stringLookup.Get(menuNameId.value());
+        
+        if(menuNameText == std::nullopt) {
+            throw std::runtime_error("PopupMenuAction::BuildMenu: Missing text for menu item.");
+        }
 
         int strIndex = static_cast<int>(
             SendMessage(
                 hwndToolbar,
                 TB_ADDSTRING,
                 0,
-                reinterpret_cast<LPARAM>(menuNameText.c_str())
+                reinterpret_cast<LPARAM>(menuNameText.value().c_str())
             )
         );
 
@@ -88,7 +92,7 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
     SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(34, 0));
     SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(3, 0));
     SendMessage(hwndToolbar, TB_AUTOSIZE, 0, 0);
-    
+
     }
 
     // Setting up the rebar (i think mostly for size)
@@ -133,15 +137,19 @@ HWND sections::MenuSection::GetHwndToolbar() const
     return m_hwndToolbar;
 }
 
-void sections::MenuSection::Refresh(program::ProgramContext& programContext)
+void sections::MenuSection::Refresh(program::ProgramContext& context)
 {
-    for(int i=static_cast<int>(action::MenuId::File); i<static_cast<int>(action::MenuId::Count); ++i)
+    for (int i=static_cast<int>(action::MenuId::File); i<static_cast<int>(action::MenuId::Count); ++i) 
     {
-        auto menuActions = programContext.actionManager->GetMenuActions(static_cast<action::MenuId>(i));
+        auto menuActions = context.actionManager->GetMenuActions(static_cast<action::MenuId>(i));
 
-        for (const auto& action : menuActions)
+        for(auto* action : menuActions)
         {
-            SendMessage(m_hwndToolbar, TB_ENABLEBUTTON, static_cast<int>(action->GetType()), MAKELPARAM(action->IsEnabled(), 0));
+            if(action->IsPopup())
+            {
+                auto popup = reinterpret_cast<action::PopupMenuAction*>(action);
+                popup->RefreshMenu();
+            }
         }
-    }    
+    }
 }

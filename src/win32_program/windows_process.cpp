@@ -138,9 +138,13 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
             
             auto text = programContext.stringLookup.Get(*tooltipStringId);
 
+            if(!text.has_value()) {
+                break;
+            }
+
             wcscpy_s(
                 info->szText,
-                text.c_str()
+                text.value().c_str()
             );
 
             info->lpszText = info->szText;

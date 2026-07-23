@@ -6,7 +6,7 @@
 action::LayerMoveAction::LayerMoveAction(int moveCount) :
     m_moveCount(moveCount)    
 {
-    m_actionType = ActionType::MoveLayer;
+    m_actionType = (moveCount < 0) ? ActionType::MoveLayerDown : ActionType::MoveLayerUp;
     m_enabled = true;
     m_checked = false;
 

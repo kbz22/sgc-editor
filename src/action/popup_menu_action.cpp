@@ -12,23 +12,34 @@ void action::PopupMenuAction::BuildMenu(program::ProgramContext &context)
 {
     for(auto &item : m_popupMenuItems)
     {
-        if(item->IsPopup()) {
-            auto popupItem = dynamic_cast<PopupMenuAction*>(item);
-            auto subItems = popupItem->GetPopupMenuItems();
-
-            if(subItems != std::nullopt) {
-                popupItem->BuildMenu(context);
-            }
+        auto text = context.stringLookup.Get(item->GetNameStringId().value());
+        
+        if(text == std::nullopt) {
+            throw std::runtime_error("PopupMenuAction::BuildMenu: Missing text for menu item.");
         }
 
-        auto text = context.stringLookup.Get(item->GetNameStringId().value()).c_str();
+        if(item->IsPopup())
+        {
+            auto popupItem = dynamic_cast<PopupMenuAction*>(item);
 
-        AppendMenuW(
-            m_hMenu,
-            MF_STRING,
-            static_cast<int>(item->GetType()),
-            text
-        );
+            popupItem->BuildMenu(context);
+
+            AppendMenuW(
+                m_hMenu,
+                MF_POPUP,
+                reinterpret_cast<UINT_PTR>(popupItem->GetHMenu()),
+                text.value().c_str()
+            );
+        }
+        else
+        {
+            AppendMenuW(
+                m_hMenu,
+                MF_STRING,
+                static_cast<int>(item->GetType()),
+                text.value().c_str()
+            );
+        }
     }
 }
 
@@ -91,4 +102,34 @@ void action::PopupMenuAction::Execute(program::ProgramContext& context)
     );
 
     return;
+}
+
+void action::PopupMenuAction::RefreshMenu()
+{
+    for (auto& item : m_popupMenuItems)
+    {
+        if(item->IsPopup())
+        {
+            auto popupItem = dynamic_cast<PopupMenuAction*>(item);
+            popupItem->RefreshMenu();
+        }
+        else
+        {
+            EnableMenuItem(
+                m_hMenu,
+                static_cast<UINT>(item->GetType()),
+                item->IsEnabled()
+                    ? MF_ENABLED | MF_BYCOMMAND
+                    : MF_GRAYED
+            );
+
+            CheckMenuItem(
+                m_hMenu,
+                static_cast<UINT>(item->GetType()),
+                item->IsChecked()
+                    ? MF_CHECKED | MF_BYCOMMAND
+                    : MF_UNCHECKED
+            );
+        }
+    }
 }

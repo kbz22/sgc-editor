@@ -19,7 +19,8 @@ namespace action {
         MenuMap = 3001,
         AddLayer,
         RemoveLayer,
-        MoveLayer,
+        MoveLayerUp,
+        MoveLayerDown,
 
         ChunkModeFixedSize,
         ChunkModeFree,
