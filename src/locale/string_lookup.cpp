@@ -5,6 +5,8 @@ locale::StringLookup::StringLookup()
 {
     m_strings =
     {
+        {StringId::WindowTitle, L"SGC Map Editor"},
+
         {StringId::TooltipFileNew,  L"New file"},
         {StringId::TooltipFileOpen, L"Open file"},
         {StringId::TooltipFileSave, L"Save file"},

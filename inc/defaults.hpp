@@ -16,12 +16,12 @@ namespace defaults
     constexpr float initialLayerVerticalRatio = 0.5f;
     constexpr float initialTilesetRatio = 0.2f;
 
-    // Names
-    const std::wstring_view WindowTitle = L"SGC Editor";
-    const std::wstring_view NewFileTooltip = L"New File";
-
     // Assets
     const std::wstring_view IconsPath = L"./toolbar_icons.png";
     const std::wstring_view DisabledIconsPath = L"./toolbar_icons_disabled.png";
+
+    //File extensions
+    const std::wstring_view MapFileExtension = L".sgcmap";
+    const std::wstring_view PackageFileExtension = L".sgcp";
     
 }

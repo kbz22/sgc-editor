@@ -6,15 +6,16 @@ void command::LayerRemoveCommand::Execute()
 {
     auto& programContext = program::GetProgramContext();
 
-    if(programContext.layerManager != nullptr) {
-        auto activeIndex = programContext.layerManager->GetActiveLayerIndex();
+    if(programContext.mapDocument != nullptr) {
+        auto layerManager = programContext.mapDocument->GetLayerManager();
+        auto activeIndex = layerManager->GetActiveLayerIndex();
         m_removedLayerIndex = activeIndex;
-        m_removedLayerStorage = programContext.layerManager->RemoveLayer(m_removedLayerIndex);
+        m_removedLayerStorage = layerManager->RemoveLayer(m_removedLayerIndex);
 
-        programContext.mapSection->Refresh(*programContext.layerManager);
+        programContext.mapSection->Refresh(*layerManager);
         programContext.mapSection->Update();
 
-        programContext.layersSection->Refresh(*programContext.layerManager);
+        programContext.layersSection->Refresh(*layerManager);
         programContext.layersSection->Update();
     }
 }
@@ -23,17 +24,18 @@ void command::LayerRemoveCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
 
-    if(programContext.layerManager != nullptr) {
-        programContext.layerManager->InsertLayer({
+    if(programContext.mapDocument != nullptr) {
+        auto layerManager = programContext.mapDocument->GetLayerManager();
+        layerManager->InsertLayer({
                 m_removedLayerStorage,
                 L"Layer " + std::to_wstring(m_removedLayerIndex)
             }, m_removedLayerIndex
         );
 
-        programContext.mapSection->Refresh(*programContext.layerManager);
+        programContext.mapSection->Refresh(*layerManager);
         programContext.mapSection->Update();
 
-        programContext.layersSection->Refresh(*programContext.layerManager);
+        programContext.layersSection->Refresh(*layerManager);
         programContext.layersSection->Update();
     }
 }

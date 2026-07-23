@@ -6,10 +6,11 @@
 
 void command::LayerAddCommand::Execute()
 {
-    auto& programContext = program::GetProgramContext();
+    auto &programContext = program::GetProgramContext();
+    auto &mapDocument = programContext.mapDocument;
 
-    if(programContext.layerManager != nullptr) {
-
+    if(mapDocument != nullptr) {
+        auto layerManager = mapDocument->GetLayerManager();
         auto storage = std::make_shared<sgc::data::ChunkedTileStorage>();
 
         //! This should probably be removed. The user should create chunks manually.
@@ -17,15 +18,15 @@ void command::LayerAddCommand::Execute()
         // If you added empty tiles to tileset probably best to remove this.
         storage->SetTileAt({0, 0}, 0);
 
-        m_addedLayerIndex = programContext.layerManager->AddLayer({
+        m_addedLayerIndex = layerManager->AddLayer({
             storage,
-            L"Layer " + std::to_wstring(programContext.layerManager->GetSize())
+            L"Layer " + std::to_wstring(layerManager->GetSize())
         });
 
-        programContext.layersSection->Refresh(*programContext.layerManager);
+        programContext.layersSection->Refresh(*layerManager);
         programContext.layersSection->Update();
 
-        programContext.mapSection->Refresh(*programContext.layerManager);
+        programContext.mapSection->Refresh(*layerManager);
         programContext.mapSection->Update();
     }
 }
@@ -34,13 +35,14 @@ void command::LayerAddCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
 
-    if(programContext.layerManager != nullptr) {
-        programContext.layerManager->RemoveLayer(m_addedLayerIndex);
+    if(programContext.mapDocument != nullptr) {
+        auto layerManager = programContext.mapDocument->GetLayerManager();
+        layerManager->RemoveLayer(m_addedLayerIndex);
 
-        programContext.layersSection->Refresh(*programContext.layerManager);
+        programContext.layersSection->Refresh(*layerManager);
         programContext.layersSection->Update();
 
-        programContext.mapSection->Refresh(*programContext.layerManager);
+        programContext.mapSection->Refresh(*layerManager);
         programContext.mapSection->Update();
     }
 }

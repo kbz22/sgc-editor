@@ -22,7 +22,7 @@ action::LayerMoveAction::LayerMoveAction(int moveCount) :
 
 void action::LayerMoveAction::Execute(program::ProgramContext& context)
 {
-    if(context.layerManager != nullptr) {
+    if(context.mapDocument != nullptr) {
         context.commandManager->Execute(
             std::make_unique<command::LayerMoveCommand>(m_moveCount)
         );

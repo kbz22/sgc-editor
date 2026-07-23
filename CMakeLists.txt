@@ -102,6 +102,9 @@ add_executable(sgc-editor WIN32
     src/action/map_menu_action.cpp
     src/action/view_menu_action.cpp
     src/action/help_menu_action.cpp
+
+    src/file/map_file.cpp
+    src/file/map_document.cpp
 )
 
 # embed manifest in the exe

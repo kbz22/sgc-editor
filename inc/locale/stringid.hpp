@@ -4,7 +4,11 @@ namespace locale
 {
     enum class StringId
     {        
-        TextMissing,        
+        TextMissing,
+
+        WindowTitle,
+
+        DefaultProjectName,
 
         TooltipFileNew,
         TooltipFileOpen,

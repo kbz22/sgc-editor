@@ -3,7 +3,9 @@
 
 void program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
 {
-    auto& programContext = program::GetProgramContext();
+    auto &programContext = program::GetProgramContext();
+    auto &mapDocument = programContext.mapDocument;
+    auto layerManager = mapDocument->GetLayerManager();
 
     programContext.editorLayerMode = newMode;
 
@@ -15,26 +17,26 @@ void program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
 
         case program::EditorLayerMode::SingleLayer:
         {
-            programContext.layerManager->SetSingleLayerMode(true);                      
+            layerManager->SetSingleLayerMode(true);                      
             break;
         }
 
         case program::EditorLayerMode::MultiLayer:
         {
-            programContext.layerManager->SetSingleLayerMode(false);
+            layerManager->SetSingleLayerMode(false);
             program::MultiLayerModeSetup(programContext);
             break;
         }
 
         case program::EditorLayerMode::SingleImage:
         {
-            programContext.layerManager->SetSingleLayerMode(false);
+            layerManager->SetSingleLayerMode(false);
             program::SingleImageModeSetup(programContext);
             break;
         }
     }
 
-    programContext.mapSection->Refresh(*programContext.layerManager);
+    programContext.mapSection->Refresh(*layerManager);
     programContext.mapSection->Update();
 
     programContext.toolbarSection->Refresh(programContext);

@@ -103,49 +103,55 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.mapSection->Update();
     programContext.tilesetSection->Update();
 
-    programContext.layerManager = std::make_unique<program::LayerManager>();
+    /* programContext.layerManager = std::make_unique<program::LayerManager>(); */
+    programContext.mapDocument = std::make_unique<file::MapDocument>();
+    auto layerManager = programContext.mapDocument->GetLayerManager();
 
-    programContext.layerManager->AddLayer({
+    layerManager->AddLayer({
         std::make_shared<sgc::data::ChunkedTileStorage>(),
         L"Layer 0"
     });
-    programContext.layerManager->SetActiveLayerIndex(0);
-    programContext.layerManager->SetBaseLayerIndex(0);
+    layerManager->SetActiveLayerIndex(0);
+    layerManager->SetBaseLayerIndex(0);
 
     for(int x=0;x<32;++x) {
         for(int y=0;y<32;++y) {
-            programContext.layerManager->GetLayers()[0]
+            layerManager->GetLayers()[0]
                 .storage->SetTileAt({ x, y }, 1);
         }
     }
 
-    programContext.mapSection->Refresh(*programContext.layerManager);
+    programContext.mapSection->Refresh(*layerManager);
     programContext.mapSection->Update();
 
     programContext.layersSection->RegisterSelectedLayerChangeCallback([&programContext](size_t index) {
-        if(programContext.layerManager != nullptr) {
-            programContext.layerManager->SetActiveLayerIndex(index);
+        if(programContext.mapDocument != nullptr) {
+            auto layerManager = programContext.mapDocument->GetLayerManager();
+            layerManager->SetActiveLayerIndex(index);
 
             if(programContext.editorLayerMode == EditorLayerMode::MultiLayer) {
                 MultiLayerModeSetup(programContext);
             }
 
-            programContext.mapSection->Refresh(*programContext.layerManager);
+            programContext.mapSection->Refresh(*layerManager);
             programContext.mapSection->Update();
         }
     });
 
     programContext.layersSection->RegisterLayerVisibilityChangeCallback([&programContext](size_t index, bool visible) {
-        if(programContext.layerManager != nullptr) {
-            programContext.layerManager->SetLayerVisibility(index, visible);
+        if(programContext.mapDocument != nullptr) {
+            auto layerManager = programContext.mapDocument->GetLayerManager();
+            layerManager->SetLayerVisibility(index, visible);
 
-            programContext.mapSection->Refresh(*programContext.layerManager);
+            programContext.mapSection->Refresh(*layerManager);
             programContext.mapSection->Update();
         }
     });
 
-    programContext.layersSection->Refresh(*programContext.layerManager);
-    programContext.layersSection->Update();
+    if(programContext.mapDocument != nullptr) {
+        programContext.layersSection->Refresh(*layerManager);
+        programContext.layersSection->Update();
+    }
 
     program::UpdateEditorLayerMode(programContext.editorLayerMode);
     program::UpdateEditorChunkMode(programContext.editorChunkMode);

@@ -3,11 +3,13 @@
 #include "win32_program/windows_process.hpp"
 #include "program/program.hpp"
 #include "defaults.hpp"
+#include "locale/string_lookup.hpp"
 
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
 #include <windowsx.h>
 #include <algorithm>
+#include <stdexcept>
 
 void win32_program::Run()
 {
@@ -23,6 +25,23 @@ win32_program::MainWindowContext& win32_program::GetMainWindowContext()
 {
     static MainWindowContext context = {};
     return context;
+}
+
+void CenterWindow(HWND hwnd)
+{
+    RECT rc;
+    GetWindowRect(hwnd, &rc);
+
+    int windowWidth = rc.right - rc.left;
+    int windowHeight = rc.bottom - rc.top;
+
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    int xPos = (screenWidth - windowWidth) / 2;
+    int yPos = (screenHeight - windowHeight) / 2;
+
+    SetWindowPos(hwnd, nullptr, xPos, yPos, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 }
 
 void win32_program::Init(HINSTANCE hInstance)
@@ -41,16 +60,25 @@ void win32_program::Init(HINSTANCE hInstance)
 
     RegisterClassEx(&wc);
 
+    auto windowTitle = programContext.stringLookup.Get(locale::StringId::WindowTitle);
+
+    if(windowTitle == std::nullopt) {
+        throw std::runtime_error("Missing window title string.");
+    }
+
     HWND hwnd = CreateWindowEx(
         0,
         wc.lpszClassName,
-        L"SGC Editor",
+        windowTitle->c_str(),
         WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-        CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
         defaults::WindowWidth,
         defaults::WindowHeight,
         nullptr, nullptr, hInstance, nullptr
     );
+
+    CenterWindow(hwnd);
 
     if (hwnd == nullptr)
     {

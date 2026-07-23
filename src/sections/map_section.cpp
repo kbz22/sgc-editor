@@ -140,9 +140,16 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto tileWidth = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().x / tileSize.x);
             auto tileHeight = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);            
 
-            auto currentLayer = programContext.layerManager->GetLayers()[programContext.layerManager->GetActiveLayerIndex()];
+            auto &mapDocument = programContext.mapDocument;
 
-            if(currentLayer.storage == nullptr) { //! check this out
+            if(mapDocument == nullptr) {
+                return 0;
+            }
+
+            auto layerManager = mapDocument->GetLayerManager();
+            auto currentLayer = mapDocument->GetCurrentLayerStorage();
+
+            if(currentLayer == nullptr) {
                 return 0;
             }
 
@@ -156,7 +163,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 m_paintStrokeCommand.reset();
             }
 
-            m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(programContext.layerManager->GetActiveLayerIndex());
+            m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(layerManager->GetActiveLayerIndex());
 
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {
@@ -164,11 +171,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     auto tileY = cursorPositionOnMap.y + _y;
                     auto currentTileId = tileset->ToTileId(static_cast<sgc::math::uval>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::uval>(currentTilePosition.y / tileSize.y) + _y);
 
-                    if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileX, tileY }).has_value()) {
+                    if( !m_checkTileBeforePainting || currentLayer->GetTileAt({ tileX, tileY }).has_value()) {
 
                         command::TileChange change{
                             { tileX, tileY },
-                            currentLayer.storage->GetTileAt({ tileX, tileY }),
+                            currentLayer->GetTileAt({ tileX, tileY }),
                             currentTileId
                         };                        
                         m_paintStrokeCommand->ExecuteTileChange(change);
@@ -259,10 +266,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 programContext.selectionRectangleOnTileset->GetPosition()
             );
 
-            auto currentLayer = programContext.layerManager->
-                GetLayers()[programContext.layerManager->GetActiveLayerIndex()];
+            auto &mapDocument = programContext.mapDocument;
+            auto currentLayer = mapDocument->GetCurrentLayerStorage();
 
-            if (currentLayer.storage == nullptr) {
+            if(currentLayer == nullptr) {
                 return 0;
             }
 
@@ -293,11 +300,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         cursorTilePositionOnTileset.y + deltaY
                     );
 
-                   if( !m_checkTileBeforePainting || currentLayer.storage->GetTileAt({ tileMapX, tileMapY }).has_value()) {
+                   if( !m_checkTileBeforePainting || currentLayer->GetTileAt({ tileMapX, tileMapY }).has_value()) {
 
                         command::TileChange change{
                             { tileMapX, tileMapY },
-                            currentLayer.storage->GetTileAt({ tileMapX, tileMapY }),
+                            currentLayer->GetTileAt({ tileMapX, tileMapY }),
                             tileId
                         };
                         
