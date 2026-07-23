@@ -11,14 +11,32 @@
 #include "debug.hpp"
 #include "program/program.hpp"
 
-sgc_view::TilesetView::TilesetView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth, int tileHeight) :
-    SgcView(hwnd, tileWidth, tileHeight) 
+sgc_view::TilesetView::TilesetView(HWND hwnd) :
+    SgcView(hwnd)
+{}
+
+sgc_view::TilesetView::~TilesetView() {
+    // nothing to do
+}
+
+void sgc_view::TilesetView::Render()
 {
-    m_tileset = LoadTileset(tilesetPath);
-    if(!m_tileset) {
-        throw std::runtime_error("Failed to load tileset from path: " + tilesetPath.string());
+    SgcView::Clear();
+    SgcView::DrawAll();
+
+    program::ProgramContext& programContext = program::GetProgramContext();
+
+    if (programContext.selectionRectangleOnTileset != nullptr) {
+        programContext.selectionRectangleOnTileset->Draw(m_renderContext);
     }
-    
+
+    sdl::Render(m_renderContext);
+}
+
+void sgc_view::TilesetView::SetTileset(std::shared_ptr<graphics::Tileset> tileset)
+{
+    SgcView::SetTileset(tileset);
+
     const math::vec2 gridSize = m_tileset->GetSizeInTiles();
 
     auto tileStorage = std::make_shared<data::StaticTileStorage>(math::vec2{gridSize.x, gridSize.y});
@@ -38,22 +56,4 @@ sgc_view::TilesetView::TilesetView(HWND hwnd, std::filesystem::path tilesetPath,
     );
 
     m_drawableImage = std::make_shared<graphics::TiledImage>(m_layer);
-}
-
-sgc_view::TilesetView::~TilesetView() {
-    // nothing to do
-}
-
-void sgc_view::TilesetView::Render()
-{
-    SgcView::Clear();
-    SgcView::DrawAll();
-
-    program::ProgramContext& programContext = program::GetProgramContext();
-
-    if (programContext.selectionRectangleOnTileset != nullptr) {
-        programContext.selectionRectangleOnTileset->Draw(m_renderContext);
-    }
-
-    sdl::Render(m_renderContext);
 }

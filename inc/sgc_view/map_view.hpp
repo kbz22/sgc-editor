@@ -7,8 +7,6 @@
 #include <sgc/data/chunkedtilestorage.hpp>
 #include <sgc/graphics/rectangle.hpp>
 
-#include <filesystem>
-
 namespace sections {
     class MapSection;
 }
@@ -23,10 +21,11 @@ namespace sgc_view
             graphics::Rectangle m_cursorTile;
 
         public:
-            MapView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth, int tileHeight);
+            MapView(HWND hwnd);
             ~MapView();
             
             void Render() override;
+            void SetTileset(std::shared_ptr<graphics::Tileset> tileset) override;
             void Refresh(program::LayerManager& layerManager);
 
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);

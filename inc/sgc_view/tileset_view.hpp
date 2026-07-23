@@ -5,8 +5,6 @@
 #include <sgc/graphics/tiledlayer.hpp>
 #include "defaults.hpp"
 
-#include <filesystem>
-
 namespace sgc_view 
 {
     class TilesetView : public SgcView
@@ -17,10 +15,10 @@ namespace sgc_view
             std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
 
         public:
-            TilesetView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth, int tileHeight);
+            TilesetView(HWND hwnd);
             ~TilesetView();
 
             void Render() override;
-            
+            void SetTileset(std::shared_ptr<graphics::Tileset> tileset) override;
     };    
 }

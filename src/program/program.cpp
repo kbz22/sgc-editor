@@ -45,6 +45,9 @@ std::vector<action::ActionType> g_activeEditorButtons {
 void program::StartDefault()
 {
     auto& programContext = GetProgramContext();    
+    
+    programContext.assetManager = std::make_unique<file::AssetManager>();
+    programContext.mapDocument = std::make_unique<file::MapDocument>();
 
     programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
     programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, false);
@@ -93,18 +96,15 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
         sgc::math::vec2{ tileWidth, tileHeight }
     );
     programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
-
-    programContext.tilesetSection->LoadTileset(tilesetPath, tileWidth, tileHeight);
-
-    programContext.mapSection->LoadTileset(tilesetPath, tileWidth, tileHeight);
+    
+    programContext.tilesetSection->LoadTileset(tilesetPath, tileWidth, tileHeight, programContext);    
+    programContext.mapSection->LoadTileset(tilesetPath, tileWidth, tileHeight, programContext);
 
     programContext.mapSection->HandleSectionResize();
     programContext.tilesetSection->HandleSectionResize();
     programContext.mapSection->Update();
-    programContext.tilesetSection->Update();
-
-    /* programContext.layerManager = std::make_unique<program::LayerManager>(); */
-    programContext.mapDocument = std::make_unique<file::MapDocument>();
+    programContext.tilesetSection->Update();    
+    
     auto layerManager = programContext.mapDocument->GetLayerManager();
 
     layerManager->AddLayer({

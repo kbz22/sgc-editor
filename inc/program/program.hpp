@@ -20,6 +20,7 @@
 #include "win32_program/win32_context.hpp"
 // #include "program/layer_manager.hpp"
 #include "file/map_document.hpp"
+#include "file/asset_manager.hpp"
 #include "program/editor_mode.hpp"
 
 #include <sgc/graphics/rectangle.hpp>
@@ -49,6 +50,7 @@ namespace program {
         std::unique_ptr<file::MapDocument> mapDocument;
         std::unique_ptr<command::CommandManager> commandManager{};
         std::unique_ptr<action::ActionManager> actionManager{};
+        std::unique_ptr<file::AssetManager> assetManager{};
 
         HIMAGELIST toolbarIcons;
         HIMAGELIST toolbarIconsDisabled;

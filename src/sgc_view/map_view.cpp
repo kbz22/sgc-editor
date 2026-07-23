@@ -7,15 +7,10 @@
 
 #include <sgc/graphics/renderlayer.hpp>
 
-sgc_view::MapView::MapView(HWND hwnd, std::filesystem::path tilesetPath, int tileWidth, int tileHeight) :
-    SgcView(hwnd, tileWidth, tileHeight),
-    m_cursorTile({0,0},{tileWidth,tileHeight})
-{
-    m_tileset = LoadTileset(tilesetPath);
-    if(m_tileset == nullptr) {
-        throw std::runtime_error("Failed to load tileset from path: " + tilesetPath.string());        
-    }
-
+sgc_view::MapView::MapView(HWND hwnd) :
+    SgcView(hwnd),
+    m_cursorTile{0, 0, 0, 0}
+{    
     m_cursorTile.SetColor({ 255, 255, 255, 64 });
 
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;    
@@ -27,6 +22,18 @@ sgc_view::MapView::MapView(HWND hwnd, std::filesystem::path tilesetPath, int til
 
 sgc_view::MapView::~MapView()
 {    
+}
+
+void sgc_view::MapView::SetTileset(std::shared_ptr<graphics::Tileset> tileset)
+{
+    SgcView::SetTileset(tileset);
+
+    auto tileSize = m_tileset->GetTileSize();
+
+    m_cursorTile.SetSize({
+        static_cast<sgc::math::ival>(tileSize.x),
+        static_cast<sgc::math::ival>(tileSize.y)
+    });    
 }
 
 void sgc_view::MapView::Render()

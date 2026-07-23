@@ -1,4 +1,5 @@
 #include "file/map_document.hpp"
+#include <sgc/data/helpers.hpp>
 
 file::MapDocument::MapDocument() :
     m_layerManager{std::make_unique<program::LayerManager>()}
@@ -14,8 +15,3 @@ sgc::data::ITileStorage* file::MapDocument::GetCurrentLayerStorage()
     auto currentLayerIndex = m_layerManager->GetActiveLayerIndex();
     return m_layerManager->GetLayers()[currentLayerIndex].storage.get();
 }
-
-/* sgc::graphics::Tileset& file::MapDocument::GetTileset()
-{
-    return m_tileset;
-} */

@@ -5,10 +5,10 @@
 #include <commctrl.h>
 #include "program/except.hpp"
 
-sgc_view::SgcView::SgcView(HWND hwnd, int tileWidth, int tileHeight)
-    : m_hostWindow(hwnd), m_tileWidth(tileWidth), m_tileHeight(tileHeight)
-{
-    CreateEmbeddedRenderer();
+sgc_view::SgcView::SgcView(HWND hwnd) :
+    m_hostWindow(hwnd)
+{    
+    CreateEmbeddedWindow();
 }
 
 sgc_view::SgcView::~SgcView()
@@ -24,7 +24,7 @@ sgc_view::SgcView::~SgcView()
     }
 }
 
-bool sgc_view::SgcView::CreateEmbeddedRenderer()
+bool sgc_view::SgcView::CreateEmbeddedWindow()
 {
     if (!m_sdlInitialized && !sdl::InitVideo()) {
         return false;
@@ -42,17 +42,34 @@ bool sgc_view::SgcView::CreateEmbeddedRenderer()
         return false;
     }
 
-    m_renderContext.renderer = sdl::CreateRenderer(m_sdlWindow);
+    /* m_renderContext.renderer = sdl::CreateRenderer(m_sdlWindow);
     if (m_renderContext.renderer == nullptr) {
         sdl::DestroyWindow(m_sdlWindow);
         m_sdlWindow = nullptr;
         return false;
-    }
+    } */
 
     return true;
 }
 
-std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::LoadTileset(const std::filesystem::path& path)
+void sgc_view::SgcView::SetTileset(std::shared_ptr<graphics::Tileset> tileset)
+{
+    if(tileset == nullptr) {
+        throw std::invalid_argument("Tileset cannot be null.");
+    }
+    
+    m_tileset = tileset;
+    auto tileSize = tileset->GetTileSize();
+    m_tileWidth = static_cast<int>(tileSize.x);
+    m_tileHeight = static_cast<int>(tileSize.y);
+}
+
+void sgc_view::SgcView::SetRenderer(const graphics::RenderContext& context)
+{
+    m_renderContext.renderer = context.renderer;
+}
+
+/* std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::LoadTileset(const std::filesystem::path& path)
 {
     if (m_renderContext.renderer == nullptr) {
         return nullptr;
@@ -86,7 +103,7 @@ std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::LoadTileset(const std
     auto tileset = std::make_shared<graphics::Tileset>(image, tileVec2); 
     
     return tileset;
-}
+} */
 
 void sgc_view::SgcView::DrawAll()
 {
@@ -140,8 +157,8 @@ sgc::math::fvec2 sgc_view::SgcView::PixelsToTiles(sgc::math::fvec2 value) const
 sgc::graphics::PixelSize2D sgc_view::SgcView::GetTileSize() const
 {
     return {
-        static_cast<sgc::math::uval>(m_tileWidth),
-        static_cast<sgc::math::uval>(m_tileHeight)
+        static_cast<sgc::math::ival>(m_tileWidth),
+        static_cast<sgc::math::ival>(m_tileHeight)
     };
 }
 
@@ -153,4 +170,9 @@ std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::GetTileset() const
 SDL_Window* sgc_view::SgcView::GetSdlWindow() const
 {
     return m_sdlWindow;
+}
+
+sgc::graphics::RenderContext& sgc_view::SgcView::GetRenderContext()
+{
+    return m_renderContext;
 }

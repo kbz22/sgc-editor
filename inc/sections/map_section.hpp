@@ -34,7 +34,7 @@ namespace sections {
 
             void Refresh(program::LayerManager& layerManager);
 
-            void LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight);
+            void LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext);
             void LoadMap(const std::filesystem::path& path);
             void SaveMap(const std::filesystem::path& path);
             

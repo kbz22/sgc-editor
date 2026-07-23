@@ -11,8 +11,7 @@ namespace file {
     class MapDocument
     {
         private:
-            std::unique_ptr<program::LayerManager> m_layerManager{};
-            // sgc::graphics::Tileset m_tileset{};
+            std::unique_ptr<program::LayerManager> m_layerManager{nullptr};            
 
         public:
             MapDocument();
@@ -20,7 +19,7 @@ namespace file {
 
             program::LayerManager* GetLayerManager();
             sgc::data::ITileStorage* GetCurrentLayerStorage();
-            // sgc::graphics::Tileset& GetTileset();
+            sgc::graphics::Tileset* GetTileset();
     };
 
 }

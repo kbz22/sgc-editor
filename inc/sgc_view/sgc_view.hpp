@@ -27,28 +27,33 @@ namespace sgc_view
 
             SDL_Window* m_sdlWindow = nullptr;
             
-            bool CreateEmbeddedRenderer();            
+            bool CreateEmbeddedWindow();            
 
         protected:
             int m_tileWidth;
             int m_tileHeight;
             std::shared_ptr<graphics::Tileset> m_tileset = nullptr;        
             std::shared_ptr<graphics::IDrawable> m_drawableImage = nullptr;
-            graphics::RenderContext m_renderContext = {};
+            graphics::RenderContext m_renderContext{};
             
             HWND m_hostWindow = HWND(); //! remove the rest of win32 stuff once all is moved to section
             HWND m_sectionWindow = HWND();
             
             void DrawAll();            
 
-            std::shared_ptr<graphics::Tileset> LoadTileset(const std::filesystem::path& path);
+            //std::shared_ptr<graphics::Tileset> LoadTileset(const std::filesystem::path& path);
 
         public:
-            SgcView(HWND hwnd, int tileWidth, int tileHeight);
+            SgcView(HWND hwnd);
             ~SgcView();
             
             virtual void SetScreenSize(int width, int height);
             virtual void Render();
+
+            virtual void SetTileset(std::shared_ptr<graphics::Tileset> tileset);
+            virtual void SetRenderer(const graphics::RenderContext& context);
+
+            graphics::RenderContext& GetRenderContext();
 
             std::shared_ptr<graphics::Tileset> GetTileset() const;
             sgc::graphics::PixelSize2D GetTileSize() const;
@@ -58,9 +63,9 @@ namespace sgc_view
             sgc::math::vec2 PixelsToTiles(sgc::math::vec2 value) const;
             sgc::math::fvec2 PixelsToTiles(sgc::math::fvec2 value) const;
 
-            void Clear();
+            void Clear();            
             
-            friend class sections::MapSection;
-            friend class sections::TilesetSection;
+            /* friend class sections::MapSection;
+            friend class sections::TilesetSection; */
     };
 }
