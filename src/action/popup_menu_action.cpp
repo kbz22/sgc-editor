@@ -1,6 +1,7 @@
 #include "action/popup_menu_action.hpp"
 #include "program/program.hpp"
 #include <stdexcept>
+#include <algorithm>
 
 action::PopupMenuAction::PopupMenuAction()
 {
@@ -10,9 +11,26 @@ action::PopupMenuAction::PopupMenuAction()
 
 void action::PopupMenuAction::BuildMenu(program::ProgramContext &context)
 {
+    if(m_popupMenuItems.empty()) {
+        return;
+    }
+
+    auto previousGroupId = m_popupMenuItems[0]->GetGroupId();
+
     for(auto &item : m_popupMenuItems)
     {
         auto text = context.stringLookup.Get(item->GetNameStringId().value());
+
+        if(item->GetGroupId() != previousGroupId) {
+            AppendMenuW(
+                m_hMenu,
+                MF_SEPARATOR,
+                0,
+                nullptr
+            );
+
+            previousGroupId = item->GetGroupId();
+        }
         
         if(text == std::nullopt) {
             throw std::runtime_error("PopupMenuAction::BuildMenu: Missing text for menu item.");

@@ -13,7 +13,7 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
             m_actionDescription.nameStringId = locale::StringId::NameEditorChunkModeFixedSize;
             m_actionDescription.imageIndex = 16;
             m_actionDescription.toolbarOrder = 1300;
-            m_actionDescription.menuOrder = 201;
+            m_actionDescription.menuOrder = 501;
             break;
 
         case program::EditorChunkMode::DynamicChunks:
@@ -22,7 +22,7 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
             m_actionDescription.nameStringId = locale::StringId::NameEditorChunkModeFree;
             m_actionDescription.imageIndex = 15;
             m_actionDescription.toolbarOrder = 1400;
-            m_actionDescription.menuOrder = 202;
+            m_actionDescription.menuOrder = 502;
             break;        
     }
     
@@ -31,7 +31,7 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
     
     m_actionDescription.checkGroupItem = true;
     m_actionDescription.groupId = GroupId::EditorChunkMode;
-    m_actionDescription.menuId = MenuId::View;    
+    m_actionDescription.menuId = MenuId::Map;
 }
 
 void action::ChangeChunkModeAction::Execute(program::ProgramContext& context)
