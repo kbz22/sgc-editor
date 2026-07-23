@@ -98,6 +98,10 @@ add_executable(sgc-editor WIN32
     src/action/change_chunk_mode_action.cpp
     src/action/popup_menu_action.cpp
     src/action/file_menu_action.cpp
+    src/action/edit_menu_action.cpp
+    src/action/map_menu_action.cpp
+    src/action/view_menu_action.cpp
+    src/action/help_menu_action.cpp
 )
 
 # embed manifest in the exe

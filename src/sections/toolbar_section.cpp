@@ -6,8 +6,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 
-sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext) :
-    m_programContext(programContext)
+sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext)
 {
     using namespace win32_program;
 
@@ -124,9 +123,9 @@ HWND sections::ToolbarSection::GetHwndToolbar() const
     return m_hwndToolbar;
 }
 
-void sections::ToolbarSection::Refresh()
+void sections::ToolbarSection::Refresh(program::ProgramContext& programContext)
 {
-    auto toolbarActions = m_programContext.actionManager->GetToolbarActions();
+    auto toolbarActions = programContext.actionManager->GetToolbarActions();
 
     for (const auto& action : toolbarActions)
     {

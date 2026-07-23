@@ -17,12 +17,13 @@ namespace action {
             std::vector<Action*> m_popupMenuItems{};
 
         protected:
-            HMENU m_hMenu = HMENU();            
+            HMENU m_hMenu = HMENU();
+            int m_menuId = -1;
 
         public:
             PopupMenuAction();
 
-            void Execute(program::ProgramContext& context) override;
+            void Execute(program::ProgramContext &context) override;
             bool IsPopup() const override;            
             std::optional<std::vector<Action*>> GetPopupMenuItems() const override;
 

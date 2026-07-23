@@ -27,6 +27,10 @@ namespace action {
         MenuView = 4001,
         LayerModeMultilayer,
         LayerModeSingleLayer,
-        LayerModeSingleImage        
+        LayerModeSingleImage,
+
+        MenuHelp = 5001,
+        HelpAbout,
+        HelpGithubHyperlink
     };
 }

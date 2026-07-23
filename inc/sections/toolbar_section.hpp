@@ -16,8 +16,7 @@ namespace sections {
     class ToolbarSection : public Section
     {
         private:
-            HWND m_hwndToolbar;
-            program::ProgramContext& m_programContext;
+            HWND m_hwndToolbar;            
 
         public:
             ToolbarSection(program::ProgramContext& programContext);
@@ -26,7 +25,7 @@ namespace sections {
             void Update() override;            
             void HandleSectionResize() override;
 
-            void Refresh();            
+            void Refresh(program::ProgramContext& programContext);
 
             HWND GetHwndToolbar() const;
     };

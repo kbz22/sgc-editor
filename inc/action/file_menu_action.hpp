@@ -7,8 +7,7 @@ namespace action {
     class FileMenuAction : public PopupMenuAction
     {
         public:
-            FileMenuAction();
-            void Execute(program::ProgramContext& context) override;
+            FileMenuAction();            
     };    
 
 }

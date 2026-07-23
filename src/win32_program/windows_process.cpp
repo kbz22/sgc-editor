@@ -102,7 +102,6 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_COMMAND:
     {
         int id = LOWORD(wParam);
-        int menuFileId = static_cast<int>(action::ActionType::MenuFile);
 
         programContext.actionManager->Execute(
             static_cast<action::ActionType>(id), programContext

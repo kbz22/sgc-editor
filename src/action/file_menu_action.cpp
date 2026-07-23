@@ -6,6 +6,7 @@
 action::FileMenuAction::FileMenuAction()
 {
     m_hMenu = CreatePopupMenu();
+    m_menuId = static_cast<int>(action::ActionType::MenuFile);
 
     m_actionType = ActionType::MenuFile;
     m_enabled = true;
@@ -21,40 +22,8 @@ action::FileMenuAction::FileMenuAction()
     m_actionDescription.nameStringId = locale::StringId::NameFile;
 }
 
-void action::FileMenuAction::Execute(program::ProgramContext& context)
-{
-    RECT rc{};
-    int intId = static_cast<int>(action::ActionType::MenuFile);
-
-    SendMessage(
-        context.menuSection->GetHwndToolbar(),
-        TB_GETRECT,
-        intId,
-        reinterpret_cast<LPARAM>(&rc));
-
-    MapWindowPoints(
-        context.menuSection->GetHwndToolbar(),
-        HWND_DESKTOP,
-        reinterpret_cast<POINT*>(&rc),
-        2);
-
-    auto actionMenuFile = context.actionManager->Find(action::ActionType::MenuFile);
-
-    if(actionMenuFile == nullptr || !actionMenuFile->IsPopup()) {
-        return;
-    }
-
-    auto hMenu = dynamic_cast<action::FileMenuAction*>(actionMenuFile)->GetHMenu();
-
-    TrackPopupMenu(
-        hMenu,
-        TPM_LEFTALIGN | TPM_TOPALIGN,
-        rc.left,
-        rc.bottom,
-        0,
-        context.menuSection->GetHwndToolbar(),
-        nullptr
-    );
-
+/* void action::FileMenuAction::Execute(program::ProgramContext& context)
+{    
+    PopupMenuAction::Execute(context);
     return;
-}
+} */

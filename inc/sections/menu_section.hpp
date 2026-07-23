@@ -25,6 +25,7 @@ namespace sections {
             void HandleSectionResize() override;
 
             HWND GetHwndToolbar() const;
+            void Refresh(program::ProgramContext& programContext);
     };
 
 }

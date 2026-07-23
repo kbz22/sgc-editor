@@ -66,7 +66,7 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
         TBBUTTON btn = {};
         btn.iBitmap = I_IMAGENONE;
         btn.idCommand = static_cast<int>(menuAction->GetType());
-        btn.fsState = TBSTATE_ENABLED;
+        btn.fsState = menuAction->IsEnabled() ? TBSTATE_ENABLED : 0;
         btn.fsStyle = BTNS_BUTTON | BTNS_SHOWTEXT;
         btn.iString = strIndex;        
 
@@ -88,21 +88,8 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
     SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(34, 0));
     SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(3, 0));
     SendMessage(hwndToolbar, TB_AUTOSIZE, 0, 0);
-    }
-
-    // Popup menus
-    /* action::Action *fileMenuAction = programContext.actionManager->Find(action::ActionType::MenuFile);
     
-    if(fileMenuAction != nullptr && fileMenuAction->IsPopup()) {
-        auto fileMenuActionPopup = dynamic_cast<action::PopupMenuAction*>(fileMenuAction);
-
-        HMENU filePopupMenu = fileMenuActionPopup->GetHMenu();
-
-        AppendMenuW(filePopupMenu, MF_STRING, 10001, L"First");
-        AppendMenuW(filePopupMenu, MF_STRING, 10002, L"Second");
-        AppendMenuW(filePopupMenu, MF_SEPARATOR, 0, nullptr);
-        AppendMenuW(filePopupMenu, MF_STRING, 10003, L"Third");
-    }   */  
+    }
 
     // Setting up the rebar (i think mostly for size)
     SIZE sz = {};
@@ -144,4 +131,17 @@ void sections::MenuSection::HandleSectionResize()
 HWND sections::MenuSection::GetHwndToolbar() const
 {
     return m_hwndToolbar;
+}
+
+void sections::MenuSection::Refresh(program::ProgramContext& programContext)
+{
+    for(int i=static_cast<int>(action::MenuId::File); i<static_cast<int>(action::MenuId::Count); ++i)
+    {
+        auto menuActions = programContext.actionManager->GetMenuActions(static_cast<action::MenuId>(i));
+
+        for (const auto& action : menuActions)
+        {
+            SendMessage(m_hwndToolbar, TB_ENABLEBUTTON, static_cast<int>(action->GetType()), MAKELPARAM(action->IsEnabled(), 0));
+        }
+    }    
 }

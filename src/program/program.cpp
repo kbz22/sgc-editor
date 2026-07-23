@@ -17,6 +17,10 @@
 #include "action/change_layer_mode_action.hpp"
 #include "action/change_chunk_mode_action.hpp"
 #include "action/file_menu_action.hpp"
+#include "action/edit_menu_action.hpp"
+#include "action/map_menu_action.hpp"
+#include "action/view_menu_action.hpp"
+#include "action/help_menu_action.hpp"
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -75,7 +79,8 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
     programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, true);
     programContext.actionManager->ActionSetChecked(action::ActionType::ChunkModeFixedSize, true);
 
-    programContext.toolbarSection->Refresh();    
+    programContext.toolbarSection->Refresh(programContext);
+    programContext.menuSection->Refresh(programContext);
 
     if(programContext.selectionRectangleOnTileset != nullptr) {
         programContext.selectionRectangleOnTileset.reset();
@@ -168,5 +173,9 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::DynamicChunks));
 
     programContext.actionManager->Register(std::make_unique<action::FileMenuAction>());
+    programContext.actionManager->Register(std::make_unique<action::EditMenuAction>());
+    programContext.actionManager->Register(std::make_unique<action::MapMenuAction>());
+    programContext.actionManager->Register(std::make_unique<action::ViewMenuAction>());
+    programContext.actionManager->Register(std::make_unique<action::HelpMenuAction>());    
 
 }

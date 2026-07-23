@@ -25,6 +25,7 @@ namespace locale
         NameEdit,
         NameMap,
         NameView,
+        NameHelp,
 
         NameNewFile,
         NameOpenFile,

@@ -37,7 +37,8 @@ void program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
     programContext.mapSection->Refresh(*programContext.layerManager);
     programContext.mapSection->Update();
 
-    programContext.toolbarSection->Refresh();
+    programContext.toolbarSection->Refresh(programContext);
+    programContext.menuSection->Refresh(programContext);
 }
 
 void program::UpdateEditorChunkMode(program::EditorChunkMode newMode)
@@ -51,5 +52,6 @@ void program::UpdateEditorChunkMode(program::EditorChunkMode newMode)
 
     programContext.mapSection->SetCheckTileBeforePainting(newMode == program::EditorChunkMode::FixedChunks);
 
-    programContext.toolbarSection->Refresh();
+    programContext.toolbarSection->Refresh(programContext);
+    programContext.menuSection->Refresh(programContext);
 }

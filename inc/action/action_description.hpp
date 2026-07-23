@@ -11,6 +11,7 @@ namespace action {
         Edit,
         Map,
         View,
+        Help,
 
         Count
     };
