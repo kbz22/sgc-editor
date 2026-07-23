@@ -96,33 +96,33 @@ void sections::MapSection::HandleSectionResize()
     Update();
 }
 
-bool g_mouseCaptured = false;
-
-void SetCaptureHelper(HWND hwnd)
-{
-    if (!g_mouseCaptured) {
-        SetCapture(hwnd);
-        g_mouseCaptured = true;
-    }
-}
-
-void ReleaseCaptureHelper()
-{
-    if (g_mouseCaptured) {
-        ReleaseCapture();
-        g_mouseCaptured = false;
-    }
-}
-
 LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 { 
     program::ProgramContext& programContext = program::GetProgramContext();
+
+    auto SetCaptureHelper = [this](HWND hwnd) {
+        if (!m_isCaptured) {
+            SetCapture(hwnd);
+            m_isCaptured = true;
+        }
+    };
+
+    auto ReleaseCaptureHelper = [this]() {
+        if (m_isCaptured) {
+            ReleaseCapture();
+            m_isCaptured = false;
+        }
+    };
+
+    auto IsMouseCaptured = [this]() -> bool {
+        return m_isCaptured;
+    };
 
     switch (msg)
     {
         case WM_LBUTTONDOWN:
         {
-            if(g_mouseCaptured) {
+            if(IsMouseCaptured()) {
                 break;
             }
 
@@ -342,7 +342,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_MBUTTONDOWN:
         {
-            if(g_mouseCaptured) {
+            if(IsMouseCaptured()) {
                 break;
             }
 
