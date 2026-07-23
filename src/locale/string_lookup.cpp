@@ -22,6 +22,9 @@ locale::StringLookup::StringLookup()
 
         {StringId::NameFile, L"File"},
         {StringId::NameEdit, L"Edit"},
+        {StringId::NameMap, L"Map"},
+        {StringId::NameView, L"View"},
+
         {StringId::NameNewFile, L"New"},
         {StringId::NameOpenFile, L"Open"},
         {StringId::NameSaveFile, L"Save"},
@@ -37,7 +40,9 @@ locale::StringLookup::StringLookup()
         {StringId::NameEditorLayerModeSingleImage, L"Single image"},
         {StringId::NameSelectEditorChunkMode, L"Chunk mode"},
         {StringId::NameEditorChunkModeFixedSize, L"Fixed size chunk"},
-        {StringId::NameEditorChunkModeFree, L"Free chunk"}
+        {StringId::NameEditorChunkModeFree, L"Free chunk"},
+
+        {StringId::TextMissing, L"Text missing"}
     };
 }
 
@@ -50,6 +55,6 @@ const std::wstring& locale::StringLookup::Get(StringId id) const
     }
     else
     {
-        throw std::runtime_error("String not found");
+        return m_strings.at(StringId::TextMissing);
     }
 }

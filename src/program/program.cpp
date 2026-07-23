@@ -16,6 +16,7 @@
 #include "action/layer_move_action.hpp"
 #include "action/change_layer_mode_action.hpp"
 #include "action/change_chunk_mode_action.hpp"
+#include "action/file_menu_action.hpp"
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -165,5 +166,7 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::SingleImage));
     programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::FixedChunks));
     programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::DynamicChunks));
+
+    programContext.actionManager->Register(std::make_unique<action::FileMenuAction>());
 
 }

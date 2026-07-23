@@ -3,8 +3,8 @@
 namespace locale
 {
     enum class StringId
-    {
-        TextMissing,
+    {        
+        TextMissing,        
 
         TooltipFileNew,
         TooltipFileOpen,
@@ -23,6 +23,9 @@ namespace locale
 
         NameFile,
         NameEdit,
+        NameMap,
+        NameView,
+
         NameNewFile,
         NameOpenFile,
         NameSaveFile,

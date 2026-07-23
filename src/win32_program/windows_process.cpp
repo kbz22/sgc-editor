@@ -16,6 +16,7 @@
 #include "defaults.hpp"
 
 #include "action/new_file_action.hpp"
+#include "action/file_menu_action.hpp"
 
 win32_program::LayoutManager& GetLayoutManager()
 {
@@ -101,6 +102,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_COMMAND:
     {
         int id = LOWORD(wParam);
+        int menuFileId = static_cast<int>(action::ActionType::MenuFile);
 
         programContext.actionManager->Execute(
             static_cast<action::ActionType>(id), programContext
@@ -123,12 +125,19 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         {
             auto* info = reinterpret_cast<NMTTDISPINFO*>(lParam);
 
-            // CommandId command = static_cast<CommandId>(info->hdr.idFrom);
-            // const auto& commandInfo = programContext.commandLookup.Get(command);
-            // const auto& text = programContext.stringLookup.Get(commandInfo.tooltip);
-
             auto action = programContext.actionManager->Find(static_cast<action::ActionType>(info->hdr.idFrom));
-            auto text = programContext.stringLookup.Get(action->GetTooltipStringId());
+
+            if(!action) {
+                break;
+            }
+
+            auto tooltipStringId = action->GetTooltipStringId();
+
+            if(tooltipStringId == std::nullopt) {
+                break;
+            }
+            
+            auto text = programContext.stringLookup.Get(*tooltipStringId);
 
             wcscpy_s(
                 info->szText,

@@ -1,8 +1,11 @@
 #include "sections/menu_section.hpp"
 #include "win32_helpers/create_helpers.hpp"
 #include "program/program.hpp"
+#include "action/action_description.hpp"
+#include "action/popup_menu_action.hpp"
 #include <windows.h>
 #include <commctrl.h>
+#include <algorithm>
 
 sections::MenuSection::MenuSection(program::ProgramContext& programContext)    
 {
@@ -22,28 +25,86 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
         static_cast<types::ctrid_t>(ControlId::MenuToolbar)
     );
 
+    // Making menu bar buttons
+    {
     // Required for TBADDBUTTONS to work correctly
     SendMessage(hwndToolbar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
+    
+    std::vector<TBBUTTON> tbButtons;
+    tbButtons.reserve(static_cast<int>(action::MenuId::Count));
 
-    int strIndex = static_cast<int>(
-        SendMessage(
-            hwndToolbar,
-            TB_ADDSTRING,
-            0,
-            (LPARAM)L"File"
-        )
+    for (int i=static_cast<int>(action::MenuId::File); i<static_cast<int>(action::MenuId::Count); ++i)
+    {
+        auto menuItems = programContext.actionManager->GetMenuActions(static_cast<action::MenuId>(i));        
+
+        std::sort(menuItems.begin(), menuItems.end(), [](const action::Action* a, const action::Action* b) {
+            return a->GetMenuIndex() < b->GetMenuIndex();
+        });
+
+        if(menuItems.empty()) {
+            continue;
+        }
+
+        auto menuAction = reinterpret_cast<action::PopupMenuAction*>(menuItems[0]);
+        auto menuNameId = menuAction->GetNameStringId();
+
+        if(menuNameId == std::nullopt) {
+            continue;
+        }
+
+        auto &menuNameText = programContext.stringLookup.Get(menuNameId.value());
+
+        int strIndex = static_cast<int>(
+            SendMessage(
+                hwndToolbar,
+                TB_ADDSTRING,
+                0,
+                reinterpret_cast<LPARAM>(menuNameText.c_str())
+            )
+        );
+
+        TBBUTTON btn = {};
+        btn.iBitmap = I_IMAGENONE;
+        btn.idCommand = static_cast<int>(menuAction->GetType());
+        btn.fsState = TBSTATE_ENABLED;
+        btn.fsStyle = BTNS_BUTTON | BTNS_SHOWTEXT;
+        btn.iString = strIndex;        
+
+        tbButtons.push_back(btn);
+
+        if(menuAction->IsPopup()) {
+            menuItems.erase(menuItems.begin());
+
+            menuAction->SetItems(menuItems);
+            menuAction->BuildMenu(programContext);
+        }
+    }
+
+    SendMessage(hwndToolbar, TB_ADDBUTTONS,
+        static_cast<WPARAM>(tbButtons.size()),
+        reinterpret_cast<LPARAM>(tbButtons.data())
     );
-
-    TBBUTTON btn = {};
-    btn.iBitmap = I_IMAGENONE;
-    btn.idCommand = static_cast<int>(CommandId::MenuFile);
-    btn.fsState = TBSTATE_ENABLED;
-    btn.fsStyle = BTNS_BUTTON | BTNS_SHOWTEXT | BTNS_DROPDOWN;
-    btn.iString = strIndex;
-
-    SendMessage(hwndToolbar, TB_ADDBUTTONS, 1, (LPARAM)&btn);    
+    
+    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(34, 0));
+    SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(3, 0));
     SendMessage(hwndToolbar, TB_AUTOSIZE, 0, 0);
+    }
 
+    // Popup menus
+    /* action::Action *fileMenuAction = programContext.actionManager->Find(action::ActionType::MenuFile);
+    
+    if(fileMenuAction != nullptr && fileMenuAction->IsPopup()) {
+        auto fileMenuActionPopup = dynamic_cast<action::PopupMenuAction*>(fileMenuAction);
+
+        HMENU filePopupMenu = fileMenuActionPopup->GetHMenu();
+
+        AppendMenuW(filePopupMenu, MF_STRING, 10001, L"First");
+        AppendMenuW(filePopupMenu, MF_STRING, 10002, L"Second");
+        AppendMenuW(filePopupMenu, MF_SEPARATOR, 0, nullptr);
+        AppendMenuW(filePopupMenu, MF_STRING, 10003, L"Third");
+    }   */  
+
+    // Setting up the rebar (i think mostly for size)
     SIZE sz = {};
     SendMessage(hwndToolbar, TB_GETMAXSIZE, 0, (LPARAM)&sz);
 

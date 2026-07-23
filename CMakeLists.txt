@@ -46,7 +46,7 @@ add_executable(sgc-editor WIN32
     src/win32_helpers/load_bitmap.cpp
     src/win32_helpers/file_helpers.cpp
 
-    src/win32_models/layer_list_control.cpp
+    src/win32_models/layer_list_control.cpp    
 
     src/win32_program/windows_init.cpp        
     src/win32_program/toolbar_functions.cpp
@@ -74,7 +74,7 @@ add_executable(sgc-editor WIN32
 
     src/debug.cpp
 
-    src/locale/command_lookup.cpp
+    src/locale/command_lookup.cpp    
     src/locale/string_lookup.cpp
     
     src/command/command_manager.cpp
@@ -96,6 +96,8 @@ add_executable(sgc-editor WIN32
     src/action/layer_move_action.cpp
     src/action/change_layer_mode_action.cpp
     src/action/change_chunk_mode_action.cpp
+    src/action/popup_menu_action.cpp
+    src/action/file_menu_action.cpp
 )
 
 # embed manifest in the exe

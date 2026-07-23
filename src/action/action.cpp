@@ -28,6 +28,11 @@ bool action::Action::IsToolbarItem() const
     return (m_actionDescription.toolbarOrder >= 0);
 }
 
+bool action::Action::IsPopup() const
+{
+    return false;
+}
+
 void action::Action::SetEnabled(bool enabled)
 {
     m_enabled = enabled;
@@ -68,12 +73,17 @@ action::MenuId action::Action::GetMenuId() const
     return m_actionDescription.menuId;
 }
 
-locale::StringId action::Action::GetTooltipStringId() const
+std::optional<locale::StringId> action::Action::GetTooltipStringId() const
 {
     return m_actionDescription.tooltipStringId;
 }
 
-locale::StringId action::Action::GetNameStringId() const
+std::optional<locale::StringId> action::Action::GetNameStringId() const
 {
     return m_actionDescription.nameStringId;
+}
+
+std::optional<std::vector<action::Action*>> action::Action::GetPopupMenuItems() const
+{
+    return std::nullopt;
 }

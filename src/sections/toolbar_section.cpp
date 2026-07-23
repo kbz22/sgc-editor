@@ -50,7 +50,7 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
     });    
 
     std::vector<TBBUTTON> tbButtons;
-    tbButtons.reserve(100);
+    tbButtons.reserve(100); //!
     action::GroupId lastGroupId = toolbarActions[0]->GetGroupId();    
 
     for (const auto& action : toolbarActions)

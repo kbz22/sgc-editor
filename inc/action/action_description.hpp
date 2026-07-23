@@ -7,10 +7,12 @@ namespace action {
     enum class MenuId
     {
         None,
-        File,
+        File = 0,
         Edit,
         Map,
-        View
+        View,
+
+        Count
     };
 
     enum class GroupId
@@ -21,7 +23,7 @@ namespace action {
         LayerManagement,
         EditorLayerMode,
         EditorChunkMode
-    };
+    };    
 
     struct ActionDescription
     {
@@ -31,11 +33,11 @@ namespace action {
 
         bool checkGroupItem = false;
 
-        GroupId groupId = GroupId::File;
-        MenuId menuId = MenuId::File;
+        GroupId groupId = GroupId::Default;
+        MenuId menuId = MenuId::None;
 
         locale::StringId tooltipStringId = locale::StringId::TextMissing;
-        locale::StringId nameStringId = locale::StringId::TextMissing;
+        locale::StringId nameStringId = locale::StringId::TextMissing;        
     };
 
 }

@@ -6,23 +6,27 @@ namespace action {
     {
         Default = 0,
 
-        NewFile = 1001,
+        MenuFile = 1001,
+        NewFile = 1002,
         OpenFile,
         SaveFile,
         CloseFile,
 
+        MenuEdit = 2001,
         Undo,
         Redo,
 
+        MenuMap = 3001,
         AddLayer,
         RemoveLayer,
         MoveLayer,
 
-        LayerModeMultilayer,
-        LayerModeSingleLayer,
-        LayerModeSingleImage,
-
         ChunkModeFixedSize,
         ChunkModeFree,
+
+        MenuView = 4001,
+        LayerModeMultilayer,
+        LayerModeSingleLayer,
+        LayerModeSingleImage        
     };
 }
