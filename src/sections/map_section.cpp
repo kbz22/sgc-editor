@@ -18,7 +18,9 @@
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
     Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
     m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())}
-{}
+{
+    AttachView(*m_mapView);
+}
 
 void sections::MapSection::Update()
 {    
@@ -124,6 +126,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 { 
     program::ProgramContext& programContext = program::GetProgramContext();
 
+    if(m_mapView == nullptr || programContext.selectionRectangleOnTileset == nullptr)
+    {
+        return DefSubclassProc(hwnd, msg, wparam, lparam);
+    }
+
     auto SetCaptureHelper = [this](HWND hwnd) {
         if (!m_isCaptured) {
             SetCapture(hwnd);
@@ -218,7 +225,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_MOUSEMOVE:
         {
-
             if(m_isPanning) {
                 auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
                 auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));

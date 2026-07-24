@@ -7,7 +7,9 @@
 sections::TilesetSection::TilesetSection(program::ProgramContext& programContext) :
     Section{L"TilesetView", win32_program::ControlId::TilesetView, *programContext.mainWindowContext},
     m_tilesetView{std::make_unique<sgc_view::TilesetView>(GetHwnd())}
-{}
+{
+    AttachView(*m_tilesetView);
+}
 
 void sections::TilesetSection::Update()
 {
