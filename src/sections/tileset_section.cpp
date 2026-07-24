@@ -79,6 +79,11 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
     using namespace program;
     ProgramContext& programContext = program::GetProgramContext();
 
+    if(m_tilesetView == nullptr || programContext.selectionRectangleOnTileset == nullptr)
+    {
+        return DefSubclassProc(hwnd, msg, wparam, lparam);
+    }
+
     switch (msg)
     {        
         case WM_LBUTTONDOWN:
