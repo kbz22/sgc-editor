@@ -21,9 +21,3 @@ action::FileMenuAction::FileMenuAction()
     m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameFile;
 }
-
-/* void action::FileMenuAction::Execute(program::ProgramContext& context)
-{    
-    PopupMenuAction::Execute(context);
-    return;
-} */

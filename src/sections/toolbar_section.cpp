@@ -48,8 +48,7 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
         return a->GetToolbarOrder() < b->GetToolbarOrder();
     });    
 
-    std::vector<TBBUTTON> tbButtons;
-    tbButtons.reserve(100); //!
+    std::vector<TBBUTTON> tbButtons;    
     action::GroupId lastGroupId = toolbarActions[0]->GetGroupId();    
 
     for (const auto& action : toolbarActions)

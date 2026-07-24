@@ -19,39 +19,6 @@ void sections::TilesetSection::Update()
     }    
 }
 
-/* void sections::TilesetSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext)
-{
-    if(m_tilesetView != nullptr) {
-        m_tilesetView.reset();
-    }
-
-    sgc::data::AssetId id = sgc::data::HashAsset(path.string());
-    m_tilesetView = std::make_unique<sgc_view::TilesetView>(GetHwnd());
-
-    auto &renderContext = m_tilesetView->GetRenderContext();
-
-    if(renderContext.renderer == nullptr) {
-        renderContext.renderer = sgc::sdl::CreateRenderer(m_tilesetView->GetSdlWindow());
-    }
-    
-    if(renderContext.renderer == nullptr) {
-        throw std::runtime_error("Failed to create SDL_Renderer for TilesetView");
-    }      
-
-    auto tileset = programContext.assetManager->LoadTileset(
-        id,
-        path,
-        tileWidth,
-        tileHeight,
-        &renderContext
-    );
-
-    m_tilesetView->SetTileset(tileset);
-    m_tilesetView->SetRenderer(renderContext);
-    
-    AttachView(*m_tilesetView);
-} */
-
 void sections::TilesetSection::ClearTileset()
 {
     m_tilesetView.reset();

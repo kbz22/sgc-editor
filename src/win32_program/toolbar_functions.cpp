@@ -7,11 +7,6 @@
 #include "program/except.hpp"
 #include "defaults.hpp"
 
-#include <sgc/asset/chunkedtilestorageserializer.hpp> //! tmp testing serialization
-#include <sgc/asset/chunkedtilestorageassetbuilder.hpp>
-#include <sgc/asset/chunkedtilestorageloader.hpp>
-#include <sgc/data/resourcemanager.hpp>
-
 #include <fstream>
 #include <vector>
 

@@ -37,39 +37,6 @@ void sections::MapSection::Refresh(program::ProgramContext& programContext)
     }
 }
 
-/* void sections::MapSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext)
-{       
-    if(m_mapView != nullptr) {
-        m_mapView.reset();
-    }
-
-    sgc::data::AssetId id = sgc::data::HashAsset(path.string());
-    m_mapView = std::make_unique<sgc_view::MapView>(GetHwnd());
-
-    auto &renderContext = m_mapView->GetRenderContext();
-
-    if(renderContext.renderer == nullptr) {
-        renderContext.renderer = sgc::sdl::CreateRenderer(m_mapView->GetSdlWindow());
-    }
-    
-    if(renderContext.renderer == nullptr) {
-        throw std::runtime_error("Failed to create SDL_Renderer for MapView");
-    }    
-
-    auto tileset = programContext.assetManager->LoadTileset(
-        id,
-        path,
-        tileWidth,
-        tileHeight,
-        &renderContext
-    );
-
-    m_mapView->SetTileset(tileset);
-    m_mapView->SetRenderer(renderContext);
-    
-    AttachView(*m_mapView);
-} */
-
 void sections::MapSection::LoadMap(const std::filesystem::path& path)
 {
     if (m_mapView == nullptr) {

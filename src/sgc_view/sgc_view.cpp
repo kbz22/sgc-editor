@@ -58,42 +58,6 @@ void sgc_view::SgcView::SetRenderer(const graphics::RenderContext& context)
     m_renderContext.renderer = context.renderer;
 }
 
-/* std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::LoadTileset(const std::filesystem::path& path)
-{
-    if (m_renderContext.renderer == nullptr) {
-        return nullptr;
-    }
-
-    if(m_tileWidth <= 0 || m_tileHeight <= 0) {
-        throw program::TileSizeException("Tile size must be greater than zero.");
-    }
-        
-    std::shared_ptr<graphics::Image> image = std::make_shared<graphics::Image>();
-
-    if (!image->LoadTexture(m_renderContext.renderer, path)) {
-        throw program::AssetLoadException("Failed to load tileset image: " + path.string());
-    }
-
-    const math::vec2 imageSize = image->GetSize();
-    if (imageSize.x == 0 || imageSize.y == 0) {
-        throw program::AssetLoadException("Tileset image has invalid dimensions: " + path.string());
-    }
-
-    if (imageSize.x % m_tileWidth != 0 || imageSize.y % m_tileHeight != 0) {
-        throw program::TileSizeException("Tileset dimensions are not divisible by tile size.");
-    }
-
-    if (imageSize.x < m_tileWidth || imageSize.y < m_tileHeight) {
-        throw program::TileSizeException("Image is smaller than the specified tile size.");
-    }    
-
-    auto tileVec2 = graphics::PixelSize2D(m_tileWidth, m_tileHeight);
-
-    auto tileset = std::make_shared<graphics::Tileset>(image, tileVec2); 
-    
-    return tileset;
-} */
-
 void sgc_view::SgcView::DrawAll()
 {
     if (m_drawableImage != nullptr) {
