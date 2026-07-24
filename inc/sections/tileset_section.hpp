@@ -30,8 +30,9 @@ namespace sections {
             
             void Update() override;
             void HandleSectionResize() override;
+            void Refresh(program::ProgramContext& programContext);
 
-            void LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext);
+            // void LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext);
             void ClearTileset();
     };
 

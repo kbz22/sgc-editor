@@ -38,10 +38,10 @@ void sections::LayersSection::Update()
     return;
 }
 
-void sections::LayersSection::Refresh(program::LayerManager& layerManager)
+void sections::LayersSection::Refresh(program::ProgramContext& programContext)
 {
     if(m_layerListControl != nullptr) {
-        m_layerListControl->Refresh(layerManager);
+        m_layerListControl->Refresh(programContext);
     }
 }
 

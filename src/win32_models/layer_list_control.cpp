@@ -372,10 +372,11 @@ void win32_models::LayerListControl::Resize(int width, int height)
     Resize(0, 0, width, height);
 }
 
-void win32_models::LayerListControl::Refresh(program::LayerManager& layerManager)
+void win32_models::LayerListControl::Refresh(program::ProgramContext& programContext)
 {    
+    program::LayerManager *layerManager = programContext.mapDocument->GetLayerManager();
     m_layers.clear();
-    for(auto &layer : layerManager.GetLayers())
+    for(auto &layer : layerManager->GetLayers())
     {
         ListItem item;
         item.name = layer.name;
@@ -384,7 +385,7 @@ void win32_models::LayerListControl::Refresh(program::LayerManager& layerManager
         m_layers.push_back(item);
     }
 
-    SetSelectedLayer(layerManager.GetActiveLayerIndex());
+    SetSelectedLayer(layerManager->GetActiveLayerIndex());
 
     UpdateScrollInfo();
 }

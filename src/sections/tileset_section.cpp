@@ -6,7 +6,7 @@
 
 sections::TilesetSection::TilesetSection(program::ProgramContext& programContext) :
     Section{L"TilesetView", win32_program::ControlId::TilesetView, *programContext.mainWindowContext},
-    m_tilesetView{nullptr}
+    m_tilesetView{std::make_unique<sgc_view::TilesetView>(GetHwnd())}
 {}
 
 void sections::TilesetSection::Update()
@@ -17,7 +17,7 @@ void sections::TilesetSection::Update()
     }    
 }
 
-void sections::TilesetSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext)
+/* void sections::TilesetSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext)
 {
     if(m_tilesetView != nullptr) {
         m_tilesetView.reset();
@@ -48,7 +48,7 @@ void sections::TilesetSection::LoadTileset(const std::filesystem::path& path, in
     m_tilesetView->SetRenderer(renderContext);
     
     AttachView(*m_tilesetView);
-}
+} */
 
 void sections::TilesetSection::ClearTileset()
 {
@@ -62,7 +62,14 @@ void sections::TilesetSection::HandleSectionResize()
         GetClientRect(GetHwnd(), &rect);
         m_tilesetView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);        
     }
-    Update();    
+    Update();
+}
+
+void sections::TilesetSection::Refresh(program::ProgramContext& programContext)
+{
+    if (m_tilesetView != nullptr) {
+        m_tilesetView->Refresh(programContext);
+    }
 }
 
 LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wparam, [[maybe_unused]] LPARAM lparam)

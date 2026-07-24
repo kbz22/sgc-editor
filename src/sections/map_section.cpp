@@ -17,7 +17,7 @@
 
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
     Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
-    m_mapView{nullptr}
+    m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())}
 {}
 
 void sections::MapSection::Update()
@@ -28,14 +28,14 @@ void sections::MapSection::Update()
     }    
 }
 
-void sections::MapSection::Refresh(program::LayerManager& layerManager)
+void sections::MapSection::Refresh(program::ProgramContext& programContext)
 {    
     if (m_mapView != nullptr) {
-        m_mapView->Refresh(layerManager);
+        m_mapView->Refresh(programContext);
     }
 }
 
-void sections::MapSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext)
+/* void sections::MapSection::LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext)
 {       
     if(m_mapView != nullptr) {
         m_mapView.reset();
@@ -66,7 +66,7 @@ void sections::MapSection::LoadTileset(const std::filesystem::path& path, int ti
     m_mapView->SetRenderer(renderContext);
     
     AttachView(*m_mapView);
-}
+} */
 
 void sections::MapSection::LoadMap(const std::filesystem::path& path)
 {

@@ -2,6 +2,7 @@
 
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/graphics/tiledimage.hpp>
+#include <sgc/data/asset.hpp>   
 
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
@@ -10,6 +11,10 @@
 #include <filesystem>
 
 #include "defaults.hpp"
+
+namespace program {
+    struct ProgramContext;
+}
 
 namespace sections {
     class MapSection;
@@ -27,21 +32,19 @@ namespace sgc_view
 
             SDL_Window* m_sdlWindow = nullptr;
             
-            bool CreateEmbeddedWindow();            
+            bool CreateEmbeddedWindow(HWND hostWindow);            
 
         protected:
             int m_tileWidth;
             int m_tileHeight;
-            std::shared_ptr<graphics::Tileset> m_tileset = nullptr;        
+            std::shared_ptr<graphics::Tileset> m_tileset = nullptr;
+            sgc::data::AssetId m_tilesetId;
             std::shared_ptr<graphics::IDrawable> m_drawableImage = nullptr;
             graphics::RenderContext m_renderContext{};
-            
-            HWND m_hostWindow = HWND(); //! remove the rest of win32 stuff once all is moved to section
-            HWND m_sectionWindow = HWND();
-            
-            void DrawAll();            
 
-            //std::shared_ptr<graphics::Tileset> LoadTileset(const std::filesystem::path& path);
+            void DrawAll();
+            virtual void SetTileset(sgc::data::AssetId tilesetId);
+            virtual void SetRenderer(const graphics::RenderContext& context);
 
         public:
             SgcView(HWND hwnd);
@@ -49,9 +52,7 @@ namespace sgc_view
             
             virtual void SetScreenSize(int width, int height);
             virtual void Render();
-
-            virtual void SetTileset(std::shared_ptr<graphics::Tileset> tileset);
-            virtual void SetRenderer(const graphics::RenderContext& context);
+            virtual void Refresh(program::ProgramContext& programContext);
 
             graphics::RenderContext& GetRenderContext();
 
@@ -63,9 +64,6 @@ namespace sgc_view
             sgc::math::vec2 PixelsToTiles(sgc::math::vec2 value) const;
             sgc::math::fvec2 PixelsToTiles(sgc::math::fvec2 value) const;
 
-            void Clear();            
-            
-            /* friend class sections::MapSection;
-            friend class sections::TilesetSection; */
+            void Clear();
     };
 }

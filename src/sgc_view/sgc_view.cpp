@@ -4,11 +4,12 @@
 #include <sgc/sdl/sdl_win32.hpp>
 #include <commctrl.h>
 #include "program/except.hpp"
+#include "program/program.hpp"
 
-sgc_view::SgcView::SgcView(HWND hwnd) :
-    m_hostWindow(hwnd)
+sgc_view::SgcView::SgcView(HWND hwnd)
 {    
-    CreateEmbeddedWindow();
+    CreateEmbeddedWindow(hwnd);
+    Render();
 }
 
 sgc_view::SgcView::~SgcView()
@@ -24,7 +25,7 @@ sgc_view::SgcView::~SgcView()
     }
 }
 
-bool sgc_view::SgcView::CreateEmbeddedWindow()
+bool sgc_view::SgcView::CreateEmbeddedWindow(HWND hostWindow)
 {
     if (!m_sdlInitialized && !sdl::InitVideo()) {
         return false;
@@ -32,36 +33,24 @@ bool sgc_view::SgcView::CreateEmbeddedWindow()
    
     m_sdlInitialized = true;
 
-    if(m_hostWindow == nullptr) {
+    if(hostWindow == nullptr) {
         return false;
     }
 
-    m_sdlWindow = sdl::CreateWindowWin32(m_hostWindow, 32, 32);
+    m_sdlWindow = sdl::CreateWindowWin32(hostWindow, 32, 32);
 
     if (m_sdlWindow == nullptr) {
         return false;
     }
 
-    /* m_renderContext.renderer = sdl::CreateRenderer(m_sdlWindow);
+    m_renderContext.renderer = sdl::CreateRenderer(m_sdlWindow);
     if (m_renderContext.renderer == nullptr) {
         sdl::DestroyWindow(m_sdlWindow);
         m_sdlWindow = nullptr;
         return false;
-    } */
+    }
 
     return true;
-}
-
-void sgc_view::SgcView::SetTileset(std::shared_ptr<graphics::Tileset> tileset)
-{
-    if(tileset == nullptr) {
-        throw std::invalid_argument("Tileset cannot be null.");
-    }
-    
-    m_tileset = tileset;
-    auto tileSize = tileset->GetTileSize();
-    m_tileWidth = static_cast<int>(tileSize.x);
-    m_tileHeight = static_cast<int>(tileSize.y);
 }
 
 void sgc_view::SgcView::SetRenderer(const graphics::RenderContext& context)
@@ -175,4 +164,30 @@ SDL_Window* sgc_view::SgcView::GetSdlWindow() const
 sgc::graphics::RenderContext& sgc_view::SgcView::GetRenderContext()
 {
     return m_renderContext;
+}
+
+void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
+{
+    auto &programContext = program::GetProgramContext();    
+
+    auto tileset = programContext.assetManager->MakeTileset(tilesetId, &m_renderContext);
+
+    if(tileset == nullptr) {
+        throw std::invalid_argument("Tileset cannot be null.");
+    }
+    
+    m_tileset = tileset;
+    m_tilesetId = tilesetId;
+    auto tileSize = tileset->GetTileSize();
+    m_tileWidth = static_cast<int>(tileSize.x);
+    m_tileHeight = static_cast<int>(tileSize.y);
+}
+
+void sgc_view::SgcView::Refresh(program::ProgramContext& programContext)
+{
+    auto currentTilesetId = programContext.mapDocument->GetTilesetAssetId();
+
+    if(currentTilesetId != m_tilesetId) {
+        SetTileset(currentTilesetId);
+    }
 }

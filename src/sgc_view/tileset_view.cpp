@@ -33,9 +33,9 @@ void sgc_view::TilesetView::Render()
     sdl::Render(m_renderContext);
 }
 
-void sgc_view::TilesetView::SetTileset(std::shared_ptr<graphics::Tileset> tileset)
+void sgc_view::TilesetView::SetTileset(sgc::data::AssetId tilesetId)
 {
-    SgcView::SetTileset(tileset);
+    SgcView::SetTileset(tilesetId);
 
     const math::vec2 gridSize = m_tileset->GetSizeInTiles();
 
@@ -56,4 +56,19 @@ void sgc_view::TilesetView::SetTileset(std::shared_ptr<graphics::Tileset> tilese
     );
 
     m_drawableImage = std::make_shared<graphics::TiledImage>(m_layer);
+}
+
+void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
+{
+    sgc_view::SgcView::Refresh(programContext);
+
+    auto tileSize = m_tileset->GetTileSize();
+
+    if(programContext.selectionRectangleOnTileset == nullptr) 
+    {
+        programContext.selectionRectangleOnTileset = std::make_unique<sgc::graphics::Rectangle>(
+            0, 0, tileSize.x, tileSize.y
+        );
+        programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 128, 255 });
+    }
 }

@@ -45,8 +45,7 @@ namespace program {
         std::wstring currentProjectName;
 
         std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
-
-        // std::unique_ptr<program::LayerManager> layerManager;
+        
         std::unique_ptr<file::MapDocument> mapDocument;
         std::unique_ptr<command::CommandManager> commandManager{};
         std::unique_ptr<action::ActionManager> actionManager{};
@@ -67,6 +66,6 @@ namespace program {
     void RegisterActions();
 
     void StartDefault();
-    void StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeight, int chunksSizeX, int chunksSizeY);    
+    void StartEditor();
 
 }

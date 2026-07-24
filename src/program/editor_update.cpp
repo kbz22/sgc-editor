@@ -36,7 +36,7 @@ void program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
         }
     }
 
-    programContext.mapSection->Refresh(*layerManager);
+    programContext.mapSection->Refresh(programContext);
     programContext.mapSection->Update();
 
     programContext.toolbarSection->Refresh(programContext);

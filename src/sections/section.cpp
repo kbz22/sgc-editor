@@ -9,8 +9,7 @@ namespace {
 bool sections::Section::m_registered = false;
 
 sections::Section::Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext &context)
-{    
-
+{
     const wchar_t* className = L"SectionWindow";
 
     if(!m_registered) {

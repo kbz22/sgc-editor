@@ -8,6 +8,10 @@
 #include <functional>
 #include <CommCtrl.h>
 
+namespace program {
+    struct ProgramContext;
+}
+
 namespace win32_models {
 
     struct ListItem
@@ -57,7 +61,7 @@ namespace win32_models {
 
             void Resize(int x, int y, int width, int height);
             void Resize(int width, int height);
-            void Refresh(program::LayerManager& layerManager);
+            void Refresh(program::ProgramContext& programContext);
             void Redraw();
 
             void SetSelectedLayer(size_t layerIndex);

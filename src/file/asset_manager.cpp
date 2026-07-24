@@ -1,53 +1,66 @@
 #include "file/asset_manager.hpp"
 #include "program/except.hpp"
+#include <sgc/asset/tilesetasset.hpp>
+#include <sgc/graphics/image.hpp>
+#include <sgc/graphics/tileset.hpp>
 
-file::AssetManager::AssetManager()
-{
-    m_imageCache = std::unordered_map<sgc::data::AssetId, std::shared_ptr<sgc::graphics::Image>>();
-}
-
-std::shared_ptr<sgc::graphics::Tileset> file::AssetManager::LoadTileset(
-    sgc::data::AssetId assetId,
-    const std::filesystem::path& path,
-    int tileWidth,
-    int tileHeight,
+std::shared_ptr<sgc::graphics::Tileset> file::AssetManager::MakeTileset(
+    sgc::data::AssetId tilesetId,
     sgc::graphics::RenderContext* renderContext
 )
 {
-    if(tileWidth <= 0 || tileHeight <= 0) {
-        throw program::TileSizeException("Tile size must be greater than zero.");
+    using namespace sgc::asset;
+    using namespace sgc::graphics;
+
+    if(m_cache.find(tilesetId) == m_cache.end()) {
+        throw program::AssetLoadException("Tileset asset not found in the cache.");
     }
 
-    sgc::graphics::PixelSize2D tileSize{ tileWidth, tileHeight };
+    std::shared_ptr<TilesetAsset> tilesetAsset;    
+    tilesetAsset = std::get<std::shared_ptr<TilesetAsset>>(m_cache[tilesetId]);
 
-    /* if(m_imageCache.find(assetId) != m_imageCache.end()) {
-        auto image = m_imageCache[assetId];
-        return std::make_shared<sgc::graphics::Tileset>(image, tileSize);
-    } */
+    auto imageId = tilesetAsset->imageId;
+    
+    if(m_cache.find(imageId) == m_cache.end()) {
+        throw program::AssetLoadException("Image asset not found in the cache.");
+    }
 
-    auto image = std::make_shared<sgc::graphics::Image>();
+    std::shared_ptr<Image> image = std::make_shared<Image>();
+    auto imageAsset = std::get<std::shared_ptr<ImageAsset>>(m_cache[imageId]);
 
-    image->LoadTexture(renderContext->renderer, path);
+    if(image->LoadTexture(renderContext->renderer, imageAsset->data)) {
+        // throw program::AssetLoadException("Failed to load texture for image asset.");
+    }
 
     auto imageSize = image->GetSize();
 
-    if(!image->LoadTexture(renderContext->renderer, path)) {
-        throw program::AssetLoadException("Failed to load tileset image: " + path.string());
+    if(imageSize.x <= 0 || imageSize.y <= 0) {
+        throw program::AssetLoadException("Invalid image dimensions for tileset asset.");
     }
 
-    if (imageSize.x == 0 || imageSize.y == 0) {
-        throw program::AssetLoadException("Tileset image has invalid dimensions: " + path.string());
+    return std::make_shared<Tileset>(image, tilesetAsset->tileSize);
+}
+
+void file::AssetManager::AddAsset(
+    sgc::data::AssetId assetId,
+    std::shared_ptr<sgc::asset::ImageAsset> imageAsset
+)
+{
+    if(m_cache.find(assetId) != m_cache.end()) {
+        throw program::AssetLoadException("Asset with the same ID already exists in the cache.");
     }
 
-    if (imageSize.x % tileWidth != 0 || imageSize.y % tileHeight != 0) {
-        throw program::TileSizeException("Tileset dimensions are not divisible by tile size.");
+    m_cache[assetId] = imageAsset;
+}
+
+void file::AssetManager::AddAsset(
+    sgc::data::AssetId assetId,
+    std::shared_ptr<sgc::asset::TilesetAsset> tilesetAsset
+)
+{
+    if(m_cache.find(assetId) != m_cache.end()) {
+        throw program::AssetLoadException("Asset with the same ID already exists in the cache.");
     }
 
-    if (imageSize.x < tileWidth || imageSize.y < tileHeight) {
-        throw program::TileSizeException("Image is smaller than the specified tile size.");
-    }  
-
-    m_imageCache[assetId] = image;
-
-    return std::make_shared<sgc::graphics::Tileset>(image, tileSize);
+    m_cache[assetId] = tilesetAsset;
 }

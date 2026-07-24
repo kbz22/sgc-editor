@@ -47,7 +47,6 @@ void program::StartDefault()
     auto& programContext = GetProgramContext();    
     
     programContext.assetManager = std::make_unique<file::AssetManager>();
-    programContext.mapDocument = std::make_unique<file::MapDocument>();
 
     programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
     programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, false);
@@ -73,11 +72,8 @@ void program::StartDefault()
     programContext.sections.push_back(programContext.packageSection.get()); 
 }
 
-void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeight, int chunksSizeX, int chunksSizeY)
-{
-    (void)chunksSizeX;
-    (void)chunksSizeY;
-    
+void program::StartEditor()
+{    
     auto& programContext = GetProgramContext();
 
     programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, true);
@@ -91,14 +87,14 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
         programContext.selectionRectangleOnTileset.reset();
     }
 
-    programContext.selectionRectangleOnTileset = std::make_unique<sgc::graphics::Rectangle>(
-        sgc::math::vec2{ 0, 0 },
-        sgc::math::vec2{ tileWidth, tileHeight }
-    );
-    programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
+    // programContext.selectionRectangleOnTileset = std::make_unique<sgc::graphics::Rectangle>(
+    //     sgc::math::vec2{ 0, 0 },
+    //     sgc::math::vec2{ tileWidth, tileHeight }
+    // );
+    // programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 255, 128 });
     
-    programContext.tilesetSection->LoadTileset(tilesetPath, tileWidth, tileHeight, programContext);    
-    programContext.mapSection->LoadTileset(tilesetPath, tileWidth, tileHeight, programContext);
+    // programContext.tilesetSection->LoadTileset(tilesetPath, tileWidth, tileHeight, programContext);    
+    // programContext.mapSection->LoadTileset(tilesetPath, tileWidth, tileHeight, programContext);
 
     programContext.mapSection->HandleSectionResize();
     programContext.tilesetSection->HandleSectionResize();
@@ -121,8 +117,10 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
         }
     }
 
-    programContext.mapSection->Refresh(*layerManager);
+    programContext.mapSection->Refresh(programContext);
     programContext.mapSection->Update();
+    programContext.tilesetSection->Refresh(programContext);
+    programContext.tilesetSection->Update();
 
     programContext.layersSection->RegisterSelectedLayerChangeCallback([&programContext](size_t index) {
         if(programContext.mapDocument != nullptr) {
@@ -133,7 +131,7 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
                 MultiLayerModeSetup(programContext);
             }
 
-            programContext.mapSection->Refresh(*layerManager);
+            programContext.mapSection->Refresh(programContext);
             programContext.mapSection->Update();
         }
     });
@@ -143,13 +141,13 @@ void program::StartEditor(std::wstring tilesetPath, int tileWidth, int tileHeigh
             auto layerManager = programContext.mapDocument->GetLayerManager();
             layerManager->SetLayerVisibility(index, visible);
 
-            programContext.mapSection->Refresh(*layerManager);
+            programContext.mapSection->Refresh(programContext);
             programContext.mapSection->Update();
         }
     });
 
     if(programContext.mapDocument != nullptr) {
-        programContext.layersSection->Refresh(*layerManager);
+        programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();
     }
 

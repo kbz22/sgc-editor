@@ -26,7 +26,7 @@ namespace sections {
             void Update() override;
             void HandleSectionResize() override;
 
-            void Refresh(program::LayerManager& layerManager);            
+            void Refresh(program::ProgramContext& programContext);
 
             void SetSelectedLayer(size_t layerIndex);
             void RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback);

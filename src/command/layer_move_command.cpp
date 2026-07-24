@@ -16,11 +16,11 @@ void command::LayerMoveCommand::Execute()
             //! no need to note the out of range error
         }
 
-        programContext.mapSection->Refresh(*layerManager);
+        programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
 
         programContext.layersSection->SetSelectedLayer(layerManager->GetActiveLayerIndex());
-        programContext.layersSection->Refresh(*layerManager);
+        programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();
     }
 }
@@ -39,11 +39,11 @@ void command::LayerMoveCommand::Undo()
             //! no need to note the out of range error
         }
 
-        programContext.mapSection->Refresh(*layerManager);
+        programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
 
         programContext.layersSection->SetSelectedLayer(layerManager->GetActiveLayerIndex());
-        programContext.layersSection->Refresh(*layerManager);
+        programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();
     }
 }

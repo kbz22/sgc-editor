@@ -12,13 +12,15 @@ namespace sgc_view
         private:
             math::uval m_gridWidth = 0;
             math::uval m_gridHeight = 0;
-            std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
+            std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;            
+
+            void SetTileset(sgc::data::AssetId tilesetId) override;
 
         public:
             TilesetView(HWND hwnd);
             ~TilesetView();
 
             void Render() override;
-            void SetTileset(std::shared_ptr<graphics::Tileset> tileset) override;
+            void Refresh(program::ProgramContext& programContext) override;
     };    
 }

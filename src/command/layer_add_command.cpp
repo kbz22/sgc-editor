@@ -23,10 +23,10 @@ void command::LayerAddCommand::Execute()
             L"Layer " + std::to_wstring(layerManager->GetSize())
         });
 
-        programContext.layersSection->Refresh(*layerManager);
+        programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();
 
-        programContext.mapSection->Refresh(*layerManager);
+        programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
     }
 }
@@ -39,10 +39,10 @@ void command::LayerAddCommand::Undo()
         auto layerManager = programContext.mapDocument->GetLayerManager();
         layerManager->RemoveLayer(m_addedLayerIndex);
 
-        programContext.layersSection->Refresh(*layerManager);
+        programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();
 
-        programContext.mapSection->Refresh(*layerManager);
+        programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
     }
 }

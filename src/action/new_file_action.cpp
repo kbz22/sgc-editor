@@ -2,6 +2,9 @@
 #include "program/except.hpp"
 #include "program/program.hpp"
 #include "new_file_dialog.h"
+#include <sgc/data/helpers.hpp>
+#include <sgc/asset/imageasset.hpp>
+#include <sgc/asset/tilesetasset.hpp>
 
 #include <windows.h>
 #include <commdlg.h>
@@ -20,6 +23,40 @@ action::NewFileAction::NewFileAction()
     m_actionDescription.menuId = MenuId::File;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipFileNew;
     m_actionDescription.nameStringId = locale::StringId::NameNewFile;
+}
+
+sgc::data::AssetId LoadImageAsset(const std::filesystem::path& path)
+{
+    auto &programContext = program::GetProgramContext();
+    auto &assetManager = programContext.assetManager;
+
+    auto imageData = sgc::data::ReadFile(path);
+    auto imageId = sgc::data::HashAsset(path.string()); 
+    
+    if(imageData.empty()) {
+        throw program::AssetLoadException("Failed to load image asset: " + path.string());
+    }
+
+    assetManager->AddAsset(imageId, std::make_shared<sgc::asset::ImageAsset>(imageData));
+
+    return imageId;
+}
+
+sgc::data::AssetId LoadTilesetAsset(sgc::data::AssetId imageId, int tileWidth, int tileHeight)
+{
+    auto &programContext = program::GetProgramContext();
+    auto &assetManager = programContext.assetManager;
+
+    auto tilesetAsset = sgc::asset::TilesetAsset{
+        imageId,
+        static_cast<sgc::math::ival>(tileWidth),
+        static_cast<sgc::math::ival>(tileHeight)
+    };
+
+    auto tilesetId = sgc::data::HashAsset(std::to_string(imageId));
+    assetManager->AddAsset(tilesetId, std::make_shared<sgc::asset::TilesetAsset>(tilesetAsset));
+
+    return tilesetId;
 }
 
 INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -57,13 +94,18 @@ INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
             
             try
             {
-                program::StartEditor(
-                    buffer,
-                    GetDlgItemInt(hDlg, IDC_MAP_WIDTH, nullptr, FALSE),
-                    GetDlgItemInt(hDlg, IDC_MAP_HEIGHT, nullptr, FALSE),
-                    1,
-                    1
-                );
+                auto tile_width = GetDlgItemInt(hDlg, IDC_MAP_WIDTH, nullptr, FALSE);
+                auto tile_height = GetDlgItemInt(hDlg, IDC_MAP_HEIGHT, nullptr, FALSE);
+                
+                if(tile_width <= 0 || tile_height <= 0) {
+                    throw program::TileSizeException("Tile size must be greater than zero.");
+                }
+
+                auto &programContext = program::GetProgramContext();
+                auto imageId = LoadImageAsset(std::filesystem::path(buffer));
+                auto tilesetId = LoadTilesetAsset(imageId, tile_width, tile_height);
+                programContext.mapDocument = std::make_unique<file::MapDocument>(tilesetId);
+                program::StartEditor();
             }
             catch (const program::TileSizeException& e)
             {

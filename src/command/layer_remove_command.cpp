@@ -12,10 +12,10 @@ void command::LayerRemoveCommand::Execute()
         m_removedLayerIndex = activeIndex;
         m_removedLayerStorage = layerManager->RemoveLayer(m_removedLayerIndex);
 
-        programContext.mapSection->Refresh(*layerManager);
+        programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
 
-        programContext.layersSection->Refresh(*layerManager);
+        programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();
     }
 }
@@ -32,10 +32,10 @@ void command::LayerRemoveCommand::Undo()
             }, m_removedLayerIndex
         );
 
-        programContext.mapSection->Refresh(*layerManager);
+        programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
 
-        programContext.layersSection->Refresh(*layerManager);
+        programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();
     }
 }

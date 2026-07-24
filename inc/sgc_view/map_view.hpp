@@ -19,14 +19,14 @@ namespace sgc_view
     {
         private:            
             graphics::Rectangle m_cursorTile;
+            void SetTileset(sgc::data::AssetId tilesetId) override;
 
         public:
             MapView(HWND hwnd);
             ~MapView();
             
             void Render() override;
-            void SetTileset(std::shared_ptr<graphics::Tileset> tileset) override;
-            void Refresh(program::LayerManager& layerManager);
+            void Refresh(program::ProgramContext& programContext) override;
 
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);

@@ -24,9 +24,9 @@ sgc_view::MapView::~MapView()
 {    
 }
 
-void sgc_view::MapView::SetTileset(std::shared_ptr<graphics::Tileset> tileset)
+void sgc_view::MapView::SetTileset(sgc::data::AssetId tilesetId)
 {
-    SgcView::SetTileset(tileset);
+    SgcView::SetTileset(tilesetId);
 
     auto tileSize = m_tileset->GetTileSize();
 
@@ -46,14 +46,17 @@ void sgc_view::MapView::Render()
     sdl::Render(m_renderContext);
 }
 
-void sgc_view::MapView::Refresh(program::LayerManager& layerManager)
+void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 {
-    auto layers = layerManager.GetLayers();
+    sgc_view::SgcView::Refresh(programContext);
+
+    auto layerManager = programContext.mapDocument->GetLayerManager();
+    auto layers = layerManager->GetLayers();
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
 
-    if(!layers.empty() && layerManager.IsSingleLayerMode()){       
+    if(!layers.empty() && layerManager->IsSingleLayerMode()){       
 
-        auto activeLayerIndex = layerManager.GetActiveLayerIndex();
+        auto activeLayerIndex = layerManager->GetActiveLayerIndex();
         auto layer = layers[activeLayerIndex];
         layers.clear();
 
