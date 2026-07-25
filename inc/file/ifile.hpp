@@ -7,6 +7,8 @@ namespace file {
     class IFile
     {
         public:
+            virtual ~IFile() = default;
+
             virtual void New() = 0;
             virtual void Open() = 0;
             virtual void Save() = 0;
