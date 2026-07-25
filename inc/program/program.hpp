@@ -14,7 +14,7 @@
 #include "locale/string_lookup.hpp"
 
 #include "command/command_manager.hpp"
-
+#include "file/file_manager.hpp"
 #include "action/action_manager.hpp"
 
 #include "win32_program/win32_context.hpp"
@@ -44,9 +44,9 @@ namespace program {
         
         std::wstring currentProjectName;
 
-        std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
+        std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;        
         
-        std::unique_ptr<file::MapDocument> mapDocument;
+        std::unique_ptr<file::FileManager> fileManager{};
         std::unique_ptr<command::CommandManager> commandManager{};
         std::unique_ptr<action::ActionManager> actionManager{};
         std::unique_ptr<file::AssetManager> assetManager{};

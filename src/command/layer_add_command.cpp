@@ -7,7 +7,7 @@
 void command::LayerAddCommand::Execute()
 {
     auto &programContext = program::GetProgramContext();
-    auto &mapDocument = programContext.mapDocument;
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
@@ -35,8 +35,8 @@ void command::LayerAddCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
 
-    if(programContext.mapDocument != nullptr) {
-        auto layerManager = programContext.mapDocument->GetLayerManager();
+    if(programContext.fileManager->GetSelectedDocument() != nullptr) {
+        auto layerManager = programContext.fileManager->GetSelectedDocument()->GetLayerManager();
         layerManager->RemoveLayer(m_addedLayerIndex);
 
         programContext.layersSection->Refresh(programContext);

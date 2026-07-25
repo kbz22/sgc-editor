@@ -15,14 +15,14 @@ void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange
         existingTileChange.newTileId = tileChange.newTileId;
     }
 
-    auto &mapDocument = program::GetProgramContext().mapDocument;
+    auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
     auto layerManager = mapDocument->GetLayerManager();
     layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);
 }
 
 void command::PaintStrokeCommand::Execute()
 {
-    auto &mapDocument = program::GetProgramContext().mapDocument;
+    auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
     auto layerManager = mapDocument->GetLayerManager();
     for (const auto& [position, change] : m_tileChanges) {        
         layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.newTileId);
@@ -31,7 +31,7 @@ void command::PaintStrokeCommand::Execute()
 
 void command::PaintStrokeCommand::Undo()
 {
-    auto &mapDocument = program::GetProgramContext().mapDocument;
+    auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
     auto layerManager = mapDocument->GetLayerManager();
     for (const auto& [position, change] : m_tileChanges) {
         // m_tileStorage.SetTileAt(position, change.previousTileId);

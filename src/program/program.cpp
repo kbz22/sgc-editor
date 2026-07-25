@@ -47,6 +47,7 @@ void program::StartDefault()
     auto& programContext = GetProgramContext();    
     
     programContext.assetManager = std::make_unique<file::AssetManager>();
+    programContext.fileManager = std::make_unique<file::FileManager>();
 
     programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
     programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, false);
@@ -101,7 +102,7 @@ void program::StartEditor()
     programContext.mapSection->Update();
     programContext.tilesetSection->Update();    
     
-    auto layerManager = programContext.mapDocument->GetLayerManager();
+    auto layerManager = programContext.fileManager->GetSelectedDocument()->GetLayerManager();
 
     layerManager->AddLayer({
         std::make_shared<sgc::data::ChunkedTileStorage>(),
@@ -123,8 +124,8 @@ void program::StartEditor()
     programContext.tilesetSection->Update();
 
     programContext.layersSection->RegisterSelectedLayerChangeCallback([&programContext](size_t index) {
-        if(programContext.mapDocument != nullptr) {
-            auto layerManager = programContext.mapDocument->GetLayerManager();
+        if(programContext.fileManager->GetSelectedDocument() != nullptr) {
+            auto layerManager = programContext.fileManager->GetSelectedDocument()->GetLayerManager();
             layerManager->SetActiveLayerIndex(index);
 
             if(programContext.editorLayerMode == EditorLayerMode::MultiLayer) {
@@ -137,8 +138,9 @@ void program::StartEditor()
     });
 
     programContext.layersSection->RegisterLayerVisibilityChangeCallback([&programContext](size_t index, bool visible) {
-        if(programContext.mapDocument != nullptr) {
-            auto layerManager = programContext.mapDocument->GetLayerManager();
+        auto document = programContext.fileManager->GetSelectedDocument();
+        if(document != nullptr) {
+            auto layerManager = document->GetLayerManager();
             layerManager->SetLayerVisibility(index, visible);
 
             programContext.mapSection->Refresh(programContext);
@@ -146,7 +148,7 @@ void program::StartEditor()
         }
     });
 
-    if(programContext.mapDocument != nullptr) {
+    if(programContext.fileManager->GetSelectedDocument() != nullptr) {
         programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();
     }

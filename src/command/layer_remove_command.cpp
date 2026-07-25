@@ -5,9 +5,10 @@
 void command::LayerRemoveCommand::Execute()
 {
     auto& programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
-    if(programContext.mapDocument != nullptr) {
-        auto layerManager = programContext.mapDocument->GetLayerManager();
+    if(mapDocument != nullptr) {
+        auto layerManager = mapDocument->GetLayerManager();
         auto activeIndex = layerManager->GetActiveLayerIndex();
         m_removedLayerIndex = activeIndex;
         m_removedLayerStorage = layerManager->RemoveLayer(m_removedLayerIndex);
@@ -23,9 +24,10 @@ void command::LayerRemoveCommand::Execute()
 void command::LayerRemoveCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
-    if(programContext.mapDocument != nullptr) {
-        auto layerManager = programContext.mapDocument->GetLayerManager();
+    if(mapDocument != nullptr) {
+        auto layerManager = mapDocument->GetLayerManager();
         layerManager->InsertLayer({
                 m_removedLayerStorage,
                 L"Layer " + std::to_wstring(m_removedLayerIndex)

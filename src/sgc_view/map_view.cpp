@@ -50,7 +50,8 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 {
     sgc_view::SgcView::Refresh(programContext);
 
-    auto layerManager = programContext.mapDocument->GetLayerManager();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto layerManager = mapDocument->GetLayerManager();
     auto layers = layerManager->GetLayers();
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
 

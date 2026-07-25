@@ -138,7 +138,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto tileWidth = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().x / tileSize.x);
             auto tileHeight = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);            
 
-            auto &mapDocument = programContext.mapDocument;
+            auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
             if(mapDocument == nullptr) {
                 return 0;
@@ -263,7 +263,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 programContext.selectionRectangleOnTileset->GetPosition()
             );
 
-            auto &mapDocument = programContext.mapDocument;
+            auto mapDocument = programContext.fileManager->GetSelectedDocument();
             auto currentLayer = mapDocument->GetCurrentLayerStorage();
 
             if(currentLayer == nullptr) {

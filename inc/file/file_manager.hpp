@@ -2,6 +2,9 @@
 
 #include "file/ifile.hpp"
 #include "file/map_document.hpp"
+#include <vector>
+#include <memory>
+#include <filesystem>
 
 namespace file {
 
@@ -18,16 +21,16 @@ namespace file {
             SelectedDocument m_selectedDocument{nullptr, 0};
 
         public:
-            FileManager();
-            ~FileManager();
+            FileManager() = default;
+            ~FileManager() = default;
 
-            void NewFile(std::unique_ptr<IFile> file);
-            void OpenFile(std::unique_ptr<IFile> file);
+            void NewMapFile(std::filesystem::path filePath, size_t tileWidth, size_t tileHeight);
+            void OpenFile(std::filesystem::path filePath);
             void SaveFile(size_t index);
             void CloseFile(size_t index);
 
             void SelectDocument(size_t index);
-            SelectedDocument GetSelectedDocument() const;
+            MapDocument* GetSelectedDocument() const;
     };
 
 }

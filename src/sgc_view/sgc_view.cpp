@@ -149,7 +149,7 @@ void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
 
 void sgc_view::SgcView::Refresh(program::ProgramContext& programContext)
 {
-    auto currentTilesetId = programContext.mapDocument->GetTilesetAssetId();
+    auto currentTilesetId = programContext.fileManager->GetSelectedDocument()->GetTilesetAssetId();
 
     if(currentTilesetId != m_tilesetId) {
         SetTileset(currentTilesetId);

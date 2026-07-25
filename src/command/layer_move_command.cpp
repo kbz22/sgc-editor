@@ -4,11 +4,12 @@
 
 void command::LayerMoveCommand::Execute()
 {
-    auto &programContext = program::GetProgramContext();    
+    auto &programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
-    if(programContext.mapDocument != nullptr) 
+    if(mapDocument != nullptr)
     {
-        auto layerManager = programContext.mapDocument->GetLayerManager();
+        auto layerManager = mapDocument->GetLayerManager();
 
         try {            
             layerManager->MoveActiveLayer(m_movement);
@@ -27,11 +28,12 @@ void command::LayerMoveCommand::Execute()
 
 void command::LayerMoveCommand::Undo()
 {
-    auto &programContext = program::GetProgramContext();    
+    auto &programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
-    if(programContext.mapDocument != nullptr) 
+    if(mapDocument != nullptr)
     {
-        auto layerManager = programContext.mapDocument->GetLayerManager();
+        auto layerManager = mapDocument->GetLayerManager();
 
         try {            
             layerManager->MoveActiveLayer(-m_movement);

@@ -21,7 +21,7 @@ action::LayerRemoveAction::LayerRemoveAction()
 
 void action::LayerRemoveAction::Execute(program::ProgramContext& context)
 {
-    if(context.mapDocument != nullptr) {
+    if(context.fileManager->GetSelectedDocument() != nullptr) {
         context.commandManager->Execute(
             std::make_unique<command::LayerRemoveCommand>()
         );
