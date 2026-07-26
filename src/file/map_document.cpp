@@ -1,5 +1,6 @@
 #include "file/map_document.hpp"
 #include <sgc/data/helpers.hpp>
+#include "program/program.hpp"
 
 file::MapDocument::MapDocument(sgc::data::AssetId tilesetId) :
     m_layerManager{std::make_unique<program::LayerManager>()},
@@ -20,4 +21,20 @@ sgc::data::ITileStorage* file::MapDocument::GetCurrentLayerStorage()
 sgc::data::AssetId file::MapDocument::GetTilesetAssetId()
 {
     return m_tilesetId;
+}
+
+bool file::MapDocument::IsEditable() const
+{
+    program::ProgramContext& programContext = program::GetProgramContext();
+    return programContext.assetManager->CheckAssetExists(m_tilesetId);
+}
+
+bool file::MapDocument::IsDirty() const
+{
+    return m_dirty;
+}
+
+void file::MapDocument::SetDirty(bool dirty)
+{
+    m_dirty = dirty;
 }

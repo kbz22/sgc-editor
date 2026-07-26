@@ -14,6 +14,7 @@ namespace file {
         private:
             std::unique_ptr<program::LayerManager> m_layerManager{nullptr};
             sgc::data::AssetId m_tilesetId{0};
+            bool m_dirty{false};
 
         public:
             MapDocument(sgc::data::AssetId tilesetId);
@@ -22,6 +23,11 @@ namespace file {
             program::LayerManager* GetLayerManager();
             sgc::data::ITileStorage* GetCurrentLayerStorage();
             sgc::data::AssetId GetTilesetAssetId();
+
+            bool IsEditable() const;
+            bool IsDirty() const;
+
+            void SetDirty(bool dirty);
     };
 
 }
