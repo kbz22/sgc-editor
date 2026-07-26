@@ -12,29 +12,27 @@
 
 namespace file {
 
+    using AssetType = std::variant<
+        std::shared_ptr<sgc::asset::ImageAsset>,
+        std::shared_ptr<sgc::asset::TilesetAsset>
+    >;
+
     class AssetManager
     {
         private:
-            std::unordered_map<
-                sgc::data::AssetId,
-                std::variant<
-                    std::shared_ptr<sgc::asset::ImageAsset>,
-                    std::shared_ptr<sgc::asset::TilesetAsset>
-                >
-            > m_cache{};
+            std::unordered_map< sgc::data::AssetId, AssetType > m_cache{};
 
         public:
             AssetManager() = default;
             virtual ~AssetManager() = default;
 
-            void AddAsset(
-                sgc::data::AssetId assetId,
-                std::shared_ptr<sgc::asset::ImageAsset> imageAsset
-            );
-            void AddAsset(
-                sgc::data::AssetId assetId,
-                std::shared_ptr<sgc::asset::TilesetAsset> tilesetAsset
-            );
+            template<typename T>
+            void AddAsset(sgc::data::AssetId assetId, std::shared_ptr<T> asset);
+
+            template<typename T>
+            std::shared_ptr<T> GetAsset(sgc::data::AssetId assetId) const;
+
+            bool CheckAssetExists(sgc::data::AssetId assetId) const;
 
             std::shared_ptr<sgc::graphics::Tileset> MakeTileset(
                 sgc::data::AssetId assetId,

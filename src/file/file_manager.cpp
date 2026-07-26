@@ -16,7 +16,7 @@ sgc::data::AssetId LoadImageAsset(const std::filesystem::path& path)
         throw program::AssetLoadException("Failed to load image asset: " + path.string());
     }
 
-    assetManager->AddAsset(imageId, std::make_shared<sgc::asset::ImageAsset>(imageData));
+    assetManager->AddAsset<sgc::asset::ImageAsset>(imageId, std::make_shared<sgc::asset::ImageAsset>(imageData));
 
     return imageId;
 }
@@ -33,7 +33,7 @@ sgc::data::AssetId LoadTilesetAsset(sgc::data::AssetId imageId, int tileWidth, i
     };
 
     auto tilesetId = sgc::data::HashAsset(std::to_string(imageId));
-    assetManager->AddAsset(tilesetId, std::make_shared<sgc::asset::TilesetAsset>(tilesetAsset));
+    assetManager->AddAsset<sgc::asset::TilesetAsset>(tilesetId, std::make_shared<sgc::asset::TilesetAsset>(tilesetAsset));
 
     return tilesetId;
 }

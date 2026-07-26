@@ -13,23 +13,27 @@ std::shared_ptr<sgc::graphics::Tileset> file::AssetManager::MakeTileset(
     using namespace sgc::graphics;
 
     if(m_cache.find(tilesetId) == m_cache.end()) {
-        throw program::AssetLoadException("Tileset asset not found in the cache.");
+        throw program::AssetCacheException("Tileset asset not found in the cache.");
     }
 
-    std::shared_ptr<TilesetAsset> tilesetAsset;    
-    tilesetAsset = std::get<std::shared_ptr<TilesetAsset>>(m_cache[tilesetId]);
+    std::shared_ptr<TilesetAsset> tilesetAsset;
+    try {
+        tilesetAsset = std::get<std::shared_ptr<TilesetAsset>>(m_cache.at(tilesetId));
+    } catch (const std::bad_variant_access&) {
+        throw program::AssetCacheException("Tileset asset not found in the cache.");
+    }
 
     auto imageId = tilesetAsset->imageId;
     
     if(m_cache.find(imageId) == m_cache.end()) {
-        throw program::AssetLoadException("Image asset not found in the cache.");
+        throw program::AssetCacheException("Image asset not found in the cache.");
     }
 
     std::shared_ptr<Image> image = std::make_shared<Image>();
     auto imageAsset = std::get<std::shared_ptr<ImageAsset>>(m_cache[imageId]);
 
     if(image->LoadTexture(renderContext->renderer, imageAsset->data)) {
-        // throw program::AssetLoadException("Failed to load texture for image asset.");
+        throw program::AssetLoadException("Failed to load texture for image asset.");
     }
 
     auto imageSize = image->GetSize();
@@ -41,26 +45,48 @@ std::shared_ptr<sgc::graphics::Tileset> file::AssetManager::MakeTileset(
     return std::make_shared<Tileset>(image, tilesetAsset->tileSize);
 }
 
-void file::AssetManager::AddAsset(
+template<>
+void file::AssetManager::AddAsset<sgc::asset::ImageAsset>(
     sgc::data::AssetId assetId,
     std::shared_ptr<sgc::asset::ImageAsset> imageAsset
 )
 {
     if(m_cache.find(assetId) != m_cache.end()) {
-        throw program::AssetLoadException("Asset with the same ID already exists in the cache.");
+        throw program::AssetCacheException("Asset with the same ID already exists in the cache.");
     }
 
     m_cache[assetId] = imageAsset;
 }
 
-void file::AssetManager::AddAsset(
+template<>
+void file::AssetManager::AddAsset<sgc::asset::TilesetAsset>(
     sgc::data::AssetId assetId,
     std::shared_ptr<sgc::asset::TilesetAsset> tilesetAsset
 )
 {
     if(m_cache.find(assetId) != m_cache.end()) {
-        throw program::AssetLoadException("Asset with the same ID already exists in the cache.");
+        throw program::AssetCacheException("Asset with the same ID already exists in the cache.");
     }
 
     m_cache[assetId] = tilesetAsset;
+}
+
+template<>
+std::shared_ptr<sgc::asset::ImageAsset> file::AssetManager::GetAsset<sgc::asset::ImageAsset>(sgc::data::AssetId assetId) const
+{
+    if(m_cache.find(assetId) == m_cache.end()) {
+        throw program::AssetCacheException("Image asset not found in the cache.");
+    }
+
+    return std::get<std::shared_ptr<sgc::asset::ImageAsset>>(m_cache.at(assetId));
+}
+
+template<>
+std::shared_ptr<sgc::asset::TilesetAsset> file::AssetManager::GetAsset<sgc::asset::TilesetAsset>(sgc::data::AssetId assetId) const
+{
+    if(m_cache.find(assetId) == m_cache.end()) {
+        throw program::AssetCacheException("Tileset asset not found in the cache.");
+    }
+
+    return std::get<std::shared_ptr<sgc::asset::TilesetAsset>>(m_cache.at(assetId));
 }
