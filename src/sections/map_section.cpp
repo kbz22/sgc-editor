@@ -121,7 +121,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
         case WM_LBUTTONDOWN:
         {
             if(IsMouseCaptured()) {
-                break;
+                return 0;
+            }
+
+            auto mapDocument = programContext.fileManager->GetSelectedDocument();
+
+            if(mapDocument == nullptr) {
+                return 0;
             }
 
             auto tileset = m_mapView->GetTileset();
@@ -136,13 +142,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto currentTilePosition = programContext.selectionRectangleOnTileset->GetPosition();          
 
             auto tileWidth = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().x / tileSize.x);
-            auto tileHeight = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);            
-
-            auto mapDocument = programContext.fileManager->GetSelectedDocument();
-
-            if(mapDocument == nullptr) {
-                return 0;
-            }
+            auto tileHeight = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);
+            
 
             auto layerManager = mapDocument->GetLayerManager();
             auto currentLayer = mapDocument->GetCurrentLayerStorage();
@@ -196,18 +197,24 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
                 auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
-                auto deltaX = x - m_lastMousePos.x;
-                auto deltaY = y - m_lastMousePos.y;
+                auto deltaX = x - m_lastMousePosPan.x;
+                auto deltaY = y - m_lastMousePosPan.y;
 
                 m_mapView->ChangeCameraPositionSingles(
                     static_cast<float>(deltaX),
                     static_cast<float>(deltaY)
                 );
 
-                m_lastMousePos.x = x;
-                m_lastMousePos.y = y;
+                m_lastMousePosPan.x = x;
+                m_lastMousePosPan.y = y;
 
                 Update();
+                return 0;
+            }
+
+            auto mapDocument = programContext.fileManager->GetSelectedDocument();
+
+            if(mapDocument == nullptr) {
                 return 0;
             }
 
@@ -262,8 +269,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(
                 programContext.selectionRectangleOnTileset->GetPosition()
             );
-
-            auto mapDocument = programContext.fileManager->GetSelectedDocument();
+            
             auto currentLayer = mapDocument->GetCurrentLayerStorage();
 
             if(currentLayer == nullptr) {
@@ -352,8 +358,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             m_isPanning = true;
 
-            m_lastMousePos.x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
-            m_lastMousePos.y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
+            m_lastMousePosPan.x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
+            m_lastMousePosPan.y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
             SetCaptureHelper(hwnd);
 

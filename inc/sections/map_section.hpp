@@ -19,8 +19,9 @@ namespace sections {
             bool m_isPainting = false;
             bool m_isPanning = false;
             bool m_isCaptured = false;
-            bool m_checkTileBeforePainting = true;
-            sgc::math::vec2 m_lastMousePos = { 0, 0 };
+            bool m_checkTileBeforePainting = true;            
+            sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
+            sgc::math::vec2 m_lastMousePosBrush = { 0, 0 };
             sgc::math::vec2 m_selectionTileStart = { 0, 0 };
 
         protected:

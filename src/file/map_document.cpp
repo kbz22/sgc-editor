@@ -15,6 +15,12 @@ program::LayerManager* file::MapDocument::GetLayerManager()
 sgc::data::ITileStorage* file::MapDocument::GetCurrentLayerStorage()
 {
     auto currentLayerIndex = m_layerManager->GetActiveLayerIndex();
+    auto layers = m_layerManager->GetLayers();
+
+    if(layers.empty() || currentLayerIndex >= layers.size()) {
+        return nullptr;
+    }
+
     return m_layerManager->GetLayers()[currentLayerIndex].storage.get();
 }
 
