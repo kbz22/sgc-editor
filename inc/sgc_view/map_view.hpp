@@ -17,10 +17,14 @@ namespace sgc_view
 
     class MapView : public SgcView
     {
-        private:            
-            graphics::Rectangle m_cursorTile;
+        private:
+            std::unique_ptr<graphics::Rectangle> m_cursorTile;
+
             void SetTileset(sgc::data::AssetId tilesetId) override;
             void ResetTileset();
+
+            void SetCursorTile(sgc::graphics::PixelSize2D size);
+            void ResetCursorTile();
 
         public:
             MapView(HWND hwnd);

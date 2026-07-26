@@ -46,7 +46,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
     using namespace program;
     ProgramContext& programContext = program::GetProgramContext();
 
-    if(m_tilesetView == nullptr || programContext.selectionRectangleOnTileset == nullptr)
+    if(programContext.fileManager->GetSelectedDocument() == nullptr)
     {
         return DefSubclassProc(hwnd, msg, wparam, lparam);
     }
@@ -55,6 +55,12 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
     {        
         case WM_LBUTTONDOWN:
         {
+            auto mapDocument = programContext.fileManager->GetSelectedDocument();
+
+            if(mapDocument == nullptr) {
+                return 0;
+            }
+
             int x = GET_X_LPARAM(lparam);
             int y = GET_Y_LPARAM(lparam);
 
@@ -74,7 +80,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             m_selectionTileStart = tilePosition;
             m_selectionTileSize = { 1, 1 };
             
-            programContext.selectionRectangleOnTileset->SetPosition(
+            /* programContext.selectionRectangleOnTileset->SetPosition(
                 {tilePosition.x * tileSize.x,
                 tilePosition.y * tileSize.y}
             );
@@ -82,7 +88,17 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
                 m_selectionTileSize.x * tileSize.x,
                 m_selectionTileSize.y * tileSize.y
             }
-            );
+            ); */
+
+            m_tilesetView->SetCursorPositionInPixels({
+                static_cast<sgc::math::ival>(tilePosition.x * tileSize.x),
+                static_cast<sgc::math::ival>(tilePosition.y * tileSize.y)
+            });
+
+            m_tilesetView->SetCursorSizeInPixels({
+                static_cast<sgc::math::ival>(tileSize.x),
+                static_cast<sgc::math::ival>(tileSize.y)
+            });
             
             m_selectionActive = true;
             SetCapture(hwnd);
@@ -136,7 +152,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
                 maxTile.y - minTile.y + 1
             };
 
-            programContext.selectionRectangleOnTileset->SetPosition({
+            /* programContext.selectionRectangleOnTileset->SetPosition({
                 static_cast<sgc::math::ival>(minTile.x * tileSize.x),
                 static_cast<sgc::math::ival>(minTile.y * tileSize.y)
             });
@@ -144,6 +160,16 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             programContext.selectionRectangleOnTileset->SetSize({
                 m_selectionTileSize.x * tileSize.x,
                 m_selectionTileSize.y * tileSize.y
+            }); */
+
+            m_tilesetView->SetCursorPositionInPixels({
+                static_cast<sgc::math::ival>(minTile.x * tileSize.x),
+                static_cast<sgc::math::ival>(minTile.y * tileSize.y)
+            });
+
+            m_tilesetView->SetCursorSizeInPixels({
+                static_cast<sgc::math::ival>(m_selectionTileSize.x * tileSize.x),
+                static_cast<sgc::math::ival>(m_selectionTileSize.y * tileSize.y)
             });
 
             Update();    
@@ -184,4 +210,36 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
     }
 
     return DefSubclassProc(hwnd, msg, wparam, lparam);
+}
+
+void sections::TilesetSection::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position)
+{
+    if(m_tilesetView != nullptr) {
+        m_tilesetView->SetCursorPositionInPixels(position);
+    }
+}
+
+void sections::TilesetSection::SetCursorSizeInPixels(sgc::graphics::PixelSize2D size)
+{
+    if(m_tilesetView != nullptr) {
+        m_tilesetView->SetCursorSizeInPixels(size);
+    }
+}
+
+std::optional<sgc::graphics::PixelPosition2D> sections::TilesetSection::GetCursorPositionInPixels() const
+{
+    if(m_tilesetView != nullptr) {
+        return m_tilesetView->GetCursorPositionInPixels();
+    }
+
+    return std::nullopt;
+}
+
+std::optional<sgc::graphics::PixelSize2D> sections::TilesetSection::GetCursorSizeInPixels() const
+{
+    if(m_tilesetView != nullptr) {
+        return m_tilesetView->GetCursorSizeInPixels();
+    }
+
+    return std::nullopt;
 }

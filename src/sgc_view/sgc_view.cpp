@@ -74,7 +74,7 @@ void sgc_view::SgcView::Render()
 
 void sgc_view::SgcView::Clear()
 {
-    sdl::Clear(m_renderContext, graphics::color{ 28, 28, 28, 255 });    
+    sdl::Clear(m_renderContext, m_backgroundColor);    
 }
 
 void sgc_view::SgcView::SetScreenSize(int width, int height)
@@ -152,7 +152,11 @@ void sgc_view::SgcView::Refresh(program::ProgramContext& programContext)
     auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
     if(mapDocument == nullptr) {
+        m_backgroundColor = m_backgroundColorInactive;
         return;
+    }
+    else {
+        m_backgroundColor = m_backgroundColorActive;
     }
 
     auto currentTilesetId = mapDocument->GetTilesetAssetId();

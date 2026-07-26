@@ -9,9 +9,9 @@
 
 sgc_view::MapView::MapView(HWND hwnd) :
     SgcView(hwnd),
-    m_cursorTile{0, 0, 0, 0}
+    m_cursorTile{nullptr}
 {    
-    m_cursorTile.SetColor({ 255, 255, 255, 64 });
+    // m_cursorTile.SetColor({ 255, 255, 255, 64 });
 
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;    
 
@@ -24,16 +24,34 @@ sgc_view::MapView::~MapView()
 {    
 }
 
+void sgc_view::MapView::SetCursorTile(sgc::graphics::PixelSize2D size)
+{
+    if(m_cursorTile == nullptr) {
+        m_cursorTile = std::make_unique<graphics::Rectangle>(0, 0, 0, 0);
+    }
+
+    m_cursorTile->SetSize({
+        size.x,
+        size.y
+    });
+    m_cursorTile->SetColor({ 255, 255, 255, 64 });
+}
+
+void sgc_view::MapView::ResetCursorTile()
+{
+    m_cursorTile.reset();
+}
+
 void sgc_view::MapView::SetTileset(sgc::data::AssetId tilesetId)
 {
     SgcView::SetTileset(tilesetId);
 
     auto tileSize = m_tileset->GetTileSize();
 
-    m_cursorTile.SetSize({
+    SetCursorTile({
         static_cast<sgc::math::ival>(tileSize.x),
         static_cast<sgc::math::ival>(tileSize.y)
-    });    
+    });   
 }
 
 void sgc_view::MapView::ResetTileset()
@@ -43,10 +61,9 @@ void sgc_view::MapView::ResetTileset()
     m_tileWidth = 0;
     m_tileHeight = 0;
 
-    m_cursorTile.SetSize({
-        0,
-        0
-    });    
+    ResetCursorTile();
+
+    Render();
 }
 
 void sgc_view::MapView::Render()
@@ -54,7 +71,9 @@ void sgc_view::MapView::Render()
     SgcView::Clear();
     SgcView::DrawAll();
 
-    m_cursorTile.Draw(m_renderContext);
+    if(m_cursorTile != nullptr) {
+        m_cursorTile->Draw(m_renderContext);
+    }
 
     sdl::Render(m_renderContext);
 }
@@ -66,7 +85,17 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
     auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
     if(mapDocument == nullptr) {
+        if(m_tileset != nullptr) {
+            ResetTileset();
+        }        
         return;
+    }
+
+    if(m_cursorTile == nullptr){
+        SetCursorTile({
+            static_cast<sgc::math::ival>(m_tileWidth),
+            static_cast<sgc::math::ival>(m_tileHeight)
+        });
     }
 
     auto layerManager = mapDocument->GetLayerManager();
@@ -116,7 +145,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
 void sgc_view::MapView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position)
 {
-    m_cursorTile.SetPosition({
+    m_cursorTile->SetPosition({
         position.x,
         position.y
     });
@@ -124,7 +153,7 @@ void sgc_view::MapView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D
 
 void sgc_view::MapView::SetCursorSizeInPixels(sgc::graphics::PixelSize2D size)
 {
-    m_cursorTile.SetSize({
+    m_cursorTile->SetSize({
         size.x,
         size.y
     });
@@ -132,12 +161,12 @@ void sgc_view::MapView::SetCursorSizeInPixels(sgc::graphics::PixelSize2D size)
 
 sgc::graphics::PixelPosition2D sgc_view::MapView::GetCursorPositionInPixels() const
 {
-    return m_cursorTile.GetPosition();
+    return m_cursorTile->GetPosition();
 }
 
 sgc::tile::TilePosition2D sgc_view::MapView::GetCursorPositionInTiles() const
 {
-    auto pixelPosition = m_cursorTile.GetPosition();
+    auto pixelPosition = m_cursorTile->GetPosition();
     
     return {
         pixelPosition.x / static_cast<sgc::math::ival>(m_tileWidth),
@@ -147,12 +176,12 @@ sgc::tile::TilePosition2D sgc_view::MapView::GetCursorPositionInTiles() const
 
 sgc::graphics::PixelSize2D sgc_view::MapView::GetCursorSizeInPixels() const
 {
-    return m_cursorTile.GetSize();
+    return m_cursorTile->GetSize();
 }
 
 sgc::tile::TileSize2D sgc_view::MapView::GetCursorSizeInTiles() const
 {
-    auto pixelSize = m_cursorTile.GetSize();
+    auto pixelSize = m_cursorTile->GetSize();
     
     return {
         pixelSize.x / m_tileWidth,
@@ -174,8 +203,9 @@ void sgc_view::MapView::ChangeCameraPositionSingles(float deltaX, float deltaY)
 
 void sgc_view::MapView::ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta)
 {
-    auto currentPosition = m_cursorTile.GetPosition();
-    m_cursorTile.SetPosition({
+    auto currentPosition = m_cursorTile->GetPosition();
+    
+    m_cursorTile->SetPosition({
         currentPosition.x - delta.x,
         currentPosition.y - delta.y
     });

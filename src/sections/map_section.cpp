@@ -92,8 +92,10 @@ void sections::MapSection::HandleSectionResize()
 LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 { 
     program::ProgramContext& programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto &tilesetSection = programContext.tilesetSection;
 
-    if(m_mapView == nullptr || programContext.selectionRectangleOnTileset == nullptr)
+    if(mapDocument == nullptr)
     {
         return DefSubclassProc(hwnd, msg, wparam, lparam);
     }
@@ -127,7 +129,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
             if(mapDocument == nullptr) {
-                m_mapView->ResetTileset();
                 return 0;
             }
 
@@ -140,11 +141,14 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 GET_Y_LPARAM(lparam)
             });
 
-            auto currentTilePosition = programContext.selectionRectangleOnTileset->GetPosition();          
+            // auto currentTilePosition = programContext.selectionRectangleOnTileset->GetPosition();          
 
-            auto tileWidth = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().x / tileSize.x);
-            auto tileHeight = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);
+            // auto tileWidth = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().x / tileSize.x);
+            // auto tileHeight = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);
             
+            auto currentTilePosition = tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0});
+            auto tileWidth = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).x / tileSize.x);
+            auto tileHeight = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).y / tileSize.y);
 
             auto layerManager = mapDocument->GetLayerManager();
             auto currentLayer = mapDocument->GetCurrentLayerStorage();
@@ -243,7 +247,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto position = m_mapView->GetCursorPositionInTiles();
             if (position.x != x_tile || position.y != y_tile) {
                 
-                auto selection = programContext.selectionRectangleOnTileset->GetSize();
+                // auto selection = programContext.selectionRectangleOnTileset->GetSize();
+                auto selection = tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
 
                 m_mapView->SetCursorSizeInPixels({
                     selection.x,
@@ -268,7 +273,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto cursorTileSize = m_mapView->GetCursorSizeInTiles();
 
             auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(
-                programContext.selectionRectangleOnTileset->GetPosition()
+                // programContext.selectionRectangleOnTileset->GetPosition()
+                tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0})
             );
             
             auto currentLayer = mapDocument->GetCurrentLayerStorage();

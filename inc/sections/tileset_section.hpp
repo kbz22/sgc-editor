@@ -4,6 +4,7 @@
 #include <memory>
 #include <windows.h>
 #include <sgc/math/vector.hpp>
+#include <optional>
 
 #include "sections/section.hpp"
 #include "sgc_view/tileset_view.hpp"
@@ -31,6 +32,12 @@ namespace sections {
             void Update() override;
             void HandleSectionResize() override;
             void Refresh(program::ProgramContext& programContext) override;
+
+            void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
+            void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
+
+            std::optional<sgc::graphics::PixelPosition2D> GetCursorPositionInPixels() const;
+            std::optional<sgc::graphics::PixelSize2D> GetCursorSizeInPixels() const;
 
             // void LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext);
             void ClearTileset();

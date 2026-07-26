@@ -41,6 +41,9 @@ namespace sgc_view
             sgc::data::AssetId m_tilesetId;
             std::shared_ptr<graphics::IDrawable> m_drawableImage = nullptr;
             graphics::RenderContext m_renderContext{};
+            const sgc::graphics::color m_backgroundColorActive{ 28, 28, 28, 255 };
+            const sgc::graphics::color m_backgroundColorInactive{ 255, 255, 255, 255 };
+            sgc::graphics::color m_backgroundColor{ m_backgroundColorInactive };
 
             void DrawAll();
             virtual void SetTileset(sgc::data::AssetId tilesetId);

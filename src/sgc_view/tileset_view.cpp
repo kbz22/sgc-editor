@@ -12,11 +12,36 @@
 #include "program/program.hpp"
 
 sgc_view::TilesetView::TilesetView(HWND hwnd) :
-    SgcView(hwnd)
+    SgcView(hwnd),
+    m_cursorTile{nullptr}
 {}
 
 sgc_view::TilesetView::~TilesetView() {
     // nothing to do
+}
+
+void sgc_view::TilesetView::SetCursorTile(sgc::graphics::PixelPosition2D position, sgc::graphics::PixelSize2D size)
+{
+    if(m_cursorTile == nullptr) {
+        m_cursorTile = std::make_unique<graphics::Rectangle>(0, 0, 0, 0);
+    }
+
+    m_cursorTile->SetPosition({
+        position.x,
+        position.y
+    });
+
+    m_cursorTile->SetSize({
+        size.x,
+        size.y
+    });
+
+    m_cursorTile->SetColor(m_cursorColor);
+}
+
+void sgc_view::TilesetView::ResetCursorTile()
+{
+    m_cursorTile.reset();
 }
 
 void sgc_view::TilesetView::Render()
@@ -24,10 +49,13 @@ void sgc_view::TilesetView::Render()
     SgcView::Clear();
     SgcView::DrawAll();
 
-    program::ProgramContext& programContext = program::GetProgramContext();
+    /* program::ProgramContext& programContext = program::GetProgramContext();
 
     if (programContext.selectionRectangleOnTileset != nullptr) {
         programContext.selectionRectangleOnTileset->Draw(m_renderContext);
+    } */
+    if(m_cursorTile != nullptr) {
+        m_cursorTile->Draw(m_renderContext);
     }
 
     sdl::Render(m_renderContext);
@@ -58,9 +86,27 @@ void sgc_view::TilesetView::SetTileset(sgc::data::AssetId tilesetId)
     m_drawableImage = std::make_shared<graphics::TiledImage>(m_layer);
 }
 
+void sgc_view::TilesetView::ResetTileset()
+{
+    m_tileset.reset();
+    m_layer.reset();
+    m_drawableImage.reset();
+
+    ResetCursorTile();
+
+    Render();
+}
+
 void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
 {
     sgc_view::SgcView::Refresh(programContext);
+
+    if(programContext.fileManager->GetSelectedDocument() == nullptr) {
+        if(m_tileset != nullptr) {
+            ResetTileset();
+        }
+        return;
+    }
 
     if(m_tileset == nullptr) {
         return;
@@ -68,11 +114,68 @@ void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
 
     auto tileSize = m_tileset->GetTileSize();
 
-    if(programContext.selectionRectangleOnTileset == nullptr) 
+    if(m_cursorTile == nullptr) {
+        SetCursorTile({
+            0,
+            0
+        }, {
+            static_cast<sgc::math::ival>(tileSize.x),
+            static_cast<sgc::math::ival>(tileSize.y)
+        });
+    }
+
+    /* if(programContext.selectionRectangleOnTileset == nullptr) 
     {
         programContext.selectionRectangleOnTileset = std::make_unique<sgc::graphics::Rectangle>(
             0, 0, tileSize.x, tileSize.y
         );
         programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 128, 255 });
+    } */
+}
+
+void sgc_view::TilesetView::SetCursorColor(sgc::graphics::color color)
+{
+    m_cursorColor = color;
+}
+
+void sgc_view::TilesetView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position)
+{
+    if(m_cursorTile == nullptr) {
+        return;
     }
+
+    m_cursorTile->SetPosition({
+        position.x,
+        position.y
+    });
+}
+
+void sgc_view::TilesetView::SetCursorSizeInPixels(sgc::graphics::PixelSize2D size)
+{
+    if(m_cursorTile == nullptr) {
+        return;
+    }
+
+    m_cursorTile->SetSize({
+        size.x,
+        size.y
+    });
+}
+
+sgc::graphics::PixelPosition2D sgc_view::TilesetView::GetCursorPositionInPixels() const
+{
+    if(m_cursorTile == nullptr) {
+        return { 0, 0 };
+    }
+
+    return m_cursorTile->GetPosition();
+}
+
+sgc::graphics::PixelSize2D sgc_view::TilesetView::GetCursorSizeInPixels() const
+{
+    if(m_cursorTile == nullptr) {
+        return { 0, 0 };
+    }
+
+    return m_cursorTile->GetSize();
 }
