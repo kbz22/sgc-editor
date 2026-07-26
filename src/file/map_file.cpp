@@ -33,3 +33,8 @@ std::span<file::MapDocument*> file::MapFile::GetMapDocuments()
         return std::span<MapDocument*>();
     }
 }
+
+std::span<file::TilesetDocument*> file::MapFile::GetTilesetDocuments()
+{
+    return std::span<TilesetDocument*>();
+}

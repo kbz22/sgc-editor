@@ -1,6 +1,7 @@
 #pragma once
 
 #include "file/map_document.hpp"
+#include "file/tileset_document.hpp"
 #include <string>
 #include <span>
 #include <filesystem>
@@ -20,6 +21,7 @@ namespace file {
             virtual std::wstring GetFileName() const = 0;
 
             virtual std::span<MapDocument*> GetMapDocuments() = 0;
+            virtual std::span<TilesetDocument*> GetTilesetDocuments() = 0;
     };
 
 }

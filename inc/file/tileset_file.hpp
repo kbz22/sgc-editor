@@ -1,24 +1,21 @@
 #pragma once
 
 #include "file/ifile.hpp"
-#include "file/map_document.hpp"
-
-#include <memory>
+#include "file/tileset_document.hpp"
 #include <filesystem>
+#include <memory>
 
 namespace file {
 
-    class FileManager;
-
-    class MapFile : public IFile
-    {        
+    class TilesetFile : public IFile
+    {
         private:
-            std::filesystem::path m_filePath{};            
-            std::unique_ptr<MapDocument> m_document = nullptr;
+            std::filesystem::path m_filePath{};
+            std::unique_ptr<TilesetDocument> m_tilesetDocument{nullptr};
 
         public:
-            MapFile() = default;
-            virtual ~MapFile() = default;
+            TilesetFile(sgc::data::AssetId tilesetId);
+            virtual ~TilesetFile() = default;
 
             void Open(std::filesystem::path filePath) override;
             void Save(std::filesystem::path filePath) override;
@@ -26,10 +23,9 @@ namespace file {
 
             std::wstring GetExtension() const override;
             std::wstring GetFileName() const override;
+
             std::span<MapDocument*> GetMapDocuments() override;
             std::span<TilesetDocument*> GetTilesetDocuments() override;
-
-            friend class FileManager;
     };
 
 }

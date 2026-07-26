@@ -25,6 +25,7 @@ namespace file {
             ~FileManager() = default;
 
             void NewMapFile(std::filesystem::path filePath, size_t tileWidth, size_t tileHeight);
+            void NewTilesetFile(std::filesystem::path filePath, size_t tileWidth, size_t tileHeight);
             void OpenFile(std::filesystem::path filePath);
             void SaveFile(size_t index);
             void CloseFile(size_t index);

@@ -107,6 +107,8 @@ add_executable(sgc-editor WIN32
     src/file/map_document.cpp
     src/file/asset_manager.cpp
     src/file/file_manager.cpp
+    src/file/tileset_file.cpp
+    src/file/tileset_document.cpp
 )
 
 # embed manifest in the exe
