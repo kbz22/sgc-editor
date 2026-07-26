@@ -89,6 +89,7 @@ add_executable(sgc-editor WIN32
     src/action/new_file_action.cpp
     # src/action/open_file_action.cpp
     # src/action/save_file_action.cpp
+    src/action/close_file_action.cpp
     src/action/undo_action.cpp
     src/action/redo_action.cpp
     src/action/layer_add_action.cpp

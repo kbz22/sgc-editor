@@ -20,6 +20,7 @@ namespace sgc_view
         private:            
             graphics::Rectangle m_cursorTile;
             void SetTileset(sgc::data::AssetId tilesetId) override;
+            void ResetTileset();
 
         public:
             MapView(HWND hwnd);

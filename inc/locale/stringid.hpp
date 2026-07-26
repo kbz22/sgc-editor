@@ -34,6 +34,7 @@ namespace locale
         NameNewFile,
         NameOpenFile,
         NameSaveFile,
+        NameCloseFile,
         NameUndo,
         NameRedo,
         NameAddLayer,

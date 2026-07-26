@@ -71,7 +71,12 @@ void file::FileManager::SaveFile(size_t index)
 
 void file::FileManager::CloseFile(size_t index)
 {
-    
+    if(!m_openFiles.empty() && index < m_openFiles.size()) {
+        m_openFiles.erase(m_openFiles.begin() + index);
+
+        SelectDocument(m_openFiles.empty() ? 0 : m_openFiles.size() - 1);
+    }
+
     return;
 }
 
@@ -80,6 +85,10 @@ void file::FileManager::SelectDocument(size_t index)
     if (index < m_openFiles.size()) {
         m_selectedDocument.file = m_openFiles[index].get();
         m_selectedDocument.index = index;
+    }
+    else if (m_openFiles.empty()) {
+        m_selectedDocument.file = nullptr;
+        m_selectedDocument.index = 0;
     }
 }
 
@@ -95,4 +104,9 @@ file::MapDocument* file::FileManager::GetSelectedDocument() const
     }    
 
     return nullptr;
+}
+
+size_t file::FileManager::GetSelectedFileIndex() const
+{
+    return m_selectedDocument.index;
 }

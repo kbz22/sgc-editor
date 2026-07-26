@@ -21,6 +21,7 @@
 #include "action/map_menu_action.hpp"
 #include "action/view_menu_action.hpp"
 #include "action/help_menu_action.hpp"
+#include "action/close_file_action.hpp"
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -233,6 +234,7 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::NewFileAction>());
     // programContext.actionManager->Register(std::make_unique<action::OpenFileAction>());
     // programContext.actionManager->Register(std::make_unique<action::SaveFileAction>());
+    programContext.actionManager->Register(std::make_unique<action::CloseFileAction>());
     programContext.actionManager->Register(std::make_unique<action::UndoAction>());
     programContext.actionManager->Register(std::make_unique<action::RedoAction>());
     programContext.actionManager->Register(std::make_unique<action::LayerAddAction>());

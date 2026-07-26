@@ -63,14 +63,9 @@ INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
                 auto tile_height = GetDlgItemInt(hDlg, IDC_MAP_HEIGHT, nullptr, FALSE);
 
                 auto &programContext = program::GetProgramContext();
-                /* auto imageId = LoadImageAsset(std::filesystem::path(buffer));
-                auto tilesetId = LoadTilesetAsset(imageId, tile_width, tile_height);
-
-                programContext.mapDocument = std::make_unique<file::MapDocument>(tilesetId); */
 
                 programContext.fileManager->NewMapFile(std::filesystem::path(buffer), tile_width, tile_height);
-
-                // program::StartEditor();
+                
                 program::RefreshEditor();
             }
             catch (const program::TileSizeException& e)

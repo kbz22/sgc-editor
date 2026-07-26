@@ -36,6 +36,19 @@ void sgc_view::MapView::SetTileset(sgc::data::AssetId tilesetId)
     });    
 }
 
+void sgc_view::MapView::ResetTileset()
+{
+    m_tileset.reset();
+    m_drawableImage.reset();
+    m_tileWidth = 0;
+    m_tileHeight = 0;
+
+    m_cursorTile.SetSize({
+        0,
+        0
+    });    
+}
+
 void sgc_view::MapView::Render()
 {
     SgcView::Clear();

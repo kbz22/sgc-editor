@@ -127,6 +127,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
             if(mapDocument == nullptr) {
+                m_mapView->ResetTileset();
                 return 0;
             }
 

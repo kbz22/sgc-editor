@@ -31,6 +31,7 @@ locale::StringLookup::StringLookup()
         {StringId::NameNewFile, L"New"},
         {StringId::NameOpenFile, L"Open"},
         {StringId::NameSaveFile, L"Save"},
+        {StringId::NameCloseFile, L"Close"},
         {StringId::NameUndo, L"Undo"},
         {StringId::NameRedo, L"Redo"},
         {StringId::NameAddLayer, L"Add layer"},
