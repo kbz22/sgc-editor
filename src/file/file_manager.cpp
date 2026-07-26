@@ -71,7 +71,7 @@ void file::FileManager::SaveFile(size_t index)
 
 void file::FileManager::CloseFile(size_t index)
 {
-    //!
+    
     return;
 }
 
@@ -85,10 +85,14 @@ void file::FileManager::SelectDocument(size_t index)
 
 file::MapDocument* file::FileManager::GetSelectedDocument() const
 {
-    auto docs = m_selectedDocument.file->GetMapDocuments();
-    if(!docs.empty()) {
-        return docs[m_selectedDocument.index];
-    }
+    if(m_selectedDocument.file != nullptr) 
+    {
+        auto docs = m_selectedDocument.file->GetMapDocuments();
+
+        if(!docs.empty()) {
+            return docs[m_selectedDocument.index];
+        }        
+    }    
 
     return nullptr;
 }

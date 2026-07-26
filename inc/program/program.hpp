@@ -64,8 +64,8 @@ namespace program {
     ProgramContext& GetProgramContext();
 
     void RegisterActions();
-
     void StartDefault();
-    void StartEditor();
+    // void StartEditor();
+    void RefreshEditor();
 
 }

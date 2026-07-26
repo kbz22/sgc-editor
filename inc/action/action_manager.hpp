@@ -23,6 +23,7 @@ namespace action {
             void ActionSetEnabled(ActionType actionType, bool enabled);
             void ActionSetEnabled(const std::vector<ActionType>& actionTypes, bool enabled);
             void ActionSetChecked(ActionType actionType, bool checked);
+            void ActionSetChecked(const std::vector<ActionType>& actionTypes, bool checked);
 
     };
 

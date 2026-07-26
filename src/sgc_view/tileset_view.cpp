@@ -62,6 +62,10 @@ void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
 {
     sgc_view::SgcView::Refresh(programContext);
 
+    if(m_tileset == nullptr) {
+        return;
+    }
+
     auto tileSize = m_tileset->GetTileSize();
 
     if(programContext.selectionRectangleOnTileset == nullptr) 

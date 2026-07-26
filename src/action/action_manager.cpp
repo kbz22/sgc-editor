@@ -83,3 +83,10 @@ void action::ActionManager::ActionSetChecked(ActionType actionType, bool checked
         }
     }
 }
+
+void action::ActionManager::ActionSetChecked(const std::vector<ActionType>& actionTypes, bool checked)
+{
+    for(auto &actionType : actionTypes) {
+        ActionSetChecked(actionType, checked);
+    }
+}

@@ -70,7 +70,8 @@ INT_PTR NewFileDialogCommandHandler(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 
                 programContext.fileManager->NewMapFile(std::filesystem::path(buffer), tile_width, tile_height);
 
-                program::StartEditor();
+                // program::StartEditor();
+                program::RefreshEditor();
             }
             catch (const program::TileSizeException& e)
             {

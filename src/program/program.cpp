@@ -70,10 +70,39 @@ void program::StartDefault()
     programContext.sections.push_back(programContext.layersSection.get());
 
     programContext.packageSection = std::make_unique<sections::PackageSection>(programContext);
-    programContext.sections.push_back(programContext.packageSection.get()); 
+    programContext.sections.push_back(programContext.packageSection.get());
+
+    programContext.layersSection->RegisterSelectedLayerChangeCallback([&programContext](size_t index) {
+        auto document = programContext.fileManager->GetSelectedDocument();
+        if(document != nullptr) {
+            auto layerManager = document->GetLayerManager();
+            layerManager->SetActiveLayerIndex(index);
+
+            if(programContext.editorLayerMode == EditorLayerMode::MultiLayer) {
+                MultiLayerModeSetup(programContext);
+            }
+
+            programContext.mapSection->Refresh(programContext);
+            programContext.mapSection->Update();
+        }
+    });
+
+    programContext.layersSection->RegisterLayerVisibilityChangeCallback([&programContext](size_t index, bool visible) {
+        auto document = programContext.fileManager->GetSelectedDocument();
+        if(document != nullptr) {
+            auto layerManager = document->GetLayerManager();
+            layerManager->SetLayerVisibility(index, visible);
+
+            programContext.mapSection->Refresh(programContext);
+            programContext.mapSection->Update();
+        }
+    });
+
+    program::UpdateEditorLayerMode(programContext.editorLayerMode);
+    program::UpdateEditorChunkMode(programContext.editorChunkMode);
 }
 
-void program::StartEditor()
+/* void program::StartEditor()
 {    
     auto& programContext = GetProgramContext();
 
@@ -124,8 +153,9 @@ void program::StartEditor()
     programContext.tilesetSection->Update();
 
     programContext.layersSection->RegisterSelectedLayerChangeCallback([&programContext](size_t index) {
-        if(programContext.fileManager->GetSelectedDocument() != nullptr) {
-            auto layerManager = programContext.fileManager->GetSelectedDocument()->GetLayerManager();
+        auto document = programContext.fileManager->GetSelectedDocument();
+        if(document != nullptr) {
+            auto layerManager = document->GetLayerManager();
             layerManager->SetActiveLayerIndex(index);
 
             if(programContext.editorLayerMode == EditorLayerMode::MultiLayer) {
@@ -156,6 +186,41 @@ void program::StartEditor()
     program::UpdateEditorLayerMode(programContext.editorLayerMode);
     program::UpdateEditorChunkMode(programContext.editorChunkMode);
 }
+ */
+void RedrawAllSections(program::ProgramContext& programContext)
+{
+    for(auto section : programContext.sections) {
+        section->HandleSectionResize();
+        section->Update();
+    }
+}
+
+void RefreshAllSection(program::ProgramContext& programContext)
+{
+    for(auto section : programContext.sections) {
+        section->Refresh(programContext);        
+    }
+}
+
+void program::RefreshEditor()
+{
+    auto &programContext = GetProgramContext();
+    auto currentDocument = programContext.fileManager->GetSelectedDocument();
+
+    if(currentDocument == nullptr || !currentDocument->IsEditable()) {
+        programContext.actionManager->ActionSetChecked(g_activeEditorButtons, false);
+        programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
+    }
+    else if(currentDocument->IsEditable()) {
+        programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, true);
+    }
+
+    RefreshAllSection(programContext);
+    RedrawAllSections(programContext);
+
+    return;
+}
+    
 
 void program::RegisterActions()
 {

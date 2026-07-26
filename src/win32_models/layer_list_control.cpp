@@ -375,6 +375,14 @@ void win32_models::LayerListControl::Resize(int width, int height)
 void win32_models::LayerListControl::Refresh(program::ProgramContext& programContext)
 {    
     auto mapDocument = programContext.fileManager->GetSelectedDocument();
+
+    if(mapDocument == nullptr) {
+        m_layers.clear();
+        SetSelectedLayer(0);
+        UpdateScrollInfo();
+        return;
+    }
+
     program::LayerManager *layerManager = mapDocument->GetLayerManager();
     m_layers.clear();
     for(auto &layer : layerManager->GetLayers())

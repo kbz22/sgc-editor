@@ -19,3 +19,8 @@ void sections::PackageSection::HandleSectionResize()
 {
     return;
 }
+
+void sections::PackageSection::Refresh(program::ProgramContext& programContext)
+{
+    return;
+}

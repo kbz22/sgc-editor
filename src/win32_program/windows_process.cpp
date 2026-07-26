@@ -94,6 +94,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         InitCommonControlsEx(&icc);
 
         StartDefault();
+        RefreshEditor();
         HandleResize(hwnd, lParam);        
 
         break;

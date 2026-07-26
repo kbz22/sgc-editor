@@ -4,7 +4,13 @@
 void program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
 {
     auto &programContext = program::GetProgramContext();
+    auto &fileManager = programContext.fileManager;
     auto mapDocument = programContext.fileManager->GetSelectedDocument();
+
+    if(mapDocument == nullptr) {
+        return;
+    }
+
     auto layerManager = mapDocument->GetLayerManager();
 
     programContext.editorLayerMode = newMode;
