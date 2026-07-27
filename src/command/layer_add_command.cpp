@@ -13,15 +13,12 @@ void command::LayerAddCommand::Execute()
         auto layerManager = mapDocument->GetLayerManager();
         auto storage = std::make_shared<sgc::data::ChunkedTileStorage>();
 
-        //! This should probably be removed. The user should create chunks manually.
-        // I leave it for now because it is convienient for testing purposes.
-        // If you added empty tiles to tileset probably best to remove this.
-        storage->SetTileAt({0, 0}, 0);
-
         m_addedLayerIndex = layerManager->AddLayer({
             storage,
             L"Layer " + std::to_wstring(layerManager->GetSize())
         });
+
+        mapDocument->SetDirty(true);
 
         programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();

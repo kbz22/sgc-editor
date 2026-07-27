@@ -23,10 +23,16 @@ void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange
 void command::PaintStrokeCommand::Execute()
 {
     auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
+
+    if(mapDocument == nullptr) {
+        return;
+    }
+
     auto layerManager = mapDocument->GetLayerManager();
     for (const auto& [position, change] : m_tileChanges) {        
         layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.newTileId);
     }
+    mapDocument->SetDirty(true);
 }
 
 void command::PaintStrokeCommand::Undo()

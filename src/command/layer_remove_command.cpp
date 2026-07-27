@@ -13,6 +13,8 @@ void command::LayerRemoveCommand::Execute()
         m_removedLayerIndex = activeIndex;
         m_removedLayerStorage = layerManager->RemoveLayer(m_removedLayerIndex);
 
+        mapDocument->SetDirty(true);
+
         programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
 

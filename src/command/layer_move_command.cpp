@@ -37,9 +37,10 @@ void command::LayerMoveCommand::Undo()
 
         try {            
             layerManager->MoveActiveLayer(-m_movement);
+            mapDocument->SetDirty(true);
         } catch ([[maybe_unused]]const std::out_of_range& e) {
             //! no need to note the out of range error
-        }
+        }        
 
         programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
