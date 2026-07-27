@@ -64,7 +64,9 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
 
 void file::FileManager::SaveFile(size_t index)
 {
-    
+    if(index < m_openFiles.size()) {
+        m_openFiles[index]->Save();
+    }
     return;
 }
 

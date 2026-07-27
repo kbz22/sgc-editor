@@ -1,11 +1,49 @@
 #include "file/map_file.hpp"
 #include "defaults.hpp"
+#include <sgc/asset/mapasset.hpp>
+#include <sgc/asset/mapserializer.hpp>
+#include <sgc/asset/tilestoragebuilder.hpp>
+#include <fstream>
 
 void file::MapFile::Open(){
     return;
 }
 
 void file::MapFile::Save(){
+
+    if(m_filePath.empty()) {
+        return;
+    }
+
+    auto layers = m_document->GetLayerManager()->GetLayers();
+
+    std::vector<sgc::asset::MapLayerAsset> layerAssets;
+    layerAssets.reserve(layers.size());
+
+    for(auto &layer : layers) {
+        sgc::asset::MapLayerAsset layerAsset = {
+            layer.name,
+            {},
+            sgc::asset::AssetBuilder<sgc::asset::TileStorageAsset>::Build(*layer.storage)
+        };
+
+        layerAssets.push_back(layerAsset);
+    }
+
+    sgc::asset::MapAsset mapAsset = {
+        m_document->GetTilesetAssetId(),
+        layerAssets
+    };
+
+    auto bytes = sgc::asset::AssetSerializer<sgc::asset::MapAsset>::Serialize(
+        mapAsset
+    );
+
+    std::ofstream file(m_filePath, std::ios::binary);
+    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+
+    file.close();
+
     return;
 }
 
