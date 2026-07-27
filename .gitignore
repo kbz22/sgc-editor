@@ -3,3 +3,4 @@ assets/*
 !assets/toolbar_icons_disabled.png
 build
 dlls
+sgc-editor.code-workspace
