@@ -46,6 +46,11 @@ locale::StringLookup::StringLookup()
         {StringId::NameEditorChunkModeFixedSize, L"Fixed size chunk"},
         {StringId::NameEditorChunkModeFree, L"Free chunk"},
 
+        {StringId::NameTilesetFile, L"Tileset file"},
+        {StringId::NameMapFile, L"Map file"},
+        {StringId::NameAllFiles, L"All files"},
+        {StringId::NamePackageFile, L"Package file"},
+
         {StringId::TextMissing, L"Text missing"}
     };
 }

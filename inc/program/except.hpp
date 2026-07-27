@@ -21,5 +21,11 @@ namespace program
         public:
             AssetCacheException(const std::string& message) : std::runtime_error(message) {}
     };
+
+    class StringNotFoundException : public std::runtime_error
+    {
+        public:
+            StringNotFoundException(const std::string& message) : std::runtime_error(message) {}
+    };
     
 }

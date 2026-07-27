@@ -32,6 +32,7 @@ namespace file {
 
             void SelectDocument(size_t index);
             MapDocument* GetSelectedDocument() const;
+            IFile* GetSelectedFile() const;
             size_t GetSelectedFileIndex() const;
     };
 

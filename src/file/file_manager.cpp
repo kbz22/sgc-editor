@@ -47,11 +47,10 @@ void file::FileManager::NewMapFile(std::filesystem::path filePath, size_t tileWi
     auto imageId = LoadImageAsset(filePath);
     auto tilesetId = LoadTilesetAsset(imageId, static_cast<int>(tileWidth), static_cast<int>(tileHeight));
 
-    auto newDocument = std::make_unique<MapFile>();
-    newDocument->m_document = std::make_unique<MapDocument>(tilesetId);
-    newDocument->m_filePath = filePath;
+    auto newFile = std::make_unique<MapFile>();
+    newFile->m_document = std::make_unique<MapDocument>(tilesetId);    
 
-    m_openFiles.push_back(std::move(newDocument));
+    m_openFiles.push_back(std::move(newFile));
     SelectDocument(m_openFiles.size() - 1);
 
     return;
@@ -65,7 +64,7 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
 
 void file::FileManager::SaveFile(size_t index)
 {
-    //!
+    
     return;
 }
 
@@ -104,6 +103,11 @@ file::MapDocument* file::FileManager::GetSelectedDocument() const
     }    
 
     return nullptr;
+}
+
+file::IFile* file::FileManager::GetSelectedFile() const
+{
+    return m_selectedDocument.file;
 }
 
 size_t file::FileManager::GetSelectedFileIndex() const

@@ -47,6 +47,11 @@ namespace locale
         NameEditorLayerModeSingleImage,
         NameSelectEditorChunkMode,
         NameEditorChunkModeFixedSize,
-        NameEditorChunkModeFree
+        NameEditorChunkModeFree,
+
+        NameTilesetFile,
+        NamePackageFile,
+        NameMapFile,
+        NameAllFiles,
     };
 }
