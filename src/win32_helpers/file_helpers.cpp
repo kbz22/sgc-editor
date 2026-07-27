@@ -8,7 +8,7 @@ std::wstring BuildFilter(const std::vector<win32_helpers::FileFilter>& filters)
 
     for (const auto& filter : filters)
     {
-        // Display name
+        // Display name        
         result += filter.name;
         result.push_back(L'\0');
 
@@ -27,7 +27,11 @@ std::wstring BuildFilter(const std::vector<win32_helpers::FileFilter>& filters)
             else
             {
                 result += L"*.";
-                result += filter.exts[i];
+                if (filter.exts[i].front() == L'.') {
+                    result += filter.exts[i].substr(1); // Remove leading dot
+                } else {
+                    result += filter.exts[i];
+                }
             }
         }
 
