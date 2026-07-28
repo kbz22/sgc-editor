@@ -1,10 +1,6 @@
 #include "file/tileset_file.hpp"
 #include "defaults.hpp"
 
-file::TilesetFile::TilesetFile(sgc::data::AssetId tilesetId) :
-    m_tilesetDocument{std::make_unique<TilesetDocument>(tilesetId)}
-{}
-
 void file::TilesetFile::Open(){
     return;
 }
@@ -59,13 +55,33 @@ void file::TilesetFile::SetFilePath(const std::filesystem::path& path)
     m_filePath = path;
 }
 
-std::span<file::MapDocument*> file::TilesetFile::GetMapDocuments()
+std::vector<file::MapDocument*> file::TilesetFile::GetMapDocuments()
 {
-    return std::span<MapDocument*>();
+    return std::vector<MapDocument*>();
 }
 
-std::span<file::TilesetDocument*> file::TilesetFile::GetTilesetDocuments()
+std::optional<file::MapDocument*> file::TilesetFile::GetMapDocument(size_t index)
 {
-    auto ptr = m_tilesetDocument.get();
-    return std::span<TilesetDocument*>(&ptr, 1);
+    return std::nullopt;
+}
+
+std::vector<file::TilesetDocument*> file::TilesetFile::GetTilesetDocuments()
+{
+    if (m_tilesetDocument) {
+        return std::vector<TilesetDocument*>{ m_tilesetDocument.get() };
+    } else {
+        return std::vector<TilesetDocument*>{};
+    }
+}
+
+std::optional<file::TilesetDocument*> file::TilesetFile::GetTilesetDocument(size_t index)
+{
+    if (index == 0 && m_tilesetDocument) 
+    {
+        return m_tilesetDocument.get();
+    }
+    else 
+    {
+        return std::nullopt;
+    }
 }

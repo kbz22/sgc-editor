@@ -14,10 +14,11 @@ namespace file {
         private:
             std::unique_ptr<program::LayerManager> m_layerManager{nullptr};
             sgc::data::AssetId m_tilesetId{0};
+            std::wstring name;
             bool m_dirty{false};
 
         public:
-            MapDocument(sgc::data::AssetId tilesetId);
+            MapDocument(std::wstring name, sgc::data::AssetId tilesetId);
             virtual ~MapDocument() = default;
 
             program::LayerManager* GetLayerManager();

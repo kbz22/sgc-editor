@@ -5,6 +5,7 @@
 #include <string>
 #include <span>
 #include <filesystem>
+#include <optional>
 
 namespace file {
 
@@ -25,8 +26,10 @@ namespace file {
 
             virtual void SetFilePath(const std::filesystem::path& path) = 0;            
 
-            virtual std::span<MapDocument*> GetMapDocuments() = 0;
-            virtual std::span<TilesetDocument*> GetTilesetDocuments() = 0;
+            virtual std::vector<MapDocument*> GetMapDocuments() = 0;
+            virtual std::optional<MapDocument*> GetMapDocument(size_t index) = 0;
+            virtual std::vector<TilesetDocument*> GetTilesetDocuments() = 0;
+            virtual std::optional<TilesetDocument*> GetTilesetDocument(size_t index) = 0;       
     };
 
 }

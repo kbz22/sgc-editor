@@ -2,7 +2,8 @@
 #include <sgc/data/helpers.hpp>
 #include "program/program.hpp"
 
-file::MapDocument::MapDocument(sgc::data::AssetId tilesetId) :
+file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId) :
+    name{name},
     m_layerManager{std::make_unique<program::LayerManager>()},
     m_tilesetId{tilesetId}
 {}

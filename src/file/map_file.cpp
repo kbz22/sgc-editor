@@ -86,17 +86,33 @@ bool file::MapFile::IsDirty() const
     return false;
 }
 
-std::span<file::MapDocument*> file::MapFile::GetMapDocuments()
-{
-    auto ptr = m_document.get();
+std::vector<file::MapDocument*> file::MapFile::GetMapDocuments()
+{    
     if (m_document) {
-        return std::span<MapDocument*>(&ptr, 1);
+        return std::vector<MapDocument*>{ m_document.get() };
     } else {
-        return std::span<MapDocument*>();
+        return std::vector<MapDocument*>{};
     }
 }
 
-std::span<file::TilesetDocument*> file::MapFile::GetTilesetDocuments()
+std::optional<file::MapDocument*> file::MapFile::GetMapDocument(size_t index)
 {
-    return std::span<TilesetDocument*>();
+    if (m_document && index == 0) 
+    {
+        return m_document.get();
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
+std::vector<file::TilesetDocument*> file::MapFile::GetTilesetDocuments()
+{
+    return std::vector<TilesetDocument*>{};
+}
+
+std::optional<file::TilesetDocument*> file::MapFile::GetTilesetDocument(size_t index)
+{
+    return std::nullopt;
 }

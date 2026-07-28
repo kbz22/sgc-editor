@@ -53,5 +53,6 @@ namespace locale
         NamePackageFile,
         NameMapFile,
         NameAllFiles,
+        NameImageFile
     };
 }

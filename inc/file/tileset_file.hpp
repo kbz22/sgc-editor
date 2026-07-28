@@ -15,7 +15,7 @@ namespace file {
             bool m_savedOrLoaded{false};
 
         public:
-            TilesetFile(sgc::data::AssetId tilesetId);
+            TilesetFile() = default;
             virtual ~TilesetFile() = default;
 
             void Open() override;
@@ -30,8 +30,12 @@ namespace file {
 
             void SetFilePath(const std::filesystem::path& path) override;
 
-            std::span<MapDocument*> GetMapDocuments() override;
-            std::span<TilesetDocument*> GetTilesetDocuments() override;
+            std::vector<MapDocument*> GetMapDocuments() override;
+            std::optional<MapDocument*> GetMapDocument(size_t index) override;
+            std::vector<TilesetDocument*> GetTilesetDocuments() override;
+            std::optional<TilesetDocument*> GetTilesetDocument(size_t index) override;
+
+            friend class FileManager;
     };
 
 }

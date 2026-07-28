@@ -48,6 +48,7 @@ locale::StringLookup::StringLookup()
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},
+        {StringId::NameImageFile, L"Image file"},
         {StringId::NameAllFiles, L"All files"},
         {StringId::NamePackageFile, L"Package file"},
 

@@ -71,6 +71,8 @@ add_executable(sgc-editor WIN32
     src/sgc_view/map_view.cpp    
 
     rcs/new_file_dialog.rc
+    rcs/new_map_dialog.rc
+    rcs/new_tileset_dialog.rc
 
     src/debug.cpp
 

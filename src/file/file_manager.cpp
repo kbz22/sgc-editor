@@ -2,29 +2,32 @@
 #include "program/program.hpp"
 #include "program/except.hpp"
 #include "file/map_file.hpp"
+#include "file/tileset_file.hpp"
 #include <sgc/data/helpers.hpp>
 
-sgc::data::AssetId LoadImageAsset(const std::filesystem::path& path)
+sgc::data::AssetId LoadImageAsset(std::wstring name, const std::filesystem::path& path)
 {
     auto &programContext = program::GetProgramContext();
     auto &assetManager = programContext.assetManager;
+    auto hashableName = L"image/" + name;
 
     auto imageData = sgc::data::ReadFile(path);
-    auto imageId = sgc::data::HashAsset(path.string()); 
+    auto imageId = sgc::data::HashAsset(hashableName);
     
     if(imageData.empty()) {
         throw program::AssetLoadException("Failed to load image asset: " + path.string());
     }
-
+    
     assetManager->AddAsset<sgc::asset::ImageAsset>(imageId, std::make_shared<sgc::asset::ImageAsset>(imageData));
 
     return imageId;
 }
 
-sgc::data::AssetId LoadTilesetAsset(sgc::data::AssetId imageId, int tileWidth, int tileHeight)
+sgc::data::AssetId LoadTilesetAsset(std::wstring name, sgc::data::AssetId imageId, int tileWidth, int tileHeight)
 {
     auto &programContext = program::GetProgramContext();
     auto &assetManager = programContext.assetManager;
+    auto hashableName = L"tileset/" + name;
 
     auto tilesetAsset = sgc::asset::TilesetAsset{
         imageId,
@@ -32,26 +35,38 @@ sgc::data::AssetId LoadTilesetAsset(sgc::data::AssetId imageId, int tileWidth, i
         static_cast<sgc::math::ival>(tileHeight)
     };
 
-    auto tilesetId = sgc::data::HashAsset(std::to_string(imageId));
+    auto tilesetId = sgc::data::HashAsset(hashableName);
     assetManager->AddAsset<sgc::asset::TilesetAsset>(tilesetId, std::make_shared<sgc::asset::TilesetAsset>(tilesetAsset));
 
     return tilesetId;
 }
 
-void file::FileManager::NewMapFile(std::filesystem::path filePath, size_t tileWidth, size_t tileHeight)
+void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tilesetId)
+{
+    auto newFile = std::make_unique<MapFile>();
+    newFile->m_document = std::make_unique<MapDocument>(name, tilesetId);
+
+    DocumentLocation selectedDoc{ newFile.get(), 0 };
+
+    m_openFiles.push_back(std::move(newFile));
+    SelectDocument(&selectedDoc);
+
+    return;
+}
+
+void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path filePath, size_t tileWidth, size_t tileHeight)
 {
     if(tileWidth <= 0 || tileHeight <= 0) {
         throw program::TileSizeException("Tile size must be greater than zero.");
     }
 
-    auto imageId = LoadImageAsset(filePath);
-    auto tilesetId = LoadTilesetAsset(imageId, static_cast<int>(tileWidth), static_cast<int>(tileHeight));
+    auto imageId = LoadImageAsset(name, filePath);
+    auto tilesetId = LoadTilesetAsset(name, imageId, static_cast<int>(tileWidth), static_cast<int>(tileHeight));
 
-    auto newFile = std::make_unique<MapFile>();
-    newFile->m_document = std::make_unique<MapDocument>(tilesetId);    
+    auto newFile = std::make_unique<TilesetFile>();
+    newFile->m_tilesetDocument = std::make_unique<TilesetDocument>(name, tilesetId);    
 
-    m_openFiles.push_back(std::move(newFile));
-    SelectDocument(m_openFiles.size() - 1);
+    m_openFiles.push_back(std::move(newFile));    
 
     return;
 }
@@ -73,24 +88,39 @@ void file::FileManager::SaveFile(size_t index)
 void file::FileManager::CloseFile(size_t index)
 {
     if(!m_openFiles.empty() && index < m_openFiles.size()) {
-        m_openFiles.erase(m_openFiles.begin() + index);
-
-        SelectDocument(m_openFiles.empty() ? 0 : m_openFiles.size() - 1);
+        
+        if(m_selectedDocument.file == m_openFiles[index].get()) {
+            m_selectedDocument.file = nullptr;
+            m_selectedDocument.index = 0;
+        }
+        
+        m_openFiles.erase(m_openFiles.begin() + index);        
     }
 
     return;
 }
 
-void file::FileManager::SelectDocument(size_t index)
+void file::FileManager::SelectDocument(DocumentLocation *document)
 {
-    if (index < m_openFiles.size()) {
-        m_selectedDocument.file = m_openFiles[index].get();
-        m_selectedDocument.index = index;
-    }
-    else if (m_openFiles.empty()) {
+    auto clearSelection = [&]() {
         m_selectedDocument.file = nullptr;
         m_selectedDocument.index = 0;
+    };
+
+    if(!document) {
+        clearSelection();
+        return;
     }
+
+    auto doc = document->file->GetMapDocument(document->index);
+
+    if(!doc) {
+        clearSelection();    
+        return;
+    }
+
+    m_selectedDocument.file = document->file;
+    m_selectedDocument.index = document->index;
 }
 
 file::MapDocument* file::FileManager::GetSelectedDocument() const
@@ -115,4 +145,16 @@ file::IFile* file::FileManager::GetSelectedFile() const
 size_t file::FileManager::GetSelectedFileIndex() const
 {
     return m_selectedDocument.index;
+}
+
+std::vector<file::TilesetDocument*> file::FileManager::GetAllTilesetDocuments() const
+{
+    std::vector<TilesetDocument*> allTilesetDocs{};
+
+    for (const auto& file : m_openFiles) {
+        auto tilesetDocs = file->GetTilesetDocuments();
+        allTilesetDocs.insert(allTilesetDocs.end(), tilesetDocs.begin(), tilesetDocs.end());
+    }
+
+    return allTilesetDocs;
 }
