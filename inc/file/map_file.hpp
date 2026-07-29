@@ -12,7 +12,7 @@ namespace file {
     class FileManager;
 
     class MapFile : public IFile
-    {        
+    {
         private:
             std::filesystem::path m_filePath{};
             std::unique_ptr<MapDocument> m_document = nullptr;
@@ -25,7 +25,7 @@ namespace file {
             void Save() override;
             void Close() override;
 
-            std::wstring GetExtension() const override;            
+            std::wstring GetExtension() const override;
             std::wstring GetFileName() const override;
             std::filesystem::path GetFilePath() const override;
 

@@ -31,7 +31,7 @@ namespace program {
 
     struct ProgramContext
     {
-        std::unique_ptr<sections::TilesetSection> tilesetSection;        
+        std::unique_ptr<sections::TilesetSection> tilesetSection;
         std::unique_ptr<sections::MapSection> mapSection;
         std::unique_ptr<sections::ToolbarSection> toolbarSection;
         std::unique_ptr<sections::MenuSection> menuSection;
@@ -44,7 +44,7 @@ namespace program {
         
         std::wstring currentProjectName;
 
-        std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;        
+        std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
         
         std::unique_ptr<file::FileManager> fileManager{};
         std::unique_ptr<command::CommandManager> commandManager{};

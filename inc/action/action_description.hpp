@@ -19,13 +19,13 @@ namespace action {
 
     enum class GroupId
     {   
-        Default,     
+        Default,
         File,
         UndoRedo,
         LayerManagement,
         EditorLayerMode,
         EditorChunkMode
-    };    
+    };
 
     struct ActionDescription
     {
@@ -39,7 +39,7 @@ namespace action {
         MenuId menuId = MenuId::None;
 
         std::optional<locale::StringId> tooltipStringId = std::nullopt;
-        locale::StringId nameStringId = locale::StringId::TextMissing;        
+        locale::StringId nameStringId = locale::StringId::TextMissing;
     };
 
 }

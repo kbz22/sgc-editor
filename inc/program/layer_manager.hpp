@@ -10,7 +10,7 @@ namespace program {
 
     struct LayerItem
     {
-        std::shared_ptr<sgc::data::ITileStorage> storage;        
+        std::shared_ptr<sgc::data::ITileStorage> storage;
         std::wstring name;
         bool visible = true;
         uint8_t transparency = 255;
@@ -45,6 +45,6 @@ namespace program {
             size_t GetBaseLayerIndex() const;
             size_t GetSize() const;
             bool IsSingleLayerMode() const;
-    };        
+    };
 
 }

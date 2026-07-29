@@ -14,7 +14,7 @@ namespace sections {
     class LayersSection : public Section
     {
         private:
-            std::unique_ptr<win32_models::LayerListControl> m_layerListControl = nullptr;            
+            std::unique_ptr<win32_models::LayerListControl> m_layerListControl = nullptr;
             static bool m_isLayerListProcRegistered;
 
             static LRESULT CALLBACK LayerListProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

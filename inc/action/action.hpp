@@ -19,8 +19,8 @@ namespace action {
         protected:
             ActionType m_actionType = ActionType::Default;
             ActionDescription m_actionDescription{};
-            bool m_enabled = false;            
-            bool m_checked = false;            
+            bool m_enabled = false;
+            bool m_checked = false;
 
             win32_program::CommandId m_commandId; //! tmp - to be fully replaced by ActionType
 
@@ -29,20 +29,20 @@ namespace action {
 
             ActionType GetType() const;
 
-            bool IsEnabled() const;         
+            bool IsEnabled() const;
             bool IsChecked() const;
             bool IsCheckGroupItem() const;
             bool IsToolbarItem() const;
             virtual bool IsPopup() const;
 
-            void SetEnabled(bool enabled);            
+            void SetEnabled(bool enabled);
             void SetChecked(bool checked);
 
             int GetToolbarImageIndex() const;
             int GetToolbarOrder() const;
             int GetMenuIndex() const;
             GroupId GetGroupId() const;
-            MenuId GetMenuId() const;            
+            MenuId GetMenuId() const;
             std::optional<locale::StringId> GetTooltipStringId() const;
             std::optional<locale::StringId> GetNameStringId() const;
             virtual std::optional<std::vector<Action*>> GetPopupMenuItems() const;

@@ -10,7 +10,7 @@ namespace win32_models {
         int imageIndex;
         win32_program::CommandId commandId;
         bool enabled = true;
-        bool seperator = false;        
+        bool seperator = false;
         bool grouped = false;
     };   
 

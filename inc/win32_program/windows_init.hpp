@@ -5,7 +5,7 @@
 namespace win32_program
 {   
 
-    void Init(HINSTANCE hInstance);        
+    void Init(HINSTANCE hInstance);
 
     void Run();
 

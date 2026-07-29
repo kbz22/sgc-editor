@@ -5,6 +5,6 @@
 namespace program {
 
     void UpdateEditorLayerMode(program::EditorLayerMode newMode);
-    void UpdateEditorChunkMode(program::EditorChunkMode newMode);    
+    void UpdateEditorChunkMode(program::EditorChunkMode newMode);
 
 }

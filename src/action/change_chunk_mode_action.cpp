@@ -23,11 +23,11 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
             m_actionDescription.imageIndex = 15;
             m_actionDescription.toolbarOrder = 1400;
             m_actionDescription.menuOrder = 502;
-            break;        
+            break;
     }
     
     m_enabled = true;
-    m_checked = false;    
+    m_checked = false;
     
     m_actionDescription.checkGroupItem = true;
     m_actionDescription.groupId = GroupId::EditorChunkMode;
@@ -36,6 +36,6 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
 
 void action::ChangeChunkModeAction::Execute(program::ProgramContext& context)
 {
-    context.editorChunkMode = m_chunkMode;    
+    context.editorChunkMode = m_chunkMode;
     program::UpdateEditorChunkMode(context.editorChunkMode);
 }

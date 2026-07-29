@@ -22,7 +22,7 @@ namespace file {
             void Save() override;
             void Close() override;
 
-            std::wstring GetExtension() const override;            
+            std::wstring GetExtension() const override;
             std::wstring GetFileName() const override;
             std::filesystem::path GetFilePath() const override;
 

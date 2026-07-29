@@ -4,7 +4,7 @@
 #include "command/layer_move_command.hpp"
 
 action::LayerMoveAction::LayerMoveAction(int moveCount) :
-    m_moveCount(moveCount)    
+    m_moveCount(moveCount)
 {
     m_actionType = (moveCount < 0) ? ActionType::MoveLayerDown : ActionType::MoveLayerUp;
     m_enabled = true;

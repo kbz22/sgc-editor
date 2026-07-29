@@ -3,7 +3,7 @@
 namespace locale
 {
     enum class StringId
-    {        
+    {
         TextMissing,
 
         WindowTitle,

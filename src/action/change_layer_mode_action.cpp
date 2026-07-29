@@ -25,10 +25,10 @@ action::ChangeLayerModeAction::ChangeLayerModeAction(program::EditorLayerMode la
             m_actionDescription.menuOrder = 101;
             break;
         
-        case program::EditorLayerMode::SingleImage:        
+        case program::EditorLayerMode::SingleImage:
             m_actionType = ActionType::LayerModeSingleImage;
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorLayerModeSingleImage;
-            m_actionDescription.nameStringId = locale::StringId::NameEditorLayerModeSingleImage;            
+            m_actionDescription.nameStringId = locale::StringId::NameEditorLayerModeSingleImage;
             m_actionDescription.imageIndex = 6;
             m_actionDescription.toolbarOrder = 1200;
             m_actionDescription.menuOrder = 102;
@@ -36,15 +36,15 @@ action::ChangeLayerModeAction::ChangeLayerModeAction(program::EditorLayerMode la
     }
     
     m_enabled = true;
-    m_checked = false;    
+    m_checked = false;
     
     m_actionDescription.checkGroupItem = true;
     m_actionDescription.groupId = GroupId::EditorLayerMode;
-    m_actionDescription.menuId = MenuId::View;    
+    m_actionDescription.menuId = MenuId::View;
 }
 
 void action::ChangeLayerModeAction::Execute(program::ProgramContext& context)
 {
-    context.editorLayerMode = m_layerMode;    
+    context.editorLayerMode = m_layerMode;
     program::UpdateEditorLayerMode(context.editorLayerMode);
 }

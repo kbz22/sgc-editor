@@ -7,7 +7,7 @@ namespace action {
     class FileMenuAction : public PopupMenuAction
     {
         public:
-            FileMenuAction();            
-    };    
+            FileMenuAction();
+    };
 
 }

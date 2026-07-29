@@ -6,7 +6,7 @@ namespace win32_program
 {
     enum class ControlId : types::ctrid_t
     {
-        MenuRebar = 1001,        
+        MenuRebar = 1001,
         MenuToolbar = 1002,
         ToolbarRebar = 1003,
         ToolbarToolbar = 1004,

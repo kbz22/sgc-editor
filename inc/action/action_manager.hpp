@@ -9,7 +9,7 @@ namespace action {
 
     class ActionManager
     {
-        private:            
+        private:
             std::vector<std::unique_ptr<Action>> m_actions;
 
         public:

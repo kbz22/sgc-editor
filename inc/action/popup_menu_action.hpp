@@ -24,7 +24,7 @@ namespace action {
             PopupMenuAction();
 
             void Execute(program::ProgramContext &context) override;
-            bool IsPopup() const override;            
+            bool IsPopup() const override;
             std::optional<std::vector<Action*>> GetPopupMenuItems() const override;
 
             void SetItems(std::vector<Action*> items);

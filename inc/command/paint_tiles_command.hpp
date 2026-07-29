@@ -6,13 +6,13 @@
 #include <vector>
 #include <optional>
 
-namespace command {    
+namespace command {
 
     class PaintTilesCommand : public ICommand {
 
         private:
             std::vector<TileChange> m_tileChanges;
-            sgc::data::ITileStorage &m_tileStorage;         
+            sgc::data::ITileStorage &m_tileStorage;
 
         public:
             PaintTilesCommand(

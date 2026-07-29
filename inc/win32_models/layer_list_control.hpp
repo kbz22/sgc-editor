@@ -15,7 +15,7 @@ namespace program {
 namespace win32_models {
 
     struct ListItem
-    {        
+    {
         std::wstring name;
         bool visible = true;
     };
@@ -36,7 +36,7 @@ namespace win32_models {
             int m_imageListIndexClosed = 1;
             std::vector<ListItem> m_layers;
             size_t m_selectedLayerIndex = 0;
-            size_t m_hoveredLayerIndex = 0;            
+            size_t m_hoveredLayerIndex = 0;
             MouseTarget m_mouseOver = MouseTarget::None;
             static bool m_isLayerListProcRegistered;
             HBRUSH m_brushHighlightHover = nullptr;

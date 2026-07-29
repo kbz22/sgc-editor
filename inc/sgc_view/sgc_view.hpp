@@ -28,11 +28,11 @@ namespace sgc_view
     class SgcView
     {
         private:
-            bool m_sdlInitialized = false;            
+            bool m_sdlInitialized = false;
 
             SDL_Window* m_sdlWindow = nullptr;
             
-            bool CreateEmbeddedWindow(HWND hostWindow);            
+            bool CreateEmbeddedWindow(HWND hostWindow);
 
         protected:
             int m_tileWidth;
