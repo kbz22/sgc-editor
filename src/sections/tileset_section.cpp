@@ -55,7 +55,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
     {        
         case WM_LBUTTONDOWN:
         {
-s            auto mapDocument = programContext.fileManager->GetSelectedDocument();
+            auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
             if(mapDocument == nullptr) {
                 return 0;

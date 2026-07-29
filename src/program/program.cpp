@@ -5,7 +5,6 @@
 #include "program/program.hpp"
 #include "program/layer_manager.hpp"
 #include "program/editor_update.hpp"
-#include "win32_program/toolbar_functions.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
 
 #include "action/new_file_action.hpp"

@@ -2,7 +2,6 @@
 #include "win32_program/windows_init.hpp"
 
 #include "win32_program/windows_controls.hpp"
-#include "win32_program/toolbar_functions.hpp"
 
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
