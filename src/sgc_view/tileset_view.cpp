@@ -95,12 +95,16 @@ void sgc_view::TilesetView::ResetTileset()
 void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
 {
     sgc_view::SgcView::Refresh(programContext);
+    auto selectedDocument = programContext.fileManager->GetSelectedDocument();
 
-    if(programContext.fileManager->GetSelectedDocument() == nullptr) {
-        if(m_tileset != nullptr) {
-            ResetTileset();
-        }
+    if(selectedDocument == nullptr && m_tileset != nullptr) {
+        ResetTileset();
         return;
+    }
+
+    if(selectedDocument != nullptr && m_tileset == nullptr) {
+        auto tilesetId = selectedDocument->GetTilesetAssetId();
+        SetTileset(tilesetId);
     }
 
     if(m_tileset == nullptr) {

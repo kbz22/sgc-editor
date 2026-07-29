@@ -10,9 +10,7 @@
 sgc_view::MapView::MapView(HWND hwnd) :
     SgcView(hwnd),
     m_cursorTile{nullptr}
-{    
-    // m_cursorTile.SetColor({ 255, 255, 255, 64 });
-
+{
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;    
 
     auto layer = std::make_shared<graphics::RenderLayer>(drawables);
@@ -82,12 +80,19 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 {
     sgc_view::SgcView::Refresh(programContext);
 
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto selectedDocument = programContext.fileManager->GetSelectedDocument();
 
-    if(mapDocument == nullptr) {
-        if(m_tileset != nullptr) {
-            ResetTileset();
-        }        
+    if(selectedDocument == nullptr && m_tileset != nullptr) {
+        ResetTileset();
+        return;
+    }
+
+    if(selectedDocument != nullptr && m_tileset == nullptr) {
+        auto tilesetId = selectedDocument->GetTilesetAssetId();
+        SetTileset(tilesetId);
+    }
+
+    if(m_tileset == nullptr) {
         return;
     }
 
@@ -98,7 +103,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
         });
     }
 
-    auto layerManager = mapDocument->GetLayerManager();
+    auto layerManager = selectedDocument->GetLayerManager();
     auto layers = layerManager->GetLayers();
     std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
 

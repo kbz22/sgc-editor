@@ -144,7 +144,13 @@ file::IFile* file::FileManager::GetSelectedFile() const
 
 size_t file::FileManager::GetSelectedFileIndex() const
 {
-    return m_selectedDocument.index;
+    for(size_t i = 0; i < m_openFiles.size(); ++i) {
+        if(m_openFiles[i].get() == m_selectedDocument.file) {
+            return i;
+        }
+    }
+
+    return 0;
 }
 
 std::vector<file::TilesetDocument*> file::FileManager::GetAllTilesetDocuments() const
