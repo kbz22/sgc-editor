@@ -55,7 +55,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
     {        
         case WM_LBUTTONDOWN:
         {
-            auto mapDocument = programContext.fileManager->GetSelectedDocument();
+s            auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
             if(mapDocument == nullptr) {
                 return 0;
@@ -79,16 +79,6 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
 
             m_selectionTileStart = tilePosition;
             m_selectionTileSize = { 1, 1 };
-            
-            /* programContext.selectionRectangleOnTileset->SetPosition(
-                {tilePosition.x * tileSize.x,
-                tilePosition.y * tileSize.y}
-            );
-            programContext.selectionRectangleOnTileset->SetSize({
-                m_selectionTileSize.x * tileSize.x,
-                m_selectionTileSize.y * tileSize.y
-            }
-            ); */
 
             m_tilesetView->SetCursorPositionInPixels({
                 static_cast<sgc::math::ival>(tilePosition.x * tileSize.x),
@@ -151,16 +141,6 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
                 maxTile.x - minTile.x + 1,
                 maxTile.y - minTile.y + 1
             };
-
-            /* programContext.selectionRectangleOnTileset->SetPosition({
-                static_cast<sgc::math::ival>(minTile.x * tileSize.x),
-                static_cast<sgc::math::ival>(minTile.y * tileSize.y)
-            });
-
-            programContext.selectionRectangleOnTileset->SetSize({
-                m_selectionTileSize.x * tileSize.x,
-                m_selectionTileSize.y * tileSize.y
-            }); */
 
             m_tilesetView->SetCursorPositionInPixels({
                 static_cast<sgc::math::ival>(minTile.x * tileSize.x),

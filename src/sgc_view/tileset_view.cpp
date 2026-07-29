@@ -49,11 +49,6 @@ void sgc_view::TilesetView::Render()
     SgcView::Clear();
     SgcView::DrawAll();
 
-    /* program::ProgramContext& programContext = program::GetProgramContext();
-
-    if (programContext.selectionRectangleOnTileset != nullptr) {
-        programContext.selectionRectangleOnTileset->Draw(m_renderContext);
-    } */
     if(m_cursorTile != nullptr) {
         m_cursorTile->Draw(m_renderContext);
     }
@@ -123,14 +118,6 @@ void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
             static_cast<sgc::math::ival>(tileSize.y)
         });
     }
-
-    /* if(programContext.selectionRectangleOnTileset == nullptr) 
-    {
-        programContext.selectionRectangleOnTileset = std::make_unique<sgc::graphics::Rectangle>(
-            0, 0, tileSize.x, tileSize.y
-        );
-        programContext.selectionRectangleOnTileset->SetColor({ 0, 128, 128, 255 });
-    } */
 }
 
 void sgc_view::TilesetView::SetCursorColor(sgc::graphics::color color)

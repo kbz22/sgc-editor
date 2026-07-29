@@ -33,9 +33,9 @@ namespace sections {
 
             virtual void Update() = 0;
             virtual void Refresh(program::ProgramContext& programContext) = 0;
-            virtual void HandleSectionResize() = 0;            
+            virtual void HandleSectionResize() = 0;
 
-            HWND GetHwnd() const;            
+            HWND GetHwnd() const;
     };    
 
 }

@@ -40,7 +40,7 @@ namespace sgc_view
             void ChangeCameraPositionSingles(float deltaX, float deltaY);
             void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
 
-            sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;            
+            sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
             sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;
             sgc::tile::TileSize2D GetCursorSizeInTiles() const;

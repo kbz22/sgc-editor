@@ -53,30 +53,14 @@ void sections::MapSection::LoadMap(const std::filesystem::path& path)
         bytes,
         rc,
         rm
-    );    
-
-    /* m_mapView->SetStorage(
-        std::make_shared<sgc::data::ChunkedTileStorage>(std::move(*storage))
-    ); */
+    );
 }
 
 void sections::MapSection::SaveMap(const std::filesystem::path& path)
 {
     if (m_mapView == nullptr) {
         return;
-    }    
-
-    /* auto asset = sgc::asset::AssetBuilder<sgc::asset::ChunkedTileStorageAsset>::Build(        
-        *(m_mapView->m_tileStorage)
-    );
-
-    auto bytes = sgc::asset::AssetSerializer<sgc::asset::ChunkedTileStorageAsset>::Serialize(
-        asset
-    );
-
-    std::ofstream file(path, std::ios::binary);
-    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size()); */
-
+    }
 }
 
 void sections::MapSection::HandleSectionResize()

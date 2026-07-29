@@ -23,7 +23,7 @@ namespace win32_program {
 
             float m_layersPackageViewRatio = defaults::initialLayerHorizontalRatio;
             float m_tilesetMapRatio = defaults::initialTilesetRatio;
-            float m_layersMapViewRatio = defaults::initialLayerVerticalRatio;            
+            float m_layersMapViewRatio = defaults::initialLayerVerticalRatio;
 
             DraggedSplitter m_draggedSplitter = DraggedSplitter::None;
 
@@ -40,7 +40,7 @@ namespace win32_program {
             void UpdateRebarLayout(HWND hwnd, int width);
 
         public:
-            LayoutManager(program::ProgramContext& programContext = program::GetProgramContext());              
+            LayoutManager(program::ProgramContext& programContext = program::GetProgramContext());
 
             DraggedSplitter GetDraggedSplitter(HWND hwnd, LPARAM lParam);
             void ResetDraggedSplitter();
