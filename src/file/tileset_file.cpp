@@ -1,7 +1,84 @@
 #include "file/tileset_file.hpp"
 #include "defaults.hpp"
+#include "sgc/graphics/tileset.hpp"
+#include "sgc/graphics/image.hpp"
+#include "sgc/asset/tilesetasset.hpp"
+#include "sgc/asset/imageasset.hpp"
+#include "sgc/asset/tilesetserializer.hpp"
+#include "sgc/asset/assetheaderdeserializer.hpp"
+#include "sgc/data/resourcecontext.hpp"
+#include "sgc/data/asset.hpp"
+#include "program/except.hpp"
+#include <fstream>
+
+file::TilesetFile::TilesetFile(AssetManager &assetManager)
+    : m_assetManager(assetManager)
+{
+    return;
+}
 
 void file::TilesetFile::Open(){
+
+    std::fstream file(m_filePath, std::ios::binary | std::ios::in);
+
+    std::vector<uint8_t> bytes;
+
+    file.seekg(0, std::ios::end);
+    bytes.resize(file.tellg());
+    file.seekg(0, std::ios::beg);
+    file.read(reinterpret_cast<char*>(bytes.data()), bytes.size());
+
+    std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
+
+    for(int i = 0; i < tilesetFileMagic.size(); ++i) {
+        if(bytes[i] != tilesetFileMagic[i]) {
+            throw program::AssetLoadException("Invalid tileset file format.");
+        }
+    }
+
+    size_t bytesIndex = tilesetFileMagic.size();
+    sgc::data::ResourceContext context;
+    
+    auto imageHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Load(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end()),
+        context
+    );
+
+    bytesIndex += sizeof(sgc::data::AssetHeader);
+
+    auto image = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Load(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + imageHeader->size),
+        context
+    );
+
+    bytesIndex += imageHeader->size;
+
+    auto tilesetHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Load(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end()),
+        context
+    );
+
+    bytesIndex += sizeof(sgc::data::AssetHeader);
+
+    auto tileset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Load(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + tilesetHeader->size),
+        context
+    );
+    
+    if(!m_assetManager.CheckAssetExists(imageHeader->id)) {
+        m_assetManager.AddAsset<sgc::asset::ImageAsset>(imageHeader->id, image);
+    }
+
+    if(!m_assetManager.CheckAssetExists(tilesetHeader->id)) {
+        m_assetManager.AddAsset<sgc::asset::TilesetAsset>(tilesetHeader->id, tileset);
+    }
+
+    m_tilesetDocument = std::make_unique<TilesetDocument>(
+        m_filePath.stem().wstring(),
+        tilesetHeader->id,
+        imageHeader->id
+    );
+
     return;
 }
 
@@ -11,7 +88,65 @@ void file::TilesetFile::Save(){
         return;
     }
 
+    if(m_tilesetDocument == nullptr) {
+        return;
+    }
+
     m_savedOrLoaded = true;
+
+    auto imageAsset = m_assetManager.GetAsset<sgc::asset::ImageAsset>(
+        m_tilesetDocument->GetImageAssetId()
+    );
+    
+    auto tilesetAsset = m_assetManager.GetAsset<sgc::asset::TilesetAsset>(
+        m_tilesetDocument->GetTilesetAssetId()
+    );
+
+    auto tilesetBytes = sgc::asset::AssetSerializer<sgc::asset::TilesetAsset>::Serialize(
+        *tilesetAsset
+    );    
+
+    auto imageBytes = sgc::asset::AssetSerializer<sgc::asset::ImageAsset>::Serialize(
+        *imageAsset
+    );
+    
+    sgc::data::AssetHeader imageHeader = {
+        m_tilesetDocument->GetImageAssetId(),
+        sgc::data::AssetType::Texture,
+        imageBytes.size()      
+    };
+
+    sgc::data::AssetHeader tilesetHeader = {
+        m_tilesetDocument->GetTilesetAssetId(),
+        sgc::data::AssetType::Tileset,
+        tilesetBytes.size()
+    };
+
+    auto tilesetHeaderBytes = sgc::asset::AssetSerializer<sgc::data::AssetHeader>::Serialize(
+        tilesetHeader
+    );
+
+    auto imageHeaderBytes = sgc::asset::AssetSerializer<sgc::data::AssetHeader>::Serialize(
+        imageHeader
+    );
+
+
+    std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
+
+    std::vector<uint8_t> bytes;
+    
+    auto appendBytes = [&bytes](const std::vector<uint8_t>& data) {        
+        bytes.insert(bytes.end(), data.begin(), data.end());
+    };   
+
+    appendBytes(tilesetFileMagic);
+    appendBytes(imageHeaderBytes);
+    appendBytes(imageBytes);
+    appendBytes(tilesetHeaderBytes);
+    appendBytes(tilesetBytes);
+
+    std::ofstream file(m_filePath, std::ios::binary);
+    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 
     return;
 }

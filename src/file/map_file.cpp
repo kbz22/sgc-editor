@@ -2,7 +2,7 @@
 #include "defaults.hpp"
 #include <sgc/asset/mapasset.hpp>
 #include <sgc/asset/mapserializer.hpp>
-#include <sgc/asset/tilestoragebuilder.hpp>
+#include <sgc/asset/tilestorageassetbuilder.hpp>
 #include <fstream>
 
 void file::MapFile::Open(){
@@ -12,6 +12,10 @@ void file::MapFile::Open(){
 void file::MapFile::Save(){
 
     if(m_filePath.empty()) {
+        return;
+    }
+
+    if(m_document == nullptr) {
         return;
     }
 
@@ -38,6 +42,10 @@ void file::MapFile::Save(){
     auto bytes = sgc::asset::AssetSerializer<sgc::asset::MapAsset>::Serialize(
         mapAsset
     );
+
+    uint8_t mapFileMagic[4] = { 'S', 'G', 'C', 'M' };
+
+    bytes.insert(bytes.begin(), mapFileMagic, mapFileMagic + 4);
 
     std::ofstream file(m_filePath, std::ios::binary);
     file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());

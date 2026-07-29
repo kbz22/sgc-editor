@@ -4,7 +4,7 @@
 #include "command/command_manager.hpp"
 
 #include <sgc/data/resourcemanager.hpp>
-#include <sgc/asset/assetloader.hpp>
+#include <sgc/asset/assetdeserializer.hpp>
 #include <sgc/asset/chunkedtilestorageserializer.hpp>
 #include <sgc/asset/chunkedtilestorageassetbuilder.hpp>
 #include <sgc/coordinates/screenworld.hpp>
@@ -34,32 +34,6 @@ void sections::MapSection::Refresh(program::ProgramContext& programContext)
 {    
     if (m_mapView != nullptr) {
         m_mapView->Refresh(programContext);
-    }
-}
-
-void sections::MapSection::LoadMap(const std::filesystem::path& path)
-{
-    if (m_mapView == nullptr) {
-        return;
-    }
-
-    std::ifstream file(path, std::ios::binary);
-    std::vector<uint8_t> bytes((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-    sgc::data::ResourceContext rc;
-    sgc::data::ResourceManager rm;
-
-    auto storage = sgc::asset::AssetLoader<sgc::data::ChunkedTileStorage>::Load(
-        bytes,
-        rc,
-        rm
-    );
-}
-
-void sections::MapSection::SaveMap(const std::filesystem::path& path)
-{
-    if (m_mapView == nullptr) {
-        return;
     }
 }
 

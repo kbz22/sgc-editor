@@ -209,7 +209,7 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
 
                     auto &programContext = program::GetProgramContext();
                     try {
-                        programContext.fileManager->NewTilesetFile(tilesetName, imagePath, tileWidth, tileHeight);
+                        programContext.fileManager->NewTilesetFile(tilesetName, imagePath, tileWidth, tileHeight, *programContext.assetManager);
                     }
                     catch (const program::AssetCacheException) {
                         MessageBox(hDlg, L"An asset with the same identifier already exists.", L"Error", MB_OK | MB_ICONERROR);

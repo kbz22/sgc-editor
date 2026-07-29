@@ -54,7 +54,7 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
     return;
 }
 
-void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path filePath, size_t tileWidth, size_t tileHeight)
+void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path filePath, size_t tileWidth, size_t tileHeight, AssetManager &assetManager)
 {
     if(tileWidth <= 0 || tileHeight <= 0) {
         throw program::TileSizeException("Tile size must be greater than zero.");
@@ -63,8 +63,8 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
     auto imageId = LoadImageAsset(name, filePath);
     auto tilesetId = LoadTilesetAsset(name, imageId, static_cast<int>(tileWidth), static_cast<int>(tileHeight));
 
-    auto newFile = std::make_unique<TilesetFile>();
-    newFile->m_tilesetDocument = std::make_unique<TilesetDocument>(name, tilesetId);    
+    auto newFile = std::make_unique<TilesetFile>(assetManager);
+    newFile->m_tilesetDocument = std::make_unique<TilesetDocument>(name, tilesetId, imageId);
 
     m_openFiles.push_back(std::move(newFile));    
 
@@ -151,6 +151,26 @@ size_t file::FileManager::GetSelectedFileIndex() const
     }
 
     return 0;
+}
+
+size_t file::FileManager::GetFileIndex(IFile* file) const
+{
+    for(size_t i = 0; i < m_openFiles.size(); ++i) {
+        if(m_openFiles[i].get() == file) {
+            return i;
+        }
+    }
+
+    return 0;
+}
+
+std::vector<file::IFile*> file::FileManager::GetOpenFiles() const
+{
+    std::vector<IFile*> openFiles{};
+    for(const auto& file : m_openFiles) {
+        openFiles.push_back(file.get());
+    }
+    return openFiles;
 }
 
 std::vector<file::TilesetDocument*> file::FileManager::GetAllTilesetDocuments() const

@@ -2,6 +2,7 @@
 
 #include "file/ifile.hpp"
 #include "file/tileset_document.hpp"
+#include "file/asset_manager.hpp"
 #include <filesystem>
 #include <memory>
 
@@ -12,10 +13,11 @@ namespace file {
         private:
             std::filesystem::path m_filePath{};
             std::unique_ptr<TilesetDocument> m_tilesetDocument{nullptr};
+            AssetManager &m_assetManager;
             bool m_savedOrLoaded{false};
 
         public:
-            TilesetFile() = default;
+            TilesetFile(AssetManager &assetManager);
             virtual ~TilesetFile() = default;
 
             void Open() override;

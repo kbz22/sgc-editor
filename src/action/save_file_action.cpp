@@ -72,6 +72,26 @@ void action::SaveFileAction::Execute(program::ProgramContext& programContext)
             programContext.fileManager->SaveFile(
                 programContext.fileManager->GetSelectedFileIndex()
             );
+
+            //! tmp - when saving a map also save the tileset file
+            // this is mostly a hack - the desired behavior is to save the tileset file 
+            // on its own from the package section once it is implemented
+            auto activeFileDocuments = activeFile->GetMapDocuments();
+            if(activeFileDocuments.size() > 0) {
+                auto files = programContext.fileManager->GetOpenFiles();
+                for(auto &file : files) {
+                    auto tilesetDocs = file->GetTilesetDocuments();
+                    for(auto &tilesetDoc : tilesetDocs) {
+                        if(tilesetDoc->GetTilesetAssetId() == activeFileDocuments[0]->GetTilesetAssetId()) {
+                            file->SetFilePath(filePath.value().parent_path() / (tilesetDoc->GetName() + defaults::TilesetFileExtension.data()));
+                            programContext.fileManager->SaveFile(
+                                programContext.fileManager->GetFileIndex(file)
+                            );
+                        }
+                    }
+                }
+
+            }
         }
 
     }

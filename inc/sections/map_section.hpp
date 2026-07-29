@@ -34,10 +34,6 @@ namespace sections {
             void HandleSectionResize() override;
 
             void Refresh(program::ProgramContext& programContext) override;
-
-            // void LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext);
-            void LoadMap(const std::filesystem::path& path);
-            void SaveMap(const std::filesystem::path& path);
             
             void SetCheckTileBeforePainting(bool check);
     };
