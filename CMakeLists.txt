@@ -88,7 +88,7 @@ add_executable(sgc-editor WIN32
     src/action/action.cpp
     src/action/action_manager.cpp
     src/action/new_file_action.cpp
-    # src/action/open_file_action.cpp
+    src/action/open_file_action.cpp
     src/action/save_file_action.cpp
     src/action/close_file_action.cpp
     src/action/undo_action.cpp
@@ -103,7 +103,7 @@ add_executable(sgc-editor WIN32
     src/action/edit_menu_action.cpp
     src/action/map_menu_action.cpp
     src/action/view_menu_action.cpp
-    src/action/help_menu_action.cpp
+    src/action/help_menu_action.cpp    
 
     src/file/map_file.cpp
     src/file/map_document.cpp

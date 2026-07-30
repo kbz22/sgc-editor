@@ -3,10 +3,6 @@
 #include "command/paint_tiles_command.hpp"
 #include "command/command_manager.hpp"
 
-#include <sgc/data/resourcemanager.hpp>
-#include <sgc/asset/assetdeserializer.hpp>
-#include <sgc/asset/chunkedtilestorageserializer.hpp>
-#include <sgc/asset/chunkedtilestorageassetbuilder.hpp>
 #include <sgc/coordinates/screenworld.hpp>
 #include <sgc/sdl/sdl_win32.hpp>
 #include <fstream>
@@ -84,7 +80,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 return 0;
             }
 
-            auto mapDocument = programContext.fileManager->GetSelectedDocument();
+            // auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
             if(mapDocument == nullptr) {
                 return 0;
@@ -175,7 +171,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 return 0;
             }
 
-            auto mapDocument = programContext.fileManager->GetSelectedDocument();
+            // auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
             if(mapDocument == nullptr) {
                 return 0;

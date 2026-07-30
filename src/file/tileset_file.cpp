@@ -4,7 +4,7 @@
 #include "sgc/graphics/image.hpp"
 #include "sgc/asset/tilesetasset.hpp"
 #include "sgc/asset/imageasset.hpp"
-#include "sgc/asset/tilesetserializer.hpp"
+#include "sgc/asset/tilesetassetserializer.hpp"
 #include "sgc/asset/assetheaderdeserializer.hpp"
 #include "sgc/data/resourcecontext.hpp"
 #include "sgc/data/asset.hpp"
@@ -18,6 +18,10 @@ file::TilesetFile::TilesetFile(AssetManager &assetManager)
 }
 
 void file::TilesetFile::Open(){
+
+    if(m_filePath.empty()) {
+        return;
+    }
 
     std::fstream file(m_filePath, std::ios::binary | std::ios::in);
 
@@ -37,46 +41,44 @@ void file::TilesetFile::Open(){
     }
 
     size_t bytesIndex = tilesetFileMagic.size();
-    sgc::data::ResourceContext context;
     
-    auto imageHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Load(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end()),
-        context
+    auto imageHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Deserialize(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end())
     );
 
     bytesIndex += sizeof(sgc::data::AssetHeader);
 
-    auto image = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Load(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + imageHeader->size),
-        context
+    auto image = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Deserialize(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + imageHeader.size)
     );
 
-    bytesIndex += imageHeader->size;
+    bytesIndex += imageHeader.size;
 
-    auto tilesetHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Load(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end()),
-        context
+    auto tilesetHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Deserialize(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end())
     );
 
     bytesIndex += sizeof(sgc::data::AssetHeader);
 
-    auto tileset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Load(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + tilesetHeader->size),
-        context
+    auto tileset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Deserialize(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + tilesetHeader.size)
     );
+
+    std::shared_ptr<sgc::asset::ImageAsset> imagePtr = std::make_shared<sgc::asset::ImageAsset>(image);
+    std::shared_ptr<sgc::asset::TilesetAsset> tilesetPtr = std::make_shared<sgc::asset::TilesetAsset>(tileset);
     
-    if(!m_assetManager.CheckAssetExists(imageHeader->id)) {
-        m_assetManager.AddAsset<sgc::asset::ImageAsset>(imageHeader->id, image);
+    if(!m_assetManager.CheckAssetExists(imageHeader.id)) {
+        m_assetManager.AddAsset<sgc::asset::ImageAsset>(imageHeader.id, imagePtr);
     }
 
-    if(!m_assetManager.CheckAssetExists(tilesetHeader->id)) {
-        m_assetManager.AddAsset<sgc::asset::TilesetAsset>(tilesetHeader->id, tileset);
+    if(!m_assetManager.CheckAssetExists(tilesetHeader.id)) {
+        m_assetManager.AddAsset<sgc::asset::TilesetAsset>(tilesetHeader.id, tilesetPtr);
     }
 
     m_tilesetDocument = std::make_unique<TilesetDocument>(
         m_filePath.stem().wstring(),
-        tilesetHeader->id,
-        imageHeader->id
+        tilesetHeader.id,
+        imageHeader.id
     );
 
     return;
@@ -195,7 +197,7 @@ std::vector<file::MapDocument*> file::TilesetFile::GetMapDocuments()
     return std::vector<MapDocument*>();
 }
 
-std::optional<file::MapDocument*> file::TilesetFile::GetMapDocument(size_t index)
+std::optional<file::MapDocument*> file::TilesetFile::GetMapDocument([[maybe_unused]]size_t index)
 {
     return std::nullopt;
 }

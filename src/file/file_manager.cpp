@@ -73,7 +73,31 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
 
 void file::FileManager::OpenFile(std::filesystem::path filePath)
 {
-    //!
+    auto extension = filePath.extension().wstring();
+
+    if(extension == defaults::MapFileExtension.data())
+    {
+        auto newFile = std::make_unique<MapFile>();
+        newFile->SetFilePath(filePath);
+        newFile->Open();
+        m_openFiles.push_back(std::move(newFile));
+    }
+    else if(extension == defaults::TilesetFileExtension.data()) 
+    {
+        auto &programContext = program::GetProgramContext();
+        auto &assetManager = programContext.assetManager;
+
+        auto newFile = std::make_unique<TilesetFile>(*assetManager);
+        newFile->SetFilePath(filePath);
+        newFile->Open();
+        m_openFiles.push_back(std::move(newFile));
+    }
+    else
+    {
+        auto errorMsg = "Unsupported file extension: " + filePath.extension().string();
+        throw program::AssetLoadException(errorMsg);
+    }
+
     return;
 }
 

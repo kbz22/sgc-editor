@@ -1,11 +1,68 @@
 #include "file/map_file.hpp"
 #include "defaults.hpp"
+#include "program/except.hpp"
 #include <sgc/asset/mapasset.hpp>
-#include <sgc/asset/mapserializer.hpp>
+#include <sgc/asset/mapassetserializer.hpp>
+#include <sgc/asset/mapassetdeserializer.hpp>
 #include <sgc/asset/tilestorageassetbuilder.hpp>
+#include <sgc/asset/chunkedtilestoragebuilder.hpp>
 #include <fstream>
+#include <variant>
 
 void file::MapFile::Open(){
+
+    if(m_filePath.empty()) {
+        return;
+    }
+
+    std::fstream file(m_filePath, std::ios::binary | std::ios::in);
+
+    std::vector<uint8_t> bytes;
+
+    file.seekg(0, std::ios::end);
+    bytes.resize(file.tellg());
+    file.seekg(0, std::ios::beg);
+    file.read(reinterpret_cast<char*>(bytes.data()), bytes.size());
+
+    std::vector<uint8_t> mapFileMagic = { 'S', 'G', 'C', 'M' };
+
+    for(int i = 0; i < mapFileMagic.size(); ++i) {
+        if(bytes[i] != mapFileMagic[i]) {
+            throw program::AssetLoadException("Invalid map file format.");
+        }
+    }
+
+    auto mapAsset = sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
+        std::vector<uint8_t>(bytes.begin() + mapFileMagic.size(), bytes.end())
+    );
+
+    m_document = std::make_unique<MapDocument>(
+        m_filePath.stem().wstring(),
+        mapAsset.tilesetId
+    );
+
+    auto layerManager = m_document->GetLayerManager();
+
+    for(const auto &layerAsset : mapAsset.layers) {
+        std::shared_ptr<sgc::data::ITileStorage> tileStorage;
+
+        if(std::holds_alternative<sgc::asset::ChunkedTileStorageAsset>(layerAsset.tileStorage)) {
+            auto &chunkedStorage = std::get<sgc::asset::ChunkedTileStorageAsset>(layerAsset.tileStorage);
+            tileStorage = sgc::asset::RuntimeBuilder<sgc::data::ChunkedTileStorage>::Build(chunkedStorage);
+        } else {
+            throw std::runtime_error("Unknown tile storage type");
+        }
+
+        program::LayerItem layerItem = {
+            tileStorage,
+            layerAsset.name,
+            true,
+            255
+        };
+
+        layerManager->AddLayer(layerItem);
+    }
+
     return;
 }
 
@@ -120,7 +177,7 @@ std::vector<file::TilesetDocument*> file::MapFile::GetTilesetDocuments()
     return std::vector<TilesetDocument*>{};
 }
 
-std::optional<file::TilesetDocument*> file::MapFile::GetTilesetDocument(size_t index)
+std::optional<file::TilesetDocument*> file::MapFile::GetTilesetDocument([[maybe_unused]] size_t index)
 {
     return std::nullopt;
 }
