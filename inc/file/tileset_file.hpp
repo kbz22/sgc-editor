@@ -29,6 +29,9 @@ namespace file {
             std::filesystem::path GetFilePath() const override;
 
             bool IsDirty() const override;
+            bool IsContainer() const override;
+
+            FileType GetFileType() const override;
 
             void SetFilePath(const std::filesystem::path& path) override;
 

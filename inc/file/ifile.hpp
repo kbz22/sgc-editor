@@ -9,6 +9,12 @@
 
 namespace file {
 
+    enum class FileType {
+        Map = 0,
+        Tileset = 1,
+        Package = 2
+    };
+
     class IFile
     {
         public:
@@ -23,6 +29,9 @@ namespace file {
             virtual std::filesystem::path GetFilePath() const = 0;
 
             virtual bool IsDirty() const = 0;
+            virtual bool IsContainer() const = 0;
+
+            virtual FileType GetFileType() const = 0;
 
             virtual void SetFilePath(const std::filesystem::path& path) = 0;
 

@@ -45,3 +45,8 @@ void file::MapDocument::SetDirty(bool dirty)
 {
     m_dirty = dirty;
 }
+
+const std::wstring& file::MapDocument::GetName() const
+{
+    return name;
+}

@@ -44,6 +44,10 @@ void sgc_view::MapView::SetTileset(sgc::data::AssetId tilesetId)
 {
     SgcView::SetTileset(tilesetId);
 
+    if(m_tileset == nullptr) {
+        return;
+    }
+
     auto tileSize = m_tileset->GetTileSize();
 
     SetCursorTile({

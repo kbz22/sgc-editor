@@ -144,6 +144,11 @@ std::filesystem::path file::MapFile::GetFilePath() const
     return m_filePath;
 }
 
+file::FileType file::MapFile::GetFileType() const
+{
+    return FileType::Map;
+}
+
 void file::MapFile::SetFilePath(const std::filesystem::path& path)
 {
     m_filePath = path;
@@ -154,6 +159,11 @@ bool file::MapFile::IsDirty() const
     if (m_document) {
         return m_document->IsDirty();
     }
+    return false;
+}
+
+bool file::MapFile::IsContainer() const
+{
     return false;
 }
 

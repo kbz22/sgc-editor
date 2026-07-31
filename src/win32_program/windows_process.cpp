@@ -54,18 +54,21 @@ void UpdateAllSections()
     }
 }
 
-void LoadToolbarIcons()
+void SetupImageLists()
 {
     auto& programContext = program::GetProgramContext();
 
     programContext.toolbarIcons = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     programContext.toolbarIconsDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+    programContext.packageViewFileIcons = ImageList_Create(16, 16, ILC_COLOR32, 10, 0);
 
     HBITMAP hBmp = win32_helpers::LoadPngWIC(defaults::IconsPath.data());
     HBITMAP hBmpDisabled = win32_helpers::LoadPngWIC(defaults::DisabledIconsPath.data());
+    HBITMAP hBmpPackageIcons = win32_helpers::LoadPngWIC(defaults::PackageViewFileIconsPath.data());
 
     ImageList_Add(programContext.toolbarIcons, hBmp, NULL);
     ImageList_Add(programContext.toolbarIconsDisabled, hBmpDisabled, NULL);
+    ImageList_Add(programContext.packageViewFileIcons, hBmpPackageIcons, NULL);
 }
 
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -80,7 +83,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     {
     case WM_CREATE:
     {        
-        LoadToolbarIcons();
+        SetupImageLists();
 
         programContext.mainWindowContext->hMainWindow = hwnd;
 

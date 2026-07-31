@@ -98,6 +98,9 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
         throw program::AssetLoadException(errorMsg);
     }
 
+    DocumentLocation openedDoc{ m_openFiles.back().get(), 0 };
+    SelectDocument(&openedDoc);
+
     return;
 }
 

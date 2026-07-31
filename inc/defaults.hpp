@@ -19,6 +19,7 @@ namespace defaults
     // Assets
     const std::wstring_view IconsPath = L"./toolbar_icons.png";
     const std::wstring_view DisabledIconsPath = L"./toolbar_icons_disabled.png";
+    const std::wstring_view PackageViewFileIconsPath = L"./file_icons.png";
 
     //File extensions
     const std::wstring_view MapFileExtension = L".sgcmap";

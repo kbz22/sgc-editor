@@ -60,6 +60,10 @@ void sgc_view::TilesetView::SetTileset(sgc::data::AssetId tilesetId)
 {
     SgcView::SetTileset(tilesetId);
 
+    if(m_tileset == nullptr) {
+        return;
+    }
+
     const math::vec2 gridSize = m_tileset->GetSizeInTiles();
 
     auto tileStorage = std::make_shared<data::StaticTileStorage>(math::vec2{gridSize.x, gridSize.y});

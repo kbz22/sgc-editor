@@ -46,7 +46,7 @@ void file::TilesetFile::Open(){
         std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end())
     );
 
-    bytesIndex += sizeof(sgc::data::AssetHeader);
+    bytesIndex += sgc::data::PackedAssetHeaderSize;
 
     auto image = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Deserialize(
         std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + imageHeader.size)
@@ -58,7 +58,7 @@ void file::TilesetFile::Open(){
         std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end())
     );
 
-    bytesIndex += sizeof(sgc::data::AssetHeader);
+    bytesIndex += sgc::data::PackedAssetHeaderSize;
 
     auto tileset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Deserialize(
         std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + tilesetHeader.size)
@@ -187,6 +187,11 @@ bool file::TilesetFile::IsDirty() const
     );
 }
 
+bool file::TilesetFile::IsContainer() const
+{
+    return false;
+}
+
 void file::TilesetFile::SetFilePath(const std::filesystem::path& path)
 {
     m_filePath = path;
@@ -221,4 +226,9 @@ std::optional<file::TilesetDocument*> file::TilesetFile::GetTilesetDocument(size
     {
         return std::nullopt;
     }
+}
+
+file::FileType file::TilesetFile::GetFileType() const
+{
+    return FileType::Tileset;
 }

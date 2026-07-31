@@ -4,6 +4,7 @@
 #include "win32_helpers/file_helpers.hpp"
 #include "locale/stringid.hpp"
 #include "defaults.hpp"
+#include <unordered_map>
 
 action::SaveFileAction::SaveFileAction()
 {
@@ -23,10 +24,10 @@ action::SaveFileAction::SaveFileAction()
 
 void action::SaveFileAction::Execute(program::ProgramContext& programContext)
 {       
-    static std::unordered_map<wchar_t, locale::StringId> extensionToStringIdMap = {
-        { L't', locale::StringId::NameTilesetFile },
-        { L'm', locale::StringId::NameMapFile },
-        { L'p', locale::StringId::NamePackageFile }
+    static std::unordered_map<file::FileType, locale::StringId> extensionToStringIdMap = {
+        { file::FileType::Map, locale::StringId::NameMapFile },
+        { file::FileType::Tileset, locale::StringId::NameTilesetFile },
+        { file::FileType::Package, locale::StringId::NamePackageFile }
     };
 
     auto activeFile = programContext.fileManager->GetSelectedFile();
@@ -43,7 +44,7 @@ void action::SaveFileAction::Execute(program::ProgramContext& programContext)
 
             auto allFilesString = programContext.stringLookup.Get(locale::StringId::NameAllFiles);
             auto thisTypeString = programContext.stringLookup.Get(
-                extensionToStringIdMap[activeFile->GetExtension().at(4)]
+                extensionToStringIdMap[activeFile->GetFileType()]
             );
 
             if(!thisTypeString.has_value() || !allFilesString.has_value()) {

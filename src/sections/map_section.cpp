@@ -49,7 +49,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
     auto mapDocument = programContext.fileManager->GetSelectedDocument();
     auto &tilesetSection = programContext.tilesetSection;
 
-    if(mapDocument == nullptr)
+    if(mapDocument == nullptr || !mapDocument->IsEditable())
     {
         return DefSubclassProc(hwnd, msg, wparam, lparam);
     }
@@ -168,12 +168,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 m_lastMousePosPan.y = y;
 
                 Update();
-                return 0;
-            }
-
-            // auto mapDocument = programContext.fileManager->GetSelectedDocument();
-
-            if(mapDocument == nullptr) {
                 return 0;
             }
 

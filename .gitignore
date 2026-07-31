@@ -1,6 +1,7 @@
 assets/*
 !assets/toolbar_icons.png
 !assets/toolbar_icons_disabled.png
+!assets/file_icons.png
 build
 dlls
 sgc-editor.code-workspace

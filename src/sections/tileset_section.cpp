@@ -45,8 +45,9 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
 {
     using namespace program;
     ProgramContext& programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
-    if(programContext.fileManager->GetSelectedDocument() == nullptr)
+    if(mapDocument == nullptr || !mapDocument->IsEditable())
     {
         return DefSubclassProc(hwnd, msg, wparam, lparam);
     }

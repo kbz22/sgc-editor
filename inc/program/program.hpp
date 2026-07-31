@@ -53,6 +53,7 @@ namespace program {
 
         HIMAGELIST toolbarIcons;
         HIMAGELIST toolbarIconsDisabled;
+        HIMAGELIST packageViewFileIcons;
 
         locale::CommandLookup commandLookup{};
         locale::StringLookup stringLookup{};

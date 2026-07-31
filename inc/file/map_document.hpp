@@ -29,6 +29,7 @@ namespace file {
             bool IsDirty() const;
 
             void SetDirty(bool dirty);
+            const std::wstring& GetName() const;
     };
 
 }

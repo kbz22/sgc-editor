@@ -132,13 +132,19 @@ sgc::graphics::RenderContext& sgc_view::SgcView::GetRenderContext()
 
 void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
 {
-    auto &programContext = program::GetProgramContext();    
+    auto &programContext = program::GetProgramContext();
 
-    auto tileset = programContext.assetManager->MakeTileset(tilesetId, &m_renderContext);
+    std::shared_ptr<sgc::graphics::Tileset> tileset = nullptr;
 
-    if(tileset == nullptr) {
-        throw std::invalid_argument("Tileset cannot be null.");
+    try {
+        tileset = programContext.assetManager->MakeTileset(tilesetId, &m_renderContext);
     }
+    catch (const program::AssetCacheException& e) {
+        // Ignore missing tileset, wait for refresh when the tileset is available        
+        return;
+    }    
+
+    if(tileset == nullptr) return;
     
     m_tileset = tileset;
     m_tilesetId = tilesetId;

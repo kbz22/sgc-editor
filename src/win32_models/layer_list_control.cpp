@@ -196,6 +196,13 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
 
 LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+    auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
+    
+    if(mapDocument == nullptr || !mapDocument->IsEditable())
+    {
+        return DefSubclassProc(hwnd, msg, wparam, lparam);
+    }
+
     switch (msg)
     {        
         case WM_PAINT:

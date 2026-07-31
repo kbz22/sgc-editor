@@ -28,8 +28,10 @@ namespace file {
             std::wstring GetExtension() const override;
             std::wstring GetFileName() const override;
             std::filesystem::path GetFilePath() const override;
+            FileType GetFileType() const override;
 
             bool IsDirty() const override;
+            bool IsContainer() const override;
 
             void SetFilePath(const std::filesystem::path& path) override;
 

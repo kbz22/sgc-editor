@@ -220,6 +220,8 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                         return TRUE;
                     }
 
+                    program::RefreshEditor();
+
                     EndDialog(hDlg, IDOK);
                     return TRUE;
                 }
