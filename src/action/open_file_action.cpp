@@ -1,4 +1,7 @@
 #include "action/open_file_action.hpp"
+#include "win32_helpers/file_helpers.hpp"
+#include "program/program.hpp"
+#include "defaults.hpp"
 
 action::OpenFileAction::OpenFileAction()
 {
@@ -18,17 +21,24 @@ action::OpenFileAction::OpenFileAction()
 
 void action::OpenFileAction::Execute(program::ProgramContext& programContext)
 {
-    /* auto filePath = win32_helpers::ShowOpenDialog(
+    auto allFilesString = programContext.stringLookup.Get(locale::StringId::NameAllFiles);
+    auto mapFilesString = programContext.stringLookup.Get(locale::StringId::NameMapFile);
+    auto tilesetFilesString = programContext.stringLookup.Get(locale::StringId::NameTilesetFile);
+
+    std::vector<win32_helpers::FileFilter> filters = {
+        { mapFilesString.value_or(L"Map Files").c_str(), { defaults::MapFileExtension.data() } },
+        { tilesetFilesString.value_or(L"Tileset Files").c_str(), { defaults::TilesetFileExtension.data() } },
+        { allFilesString.value_or(L"All Files").c_str(), { L"*.*" } }
+    };
+
+    auto filePath = win32_helpers::ShowOpenDialog(
         programContext.mainWindowContext->hMainWindow,
-        {
-            { L"Map Files", defaults::MapFileExtension.data() },
-            { L"Tileset Files", defaults::TilesetFileExtension.data() },
-            { L"All Files", L"*.*" }
-        }
+        filters
     );
 
     if(filePath.has_value()) {
         programContext.fileManager->OpenFile(filePath.value());
-    } */
+        program::RefreshEditor();
+    }
    return;
 }

@@ -15,7 +15,11 @@ void file::MapFile::Open(){
         return;
     }
 
-    std::fstream file(m_filePath, std::ios::binary | std::ios::in);
+    std::ifstream file(m_filePath, std::ios::binary);
+
+    if(!file.is_open()) {
+        throw program::FileLoadException("Failed to open map file: " + m_filePath.string());
+    }
 
     std::vector<uint8_t> bytes;
 
@@ -23,6 +27,8 @@ void file::MapFile::Open(){
     bytes.resize(file.tellg());
     file.seekg(0, std::ios::beg);
     file.read(reinterpret_cast<char*>(bytes.data()), bytes.size());
+
+    file.close();
 
     std::vector<uint8_t> mapFileMagic = { 'S', 'G', 'C', 'M' };
 

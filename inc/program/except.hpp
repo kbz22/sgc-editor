@@ -27,5 +27,11 @@ namespace program
         public:
             StringNotFoundException(const std::string& message) : std::runtime_error(message) {}
     };
+
+    class FileLoadException : public std::runtime_error
+    {
+        public:
+            FileLoadException(const std::string& message) : std::runtime_error(message) {}
+    };
     
 }
