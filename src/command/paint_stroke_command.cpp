@@ -45,4 +45,5 @@ void command::PaintStrokeCommand::Undo()
         // m_tileStorage.SetTileAt(position, change.previousTileId);
         layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.previousTileId);
     }
+    mapDocument->SetDirty(true);    
 }

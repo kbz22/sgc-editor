@@ -47,7 +47,7 @@ namespace program {
         std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
         
         std::unique_ptr<file::FileManager> fileManager{};
-        std::unique_ptr<command::CommandManager> commandManager{};
+        // std::unique_ptr<command::CommandManager> commandManager{};
         std::unique_ptr<action::ActionManager> actionManager{};
         std::unique_ptr<file::AssetManager> assetManager{};
 

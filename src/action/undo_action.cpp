@@ -19,8 +19,9 @@ action::UndoAction::UndoAction()
 
 void action::UndoAction::Execute(program::ProgramContext& context)
 {
-    if(context.commandManager != nullptr) {
-        context.commandManager->Undo();
+    auto selectedDocument = context.fileManager->GetSelectedDocument();
+    if(selectedDocument != nullptr) {
+        selectedDocument->GetCommandManager()->Undo();
     }
 
     context.mapSection->Update();

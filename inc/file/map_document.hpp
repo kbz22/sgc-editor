@@ -5,6 +5,7 @@
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/data/itilestorage.hpp>
 #include <sgc/data/asset.hpp>
+#include "command/command_manager.hpp"
 
 #include <memory>
 #include <functional>
@@ -15,6 +16,7 @@ namespace file {
     {
         private:
             std::unique_ptr<program::LayerManager> m_layerManager{nullptr};
+            std::unique_ptr<command::CommandManager> m_commandManager{nullptr};
             sgc::data::AssetId m_tilesetId{0};
             std::wstring name;
             bool m_dirty{false};
@@ -25,6 +27,7 @@ namespace file {
             virtual ~MapDocument() = default;
 
             program::LayerManager* GetLayerManager();
+            command::CommandManager* GetCommandManager();
             sgc::data::ITileStorage* GetCurrentLayerStorage();
             sgc::data::AssetId GetTilesetAssetId();
 

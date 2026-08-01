@@ -21,9 +21,10 @@ action::LayerAddAction::LayerAddAction()
 
 void action::LayerAddAction::Execute(program::ProgramContext& context)
 {    
-    if(context.fileManager->GetSelectedDocument() != nullptr) {       
+    auto selectedDocument = context.fileManager->GetSelectedDocument();
+    if(selectedDocument != nullptr) {
         
-        context.commandManager->Execute(
+        selectedDocument->GetCommandManager()->Execute(
             std::make_unique<command::LayerAddCommand>()
         );
 

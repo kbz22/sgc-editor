@@ -272,7 +272,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 m_isPainting = false;
 
                 if(m_paintStrokeCommand != nullptr) {
-                    programContext.commandManager->Commit(
+                    auto commandManager = mapDocument->GetCommandManager();
+                    commandManager->Commit(
                         std::move(m_paintStrokeCommand)
                     );
                 }

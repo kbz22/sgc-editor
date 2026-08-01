@@ -19,8 +19,9 @@ action::RedoAction::RedoAction()
 
 void action::RedoAction::Execute(program::ProgramContext& context)
 {
-    if(context.commandManager != nullptr) {
-        context.commandManager->Redo();
+    auto selectedDocument = context.fileManager->GetSelectedDocument();
+    if(selectedDocument != nullptr) {
+        selectedDocument->GetCommandManager()->Redo();
     }
 
     context.mapSection->Update();

@@ -31,10 +31,13 @@ void command::LayerAddCommand::Execute()
 void command::LayerAddCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
-    if(programContext.fileManager->GetSelectedDocument() != nullptr) {
-        auto layerManager = programContext.fileManager->GetSelectedDocument()->GetLayerManager();
+    if(mapDocument != nullptr) {
+        auto layerManager = mapDocument->GetLayerManager();
         layerManager->RemoveLayer(m_addedLayerIndex);
+
+        mapDocument->SetDirty(true);
 
         programContext.layersSection->Refresh(programContext);
         programContext.layersSection->Update();

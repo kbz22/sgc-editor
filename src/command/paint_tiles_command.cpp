@@ -26,7 +26,13 @@ void command::PaintTilesCommand::Execute()
 
 void command::PaintTilesCommand::Undo()
 {
-    for (const auto& change : m_tileChanges) {
-        m_tileStorage.SetTileAt(change.position, change.previousTileId);
+    auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
+
+    if(mapDocument != nullptr) 
+    {
+        for (const auto& change : m_tileChanges) {
+            m_tileStorage.SetTileAt(change.position, change.previousTileId);
+        }
+        mapDocument->SetDirty(true);
     }
 }

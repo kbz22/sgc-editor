@@ -5,12 +5,18 @@
 file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId) :
     name{name},
     m_layerManager{std::make_unique<program::LayerManager>()},
+    m_commandManager{std::make_unique<command::CommandManager>()},
     m_tilesetId{tilesetId}
 {}
 
 program::LayerManager* file::MapDocument::GetLayerManager()
 {
     return m_layerManager.get();
+}
+
+command::CommandManager* file::MapDocument::GetCommandManager()
+{
+    return m_commandManager.get();
 }
 
 sgc::data::ITileStorage* file::MapDocument::GetCurrentLayerStorage()

@@ -87,7 +87,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
         programContext.mainWindowContext->hMainWindow = hwnd;
 
-        programContext.commandManager = std::make_unique<command::CommandManager>();
+        // programContext.commandManager = std::make_unique<command::CommandManager>();
         programContext.actionManager = std::make_unique<action::ActionManager>();
 
         RegisterActions();

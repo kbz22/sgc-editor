@@ -36,6 +36,8 @@ void command::LayerRemoveCommand::Undo()
             }, m_removedLayerIndex
         );
 
+        mapDocument->SetDirty(true);
+
         programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
 
