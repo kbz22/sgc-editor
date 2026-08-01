@@ -8,17 +8,17 @@
 
 namespace command {
 
-    class PaintStrokeCommand : public ICommand {
+    class PaintCommand : public ICommand {
 
         private:
             std::unordered_map<sgc::math::vec2, TileChange> m_tileChanges;
             size_t m_activeLayerIndex;
 
         public:
-            PaintStrokeCommand(
+            PaintCommand(
                 size_t activeLayerIndex
             );
-            virtual ~PaintStrokeCommand() = default;
+            virtual ~PaintCommand() = default;
 
             void ExecuteTileChange(const TileChange &tileChange);
 

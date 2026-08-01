@@ -78,9 +78,8 @@ add_executable(sgc-editor WIN32
     src/locale/command_lookup.cpp    
     src/locale/string_lookup.cpp
     
-    src/command/command_manager.cpp
-    src/command/paint_tiles_command.cpp
-    src/command/paint_stroke_command.cpp
+    src/command/command_manager.cpp    
+    src/command/paint_command.cpp
     src/command/layer_add_command.cpp
     src/command/layer_remove_command.cpp
     src/command/layer_move_command.cpp
@@ -111,6 +110,8 @@ add_executable(sgc-editor WIN32
     src/file/file_manager.cpp
     src/file/tileset_file.cpp
     src/file/tileset_document.cpp
+
+    src/editor_tools/brush.cpp
 )
 
 # embed manifest in the exe

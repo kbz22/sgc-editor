@@ -1,6 +1,6 @@
 #include "sections/map_section.hpp"
 #include "program/program.hpp"
-#include "command/paint_tiles_command.hpp"
+#include "command/paint_command.hpp"
 #include "command/command_manager.hpp"
 
 #include <sgc/coordinates/screenworld.hpp>
@@ -110,7 +110,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 m_paintStrokeCommand.reset();
             }
 
-            m_paintStrokeCommand = std::make_unique<command::PaintStrokeCommand>(layerManager->GetActiveLayerIndex());
+            m_paintStrokeCommand = std::make_unique<command::PaintCommand>(layerManager->GetActiveLayerIndex());
 
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {

@@ -1,11 +1,11 @@
-#include "command/paint_stroke_command.hpp"
+#include "command/paint_command.hpp"
 #include "program/program.hpp"
 
-command::PaintStrokeCommand::PaintStrokeCommand(size_t activeLayerIndex) :
+command::PaintCommand::PaintCommand(size_t activeLayerIndex) :
     m_activeLayerIndex{activeLayerIndex}
 {}
 
-void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange)
+void command::PaintCommand::ExecuteTileChange(const TileChange &tileChange)
 {
     if(m_tileChanges.find(tileChange.position) == m_tileChanges.end()) {
         m_tileChanges[tileChange.position] = tileChange;
@@ -21,7 +21,7 @@ void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange
     mapDocument->SetDirty(true);
 }
 
-void command::PaintStrokeCommand::Execute()
+void command::PaintCommand::Execute()
 {
     auto &programContext = program::GetProgramContext();
     auto mapDocument = programContext.fileManager->GetSelectedDocument();
@@ -37,7 +37,7 @@ void command::PaintStrokeCommand::Execute()
     mapDocument->SetDirty(true);
 }
 
-void command::PaintStrokeCommand::Undo()
+void command::PaintCommand::Undo()
 {
     auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
     auto layerManager = mapDocument->GetLayerManager();

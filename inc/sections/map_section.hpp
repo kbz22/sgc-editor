@@ -2,7 +2,7 @@
 
 #include "sections/section.hpp"
 #include "sgc_view/map_view.hpp"
-#include "command/paint_stroke_command.hpp"
+#include "command/paint_command.hpp"
 #include <windows.h>
 
 namespace program {
@@ -15,7 +15,7 @@ namespace sections {
     {
         private:
             std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;
-            std::unique_ptr<command::PaintStrokeCommand> m_paintStrokeCommand = nullptr;
+            std::unique_ptr<command::PaintCommand> m_paintStrokeCommand = nullptr;
             bool m_isPainting = false;
             bool m_isPanning = false;
             bool m_isCaptured = false;
