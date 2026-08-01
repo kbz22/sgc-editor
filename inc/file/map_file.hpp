@@ -15,7 +15,7 @@ namespace file {
     {
         private:
             std::filesystem::path m_filePath{};
-            std::unique_ptr<MapDocument> m_document = nullptr;
+            std::unique_ptr<MapDocument> m_document = nullptr;            
 
         public:
             MapFile() = default;
@@ -39,6 +39,8 @@ namespace file {
             std::optional<MapDocument*> GetMapDocument(size_t index) override;
             std::vector<TilesetDocument*> GetTilesetDocuments() override;
             std::optional<TilesetDocument*> GetTilesetDocument(size_t index) override;
+
+            void RegisterOnSetDirtyCallback(std::function<void(bool)> callback);
 
             friend class FileManager;
     };

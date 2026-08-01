@@ -18,11 +18,13 @@ void command::PaintStrokeCommand::ExecuteTileChange(const TileChange &tileChange
     auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
     auto layerManager = mapDocument->GetLayerManager();
     layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);
+    mapDocument->SetDirty(true);
 }
 
 void command::PaintStrokeCommand::Execute()
 {
-    auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
+    auto &programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
 
     if(mapDocument == nullptr) {
         return;

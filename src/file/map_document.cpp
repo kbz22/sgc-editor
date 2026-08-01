@@ -44,9 +44,27 @@ bool file::MapDocument::IsDirty() const
 void file::MapDocument::SetDirty(bool dirty)
 {
     m_dirty = dirty;
+    if(m_onSetDirtyCallback) {
+        m_onSetDirtyCallback(dirty);
+    }
+}
+
+void file::MapDocument::RegisterOnSetDirtyCallback(std::function<void(bool)> callback)
+{
+    m_onSetDirtyCallback = callback;
 }
 
 const std::wstring& file::MapDocument::GetName() const
 {
     return name;
+}
+
+bool file::MapDocument::IsContainer() const
+{
+    return false;
+}
+
+bool file::MapDocument::IsActivable() const
+{
+    return true;
 }

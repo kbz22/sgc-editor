@@ -1,10 +1,11 @@
 #pragma once
 
+#include "file/itreeviewlistable.hpp"
 #include <sgc/data/asset.hpp>
 
 namespace file {
 
-    class TilesetDocument {
+    class TilesetDocument : public ITreeViewListable{
 
         private:
             std::wstring name;
@@ -13,12 +14,16 @@ namespace file {
 
         public:
             TilesetDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId imageId);
-            virtual ~TilesetDocument() = default;
+            virtual ~TilesetDocument() = default;            
+
+            const std::wstring& GetName() const override;
+            bool IsContainer() const override;
+            bool IsDirty() const override;
+            bool IsActivable() const override;
 
             sgc::data::AssetId GetTilesetAssetId() const;
-            const std::wstring& GetName() const;
             sgc::data::AssetId GetImageAssetId() const;
-
+            
     };
 
 }

@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <filesystem>
+#include <functional>
 
 namespace file {
 
@@ -19,7 +20,7 @@ namespace file {
     {
         private:
             std::vector<std::unique_ptr<IFile>> m_openFiles{};
-            DocumentLocation m_selectedDocument{nullptr, 0};
+            DocumentLocation m_selectedDocument{nullptr, 0};            
 
         public:
             FileManager() = default;

@@ -48,6 +48,12 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
 
     DocumentLocation selectedDoc{ newFile.get(), 0 };
 
+    newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
+        auto &programContext = program::GetProgramContext();
+        programContext.packageSection->UpdateSelectedTreeViewItem(programContext);
+        programContext.packageSection->Update();
+    });
+
     m_openFiles.push_back(std::move(newFile));
     SelectDocument(&selectedDoc);
 
@@ -74,13 +80,24 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
 void file::FileManager::OpenFile(std::filesystem::path filePath)
 {
     auto extension = filePath.extension().wstring();
+    DocumentLocation openedDoc{ nullptr, 0 };
 
     if(extension == defaults::MapFileExtension.data())
     {
         auto newFile = std::make_unique<MapFile>();
         newFile->SetFilePath(filePath);
         newFile->Open();
+
+        newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
+            auto &programContext = program::GetProgramContext();
+            programContext.packageSection->UpdateSelectedTreeViewItem(programContext);
+            programContext.packageSection->Update();
+        });
+
         m_openFiles.push_back(std::move(newFile));
+
+        openedDoc.file = m_openFiles.back().get();
+        SelectDocument(&openedDoc);
     }
     else if(extension == defaults::TilesetFileExtension.data()) 
     {
@@ -97,9 +114,6 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
         auto errorMsg = "Unsupported file extension: " + filePath.extension().string();
         throw program::AssetLoadException(errorMsg);
     }
-
-    DocumentLocation openedDoc{ m_openFiles.back().get(), 0 };
-    SelectDocument(&openedDoc);
 
     return;
 }
@@ -134,7 +148,7 @@ void file::FileManager::SelectDocument(DocumentLocation *document)
         m_selectedDocument.index = 0;
     };
 
-    if(!document) {
+    if(!document || document->file == nullptr) {
         clearSelection();
         return;
     }

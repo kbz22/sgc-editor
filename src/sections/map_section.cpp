@@ -80,12 +80,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 return 0;
             }
 
-            // auto mapDocument = programContext.fileManager->GetSelectedDocument();
-
-            if(mapDocument == nullptr) {
-                return 0;
-            }
-
             auto tileset = m_mapView->GetTileset();
             auto tileSize = tileset->GetTileSize();
 
@@ -94,11 +88,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 GET_X_LPARAM(lparam),
                 GET_Y_LPARAM(lparam)
             });
-
-            // auto currentTilePosition = programContext.selectionRectangleOnTileset->GetPosition();          
-
-            // auto tileWidth = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().x / tileSize.x);
-            // auto tileHeight = static_cast<sgc::math::ival>(programContext.selectionRectangleOnTileset->GetSize().y / tileSize.y);
             
             auto currentTilePosition = tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0});
             auto tileWidth = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).x / tileSize.x);

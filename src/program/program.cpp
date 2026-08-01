@@ -54,8 +54,6 @@ void program::StartDefault()
     programContext.fileManager = std::make_unique<file::FileManager>();
 
     programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
-    programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, false);
-    programContext.actionManager->ActionSetChecked(action::ActionType::ChunkModeFixedSize, false);    
 
     programContext.menuSection = std::make_unique<sections::MenuSection>(programContext);
     programContext.sections.push_back(programContext.menuSection.get());
@@ -101,9 +99,6 @@ void program::StartDefault()
             programContext.mapSection->Update();
         }
     });
-
-    program::UpdateEditorLayerMode(programContext.editorLayerMode);
-    program::UpdateEditorChunkMode(programContext.editorChunkMode);
 }
 
 void RedrawAllSections(program::ProgramContext& programContext)
@@ -132,7 +127,9 @@ void program::RefreshEditor()
     }
     else if(currentDocument->IsEditable()) {
         programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, true);
-    }
+        program::UpdateEditorLayerMode(programContext.editorLayerMode);
+        program::UpdateEditorChunkMode(programContext.editorChunkMode);
+    }    
 
     RefreshAllSection(programContext);
     RedrawAllSections(programContext);

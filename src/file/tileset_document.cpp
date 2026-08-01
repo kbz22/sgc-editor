@@ -16,7 +16,22 @@ const std::wstring& file::TilesetDocument::GetName() const
     return name;
 }
 
+bool file::TilesetDocument::IsContainer() const
+{
+    return false;
+}
+
+bool file::TilesetDocument::IsDirty() const
+{
+    return false;
+}
+
 sgc::data::AssetId file::TilesetDocument::GetImageAssetId() const
 {
     return m_imageId;
+}
+
+bool file::TilesetDocument::IsActivable() const
+{
+    return false;
 }

@@ -81,6 +81,8 @@ void file::TilesetFile::Open(){
         imageHeader.id
     );
 
+    m_savedOrLoaded = true;
+
     return;
 }
 
@@ -132,7 +134,6 @@ void file::TilesetFile::Save(){
         imageHeader
     );
 
-
     std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
 
     std::vector<uint8_t> bytes;
@@ -149,6 +150,8 @@ void file::TilesetFile::Save(){
 
     std::ofstream file(m_filePath, std::ios::binary);
     file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+
+    m_savedOrLoaded = true;
 
     return;
 }
@@ -183,7 +186,7 @@ bool file::TilesetFile::IsDirty() const
 {
     return (
         !m_savedOrLoaded ||
-        (m_tilesetDocument != nullptr && m_tilesetDocument->GetTilesetAssetId() != 0)
+        !(m_tilesetDocument != nullptr && m_tilesetDocument->GetTilesetAssetId() != 0)
     );
 }
 

@@ -115,6 +115,8 @@ void file::MapFile::Save(){
 
     file.close();
 
+    m_document->SetDirty(false);
+
     return;
 }
 
@@ -196,4 +198,11 @@ std::vector<file::TilesetDocument*> file::MapFile::GetTilesetDocuments()
 std::optional<file::TilesetDocument*> file::MapFile::GetTilesetDocument([[maybe_unused]] size_t index)
 {
     return std::nullopt;
+}
+
+void file::MapFile::RegisterOnSetDirtyCallback(std::function<void(bool)> callback)
+{
+    if (m_document) {
+        m_document->RegisterOnSetDirtyCallback(callback);
+    }
 }

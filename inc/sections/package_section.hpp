@@ -2,8 +2,10 @@
 
 #include "sections/section.hpp"
 #include <windows.h>
-#include <functional>
+#include <commctrl.h>
 #include <unordered_map>
+#include <functional>
+#include "file/ifile.hpp"
 
 namespace program {
     struct ProgramContext;
@@ -12,17 +14,28 @@ namespace program {
 namespace sections {
 
     enum class FileAction {
-        FileSelected,
-        FileDoubleClicked,
+        ItemSelected,
+        ItemDoubleClicked,
         FileSaved,
         FileClosed
+    };
+
+    struct TreeListItem {        
+        file::ITreeViewListable* listable;
+        file::IFile* file;
+        HTREEITEM treeItem;
+        size_t inFileIndex = 0;
     };
 
     class PackageSection : public Section
     {
         private:
             HWND m_packageTreeViewHandle = HWND();
-            std::unordered_map<FileAction, std::function<void(const std::wstring&, size_t)>> m_fileActionCallbacks;
+            std::unordered_map<FileAction, std::function<void(file::IFile*, size_t)>> m_fileActionCallbacks;
+            std::vector<TreeListItem> m_treeListItems;
+
+            void UpdateTreeItem(TreeListItem &tli);
+            void TreeViewNotifyHandler(NMTREEVIEW* nm, program::ProgramContext& programContext);
             
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
@@ -35,7 +48,9 @@ namespace sections {
             void HandleSectionResize() override;
             void Refresh(program::ProgramContext& programContext) override;
 
-            void RegisterFileActionCallback(FileAction action, std::function<void(const std::wstring&, size_t)> callback);
+            void UpdateSelectedTreeViewItem(program::ProgramContext& programContext);
+
+            void RegisterFileActionCallback(FileAction action, std::function<void(file::IFile*, size_t)> callback);
     };
 
 }

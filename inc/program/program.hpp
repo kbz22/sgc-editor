@@ -59,7 +59,7 @@ namespace program {
         locale::StringLookup stringLookup{};
 
         program::EditorLayerMode editorLayerMode = program::EditorLayerMode::MultiLayer;
-        program::EditorChunkMode editorChunkMode = program::EditorChunkMode::DynamicChunks;
+        program::EditorChunkMode editorChunkMode = program::EditorChunkMode::FixedChunks;
     };
 
     ProgramContext& GetProgramContext();

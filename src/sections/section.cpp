@@ -90,6 +90,13 @@ void sections::Section::AttachView(sgc_view::SgcView& view)
     
 }
 
+void sections::Section::SetupSubclass(HWND hwnd, Section* section)
+{
+    if (hwnd != nullptr) {
+        SetWindowSubclass(hwnd, StaticPaneProc, 0, reinterpret_cast<DWORD_PTR>(section));
+    }
+}
+
 void sections::Section::Redraw()
 {
     if (m_hwnd != nullptr) {

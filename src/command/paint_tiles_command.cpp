@@ -11,7 +11,9 @@ command::PaintTilesCommand::PaintTilesCommand(
 
 void command::PaintTilesCommand::Execute()
 {    
-    auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
+    auto &programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+
     if(mapDocument != nullptr) 
     {
         for (const auto& change : m_tileChanges) {

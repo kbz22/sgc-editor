@@ -25,6 +25,7 @@ namespace sections {
 
             virtual LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
             void AttachView(sgc_view::SgcView& view);
+            void SetupSubclass(HWND hwnd, Section* section);
             void Redraw();
 
         public:
