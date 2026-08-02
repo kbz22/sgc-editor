@@ -16,14 +16,10 @@ namespace sections {
     {
         private:
             std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;
-            std::unique_ptr<command::PaintCommand> m_paintStrokeCommand = nullptr;
             bool m_isPainting = false;
             bool m_isPanning = false;
-            bool m_isCaptured = false;
-            // bool m_checkTileBeforePainting = true;            
+            bool m_isCaptured = false;        
             sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
-            sgc::math::vec2 m_lastMousePosBrush = { 0, 0 };
-            sgc::math::vec2 m_selectionTileStart = { 0, 0 };
 
             editor_tools::Brush m_brush;
 
@@ -39,6 +35,7 @@ namespace sections {
             void Refresh(program::ProgramContext& programContext) override;
             
             void SetCheckTileBeforePainting(bool check);
+            void SetPaintMode(editor_tools::PaintMode paintMode);
     };
 
 }

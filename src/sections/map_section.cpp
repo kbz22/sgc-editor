@@ -94,13 +94,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto tileWidth = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).x / tileSize.x);
             auto tileHeight = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).y / tileSize.y);
 
-            auto layerManager = mapDocument->GetLayerManager();
-            auto currentLayer = mapDocument->GetCurrentLayerStorage();
-
-            if(currentLayer == nullptr) {
-                return 0;
-            }
-
             auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
             m_brush.PaintExecuteChange(
@@ -113,35 +106,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 },
                 sgc::tile::TileSize2D{tileWidth, tileHeight}
             );
-
-            /* m_selectionTileStart = cursorPositionOnMap;
-            
-            std::vector<command::TileChange> tileChanges;
-            
-            if(m_paintStrokeCommand != nullptr) {
-                m_paintStrokeCommand.reset();
-            }
-
-            m_paintStrokeCommand = std::make_unique<command::PaintCommand>(mapDocument, layerManager->GetActiveLayerIndex());
-
-            for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
-                for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {
-                    auto tileX = cursorPositionOnMap.x + _x;
-                    auto tileY = cursorPositionOnMap.y + _y;
-                    auto currentTileId = tileset->ToTileId(static_cast<sgc::math::uval>(currentTilePosition.x / tileSize.x) + _x, static_cast<sgc::math::uval>(currentTilePosition.y / tileSize.y) + _y);
-
-                    if( !m_checkTileBeforePainting || currentLayer->GetTileAt({ tileX, tileY }).has_value()) {
-
-                        command::TileChange change{
-                            { tileX, tileY },
-                            currentLayer->GetTileAt({ tileX, tileY }),
-                            currentTileId
-                        };                        
-                        m_paintStrokeCommand->ExecuteTileChange(change);
-
-                    }                    
-                }
-            } */
 
             m_isPainting = true;
             SetCaptureHelper(hwnd);        
@@ -194,9 +158,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             );
 
             auto position = m_mapView->GetCursorPositionInTiles();
-            if (position.x != x_tile || position.y != y_tile) {
+            if (position.x != x_tile || position.y != y_tile) {                
                 
-                // auto selection = programContext.selectionRectangleOnTileset->GetSize();
                 auto selection = tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
 
                 m_mapView->SetCursorSizeInPixels({
@@ -221,16 +184,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             auto cursorTileSize = m_mapView->GetCursorSizeInTiles();
 
-            auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(
-                // programContext.selectionRectangleOnTileset->GetPosition()
+            auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(                
                 tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0})
             );
-            
-            auto currentLayer = mapDocument->GetCurrentLayerStorage();
-
-            if(currentLayer == nullptr) {
-                return 0;
-            }
 
             auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
@@ -242,45 +198,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 cursorTileSize
             );
 
-            /* auto absmod = [](sgc::math::ival value, sgc::math::ival mod) -> sgc::math::ival {
-                return ((value % mod) + mod) % mod;
-            };
-
-            for (sgc::math::ival x = 0; x < static_cast<sgc::math::ival>(cursorTileSize.x); ++x){
-                for (sgc::math::ival y = 0; y < static_cast<sgc::math::ival>(cursorTileSize.y); ++y){
-
-                    auto tileMapX = cursorPositionOnMap.x + x;
-                    auto tileMapY = cursorPositionOnMap.y + y;
-
-                    auto deltaX = absmod(
-                        tileMapX - m_selectionTileStart.x,
-                        cursorTileSize.x
-                    );
-
-                    auto deltaY = absmod(
-                        tileMapY - m_selectionTileStart.y,
-                        cursorTileSize.y
-                    );
-
-                    auto tileId = m_mapView->GetTileset()->ToTileId(
-                        cursorTilePositionOnTileset.x + deltaX,
-                        cursorTilePositionOnTileset.y + deltaY
-                    );
-
-                   if( !m_checkTileBeforePainting || currentLayer->GetTileAt({ tileMapX, tileMapY }).has_value()) {
-
-                        command::TileChange change{
-                            { tileMapX, tileMapY },
-                            currentLayer->GetTileAt({ tileMapX, tileMapY }),
-                            tileId
-                        };
-                        
-                        m_paintStrokeCommand->ExecuteTileChange(change);
-
-                    }  
-                }
-            }
-            */
             Update();
 
             return 0;
@@ -292,13 +209,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 m_isPainting = false;
 
                 m_brush.PaintCommitChanges(*mapDocument);
-
-                /* if(m_paintStrokeCommand != nullptr) {
-                    auto commandManager = mapDocument->GetCommandManager();
-                    commandManager->Commit(
-                        std::move(m_paintStrokeCommand)
-                    );
-                } */
 
                 ReleaseCaptureHelper();
             }
@@ -339,6 +249,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
 void sections::MapSection::SetCheckTileBeforePainting(bool check)
 {
-    // m_checkTileBeforePainting = check;
     m_brush.SetCheckTileBeforePainting(check);
+}
+
+void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
+{
+    m_brush.SetPaintMode(paintMode);
 }
