@@ -89,7 +89,10 @@ void editor_tools::Brush::PaintExecuteChange(
 void editor_tools::Brush::PaintCommitChanges(file::MapDocument& mapDocument)
 {
     auto commandManager = mapDocument.GetCommandManager();
-    commandManager->Commit(std::move(m_paintCommand));
+
+    if(m_paintCommand != nullptr) {
+        commandManager->Commit(std::move(m_paintCommand));
+    }
 
     m_paintCommand.reset();
     m_selectionStart.reset();

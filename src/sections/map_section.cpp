@@ -13,7 +13,8 @@
 
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
     Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
-    m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())}
+    m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())},
+    m_brush{*programContext.selectionRectangleOnTileset}
 {
     AttachView(*m_mapView);
 }
@@ -102,7 +103,18 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
-            m_selectionTileStart = cursorPositionOnMap;
+            m_brush.PaintExecuteChange(
+                *mapDocument,
+                *tileset,
+                cursorPositionOnMap,
+                sgc::tile::TilePosition2D{
+                    static_cast<sgc::math::ival>(currentTilePosition.x / tileSize.x),
+                    static_cast<sgc::math::ival>(currentTilePosition.y / tileSize.y)
+                },
+                sgc::tile::TileSize2D{tileWidth, tileHeight}
+            );
+
+            /* m_selectionTileStart = cursorPositionOnMap;
             
             std::vector<command::TileChange> tileChanges;
             
@@ -129,7 +141,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
                     }                    
                 }
-            }
+            } */
 
             m_isPainting = true;
             SetCaptureHelper(hwnd);        
@@ -222,7 +234,15 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
-            auto absmod = [](sgc::math::ival value, sgc::math::ival mod) -> sgc::math::ival {
+            m_brush.PaintExecuteChange(
+                *mapDocument,
+                *m_mapView->GetTileset(),
+                cursorPositionOnMap,
+                cursorTilePositionOnTileset,
+                cursorTileSize
+            );
+
+            /* auto absmod = [](sgc::math::ival value, sgc::math::ival mod) -> sgc::math::ival {
                 return ((value % mod) + mod) % mod;
             };
 
@@ -260,7 +280,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     }  
                 }
             }
-
+            */
             Update();
 
             return 0;
@@ -271,12 +291,14 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             if(m_isPainting) {
                 m_isPainting = false;
 
-                if(m_paintStrokeCommand != nullptr) {
+                m_brush.PaintCommitChanges(*mapDocument);
+
+                /* if(m_paintStrokeCommand != nullptr) {
                     auto commandManager = mapDocument->GetCommandManager();
                     commandManager->Commit(
                         std::move(m_paintStrokeCommand)
                     );
-                }
+                } */
 
                 ReleaseCaptureHelper();
             }
@@ -317,5 +339,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
 void sections::MapSection::SetCheckTileBeforePainting(bool check)
 {
-    m_checkTileBeforePainting = check;
+    // m_checkTileBeforePainting = check;
+    m_brush.SetCheckTileBeforePainting(check);
 }

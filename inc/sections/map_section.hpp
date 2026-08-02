@@ -3,6 +3,7 @@
 #include "sections/section.hpp"
 #include "sgc_view/map_view.hpp"
 #include "command/paint_command.hpp"
+#include "editor_tools/brush.hpp"
 #include <windows.h>
 
 namespace program {
@@ -19,10 +20,12 @@ namespace sections {
             bool m_isPainting = false;
             bool m_isPanning = false;
             bool m_isCaptured = false;
-            bool m_checkTileBeforePainting = true;            
+            // bool m_checkTileBeforePainting = true;            
             sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
             sgc::math::vec2 m_lastMousePosBrush = { 0, 0 };
             sgc::math::vec2 m_selectionTileStart = { 0, 0 };
+
+            editor_tools::Brush m_brush;
 
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
