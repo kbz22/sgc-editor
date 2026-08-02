@@ -24,6 +24,11 @@ namespace locale
         TooltipEditorLayerModeSingleImage,
         TooltipEditorChunkModeFixedSize,
         TooltipEditorChunkModeFree,
+        TooltipEditorPaintModeBrush,
+        TooltipEditorPaintModeRectangle,
+        TooltipEditorPaintModeFill,
+        TooltipEditorPaintModeSelect,
+        TooltipEditorPaintModeEraser,
 
         NameFile,
         NameEdit,
@@ -48,6 +53,11 @@ namespace locale
         NameSelectEditorChunkMode,
         NameEditorChunkModeFixedSize,
         NameEditorChunkModeFree,
+        NamePaintModeBrush,
+        NamePaintModeRectangle,
+        NamePaintModeFill,
+        NamePaintModeSelect,
+        NamePaintModeEraser,
 
         NameTilesetFile,
         NamePackageFile,

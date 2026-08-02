@@ -103,6 +103,7 @@ add_executable(sgc-editor WIN32
     src/action/map_menu_action.cpp
     src/action/view_menu_action.cpp
     src/action/help_menu_action.cpp    
+    src/action/change_brush_mode_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
@@ -112,6 +113,7 @@ add_executable(sgc-editor WIN32
     src/file/tileset_document.cpp
 
     src/editor_tools/brush.cpp
+    src/editor_tools/paint_modes.cpp
 )
 
 # embed manifest in the exe

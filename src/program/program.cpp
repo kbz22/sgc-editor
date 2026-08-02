@@ -23,6 +23,7 @@
 #include "action/close_file_action.hpp"
 #include "action/save_file_action.hpp"
 #include "action/open_file_action.hpp"
+#include "action/change_brush_mode_action.hpp"
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -43,7 +44,11 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::LayerModeSingleLayer,
     action::ActionType::LayerModeSingleImage,
     action::ActionType::ChunkModeFixedSize,
-    action::ActionType::ChunkModeFree
+    action::ActionType::ChunkModeFree,
+    action::ActionType::PaintModeBrush,
+    action::ActionType::PaintModeRectangle,
+    action::ActionType::PaintModeFill,
+    action::ActionType::PaintModeSelect
 };
 
 void program::StartDefault()
@@ -129,6 +134,7 @@ void program::RefreshEditor()
         programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, true);
         program::UpdateEditorLayerMode(programContext.editorLayerMode);
         program::UpdateEditorChunkMode(programContext.editorChunkMode);
+        program::UpdateBrushMode(programContext.mapSection->GetPaintMode());
     }    
 
     RefreshAllSection(programContext);
@@ -161,6 +167,10 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::SingleImage));
     programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::FixedChunks));
     programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::DynamicChunks));
+    programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Brush));
+    programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Rectangle));
+    programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Fill));
+    programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Select));
 
     programContext.actionManager->Register(std::make_unique<action::FileMenuAction>());
     programContext.actionManager->Register(std::make_unique<action::EditMenuAction>());

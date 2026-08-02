@@ -24,7 +24,8 @@ namespace action {
         UndoRedo,
         LayerManagement,
         EditorLayerMode,
-        EditorChunkMode
+        EditorChunkMode,
+        BrushMode,
     };
 
     struct ActionDescription

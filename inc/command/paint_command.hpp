@@ -21,12 +21,15 @@ namespace command {
                 file::MapDocument* mapDocument,
                 size_t activeLayerIndex
             );
+            
             virtual ~PaintCommand() = default;
 
             void ExecuteTileChange(const TileChange &tileChange);
+            void UndoTileChanges();
             file::MapDocument* GetMapDocument() const;
 
             void Execute() override;
+            void Commit() override;
             void Undo() override;
 
     };

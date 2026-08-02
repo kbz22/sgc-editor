@@ -13,7 +13,6 @@ namespace editor_tools {
     enum class PaintMode
     {
         Brush,
-        Line,
         Rectangle,
         Fill,
         Select,
@@ -26,14 +25,17 @@ namespace editor_tools {
             PaintMode m_paintMode{PaintMode::Brush};
             sgc::graphics::Rectangle& m_selectionRectangleOnTileset;            
             std::unique_ptr<sgc::tile::TilePosition2D> m_selectionStart{nullptr};
+            std::unique_ptr<sgc::tile::TilePosition2D> m_lastSelection{nullptr};
             std::unique_ptr<command::PaintCommand> m_paintCommand{nullptr};
             bool m_checkTileBeforePainting{true};
+            bool m_needsRedraw{false};
 
         public:
             Brush(sgc::graphics::Rectangle& selectionRectangleOnTileset);
             ~Brush() = default;
 
             PaintMode GetPaintMode() const;
+            bool NeedsRedraw() const;
 
             void SetPaintMode(PaintMode paintMode);
             void SetCheckTileBeforePainting(bool check);
@@ -47,6 +49,23 @@ namespace editor_tools {
             );
             void PaintCommitChanges(
                 file::MapDocument& mapDocument
+            );
+
+            friend void PaintStroke(
+                Brush& brush,
+                file::MapDocument& mapDocument,
+                sgc::graphics::Tileset& tileset,
+                sgc::tile::TilePosition2D tilePosition,
+                sgc::tile::TilePosition2D cursorPositionOnTileset,
+                sgc::tile::TileSize2D tileSize
+            );
+            friend void PaintRectangle(
+                Brush& brush,
+                file::MapDocument& mapDocument,
+                sgc::graphics::Tileset& tileset,
+                sgc::tile::TilePosition2D tilePosition,
+                sgc::tile::TilePosition2D cursorPositionOnTileset,
+                sgc::tile::TileSize2D tileSize
             );
     };
 

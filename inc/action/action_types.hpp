@@ -15,6 +15,12 @@ namespace action {
         MenuEdit = 2001,
         Undo,
         Redo,
+        
+        PaintModeBrush,
+        PaintModeRectangle,
+        PaintModeFill,
+        PaintModeSelect,
+        PaintModeEraser,
 
         MenuMap = 3001,
         AddLayer,

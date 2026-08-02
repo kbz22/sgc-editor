@@ -15,6 +15,7 @@ namespace command {
             virtual ~LayerAddCommand() = default;
 
             void Execute() override;
+            void Commit() override;
             void Undo() override;
 
     };

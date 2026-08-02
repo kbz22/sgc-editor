@@ -108,9 +108,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             );
 
             m_isPainting = true;
-            SetCaptureHelper(hwnd);        
+            SetCaptureHelper(hwnd);    
 
-            Update();            
+            if(m_brush.NeedsRedraw()) {
+                Update();
+            }       
             
             return 0;
         }
@@ -162,10 +164,22 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 
                 auto selection = tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
 
-                m_mapView->SetCursorSizeInPixels({
-                    selection.x,
-                    selection.y
-                });
+                switch(m_brush.GetPaintMode())
+                {                    
+                    case editor_tools::PaintMode::Rectangle:
+                        m_mapView->SetCursorSizeInPixels({
+                            tileSize.x,
+                            tileSize.y
+                        });
+                        break;
+
+                    default:
+                        m_mapView->SetCursorSizeInPixels({
+                            selection.x,
+                            selection.y
+                        });
+                        break;
+                }                
 
                 m_mapView->SetCursorPositionInPixels({
                     x_tile,
@@ -175,14 +189,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 shouldUpdate = true;                
             }
 
-            if (!m_isPainting){
-                if(shouldUpdate) {
-                    Update();
-                }
-                break;
-            }                
-
-            auto cursorTileSize = m_mapView->GetCursorSizeInTiles();
+            auto selectionSize = tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
+            auto cursorTileSize = sgc::tile::TileSize2D{
+                static_cast<sgc::math::ival>(selectionSize.x / tileSize.x),
+                static_cast<sgc::math::ival>(selectionSize.y / tileSize.y)
+            };
 
             auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(                
                 tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0})
@@ -190,15 +201,19 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
-            m_brush.PaintExecuteChange(
-                *mapDocument,
-                *m_mapView->GetTileset(),
-                cursorPositionOnMap,
-                cursorTilePositionOnTileset,
-                cursorTileSize
-            );
+            if(m_isPainting) {
+                m_brush.PaintExecuteChange(
+                    *mapDocument,
+                    *m_mapView->GetTileset(),
+                    cursorPositionOnMap,
+                    cursorTilePositionOnTileset,
+                    cursorTileSize
+                );
+            }
 
-            Update();
+            if(m_brush.NeedsRedraw() || shouldUpdate) {
+                Update();
+            }
 
             return 0;
         }
@@ -255,4 +270,9 @@ void sections::MapSection::SetCheckTileBeforePainting(bool check)
 void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
 {
     m_brush.SetPaintMode(paintMode);
+}
+
+editor_tools::PaintMode sections::MapSection::GetPaintMode()
+{
+    return m_brush.GetPaintMode();
 }

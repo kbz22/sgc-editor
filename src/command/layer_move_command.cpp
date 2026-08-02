@@ -27,6 +27,11 @@ void command::LayerMoveCommand::Execute()
     }
 }
 
+void command::LayerMoveCommand::Commit()
+{    
+    return;
+}
+
 void command::LayerMoveCommand::Undo()
 {
     auto &programContext = program::GetProgramContext();

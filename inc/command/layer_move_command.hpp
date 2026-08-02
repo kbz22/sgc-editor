@@ -14,6 +14,7 @@ namespace command {
             virtual ~LayerMoveCommand() = default;
 
             void Execute() override;
+            void Commit() override;
             void Undo() override;
     };
 

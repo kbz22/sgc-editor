@@ -8,6 +8,7 @@ namespace command {
             virtual ~ICommand() = default;
 
             virtual void Execute() = 0;
+            virtual void Commit() = 0;
             virtual void Undo() = 0;
             
     };

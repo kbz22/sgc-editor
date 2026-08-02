@@ -15,7 +15,7 @@ namespace sections {
     class MapSection : public Section
     {
         private:
-            std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;
+            std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;            
             bool m_isPainting = false;
             bool m_isPanning = false;
             bool m_isCaptured = false;        
@@ -36,6 +36,8 @@ namespace sections {
             
             void SetCheckTileBeforePainting(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
+
+            editor_tools::PaintMode GetPaintMode();
     };
 
 }

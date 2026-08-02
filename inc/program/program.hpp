@@ -18,7 +18,6 @@
 #include "action/action_manager.hpp"
 
 #include "win32_program/win32_context.hpp"
-// #include "program/layer_manager.hpp"
 #include "file/map_document.hpp"
 #include "file/asset_manager.hpp"
 #include "program/editor_mode.hpp"
@@ -47,7 +46,6 @@ namespace program {
         std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
         
         std::unique_ptr<file::FileManager> fileManager{};
-        // std::unique_ptr<command::CommandManager> commandManager{};
         std::unique_ptr<action::ActionManager> actionManager{};
         std::unique_ptr<file::AssetManager> assetManager{};
 
@@ -66,7 +64,7 @@ namespace program {
 
     void RegisterActions();
     void StartDefault();
-    // void StartEditor();
+    
     void RefreshEditor();
 
 }

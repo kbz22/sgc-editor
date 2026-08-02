@@ -23,6 +23,11 @@ void command::LayerRemoveCommand::Execute()
     }
 }
 
+void command::LayerRemoveCommand::Commit()
+{
+    return;
+}
+
 void command::LayerRemoveCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();

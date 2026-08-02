@@ -9,6 +9,11 @@ editor_tools::PaintMode editor_tools::Brush::GetPaintMode() const
     return m_paintMode;
 }
 
+bool editor_tools::Brush::NeedsRedraw() const
+{
+    return m_needsRedraw;
+}
+
 void editor_tools::Brush::SetPaintMode(PaintMode paintMode)
 {
     m_paintMode = paintMode;
@@ -37,51 +42,46 @@ void editor_tools::Brush::PaintExecuteChange(
 
     if(m_selectionStart == nullptr) {
         m_selectionStart = std::make_unique<sgc::tile::TilePosition2D>(tilePosition);
+        m_lastSelection = std::make_unique<sgc::tile::TilePosition2D>(tilePosition);
     }
-
-    auto currentLayer = mapDocument.GetCurrentLayerStorage();
-
-    if(currentLayer == nullptr) {
+    else if(m_lastSelection->x == tilePosition.x && m_lastSelection->y == tilePosition.y) {
+        m_needsRedraw = false;
         return;
+    }
+    else {
+        m_lastSelection->x = tilePosition.x;
+        m_lastSelection->y = tilePosition.y;
     }    
 
-    auto absmod = [](sgc::math::ival value, sgc::math::ival mod) -> sgc::math::ival {
-        return ((value % mod) + mod) % mod;
-    };
-
-    for(auto x = 0; x < tileSize.x; ++x){
-        for(auto y = 0; y < tileSize.y; ++y)
-        {
-            auto tileMapX = tilePosition.x + x;
-            auto tileMapY = tilePosition.y + y;
-
-            auto deltaX = absmod(
-                tileMapX - m_selectionStart->x,
-                tileSize.x
+    switch(m_paintMode)
+    {
+        case PaintMode::Brush:
+            PaintStroke(
+                *this,
+                mapDocument,
+                tileset,
+                tilePosition,
+                cursorPositionOnTileset,
+                tileSize
             );
+            m_needsRedraw = true;
+            break;
 
-            auto deltaY = absmod(
-                tileMapY - m_selectionStart->y,
-                tileSize.y
+        case PaintMode::Rectangle:
+            PaintRectangle(
+                *this,
+                mapDocument,
+                tileset,
+                tilePosition,
+                cursorPositionOnTileset,
+                tileSize
             );
+            m_needsRedraw = true;
+            break;
 
-            auto tileId = tileset.ToTileId(
-                cursorPositionOnTileset.x + deltaX,
-                cursorPositionOnTileset.y + deltaY
-            );
-
-            if( !m_checkTileBeforePainting || currentLayer->GetTileAt({ tileMapX, tileMapY }).has_value()) {
-
-                command::TileChange change{
-                    { tileMapX, tileMapY },
-                    currentLayer->GetTileAt({ tileMapX, tileMapY }),
-                    tileId
-                };
-                
-                m_paintCommand->ExecuteTileChange(change);
-
-            } 
-        }
+        default:
+            m_needsRedraw = false;
+            break;
     }
     
 }

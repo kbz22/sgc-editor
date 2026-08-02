@@ -17,6 +17,7 @@ namespace command {
             virtual ~LayerRemoveCommand() = default;
 
             void Execute() override;
+            void Commit() override;
             void Undo() override;
 
     };

@@ -9,6 +9,7 @@ void command::CommandManager::Execute(std::unique_ptr<ICommand> command)
 
 void command::CommandManager::Commit(std::unique_ptr<ICommand> command)
 {
+    command->Commit();
     m_undoStack.push_back(std::move(command));
     m_redoStack.clear();
 }

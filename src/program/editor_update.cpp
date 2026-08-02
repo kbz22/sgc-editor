@@ -63,3 +63,18 @@ void program::UpdateEditorChunkMode(program::EditorChunkMode newMode)
     programContext.toolbarSection->Refresh(programContext);
     programContext.menuSection->Refresh(programContext);
 }
+
+void program::UpdateBrushMode(editor_tools::PaintMode newMode)
+{
+    auto& programContext = program::GetProgramContext();
+
+    programContext.mapSection->SetPaintMode(newMode);
+
+    programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeBrush, newMode == editor_tools::PaintMode::Brush);
+    programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeRectangle, newMode == editor_tools::PaintMode::Rectangle);
+    programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeFill, newMode == editor_tools::PaintMode::Fill);
+    programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeSelect, newMode == editor_tools::PaintMode::Select);
+
+    programContext.toolbarSection->Refresh(programContext);
+    programContext.menuSection->Refresh(programContext);
+}

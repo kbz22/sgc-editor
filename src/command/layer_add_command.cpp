@@ -28,6 +28,12 @@ void command::LayerAddCommand::Execute()
     }
 }
 
+void command::LayerAddCommand::Commit()
+{
+    // No additional commit logic needed for adding a layer
+    return;
+}
+
 void command::LayerAddCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();

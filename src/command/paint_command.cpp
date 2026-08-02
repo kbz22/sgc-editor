@@ -16,8 +16,18 @@ void command::PaintCommand::ExecuteTileChange(const TileChange &tileChange)
     }
 
     auto layerManager = m_mapDocument->GetLayerManager();
-    layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);
-    m_mapDocument->SetDirty(true);
+    layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);    
+}
+
+void command::PaintCommand::UndoTileChanges()
+{
+    if(m_mapDocument == nullptr) {
+        return;
+    }
+    auto layerManager = m_mapDocument->GetLayerManager();
+    for (const auto& [position, change] : m_tileChanges) {
+        layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.previousTileId);
+    }
 }
 
 void command::PaintCommand::Execute()
@@ -33,15 +43,13 @@ void command::PaintCommand::Execute()
     m_mapDocument->SetDirty(true);
 }
 
+void command::PaintCommand::Commit()
+{
+    m_mapDocument->SetDirty(true);
+}
+
 void command::PaintCommand::Undo()
 {
-    if(m_mapDocument == nullptr) {
-        return;
-    }
-    auto layerManager = m_mapDocument->GetLayerManager();
-    for (const auto& [position, change] : m_tileChanges) {
-        // m_tileStorage.SetTileAt(position, change.previousTileId);
-        layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.previousTileId);
-    }
+    UndoTileChanges();
     m_mapDocument->SetDirty(true);
 }
