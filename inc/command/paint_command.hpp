@@ -2,6 +2,7 @@
 
 #include "command/icommand.hpp"
 #include "command/tile_change.hpp"
+#include "file/map_document.hpp"
 #include <sgc/math/value.hpp>
 #include <sgc/data/itilestorage.hpp>
 #include <unordered_map>
@@ -12,15 +13,18 @@ namespace command {
 
         private:
             std::unordered_map<sgc::math::vec2, TileChange> m_tileChanges;
+            file::MapDocument* m_mapDocument;
             size_t m_activeLayerIndex;
 
         public:
             PaintCommand(
+                file::MapDocument* mapDocument,
                 size_t activeLayerIndex
             );
             virtual ~PaintCommand() = default;
 
             void ExecuteTileChange(const TileChange &tileChange);
+            file::MapDocument* GetMapDocument() const;
 
             void Execute() override;
             void Undo() override;

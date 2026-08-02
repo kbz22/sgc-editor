@@ -110,7 +110,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 m_paintStrokeCommand.reset();
             }
 
-            m_paintStrokeCommand = std::make_unique<command::PaintCommand>(layerManager->GetActiveLayerIndex());
+            m_paintStrokeCommand = std::make_unique<command::PaintCommand>(mapDocument, layerManager->GetActiveLayerIndex());
 
             for(sgc::math::ival _x = 0; _x < tileWidth; ++_x) {
                 for(sgc::math::ival _y = 0; _y < tileHeight; ++_y) {
