@@ -67,6 +67,14 @@ namespace editor_tools {
                 sgc::tile::TilePosition2D cursorPositionOnTileset,
                 sgc::tile::TileSize2D tileSize
             );
+            friend void PaintFill(
+                Brush& brush,
+                file::MapDocument& mapDocument,
+                sgc::graphics::Tileset& tileset,
+                sgc::tile::TilePosition2D tilePosition,
+                sgc::tile::TilePosition2D cursorPositionOnTileset,
+                sgc::tile::TileSize2D tileSize
+            );
     };
 
 }

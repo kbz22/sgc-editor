@@ -79,6 +79,18 @@ void editor_tools::Brush::PaintExecuteChange(
             m_needsRedraw = true;
             break;
 
+        case PaintMode::Fill:
+            PaintFill(
+                *this,
+                mapDocument,
+                tileset,
+                tilePosition,
+                cursorPositionOnTileset,
+                tileSize
+            );
+            m_needsRedraw = true;
+            break;
+
         default:
             m_needsRedraw = false;
             break;
