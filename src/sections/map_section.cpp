@@ -123,12 +123,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
                 auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
-                auto deltaX = x - m_lastMousePosPan.x;
-                auto deltaY = y - m_lastMousePosPan.y;
+                auto zoom = m_mapView->GetZoom();
+                auto deltaX = (x - m_lastMousePosPan.x) * zoom;
+                auto deltaY = (y - m_lastMousePosPan.y) * zoom;
 
                 m_mapView->ChangeCameraPositionSingles(
-                    static_cast<float>(deltaX),
-                    static_cast<float>(deltaY)
+                    deltaX,
+                    deltaY
                 );
 
                 m_lastMousePosPan.x = x;
@@ -254,6 +255,44 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             m_lastMousePosPan.y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
             SetCaptureHelper(hwnd);
+
+            return 0;
+        }
+
+        case WM_MOUSEWHEEL:
+        {
+            auto delta = GET_WHEEL_DELTA_WPARAM(wparam);
+
+            if (delta != 0)
+            {
+                auto zoomFactor = 1.1f;
+                if (delta > 0)
+                {
+                    zoomFactor = 1.0f / zoomFactor;
+                }
+
+                auto zoom = m_mapView->GetZoom();
+                zoom *= zoomFactor;
+
+                auto mousePos = sgc::math::fvec2{
+                    static_cast<float>(GET_X_LPARAM(lparam)),
+                    static_cast<float>(GET_Y_LPARAM(lparam))
+                };
+
+                auto view = m_mapView->GetView();
+                auto worldPosBeforeZoom = sgc::coordinates::ScreenToWorld(mousePos, view);
+
+                m_mapView->SetZoom(zoom);
+
+                view = m_mapView->GetView();
+                auto worldPosAfterZoom = sgc::coordinates::ScreenToWorld(mousePos, view);
+
+                auto cameraDelta = worldPosAfterZoom - worldPosBeforeZoom;
+
+                m_mapView->ChangeCameraPositionSingles(cameraDelta.x, cameraDelta.y);
+
+                Update();
+            }
 
             return 0;
         }

@@ -22,6 +22,40 @@ sgc_view::MapView::~MapView()
 {    
 }
 
+void sgc_view::MapView::SetScreenSize(int width, int height)
+{
+    auto camera_x = m_renderContext.view.camera.x;
+    auto camera_y = m_renderContext.view.camera.y;
+
+    m_renderContext.view.screen = graphics::Viewport{ 0, 0, static_cast<float>(width), static_cast<float>(height) };
+    m_renderContext.view.camera = graphics::Viewport{
+        camera_x,
+        camera_y,
+        static_cast<float>(width) * m_zoom,
+        static_cast<float>(height) * m_zoom
+    };
+}
+
+void sgc_view::MapView::SetZoom(float zoom)
+{
+    m_zoom = zoom;
+
+    auto camera_x = m_renderContext.view.camera.x;
+    auto camera_y = m_renderContext.view.camera.y;
+
+    m_renderContext.view.camera = graphics::Viewport{
+        camera_x,
+        camera_y,
+        static_cast<float>(m_renderContext.view.screen.w) * m_zoom,
+        static_cast<float>(m_renderContext.view.screen.h) * m_zoom
+    };
+}
+
+float sgc_view::MapView::GetZoom() const
+{
+    return m_zoom;
+}
+
 void sgc_view::MapView::SetCursorTile(sgc::graphics::PixelSize2D size)
 {
     if(m_cursorTile == nullptr) {

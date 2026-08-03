@@ -19,6 +19,7 @@ namespace sgc_view
     {
         private:
             std::unique_ptr<graphics::Rectangle> m_cursorTile;
+            float m_zoom = 1.0f;
 
             void SetTileset(sgc::data::AssetId tilesetId) override;
             void ResetTileset();
@@ -32,7 +33,9 @@ namespace sgc_view
             
             void Render() override;
             void Refresh(program::ProgramContext& programContext) override;
+            void SetScreenSize(int width, int height) override;
 
+            void SetZoom(float zoom);
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
             void SetCameraPositionSingles(float x, float y);
@@ -40,6 +43,7 @@ namespace sgc_view
             void ChangeCameraPositionSingles(float deltaX, float deltaY);
             void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
 
+            float GetZoom() const;
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
             sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;
