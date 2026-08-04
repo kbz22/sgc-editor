@@ -262,6 +262,16 @@ sgc::math::fvec2 sgc_view::MapView::GetCameraPositionSingles() const
     };
 }
 
+sgc::math::fvec2 sgc_view::MapView::GetCursorPositionSingles() const
+{
+    auto cursorPosition = m_cursorTile->GetPosition();
+
+    return {
+        static_cast<float>(cursorPosition.x),
+        static_cast<float>(cursorPosition.y)
+    };
+}
+
 sgc::graphics::View sgc_view::MapView::GetView() const
 {
     return m_renderContext.view;

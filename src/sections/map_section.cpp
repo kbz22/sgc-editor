@@ -265,6 +265,18 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             if (delta != 0)
             {
+                POINT point{
+                    GET_X_LPARAM(lparam),
+                    GET_Y_LPARAM(lparam)
+                };
+
+                ScreenToClient(hwnd, &point);
+
+                auto mousePos = sgc::math::fvec2{
+                    static_cast<float>(point.x),
+                    static_cast<float>(point.y)
+                };
+
                 auto zoomFactor = 1.1f;
                 if (delta > 0)
                 {
@@ -272,28 +284,25 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 }
 
                 auto zoom = m_mapView->GetZoom();
-                zoom *= zoomFactor;
-
-                auto mousePos = sgc::math::fvec2{
-                    static_cast<float>(GET_X_LPARAM(lparam)),
-                    static_cast<float>(GET_Y_LPARAM(lparam))
-                };
 
                 auto view = m_mapView->GetView();
                 auto worldPosBeforeZoom = sgc::coordinates::ScreenToWorld(mousePos, view);
 
-                m_mapView->SetZoom(zoom);
+                m_mapView->SetZoom(zoom * zoomFactor);
 
                 view = m_mapView->GetView();
                 auto worldPosAfterZoom = sgc::coordinates::ScreenToWorld(mousePos, view);
 
-                auto cameraDelta = worldPosAfterZoom - worldPosBeforeZoom;
+                auto cameraDelta = worldPosBeforeZoom - worldPosAfterZoom;
+                cameraDelta *= -1.0f;
 
-                m_mapView->ChangeCameraPositionSingles(cameraDelta.x, cameraDelta.y);
+                m_mapView->ChangeCameraPositionSingles(
+                    cameraDelta.x,
+                    cameraDelta.y
+                );
 
                 Update();
             }
-
             return 0;
         }
     }

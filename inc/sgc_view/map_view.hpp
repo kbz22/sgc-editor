@@ -49,6 +49,7 @@ namespace sgc_view
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;
             sgc::tile::TileSize2D GetCursorSizeInTiles() const;
             sgc::math::fvec2 GetCameraPositionSingles() const;
+            sgc::math::fvec2 GetCursorPositionSingles() const;
             sgc::graphics::View GetView() const;
 
             friend class sections::MapSection;
