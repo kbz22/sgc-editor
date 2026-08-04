@@ -7,7 +7,7 @@ namespace action {
 
     enum class MenuId
     {
-        None,
+        None = -1,
         File = 0,
         Edit,
         Map,

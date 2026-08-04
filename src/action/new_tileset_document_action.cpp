@@ -15,7 +15,7 @@ action::NewTilesetDocumentAction::NewTilesetDocumentAction()
 
     m_actionDescription.imageIndex = -1;
     m_actionDescription.toolbarOrder = -1;
-    m_actionDescription.menuOrder = 110;
+    m_actionDescription.menuOrder = 120;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::File;
     m_actionDescription.menuId = MenuId::None;    
