@@ -13,7 +13,7 @@ namespace action {
             std::vector<std::unique_ptr<Action>> m_actions;
 
         public:
-            void Register(std::unique_ptr<Action> action);
+            Action* Register(std::unique_ptr<Action> action);
             void Execute(ActionType actionType, program::ProgramContext& context);
             Action* Find(ActionType actionType);
 

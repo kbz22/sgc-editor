@@ -10,7 +10,6 @@
 #include "sections/layers_section.hpp"
 #include "sections/package_section.hpp"
 
-#include "locale/command_lookup.hpp"
 #include "locale/string_lookup.hpp"
 
 #include "command/command_manager.hpp"
@@ -52,8 +51,7 @@ namespace program {
         HIMAGELIST toolbarIcons;
         HIMAGELIST toolbarIconsDisabled;
         HIMAGELIST packageViewFileIcons;
-
-        locale::CommandLookup commandLookup{};
+        
         locale::StringLookup stringLookup{};
 
         program::EditorLayerMode editorLayerMode = program::EditorLayerMode::MultiLayer;

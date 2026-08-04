@@ -1,5 +1,4 @@
 #include "action/action.hpp"
-#include "locale/command_lookup.hpp"
 #include "locale/string_lookup.hpp"
 #include "program/program.hpp"
 

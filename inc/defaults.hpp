@@ -16,10 +16,7 @@ namespace defaults
     constexpr float initialLayerVerticalRatio = 0.5f;
     constexpr float initialTilesetRatio = 0.2f;
 
-    // Assets
-    const std::wstring_view IconsPath = L"./toolbar_icons.png";
-    const std::wstring_view DisabledIconsPath = L"./toolbar_icons_disabled.png";
-    const std::wstring_view PackageViewFileIconsPath = L"./file_icons.png";
+    constexpr float zoomFactor = 1.1f;    
 
     //File extensions
     const std::wstring_view MapFileExtension = L".sgcmap";

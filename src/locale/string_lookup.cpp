@@ -7,7 +7,7 @@ locale::StringLookup::StringLookup()
     {
         {StringId::WindowTitle, L"SGC Map Editor"},
 
-        {StringId::TooltipFileNew,  L"New file"},
+        {StringId::TooltipNewMapDocument,  L"New map"},
         {StringId::TooltipFileOpen, L"Open file"},
         {StringId::TooltipFileSave, L"Save file"},
         {StringId::TooltipEditUndo, L"Undo"},
@@ -34,6 +34,8 @@ locale::StringLookup::StringLookup()
         {StringId::NameHelp, L"Help"},
 
         {StringId::NameNewFile, L"New"},
+        {StringId::NameNewMapDocument, L"Map"},
+        {StringId::NameNewTilesetDocument, L"Tileset"},
         {StringId::NameOpenFile, L"Open"},
         {StringId::NameSaveFile, L"Save"},
         {StringId::NameCloseFile, L"Close"},

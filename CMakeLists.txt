@@ -75,8 +75,7 @@ add_executable(sgc-editor WIN32
     rcs/editor_graphics.rc
 
     src/debug.cpp
-
-    src/locale/command_lookup.cpp    
+    
     src/locale/string_lookup.cpp
     
     src/command/command_manager.cpp    
@@ -87,7 +86,9 @@ add_executable(sgc-editor WIN32
     
     src/action/action.cpp
     src/action/action_manager.cpp
-    src/action/new_file_action.cpp
+    src/action/new_document_action.cpp
+    src/action/new_map_document_action.cpp
+    src/action/new_tileset_document_action.cpp
     src/action/open_file_action.cpp
     src/action/save_file_action.cpp
     src/action/close_file_action.cpp

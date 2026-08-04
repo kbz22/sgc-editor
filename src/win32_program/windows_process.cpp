@@ -14,9 +14,6 @@
 
 #include "editor_graphics.h"
 
-#include "action/new_file_action.hpp"
-#include "action/file_menu_action.hpp"
-
 win32_program::LayoutManager& GetLayoutManager()
 {
     static win32_program::LayoutManager layoutManager(        

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "new_map_dialog.h"
 #include "new_tileset_dialog.h"
 #include <sgc/data/asset.hpp>

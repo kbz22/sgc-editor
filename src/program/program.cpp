@@ -7,7 +7,9 @@
 #include "program/editor_update.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
 
-#include "action/new_file_action.hpp"
+#include "action/new_document_action.hpp"
+#include "action/new_map_document_action.hpp"
+#include "action/new_tileset_document_action.hpp"
 #include "action/undo_action.hpp"
 #include "action/redo_action.hpp"
 #include "action/layer_add_action.hpp"
@@ -152,7 +154,9 @@ void program::RegisterActions()
         programContext.actionManager = std::make_unique<action::ActionManager>();
     }
 
-    programContext.actionManager->Register(std::make_unique<action::NewFileAction>());
+    auto newDocAction = programContext.actionManager->Register(std::make_unique<action::NewDocumentAction>());
+    auto newMapAction = programContext.actionManager->Register(std::make_unique<action::NewMapDocumentAction>());
+    auto newTilesetAction = programContext.actionManager->Register(std::make_unique<action::NewTilesetDocumentAction>());
     programContext.actionManager->Register(std::make_unique<action::OpenFileAction>());
     programContext.actionManager->Register(std::make_unique<action::SaveFileAction>());
     programContext.actionManager->Register(std::make_unique<action::CloseFileAction>());
@@ -172,10 +176,14 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Fill));
     programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Select));
 
+    reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
+        newMapAction,
+        newTilesetAction
+    });
+
     programContext.actionManager->Register(std::make_unique<action::FileMenuAction>());
     programContext.actionManager->Register(std::make_unique<action::EditMenuAction>());
     programContext.actionManager->Register(std::make_unique<action::MapMenuAction>());
     programContext.actionManager->Register(std::make_unique<action::ViewMenuAction>());
-    programContext.actionManager->Register(std::make_unique<action::HelpMenuAction>());    
-
+    programContext.actionManager->Register(std::make_unique<action::HelpMenuAction>());
 }

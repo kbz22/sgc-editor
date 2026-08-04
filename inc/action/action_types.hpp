@@ -6,8 +6,10 @@ namespace action {
     {
         Default = 0,
 
-        MenuFile = 1001,
+        MenuFile = 1001,        
         NewFile = 1002,
+        NewMapDocument,
+        NewTilesetDocument,
         OpenFile,
         SaveFile,
         CloseFile,

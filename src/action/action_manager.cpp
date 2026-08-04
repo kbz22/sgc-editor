@@ -1,8 +1,9 @@
 #include "action/action_manager.hpp"
 
-void action::ActionManager::Register(std::unique_ptr<Action> action)
+action::Action* action::ActionManager::Register(std::unique_ptr<Action> action)
 {    
     m_actions.push_back(std::move(action));
+    return m_actions.back().get();
 }
 
 action::Action* action::ActionManager::Find(ActionType actionType)

@@ -10,7 +10,7 @@ namespace locale
 
         DefaultProjectName,
 
-        TooltipFileNew,
+        TooltipNewMapDocument,
         TooltipFileOpen,
         TooltipFileSave,
         TooltipEditUndo,
@@ -37,6 +37,8 @@ namespace locale
         NameHelp,
 
         NameNewFile,
+        NameNewMapDocument,
+        NameNewTilesetDocument,
         NameOpenFile,
         NameSaveFile,
         NameCloseFile,

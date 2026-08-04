@@ -4,10 +4,10 @@
 
 namespace action {
 
-    class NewFileAction : public Action
+    class NewMapDocumentAction : public Action
     {
         public:
-            NewFileAction();
+            NewMapDocumentAction();
 
             void Execute(program::ProgramContext& context) override;
     };
