@@ -32,6 +32,11 @@ bool action::Action::IsPopup() const
     return false;
 }
 
+bool action::Action::IsWidget() const
+{
+    return false;
+}
+
 void action::Action::SetEnabled(bool enabled)
 {
     m_enabled = enabled;

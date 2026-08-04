@@ -272,38 +272,25 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
                 ScreenToClient(hwnd, &point);
 
-                auto mousePos = sgc::math::fvec2{
+                auto anchor = sgc::math::fvec2{
                     static_cast<float>(point.x),
                     static_cast<float>(point.y)
                 };
 
                 auto zoomFactor = 1.1f;
+
                 if (delta > 0)
                 {
                     zoomFactor = 1.0f / zoomFactor;
                 }
 
-                auto zoom = m_mapView->GetZoom();
-
-                auto view = m_mapView->GetView();
-                auto worldPosBeforeZoom = sgc::coordinates::ScreenToWorld(mousePos, view);
-
-                m_mapView->SetZoom(zoom * zoomFactor);
-
-                view = m_mapView->GetView();
-                auto worldPosAfterZoom = sgc::coordinates::ScreenToWorld(mousePos, view);
-
-                auto cameraDelta = worldPosBeforeZoom - worldPosAfterZoom;
-                cameraDelta *= -1.0f;
-
-                m_mapView->ChangeCameraPositionSingles(
-                    cameraDelta.x,
-                    cameraDelta.y
+                ExecuteZoom(
+                    anchor,
+                    m_mapView->GetZoom() * zoomFactor
                 );
-
-                Update();
             }
-            return 0;
+
+            break;
         }
     }
 
@@ -323,4 +310,55 @@ void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
 editor_tools::PaintMode sections::MapSection::GetPaintMode()
 {
     return m_brush.GetPaintMode();
+}
+
+float sections::MapSection::GetZoom() const
+{
+    if (m_mapView != nullptr) {
+        return m_mapView->GetZoom();
+    }
+    return 1.0f;
+}
+
+sgc::math::fvec2 sections::MapSection::GetScreenCenterWorldPosition() const
+{
+    if (m_mapView != nullptr) {
+        auto renderContext = m_mapView->GetRenderContext();
+
+        auto centerScreenPos = sgc::math::fvec2{
+            static_cast<float>(renderContext.view.screen.w) / 2.0f,
+            static_cast<float>(renderContext.view.screen.h) / 2.0f
+        };
+        
+        auto view = m_mapView->GetView();
+        return sgc::coordinates::ScreenToWorld(centerScreenPos, view);
+    }
+    return sgc::math::fvec2{0.0f, 0.0f};
+}
+
+void sections::MapSection::ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomValue)
+{
+    auto view = m_mapView->GetView();
+
+    auto worldPosBeforeZoom =
+        sgc::coordinates::ScreenToWorld(anchorPoint, view);
+
+    m_mapView->SetZoom(zoomValue);
+
+    view = m_mapView->GetView();
+
+    auto worldPosAfterZoom =
+        sgc::coordinates::ScreenToWorld(anchorPoint, view);
+
+    auto cameraDelta =
+        worldPosBeforeZoom - worldPosAfterZoom;
+
+    cameraDelta *= -1.0f;
+
+    m_mapView->ChangeCameraPositionSingles(
+        cameraDelta.x,
+        cameraDelta.y
+    );
+
+    Update();
 }

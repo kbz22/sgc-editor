@@ -34,6 +34,7 @@ namespace action {
             bool IsCheckGroupItem() const;
             bool IsToolbarItem() const;
             virtual bool IsPopup() const;
+            virtual bool IsWidget() const;
 
             void SetEnabled(bool enabled);
             void SetChecked(bool checked);

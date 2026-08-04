@@ -29,6 +29,8 @@ namespace locale
         TooltipEditorPaintModeFill,
         TooltipEditorPaintModeSelect,
         TooltipEditorPaintModeEraser,
+        TooltipResetZoom,
+        TooltipSetZoom,
 
         NameFile,
         NameEdit,
@@ -60,6 +62,8 @@ namespace locale
         NamePaintModeFill,
         NamePaintModeSelect,
         NamePaintModeEraser,
+        NameZoomIn,
+        NameZoomOut,
 
         NameTilesetFile,
         NamePackageFile,

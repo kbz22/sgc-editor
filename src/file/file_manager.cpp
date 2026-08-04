@@ -49,6 +49,11 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
     DocumentLocation selectedDoc{ newFile.get(), 0 };
 
     newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
+
+        if(!dirty) {
+            return;
+        }
+
         auto &programContext = program::GetProgramContext();
         programContext.packageSection->UpdateTreeViewItems(programContext);
         programContext.packageSection->Update();
@@ -89,7 +94,12 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
         newFile->SetFilePath(filePath);
         newFile->Open();
 
-        newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {            
+        newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
+
+            if(!dirty) {
+                return;
+            }
+
             auto &programContext = program::GetProgramContext();
             programContext.packageSection->UpdateTreeViewItems(programContext);
             programContext.packageSection->Update();

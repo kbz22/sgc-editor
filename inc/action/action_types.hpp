@@ -34,6 +34,10 @@ namespace action {
         ChunkModeFree,
 
         MenuView = 4001,
+        SetZoom,
+        ResetZoom,
+        ZoomIn,
+        ZoomOut,
         LayerModeMultilayer,
         LayerModeSingleLayer,
         LayerModeSingleImage,

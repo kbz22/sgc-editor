@@ -5,7 +5,6 @@
 #include "win32_program/windows_controls.hpp"
 
 #include <windows.h>
-#include <vector>
 
 namespace program {
     struct ProgramContext;

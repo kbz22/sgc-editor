@@ -56,7 +56,10 @@ locale::StringLookup::StringLookup()
         {StringId::NamePaintModeRectangle, L"Rectangle"},
         {StringId::NamePaintModeFill, L"Fill"},
         {StringId::NamePaintModeSelect, L"Select"},
-        {StringId::NamePaintModeEraser, L"Eraser"},
+        {StringId::NamePaintModeEraser, L"Eraser"},        
+        {StringId::NameZoomIn, L"Zoom in"},
+        {StringId::NameZoomOut, L"Zoom out"},
+
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},

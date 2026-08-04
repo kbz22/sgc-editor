@@ -33,11 +33,15 @@ namespace sections {
             void HandleSectionResize() override;
 
             void Refresh(program::ProgramContext& programContext) override;
+
+            void ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomValue);
             
             void SetCheckTileBeforePainting(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
 
             editor_tools::PaintMode GetPaintMode();
+            float GetZoom() const;
+            sgc::math::fvec2 GetScreenCenterWorldPosition() const;
     };
 
 }

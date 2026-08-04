@@ -26,6 +26,9 @@
 #include "action/save_file_action.hpp"
 #include "action/open_file_action.hpp"
 #include "action/change_brush_mode_action.hpp"
+#include "action/zoom_action.hpp"
+#include "action/zoom_reset_action.hpp"
+#include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
 {
@@ -50,7 +53,12 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::PaintModeBrush,
     action::ActionType::PaintModeRectangle,
     action::ActionType::PaintModeFill,
-    action::ActionType::PaintModeSelect
+    action::ActionType::PaintModeSelect,
+    action::ActionType::PaintModeEraser,
+    action::ActionType::SetZoom,
+    action::ActionType::ResetZoom,
+    action::ActionType::ZoomIn,
+    action::ActionType::ZoomOut
 };
 
 void program::StartDefault()
@@ -213,6 +221,9 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Rectangle));
     programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Fill));
     programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Select));
+    programContext.actionManager->Register(std::make_unique<action::ZoomResetAction>());
+    programContext.actionManager->Register(std::make_unique<action::ZoomAction>(defaults::zoomFactor));
+    programContext.actionManager->Register(std::make_unique<action::ZoomAction>(1.0f / defaults::zoomFactor));
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

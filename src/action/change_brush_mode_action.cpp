@@ -52,7 +52,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
     m_actionDescription.menuId = MenuId::Edit;
 }
 
-void action::ChangeBrushModeAction::Execute(program::ProgramContext& context)
+void action::ChangeBrushModeAction::Execute([[maybe_unused]] program::ProgramContext& context)
 {
     program::UpdateBrushMode(m_brushMode);
 }

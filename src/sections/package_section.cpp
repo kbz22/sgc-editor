@@ -45,7 +45,7 @@ sections::PackageSection::~PackageSection()
     }
 }
 
-void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, program::ProgramContext& programContext)
+void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, [[maybe_unused]] program::ProgramContext& programContext)
 {
     auto code = nm->hdr.code;
 

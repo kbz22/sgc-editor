@@ -75,7 +75,7 @@ add_executable(sgc-editor WIN32
     rcs/editor_graphics.rc
 
     src/debug.cpp
-    
+
     src/locale/string_lookup.cpp
     
     src/command/command_manager.cpp    
@@ -106,6 +106,9 @@ add_executable(sgc-editor WIN32
     src/action/view_menu_action.cpp
     src/action/help_menu_action.cpp    
     src/action/change_brush_mode_action.cpp
+    src/action/widget_action.cpp
+    src/action/zoom_action.cpp
+    src/action/zoom_reset_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
