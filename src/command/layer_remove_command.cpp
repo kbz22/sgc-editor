@@ -5,7 +5,7 @@
 void command::LayerRemoveCommand::Execute()
 {
     auto& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
@@ -31,7 +31,7 @@ void command::LayerRemoveCommand::Commit()
 void command::LayerRemoveCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();

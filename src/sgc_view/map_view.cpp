@@ -118,7 +118,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 {
     sgc_view::SgcView::Refresh(programContext);
 
-    auto selectedDocument = programContext.fileManager->GetSelectedDocument();
+    auto selectedDocument = programContext.fileManager->GetActiveDocument();
 
     if(selectedDocument == nullptr && m_tileset != nullptr) {
         ResetTileset();

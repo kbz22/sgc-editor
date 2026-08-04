@@ -22,7 +22,7 @@ action::LayerMoveAction::LayerMoveAction(int moveCount) :
 
 void action::LayerMoveAction::Execute(program::ProgramContext& context)
 {
-    auto selectedDocument = context.fileManager->GetSelectedDocument();
+    auto selectedDocument = context.fileManager->GetActiveDocument();
     if(selectedDocument != nullptr) {
         selectedDocument->GetCommandManager()->Execute(
             std::make_unique<command::LayerMoveCommand>(m_moveCount)

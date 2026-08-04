@@ -5,7 +5,7 @@
 void command::LayerMoveCommand::Execute()
 {
     auto &programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr)
     {
@@ -35,7 +35,7 @@ void command::LayerMoveCommand::Commit()
 void command::LayerMoveCommand::Undo()
 {
     auto &programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr)
     {

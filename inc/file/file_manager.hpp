@@ -20,7 +20,8 @@ namespace file {
     {
         private:
             std::vector<std::unique_ptr<IFile>> m_openFiles{};
-            DocumentLocation m_selectedDocument{nullptr, 0};            
+            DocumentLocation m_selectedDocument{nullptr, 0};
+            DocumentLocation m_activeDocument{nullptr, 0};
 
         public:
             FileManager() = default;
@@ -32,8 +33,9 @@ namespace file {
             void SaveFile(size_t index);
             void CloseFile(size_t index);
 
-            void SelectDocument(DocumentLocation *document);
-            MapDocument* GetSelectedDocument() const;
+            void SelectDocument(const DocumentLocation &document);
+            void SetActiveDocument(const DocumentLocation &document);
+            MapDocument* GetActiveDocument() const;
             IFile* GetSelectedFile() const;
             size_t GetSelectedFileIndex() const;
             size_t GetFileIndex(IFile* file) const;

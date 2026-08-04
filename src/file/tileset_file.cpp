@@ -96,8 +96,6 @@ void file::TilesetFile::Save(){
         return;
     }
 
-    m_savedOrLoaded = true;
-
     auto imageAsset = m_assetManager.GetAsset<sgc::asset::ImageAsset>(
         m_tilesetDocument->GetImageAssetId()
     );

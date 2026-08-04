@@ -47,7 +47,7 @@ void sections::MapSection::HandleSectionResize()
 LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 { 
     program::ProgramContext& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
     auto &tilesetSection = programContext.tilesetSection;
 
     if(mapDocument == nullptr || !mapDocument->IsEditable())

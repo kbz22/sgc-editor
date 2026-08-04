@@ -5,6 +5,7 @@
 #include <commctrl.h>
 #include <unordered_map>
 #include <functional>
+#include <memory>
 #include "file/ifile.hpp"
 
 namespace program {
@@ -31,10 +32,12 @@ namespace sections {
     {
         private:
             HWND m_packageTreeViewHandle = HWND();
+            HTREEITEM m_activeTreeItem = nullptr;
             std::unordered_map<FileAction, std::function<void(file::IFile*, size_t)>> m_fileActionCallbacks;
-            std::vector<TreeListItem> m_treeListItems;
+            std::vector<std::shared_ptr<TreeListItem>> m_treeListItems;
 
             void UpdateTreeItem(TreeListItem &tli);
+            void SetTreeItemActive(TreeListItem &tli);
             void TreeViewNotifyHandler(NMTREEVIEW* nm, program::ProgramContext& programContext);
             
         protected:
@@ -48,7 +51,7 @@ namespace sections {
             void HandleSectionResize() override;
             void Refresh(program::ProgramContext& programContext) override;
 
-            void UpdateSelectedTreeViewItem(program::ProgramContext& programContext);
+            void UpdateTreeViewItems(program::ProgramContext& programContext);
 
             void RegisterFileActionCallback(FileAction action, std::function<void(file::IFile*, size_t)> callback);
     };

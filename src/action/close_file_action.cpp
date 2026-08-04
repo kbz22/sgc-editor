@@ -19,7 +19,7 @@ action::CloseFileAction::CloseFileAction()
 
 void action::CloseFileAction::Execute(program::ProgramContext& context)
 {
-    auto currentDocument = context.fileManager->GetSelectedDocument();
+    auto currentDocument = context.fileManager->GetActiveDocument();
 
     if(currentDocument != nullptr) {
         context.fileManager->CloseFile(context.fileManager->GetSelectedFileIndex());

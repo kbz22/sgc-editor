@@ -19,7 +19,7 @@ action::RedoAction::RedoAction()
 
 void action::RedoAction::Execute(program::ProgramContext& context)
 {
-    auto selectedDocument = context.fileManager->GetSelectedDocument();
+    auto selectedDocument = context.fileManager->GetActiveDocument();
     if(selectedDocument != nullptr) {
         selectedDocument->GetCommandManager()->Redo();
     }

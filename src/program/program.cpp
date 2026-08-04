@@ -82,7 +82,7 @@ void program::StartDefault()
     programContext.sections.push_back(programContext.packageSection.get());
 
     programContext.layersSection->RegisterSelectedLayerChangeCallback([&programContext](size_t index) {
-        auto document = programContext.fileManager->GetSelectedDocument();
+        auto document = programContext.fileManager->GetActiveDocument();
         if(document != nullptr) {
             auto layerManager = document->GetLayerManager();
             layerManager->SetActiveLayerIndex(index);
@@ -97,7 +97,7 @@ void program::StartDefault()
     });
 
     programContext.layersSection->RegisterLayerVisibilityChangeCallback([&programContext](size_t index, bool visible) {
-        auto document = programContext.fileManager->GetSelectedDocument();
+        auto document = programContext.fileManager->GetActiveDocument();
         if(document != nullptr) {
             auto layerManager = document->GetLayerManager();
             layerManager->SetLayerVisibility(index, visible);
@@ -105,6 +105,42 @@ void program::StartDefault()
             programContext.mapSection->Refresh(programContext);
             programContext.mapSection->Update();
         }
+    });
+
+    programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemSelected, [&programContext](file::IFile* file, size_t index) {
+        auto fileManager = programContext.fileManager.get();
+        auto location = file::DocumentLocation{file, index};
+        
+        fileManager->SelectDocument(location);
+
+        programContext.mapSection->Refresh(programContext);
+        programContext.mapSection->Update();
+
+        programContext.layersSection->Refresh(programContext);
+        programContext.layersSection->Update();
+
+        programContext.tilesetSection->Refresh(programContext);
+        programContext.tilesetSection->Update();
+
+        programContext.packageSection->Update();
+    });
+
+    programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemDoubleClicked, [&programContext](file::IFile* file, size_t index) {
+        auto fileManager = programContext.fileManager.get();
+        auto location = file::DocumentLocation{file, index};
+        
+        fileManager->SetActiveDocument(location);
+
+        programContext.mapSection->Refresh(programContext);
+        programContext.mapSection->Update();
+
+        programContext.layersSection->Refresh(programContext);
+        programContext.layersSection->Update();
+
+        programContext.tilesetSection->Refresh(programContext);
+        programContext.tilesetSection->Update();
+
+        programContext.packageSection->Update();
     });
 }
 
@@ -126,7 +162,7 @@ void RefreshAllSection(program::ProgramContext& programContext)
 void program::RefreshEditor()
 {
     auto &programContext = GetProgramContext();
-    auto currentDocument = programContext.fileManager->GetSelectedDocument();
+    auto currentDocument = programContext.fileManager->GetActiveDocument();
 
     if(currentDocument == nullptr || !currentDocument->IsEditable()) {
         programContext.actionManager->ActionSetChecked(g_activeEditorButtons, false);

@@ -7,7 +7,7 @@
 void command::LayerAddCommand::Execute()
 {
     auto &programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
@@ -37,7 +37,7 @@ void command::LayerAddCommand::Commit()
 void command::LayerAddCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();

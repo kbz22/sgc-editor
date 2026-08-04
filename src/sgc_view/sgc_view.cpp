@@ -155,7 +155,7 @@ void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
 
 void sgc_view::SgcView::Refresh(program::ProgramContext& programContext)
 {
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument == nullptr) {
         m_backgroundColor = m_backgroundColorInactive;

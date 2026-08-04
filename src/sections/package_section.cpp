@@ -53,7 +53,7 @@ void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, program::Pr
 
         case TVN_SELCHANGED:
         {
-            using namespace file;            
+            using namespace file;
 
             auto listItem = reinterpret_cast<TreeListItem*>(nm->itemNew.lParam);
 
@@ -62,6 +62,7 @@ void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, program::Pr
                 auto callbackIt = m_fileActionCallbacks.find(FileAction::ItemSelected);
                 if(callbackIt != m_fileActionCallbacks.end()) 
                 {
+                    auto location = DocumentLocation{listItem->file, listItem->inFileIndex};
                     callbackIt->second(listItem->file, listItem->inFileIndex);
                 }
             }
@@ -72,6 +73,37 @@ void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, program::Pr
 
         case NM_DBLCLK:
         {
+            POINT pt;
+            GetCursorPos(&pt);
+            ScreenToClient(m_packageTreeViewHandle, &pt);
+
+            TVHITTESTINFO hit{};
+            hit.pt = pt;
+
+            HTREEITEM hItem = TreeView_HitTest(m_packageTreeViewHandle, &hit);
+
+            if (hItem != nullptr)
+            {
+                TVITEM item{};
+                item.mask = TVIF_PARAM;
+                item.hItem = hItem;
+
+                if (TreeView_GetItem(m_packageTreeViewHandle, &item))
+                {
+                    auto listItem = reinterpret_cast<TreeListItem*>(item.lParam);
+
+                    if (listItem != nullptr &&
+                        listItem->listable != nullptr &&
+                        listItem->file != nullptr)
+                    {
+                        auto callbackIt = m_fileActionCallbacks.find(FileAction::ItemDoubleClicked);
+                        if (callbackIt != m_fileActionCallbacks.end())
+                        {
+                            callbackIt->second(listItem->file, listItem->inFileIndex);
+                        }
+                    }
+                }
+            }
 
             break;
         }
@@ -133,29 +165,33 @@ void sections::PackageSection::HandleSectionResize()
 void sections::PackageSection::UpdateTreeItem(TreeListItem &tli)
 {   
     auto name = tli.file->IsDirty() ? L" *" + tli.listable->GetName() : tli.listable->GetName();
+    auto state = tli.treeItem == m_activeTreeItem ? TVIS_BOLD : 0;
 
     TVITEM item{};
     item.mask = TVIF_TEXT;
     item.hItem = tli.treeItem;
     item.pszText = const_cast<wchar_t*>(name.c_str());
+    item.state = state;
 
     TreeView_SetItem(m_packageTreeViewHandle, &item);
 }
 
-void sections::PackageSection::UpdateSelectedTreeViewItem(program::ProgramContext& programContext)
+void sections::PackageSection::SetTreeItemActive(TreeListItem &tli)
 {
-    auto selectedDocument = programContext.fileManager->GetSelectedDocument();
+    m_activeTreeItem = tli.treeItem;
+}
 
-    if(selectedDocument == nullptr) {
-        return;
-    }
+void sections::PackageSection::UpdateTreeViewItems(program::ProgramContext& programContext)
+{
+    auto activeDocument = programContext.fileManager->GetActiveDocument();
 
     for(auto &tli : m_treeListItems) {
-        if(tli.listable == selectedDocument) {
-            TreeView_SelectItem(m_packageTreeViewHandle, tli.treeItem);
-            UpdateTreeItem(tli);
-            break;
+        if(tli->listable == activeDocument) 
+        {
+            SetTreeItemActive(*tli);
         }
+
+        UpdateTreeItem(*tli);
     }
 }
 
@@ -163,11 +199,14 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
 {
     auto addItem = [this](file::IFile *file, file::ITreeViewListable *listable, HTREEITEM hParent = TVI_ROOT)
     {
-        m_treeListItems.push_back(TreeListItem{
-            listable,
-            file,
-            nullptr
-        });
+        m_treeListItems.push_back(std::make_unique<TreeListItem>(
+            TreeListItem{
+                listable,
+                file,
+                nullptr,
+                0
+            }
+        ));
 
         auto &returnItem = m_treeListItems.back();
         auto imageIndex = static_cast<int>(file->GetFileType());
@@ -178,16 +217,16 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
 
         insert.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
         insert.item.pszText = const_cast<wchar_t*>(listable->GetName().c_str());
-        insert.item.lParam = reinterpret_cast<LPARAM>(&m_treeListItems.back());
+        insert.item.lParam = reinterpret_cast<LPARAM>(m_treeListItems.back().get());
 
         insert.item.iImage = imageIndex;
         insert.item.iSelectedImage = imageIndex;
 
-        returnItem.treeItem = TreeView_InsertItem(m_packageTreeViewHandle, &insert);
+        returnItem->treeItem = TreeView_InsertItem(m_packageTreeViewHandle, &insert);
 
-        UpdateTreeItem(returnItem);
+        UpdateTreeItem(*returnItem);
 
-        return returnItem;
+        return returnItem.get();
     };
 
     TreeView_DeleteAllItems(m_packageTreeViewHandle);
@@ -201,7 +240,7 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
 
         if(file->IsContainer()) {
             auto tli = addItem(file, reinterpret_cast<file::ITreeViewListable*>(file), TVI_ROOT);
-            root = tli.treeItem;
+            root = tli->treeItem;
         }
 
         for(auto mapDoc : file->GetMapDocuments()) 

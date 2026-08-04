@@ -196,7 +196,7 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
 
 LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-    auto mapDocument = program::GetProgramContext().fileManager->GetSelectedDocument();
+    auto mapDocument = program::GetProgramContext().fileManager->GetActiveDocument();
     
     if(mapDocument == nullptr || !mapDocument->IsEditable())
     {
@@ -381,7 +381,7 @@ void win32_models::LayerListControl::Resize(int width, int height)
 
 void win32_models::LayerListControl::Refresh(program::ProgramContext& programContext)
 {    
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument == nullptr) {
         m_layers.clear();

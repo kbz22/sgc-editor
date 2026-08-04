@@ -50,12 +50,13 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
 
     newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
         auto &programContext = program::GetProgramContext();
-        programContext.packageSection->UpdateSelectedTreeViewItem(programContext);
+        programContext.packageSection->UpdateTreeViewItems(programContext);
         programContext.packageSection->Update();
     });
 
     m_openFiles.push_back(std::move(newFile));
-    SelectDocument(&selectedDoc);
+    // SelectDocument(selectedDoc);
+    SetActiveDocument(selectedDoc);
 
     return;
 }
@@ -88,16 +89,17 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
         newFile->SetFilePath(filePath);
         newFile->Open();
 
-        newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
+        newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {            
             auto &programContext = program::GetProgramContext();
-            programContext.packageSection->UpdateSelectedTreeViewItem(programContext);
+            programContext.packageSection->UpdateTreeViewItems(programContext);
             programContext.packageSection->Update();
         });
 
         m_openFiles.push_back(std::move(newFile));
 
         openedDoc.file = m_openFiles.back().get();
-        SelectDocument(&openedDoc);
+        // SelectDocument(openedDoc);
+        SetActiveDocument(openedDoc);
     }
     else if(extension == defaults::TilesetFileExtension.data()) 
     {
@@ -141,38 +143,66 @@ void file::FileManager::CloseFile(size_t index)
     return;
 }
 
-void file::FileManager::SelectDocument(DocumentLocation *document)
+void file::FileManager::SelectDocument(const DocumentLocation &document)
 {
     auto clearSelection = [&]() {
         m_selectedDocument.file = nullptr;
         m_selectedDocument.index = 0;
     };
 
-    if(!document || document->file == nullptr) {
+    if(!document.file) {
         clearSelection();
         return;
     }
 
-    auto doc = document->file->GetMapDocument(document->index);
+    auto mapDoc = document.file->GetMapDocument(document.index);
+    auto tilesetDoc = document.file->GetTilesetDocument(document.index);
 
-    if(!doc) {
-        clearSelection();    
+    if(mapDoc) {
+        m_selectedDocument.file = document.file;
+        m_selectedDocument.index = document.index;
+    }
+    else if(tilesetDoc) {
+        m_selectedDocument.file = document.file;
+        m_selectedDocument.index = document.index;
+    }
+    else {
+        clearSelection();
+    }
+}
+
+void file::FileManager::SetActiveDocument(const DocumentLocation &document)
+{
+    auto clearActive = [&]() {
+        m_activeDocument.file = nullptr;
+        m_activeDocument.index = 0;
+    };
+
+    if(!document.file) {
+        clearActive();
         return;
     }
 
-    m_selectedDocument.file = document->file;
-    m_selectedDocument.index = document->index;
+    auto doc = document.file->GetMapDocument(document.index);
+
+    if(!doc) {
+        clearActive();
+        return;
+    }
+
+    m_activeDocument.file = document.file;
+    m_activeDocument.index = document.index;
 }
 
-file::MapDocument* file::FileManager::GetSelectedDocument() const
+file::MapDocument* file::FileManager::GetActiveDocument() const
 {
-    if(m_selectedDocument.file != nullptr) 
+    if(m_activeDocument.file != nullptr) 
     {
-        auto docs = m_selectedDocument.file->GetMapDocuments();
+        auto docs = m_activeDocument.file->GetMapDocuments();
 
         if(!docs.empty()) {
-            return docs[m_selectedDocument.index];
-        }        
+            return docs[m_activeDocument.index];
+        }
     }    
 
     return nullptr;

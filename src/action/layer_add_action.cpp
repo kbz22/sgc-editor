@@ -21,7 +21,7 @@ action::LayerAddAction::LayerAddAction()
 
 void action::LayerAddAction::Execute(program::ProgramContext& context)
 {    
-    auto selectedDocument = context.fileManager->GetSelectedDocument();
+    auto selectedDocument = context.fileManager->GetActiveDocument();
     if(selectedDocument != nullptr) {
         
         selectedDocument->GetCommandManager()->Execute(

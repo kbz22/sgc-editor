@@ -45,7 +45,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
 {
     using namespace program;
     ProgramContext& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetSelectedDocument();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument == nullptr || !mapDocument->IsEditable())
     {
