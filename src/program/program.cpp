@@ -122,6 +122,7 @@ void program::StartDefault()
         programContext.tilesetSection->Refresh(programContext);
         programContext.tilesetSection->Update();
 
+        programContext.packageSection->UpdateTreeViewItems(programContext);
         programContext.packageSection->Update();
     });
 
@@ -140,6 +141,7 @@ void program::StartDefault()
         programContext.tilesetSection->Refresh(programContext);
         programContext.tilesetSection->Update();
 
+        programContext.packageSection->UpdateTreeViewItems(programContext);
         programContext.packageSection->Update();
     });
 }

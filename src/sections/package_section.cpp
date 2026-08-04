@@ -49,62 +49,52 @@ void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, program::Pr
 {
     auto code = nm->hdr.code;
 
+    auto getItemAndCallback = [this](FileAction action) {
+        POINT pt;
+        GetCursorPos(&pt);
+        ScreenToClient(m_packageTreeViewHandle, &pt);
+
+        TVHITTESTINFO hit{};
+        hit.pt = pt;
+
+        HTREEITEM hItem = TreeView_HitTest(m_packageTreeViewHandle, &hit);
+
+        if (hItem != nullptr)
+        {
+            TVITEM item{};
+            item.mask = TVIF_PARAM;
+            item.hItem = hItem;
+
+            if (TreeView_GetItem(m_packageTreeViewHandle, &item))
+            {
+                auto listItem = reinterpret_cast<TreeListItem*>(item.lParam);
+
+                if (listItem != nullptr &&
+                    listItem->listable != nullptr &&
+                    listItem->file != nullptr)
+                {
+                    auto callbackIt = m_fileActionCallbacks.find(action);
+                    if (callbackIt != m_fileActionCallbacks.end())
+                    {
+                        callbackIt->second(listItem->file, listItem->inFileIndex);
+                    }
+                }
+            }
+        }
+    };
+
     switch(code){
 
         case TVN_SELCHANGED:
         {
-            using namespace file;
-
-            auto listItem = reinterpret_cast<TreeListItem*>(nm->itemNew.lParam);
-
-            if(listItem != nullptr && listItem->listable != nullptr && listItem->file != nullptr) 
-            {
-                auto callbackIt = m_fileActionCallbacks.find(FileAction::ItemSelected);
-                if(callbackIt != m_fileActionCallbacks.end()) 
-                {
-                    auto location = DocumentLocation{listItem->file, listItem->inFileIndex};
-                    callbackIt->second(listItem->file, listItem->inFileIndex);
-                }
-            }
-
+            getItemAndCallback(FileAction::ItemSelected);
             break;
         }
         
 
         case NM_DBLCLK:
         {
-            POINT pt;
-            GetCursorPos(&pt);
-            ScreenToClient(m_packageTreeViewHandle, &pt);
-
-            TVHITTESTINFO hit{};
-            hit.pt = pt;
-
-            HTREEITEM hItem = TreeView_HitTest(m_packageTreeViewHandle, &hit);
-
-            if (hItem != nullptr)
-            {
-                TVITEM item{};
-                item.mask = TVIF_PARAM;
-                item.hItem = hItem;
-
-                if (TreeView_GetItem(m_packageTreeViewHandle, &item))
-                {
-                    auto listItem = reinterpret_cast<TreeListItem*>(item.lParam);
-
-                    if (listItem != nullptr &&
-                        listItem->listable != nullptr &&
-                        listItem->file != nullptr)
-                    {
-                        auto callbackIt = m_fileActionCallbacks.find(FileAction::ItemDoubleClicked);
-                        if (callbackIt != m_fileActionCallbacks.end())
-                        {
-                            callbackIt->second(listItem->file, listItem->inFileIndex);
-                        }
-                    }
-                }
-            }
-
+            getItemAndCallback(FileAction::ItemDoubleClicked);
             break;
         }
 
@@ -168,12 +158,13 @@ void sections::PackageSection::UpdateTreeItem(TreeListItem &tli)
     auto state = tli.treeItem == m_activeTreeItem ? TVIS_BOLD : 0;
 
     TVITEM item{};
-    item.mask = TVIF_TEXT;
+    item.mask = TVIF_TEXT | TVIF_STATE;
     item.hItem = tli.treeItem;
     item.pszText = const_cast<wchar_t*>(name.c_str());
+    item.stateMask = TVIS_BOLD;
     item.state = state;
 
-    TreeView_SetItem(m_packageTreeViewHandle, &item);
+    TreeView_SetItem(m_packageTreeViewHandle, &item);    
 }
 
 void sections::PackageSection::SetTreeItemActive(TreeListItem &tli)
@@ -185,7 +176,9 @@ void sections::PackageSection::UpdateTreeViewItems(program::ProgramContext& prog
 {
     auto activeDocument = programContext.fileManager->GetActiveDocument();
 
-    for(auto &tli : m_treeListItems) {
+    m_activeTreeItem = nullptr;
+    
+    for(auto &tli : m_treeListItems) {        
         if(tli->listable == activeDocument) 
         {
             SetTreeItemActive(*tli);

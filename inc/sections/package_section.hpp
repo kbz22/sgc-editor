@@ -32,9 +32,9 @@ namespace sections {
     {
         private:
             HWND m_packageTreeViewHandle = HWND();
-            HTREEITEM m_activeTreeItem = nullptr;
+            HTREEITEM m_activeTreeItem = HTREEITEM();
             std::unordered_map<FileAction, std::function<void(file::IFile*, size_t)>> m_fileActionCallbacks;
-            std::vector<std::shared_ptr<TreeListItem>> m_treeListItems;
+            std::vector<std::unique_ptr<TreeListItem>> m_treeListItems;
 
             void UpdateTreeItem(TreeListItem &tli);
             void SetTreeItemActive(TreeListItem &tli);
