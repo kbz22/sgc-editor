@@ -1,0 +1,6 @@
+#include "editor_graphics.h"
+
+IDI_APPICON                 ICON    "sgc-editor-icon.ico"
+IDB_TOOLBARICONS            RCDATA  "toolbar_icons.png"
+IDB_TOOLBARICONS_DISABLED   RCDATA  "toolbar_icons_disabled.png"
+IDB_PACKAGEVIEW_ICONS       RCDATA  "file_icons.png"

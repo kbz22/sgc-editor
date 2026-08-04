@@ -3,6 +3,7 @@
 #include "program/program.hpp"
 #include "defaults.hpp"
 #include "locale/string_lookup.hpp"
+#include "editor_graphics.h"
 
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
@@ -56,6 +57,21 @@ void win32_program::Init(HINSTANCE hInstance)
     wc.lpszClassName = L"SGCEditorMainWindow";
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hIcon = (HICON)LoadImage(
+        hInstance,
+        MAKEINTRESOURCE(IDI_APPICON),
+        IMAGE_ICON,
+        32, 32,
+        LR_DEFAULTCOLOR
+    );
+    wc.hIconSm = (HICON)LoadImage(
+        hInstance,
+        MAKEINTRESOURCE(IDI_APPICON),
+        IMAGE_ICON,
+        GetSystemMetrics(SM_CXSMICON),
+        GetSystemMetrics(SM_CYSMICON),
+        0
+    );
 
     RegisterClassEx(&wc);
 

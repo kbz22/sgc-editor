@@ -33,5 +33,11 @@ namespace program
         public:
             FileLoadException(const std::string& message) : std::runtime_error(message) {}
     };
+
+    class ResourceLoadException : public std::runtime_error
+    {
+        public:
+            ResourceLoadException(const std::string& message) : std::runtime_error(message) {}
+    };
     
 }

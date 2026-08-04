@@ -12,7 +12,7 @@
 #include <windows.h>
 #include <CommCtrl.h>
 
-#include "defaults.hpp"
+#include "editor_graphics.h"
 
 #include "action/new_file_action.hpp"
 #include "action/file_menu_action.hpp"
@@ -62,9 +62,19 @@ void SetupImageLists()
     programContext.toolbarIconsDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     programContext.packageViewFileIcons = ImageList_Create(16, 16, ILC_COLOR32, 10, 0);
 
-    HBITMAP hBmp = win32_helpers::LoadPngWIC(defaults::IconsPath.data());
-    HBITMAP hBmpDisabled = win32_helpers::LoadPngWIC(defaults::DisabledIconsPath.data());
-    HBITMAP hBmpPackageIcons = win32_helpers::LoadPngWIC(defaults::PackageViewFileIconsPath.data());
+    auto hInstance = programContext.mainWindowContext->hInstance;
+    auto hBmp = win32_helpers::LoadBitmapFromResource(
+        hInstance,
+        IDB_TOOLBARICONS
+    );
+    auto hBmpDisabled = win32_helpers::LoadBitmapFromResource(
+        hInstance,
+        IDB_TOOLBARICONS_DISABLED
+    );
+    auto hBmpPackageIcons = win32_helpers::LoadBitmapFromResource(
+        hInstance,
+        IDB_PACKAGEVIEWICONS
+    );
 
     ImageList_Add(programContext.toolbarIcons, hBmp, NULL);
     ImageList_Add(programContext.toolbarIconsDisabled, hBmpDisabled, NULL);
