@@ -29,6 +29,7 @@ namespace editor_tools {
             std::unique_ptr<command::PaintCommand> m_paintCommand{nullptr};
             bool m_checkTileBeforePainting{true};
             bool m_needsRedraw{false};
+            sgc::tile::TileId m_clearTileId{0};
 
         public:
             Brush(sgc::graphics::Rectangle& selectionRectangleOnTileset);

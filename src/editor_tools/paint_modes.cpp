@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <optional>
 #include <sgc/math/value.hpp>
+#include <sgc/data/chunkedtilestorage.hpp>
 
 std::optional<sgc::tile::TileId> GetTileId(
     sgc::graphics::Tileset& tileset,
@@ -58,7 +59,17 @@ void editor_tools::PaintStroke(
                 *brush.m_selectionStart
             );
 
-            if( !brush.m_checkTileBeforePainting || currentLayer->GetTileAt({ tileMapX, tileMapY }).has_value()) {
+            auto hasValue = currentLayer->GetTileAt({ tileMapX, tileMapY }).has_value();
+
+            if( !brush.m_checkTileBeforePainting || hasValue) {
+
+                if(!hasValue){
+                    auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
+                    chunkStorage->SetChunkAt(
+                        chunkStorage->GetChunkCoordAt({ tileMapX, tileMapY }),
+                        brush.m_clearTileId
+                    );
+                }
 
                 command::TileChange change{
                     { tileMapX, tileMapY },
@@ -113,6 +124,14 @@ void editor_tools::PaintRectangle(
 
             if( !brush.m_checkTileBeforePainting || getTile.has_value()) {
 
+                if(!getTile.has_value()){
+                    auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
+                    chunkStorage->SetChunkAt(
+                        chunkStorage->GetChunkCoordAt({ tileMapX, tileMapY }),
+                        brush.m_clearTileId
+                    );
+                }
+
                 command::TileChange change{
                     { tileMapX, tileMapY },
                     getTile,
@@ -148,7 +167,7 @@ void editor_tools::PaintFill(
     }
     else {
         if(targetTileId == std::nullopt) {
-            targetTileId = 0;
+            targetTileId = brush.m_clearTileId;
         }
 
         currentLayer->SetTileAt(tilePosition, targetTileId);

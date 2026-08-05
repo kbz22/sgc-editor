@@ -51,7 +51,9 @@ void editor_tools::Brush::PaintExecuteChange(
     else {
         m_lastSelection->x = tilePosition.x;
         m_lastSelection->y = tilePosition.y;
-    }    
+    }
+
+    m_clearTileId = tileset.TileIdCount();
 
     switch(m_paintMode)
     {
