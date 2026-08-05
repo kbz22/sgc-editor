@@ -65,7 +65,8 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
         
         action::GroupId groupId = action->GetGroupId();
              
-        btn.fsStyle = action->IsCheckGroupItem() ? BTNS_CHECKGROUP : btn.fsStyle;
+        // btn.fsStyle = action->IsCheckGroupItem() ? BTNS_CHECKGROUP : btn.fsStyle;        
+        btn.fsStyle = action->IsCheckGroupItem() ? BTNS_CHECK : btn.fsStyle;
 
         lastGroupId = groupId;
         tbButtons.push_back(btn);

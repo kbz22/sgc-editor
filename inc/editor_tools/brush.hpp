@@ -15,20 +15,27 @@ namespace editor_tools {
         Brush,
         Rectangle,
         Fill,
-        Select,
-        Eraser
+        Select
+    };
+
+    enum class EraserMode
+    {
+        None,
+        ClearTile,
+        DeleteChunk
     };
 
     class Brush
     {
         private:
             PaintMode m_paintMode{PaintMode::Brush};
+            EraserMode m_eraserMode{EraserMode::None};
             sgc::graphics::Rectangle& m_selectionRectangleOnTileset;            
             std::unique_ptr<sgc::tile::TilePosition2D> m_selectionStart{nullptr};
             std::unique_ptr<sgc::tile::TilePosition2D> m_lastSelection{nullptr};
             std::unique_ptr<command::PaintCommand> m_paintCommand{nullptr};
             bool m_checkTileBeforePainting{true};
-            bool m_needsRedraw{false};
+            bool m_needsRedraw{false};            
             sgc::tile::TileId m_clearTileId{0};
 
         public:
@@ -36,9 +43,11 @@ namespace editor_tools {
             ~Brush() = default;
 
             PaintMode GetPaintMode() const;
+            EraserMode GetEraserMode() const;
             bool NeedsRedraw() const;
 
             void SetPaintMode(PaintMode paintMode);
+            void SetEraserMode(EraserMode eraserMode);
             void SetCheckTileBeforePainting(bool check);
 
             void PaintExecuteChange(
@@ -69,6 +78,30 @@ namespace editor_tools {
                 sgc::tile::TileSize2D tileSize
             );
             friend void PaintFill(
+                Brush& brush,
+                file::MapDocument& mapDocument,
+                sgc::graphics::Tileset& tileset,
+                sgc::tile::TilePosition2D tilePosition,
+                sgc::tile::TilePosition2D cursorPositionOnTileset,
+                sgc::tile::TileSize2D tileSize
+            );
+            friend void EraseStroke(
+                Brush& brush,
+                file::MapDocument& mapDocument,
+                sgc::graphics::Tileset& tileset,
+                sgc::tile::TilePosition2D tilePosition,
+                sgc::tile::TilePosition2D cursorPositionOnTileset,
+                sgc::tile::TileSize2D tileSize
+            );
+            friend void EraseRectangle(
+                Brush& brush,
+                file::MapDocument& mapDocument,
+                sgc::graphics::Tileset& tileset,
+                sgc::tile::TilePosition2D tilePosition,
+                sgc::tile::TilePosition2D cursorPositionOnTileset,
+                sgc::tile::TileSize2D tileSize
+            );
+            friend void EraseFill(
                 Brush& brush,
                 file::MapDocument& mapDocument,
                 sgc::graphics::Tileset& tileset,

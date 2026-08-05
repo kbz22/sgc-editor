@@ -38,8 +38,10 @@ namespace sections {
             
             void SetCheckTileBeforePainting(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
-
-            editor_tools::PaintMode GetPaintMode();
+            void SetEraseMode(editor_tools::EraserMode eraserMode);
+            
+            editor_tools::PaintMode GetPaintMode() const;
+            editor_tools::EraserMode GetEraseMode() const;
             float GetZoom() const;
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;
     };

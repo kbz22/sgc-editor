@@ -8,12 +8,12 @@ action::ZoomResetAction::ZoomResetAction()
     m_checked = false;    
     
     m_actionDescription.imageIndex = 17;
-    m_actionDescription.toolbarOrder = 1900;
+    m_actionDescription.toolbarOrder = 2200;
     m_actionDescription.menuOrder = -1;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::Zoom;
     m_actionDescription.menuId = MenuId::None;    
-    m_actionDescription.tooltipStringId = locale::StringId::TooltipResetZoom;
+    m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorResetZoom;
     m_actionDescription.nameStringId = locale::StringId::TextMissing;
 }
 

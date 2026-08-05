@@ -43,7 +43,7 @@ void editor_tools::PaintStroke(
 
     if(currentLayer == nullptr) {
         return;
-    }
+    }    
 
     for(auto x = 0; x < tileSize.x; ++x){
         for(auto y = 0; y < tileSize.y; ++y)
@@ -59,11 +59,11 @@ void editor_tools::PaintStroke(
                 *brush.m_selectionStart
             );
 
-            auto hasValue = currentLayer->GetTileAt({ tileMapX, tileMapY }).has_value();
+            auto checkTile = currentLayer->GetTileAt({ tileMapX, tileMapY });
 
-            if( !brush.m_checkTileBeforePainting || hasValue) {
+            if( !brush.m_checkTileBeforePainting || checkTile.has_value()) {
 
-                if(!hasValue){
+                if(!checkTile.has_value()){
                     auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
                     chunkStorage->SetChunkAt(
                         chunkStorage->GetChunkCoordAt({ tileMapX, tileMapY }),
@@ -73,13 +73,51 @@ void editor_tools::PaintStroke(
 
                 command::TileChange change{
                     { tileMapX, tileMapY },
-                    currentLayer->GetTileAt({ tileMapX, tileMapY }),
+                    checkTile,
                     tileId
                 };
                 
                 brush.m_paintCommand->ExecuteTileChange(change);
 
             } 
+        }
+    }
+}
+
+void editor_tools::EraseStroke(
+    Brush& brush,
+    file::MapDocument& mapDocument,
+    sgc::graphics::Tileset& tileset,
+    sgc::tile::TilePosition2D tilePosition,
+    sgc::tile::TilePosition2D cursorPositionOnTileset,
+    sgc::tile::TileSize2D tileSize
+)
+{
+    auto currentLayer = mapDocument.GetCurrentLayerStorage();
+
+    if(currentLayer == nullptr) {
+        return;
+    }
+    
+    std::optional<sgc::tile::TileId> tileId = brush.m_clearTileId;
+
+    for(auto x = 0; x < tileSize.x; ++x){
+        for(auto y = 0; y < tileSize.y; ++y)
+        {
+            auto tileMapX = tilePosition.x + x;
+            auto tileMapY = tilePosition.y + y;
+
+            auto checkTile = currentLayer->GetTileAt({ tileMapX, tileMapY });
+
+            if( !brush.m_checkTileBeforePainting || checkTile.has_value()) {
+                command::TileChange change{
+                    { tileMapX, tileMapY },
+                    checkTile,
+                    tileId
+                };
+                
+                brush.m_paintCommand->ExecuteTileChange(change);
+            }
         }
     }
 }
@@ -119,6 +157,61 @@ void editor_tools::PaintRectangle(
                 { tileMapX, tileMapY },
                 *brush.m_selectionStart
             );
+
+            auto getTile = currentLayer->GetTileAt({ tileMapX, tileMapY });
+
+            if( !brush.m_checkTileBeforePainting || getTile.has_value()) {
+
+                if(!getTile.has_value()){
+                    auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
+                    chunkStorage->SetChunkAt(
+                        chunkStorage->GetChunkCoordAt({ tileMapX, tileMapY }),
+                        brush.m_clearTileId
+                    );
+                }
+
+                command::TileChange change{
+                    { tileMapX, tileMapY },
+                    getTile,
+                    tileId
+                };
+                
+                brush.m_paintCommand->ExecuteTileChange(change);
+
+            } 
+        }
+    }
+}
+
+void editor_tools::EraseRectangle(
+    Brush& brush,
+    file::MapDocument& mapDocument,
+    sgc::graphics::Tileset& tileset,
+    sgc::tile::TilePosition2D tilePosition,
+    sgc::tile::TilePosition2D cursorPositionOnTileset,
+    sgc::tile::TileSize2D tileSize
+)
+{
+    auto currentLayer = mapDocument.GetCurrentLayerStorage();
+
+    if(currentLayer == nullptr) {
+        return;
+    }
+
+    brush.m_paintCommand->UndoTileChanges();
+
+    auto rectStartX = std::min(brush.m_selectionStart->x, tilePosition.x);
+    auto rectEndX = std::max(brush.m_selectionStart->x, tilePosition.x);
+    auto rectStartY = std::min(brush.m_selectionStart->y, tilePosition.y);
+    auto rectEndY = std::max(brush.m_selectionStart->y, tilePosition.y);
+
+    for(auto x = rectStartX; x <= rectEndX; ++x){
+        for(auto y = rectStartY; y <= rectEndY; ++y)
+        {
+            auto tileMapX = x;
+            auto tileMapY = y;
+
+            auto tileId = brush.m_clearTileId;
 
             auto getTile = currentLayer->GetTileAt({ tileMapX, tileMapY });
 
@@ -221,4 +314,73 @@ void editor_tools::PaintFill(
         brush.m_paintCommand->ExecuteTileChange(change);
     }
 
+}
+
+void editor_tools::EraseFill(
+    Brush& brush,
+    file::MapDocument& mapDocument,
+    sgc::graphics::Tileset& tileset,
+    sgc::tile::TilePosition2D tilePosition,
+    sgc::tile::TilePosition2D cursorPositionOnTileset,
+    sgc::tile::TileSize2D tileSize
+)
+{
+    auto currentLayer = mapDocument.GetCurrentLayerStorage();
+
+    if(currentLayer == nullptr) {
+        return;
+    }
+
+    auto targetTileId = currentLayer->GetTileAt(tilePosition);
+
+    if(brush.m_checkTileBeforePainting && !targetTileId.has_value()) {
+        return;
+    }
+    else {
+        if(targetTileId == std::nullopt) {
+            targetTileId = brush.m_clearTileId;
+        }
+
+        currentLayer->SetTileAt(tilePosition, targetTileId);
+    }
+
+    std::vector<sgc::tile::TilePosition2D> region;
+    std::unordered_set<sgc::tile::TilePosition2D> visited;
+
+    std::stack<sgc::tile::TilePosition2D> stack;
+    stack.push(tilePosition);
+
+    while (!stack.empty())
+    {
+        auto pos = stack.top();
+        stack.pop();
+
+        if (visited.contains(pos))
+            continue;
+
+        visited.insert(pos);
+
+        auto tile = currentLayer->GetTileAt(pos);
+
+        if (tile != targetTileId)
+            continue;
+
+        region.push_back(pos);
+
+        stack.push({pos.x + 1, pos.y});
+        stack.push({pos.x - 1, pos.y});
+        stack.push({pos.x, pos.y + 1});
+        stack.push({pos.x, pos.y - 1});
+    }
+
+    for(auto pos : region)
+    {
+        command::TileChange change{
+            pos,
+            currentLayer->GetTileAt(pos),
+            brush.m_clearTileId
+        };
+
+        brush.m_paintCommand->ExecuteTileChange(change);
+    }
 }

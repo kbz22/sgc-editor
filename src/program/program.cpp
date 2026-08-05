@@ -28,6 +28,7 @@
 #include "action/change_brush_mode_action.hpp"
 #include "action/zoom_action.hpp"
 #include "action/zoom_reset_action.hpp"
+#include "action/change_brush_erase_mode_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -54,11 +55,13 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::PaintModeRectangle,
     action::ActionType::PaintModeFill,
     action::ActionType::PaintModeSelect,
-    action::ActionType::PaintModeEraser,
+    // action::ActionType::PaintModeEraser,
     action::ActionType::SetZoom,
     action::ActionType::ResetZoom,
     action::ActionType::ZoomIn,
-    action::ActionType::ZoomOut
+    action::ActionType::ZoomOut,
+    action::ActionType::EraseModeClearTile,
+    action::ActionType::EraseModeDeleteChunk
 };
 
 void program::StartDefault()
@@ -224,6 +227,8 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ZoomResetAction>());
     programContext.actionManager->Register(std::make_unique<action::ZoomAction>(defaults::zoomFactor));
     programContext.actionManager->Register(std::make_unique<action::ZoomAction>(1.0f / defaults::zoomFactor));
+    programContext.actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::ClearTile));
+    programContext.actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::DeleteChunk));
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

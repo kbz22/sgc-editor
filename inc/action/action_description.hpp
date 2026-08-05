@@ -26,6 +26,7 @@ namespace action {
         EditorLayerMode,
         EditorChunkMode,
         BrushMode,
+        EraseMode,
         Zoom
     };
 

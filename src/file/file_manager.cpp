@@ -146,6 +146,11 @@ void file::FileManager::CloseFile(size_t index)
             m_selectedDocument.file = nullptr;
             m_selectedDocument.index = 0;
         }
+
+        if(m_activeDocument.file == m_openFiles[index].get()) {
+            m_activeDocument.file = nullptr;
+            m_activeDocument.index = 0;
+        }
         
         m_openFiles.erase(m_openFiles.begin() + index);        
     }

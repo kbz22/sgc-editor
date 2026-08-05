@@ -78,3 +78,22 @@ void program::UpdateBrushMode(editor_tools::PaintMode newMode)
     programContext.toolbarSection->Refresh(programContext);
     programContext.menuSection->Refresh(programContext);
 }
+
+void program::UpdateBrushEraseMode(editor_tools::EraserMode newMode)
+{
+    auto& programContext = program::GetProgramContext();
+
+    programContext.mapSection->SetEraseMode(newMode);
+
+    programContext.actionManager->ActionSetChecked(
+        action::ActionType::EraseModeClearTile,
+        newMode == editor_tools::EraserMode::ClearTile
+    );
+    programContext.actionManager->ActionSetChecked(
+        action::ActionType::EraseModeDeleteChunk,
+        newMode == editor_tools::EraserMode::DeleteChunk
+    );
+
+    programContext.toolbarSection->Refresh(programContext);
+    programContext.menuSection->Refresh(programContext);
+}

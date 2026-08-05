@@ -307,9 +307,19 @@ void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
     m_brush.SetPaintMode(paintMode);
 }
 
-editor_tools::PaintMode sections::MapSection::GetPaintMode()
+void sections::MapSection::SetEraseMode(editor_tools::EraserMode eraserMode)
+{
+    m_brush.SetEraserMode(eraserMode);
+}
+
+editor_tools::PaintMode sections::MapSection::GetPaintMode() const
 {
     return m_brush.GetPaintMode();
+}
+
+editor_tools::EraserMode sections::MapSection::GetEraseMode() const
+{
+    return m_brush.GetEraserMode();
 }
 
 float sections::MapSection::GetZoom() const

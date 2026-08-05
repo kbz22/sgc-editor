@@ -22,7 +22,9 @@ namespace action {
         PaintModeRectangle,
         PaintModeFill,
         PaintModeSelect,
-        PaintModeEraser,
+        
+        EraseModeClearTile,
+        EraseModeDeleteChunk,
 
         MenuMap = 3001,
         AddLayer,

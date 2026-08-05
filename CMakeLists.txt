@@ -83,6 +83,7 @@ add_executable(sgc-editor WIN32
     src/command/layer_add_command.cpp
     src/command/layer_remove_command.cpp
     src/command/layer_move_command.cpp
+    src/command/delete_chunk_command.cpp
     
     src/action/action.cpp
     src/action/action_manager.cpp
@@ -109,6 +110,7 @@ add_executable(sgc-editor WIN32
     src/action/widget_action.cpp
     src/action/zoom_action.cpp
     src/action/zoom_reset_action.cpp
+    src/action/change_brush_erase_mode_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
