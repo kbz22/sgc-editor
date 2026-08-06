@@ -7,16 +7,29 @@ command::PaintCommand::PaintCommand(file::MapDocument* mapDocument, size_t activ
 
 void command::PaintCommand::ExecuteTileChange(const TileChange &tileChange)
 {
-    if(m_tileChanges.find(tileChange.position) == m_tileChanges.end()) {
+    /* if(m_tileChanges.find(tileChange.position) == m_tileChanges.end()) {
         m_tileChanges[tileChange.position] = tileChange;
     }
     else {
         auto &existingTileChange = m_tileChanges[tileChange.position];
         existingTileChange.newTileId = tileChange.newTileId;
     }
+ */
+    m_tileChanges.insert_or_assign(tileChange.position, tileChange);
 
     auto layerManager = m_mapDocument->GetLayerManager();
-    layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);    
+    layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);
+}
+
+void command::PaintCommand::ExecuteTileChange(const std::vector<TileChange> &tileChanges)
+{
+    m_tileChanges.reserve(m_tileChanges.size() + tileChanges.size());
+    auto layerManager = m_mapDocument->GetLayerManager();
+
+    for (const auto& change : tileChanges) {
+        m_tileChanges.insert_or_assign(change.position, change);
+        layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(change.position, change.newTileId);
+    }
 }
 
 void command::PaintCommand::UndoTileChanges()

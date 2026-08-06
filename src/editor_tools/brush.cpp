@@ -44,6 +44,7 @@ void editor_tools::Brush::PaintExecuteChange(
     sgc::tile::TileSize2D tileSize
 )
 {
+    // Eraser mode bypasses the standard paint control handling
     if(m_eraserMode == EraserMode::DeleteChunk)
     {
         auto layerManager = mapDocument.GetLayerManager();
