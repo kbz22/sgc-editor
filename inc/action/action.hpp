@@ -22,8 +22,6 @@ namespace action {
             bool m_enabled = false;
             bool m_checked = false;
 
-            // win32_program::CommandId m_commandId; //! tmp - to be fully replaced by ActionType
-
         public:
             virtual ~Action() = default;
 
@@ -47,8 +45,6 @@ namespace action {
             std::optional<locale::StringId> GetTooltipStringId() const;
             std::optional<locale::StringId> GetNameStringId() const;
             virtual std::optional<std::vector<Action*>> GetPopupMenuItems() const;
-
-            // win32_program::CommandId GetCommandId() const;
 
             virtual void Execute(program::ProgramContext& context) = 0;
     };

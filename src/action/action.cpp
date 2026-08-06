@@ -47,11 +47,6 @@ void action::Action::SetChecked(bool checked)
     m_checked = checked;
 }
 
-/* win32_program::CommandId action::Action::GetCommandId() const
-{
-    return m_commandId;
-}
- */
 int action::Action::GetToolbarImageIndex() const
 {
     return m_actionDescription.imageIndex;

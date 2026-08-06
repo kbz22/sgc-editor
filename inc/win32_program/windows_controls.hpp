@@ -20,37 +20,5 @@ namespace win32_program
         SplitLayerPackage = 2002,
         SplitLayerMap = 2003
     };
-
-    enum class CommandId : types::cmdid_t
-    {
-        NotApplicable,
-
-        MenuFile = 1001,
-        MenuEdit = 1002,
-
-        FileNew = 2001,
-        FileOpen = 2002,
-        FileSave = 2003,
-
-        EditUndo = 3001,
-        EditRedo = 3002,
-
-        LayerAdd = 4001,
-        LayerRemove = 4002,
-        LayerMoveUp = 4003,
-        LayerMoveDown = 4004,
-
-        EditorLayerModeNonActiveTransparent = 5001,
-        EditorLayerModeSingleLayer = 5002,
-        EditorLayerModeSingleImage = 5003,
-
-        EditorChunkModeFixedSize = 6001,
-        EditorChunkModeFree = 6002,
-
-        EditorPaintModeSingle = 7001,
-        EditorPaintModeRectangle = 7002,
-        EditorPaintModeLine = 7003,
-        EditorPaintModeFill = 7004
-    };
     
 }
