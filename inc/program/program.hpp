@@ -40,7 +40,7 @@ namespace program {
 
         std::unique_ptr<sgc::graphics::Rectangle> selectionRectangleOnTileset;
         
-        std::wstring currentProjectName;
+        std::wstring currentProjectName;        
 
         std::unique_ptr<win32_program::MainWindowContext> mainWindowContext;
         

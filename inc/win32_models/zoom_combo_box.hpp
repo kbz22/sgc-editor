@@ -11,6 +11,7 @@ namespace win32_models {
         private:
             HWND m_hwnd{nullptr};
             HWND m_parent{nullptr};
+            HWND m_hwndEdit{nullptr};
             float m_zoom = 1.0f;
             int m_width = 80;
             RECT m_bounds{0, 0, m_width, 24};
@@ -23,7 +24,8 @@ namespace win32_models {
                 1.25f,
                 1.5f,
                 2.0f
-            };            
+            };
+            std::function<void()> m_onUpdateCallback = nullptr;
 
             static LRESULT CALLBACK ComboBoxStaticProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
             LRESULT HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -38,6 +40,8 @@ namespace win32_models {
             int GetWidth() const override;
             void SetPosition(int x, int y) override;
             void Update() override;
+
+            void RegisterOnUpdateCallback(std::function<void()> callback) override;
 
             void SetZoomLevel(float zoomLevel);
     };

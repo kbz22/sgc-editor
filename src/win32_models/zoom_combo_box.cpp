@@ -27,10 +27,24 @@ win32_models::ZoomComboBox::ZoomComboBox(HWND parent, HINSTANCE hInstance, int i
         wchar_t buffer[16];
         swprintf(buffer, 16, L"%.0f%%", preset * 100);
         SendMessage(m_hwnd, CB_ADDSTRING, 0, (LPARAM)buffer);
-    }
+    }    
 
     SetWindowSubclass(
         m_hwnd,
+        ComboBoxStaticProc,
+        0,
+        reinterpret_cast<DWORD_PTR>(this)
+    );
+
+    m_hwndEdit = FindWindowEx(
+        m_hwnd,
+        nullptr,
+        L"Edit",
+        nullptr
+    );
+
+    SetWindowSubclass(
+        m_hwndEdit,
         ComboBoxStaticProc,
         0,
         reinterpret_cast<DWORD_PTR>(this)
@@ -63,7 +77,8 @@ LRESULT win32_models::ZoomComboBox::HandleMessage(HWND hwnd, UINT msg, WPARAM wp
                     int selectedIndex = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
                     if (selectedIndex >= 0 && selectedIndex < static_cast<int>(ZoomLevelPresetsCount))
                     {
-                        m_zoom = m_zoomLevelPresets[selectedIndex];
+                        SetZoomLevel(m_zoomLevelPresets[selectedIndex]);
+                        m_onUpdateCallback();
                     }
                 }
                 break;
@@ -72,6 +87,32 @@ LRESULT win32_models::ZoomComboBox::HandleMessage(HWND hwnd, UINT msg, WPARAM wp
                     break;
             }
             break;
+        }
+
+        case WM_KEYDOWN:
+        {
+            if (wparam == VK_RETURN)
+            {
+                wchar_t buffer[16];
+                GetWindowText(hwnd, buffer, 16);
+                std::wstring text(buffer);
+
+                if (!text.empty() && text.back() == L'%')
+                {
+                    text.pop_back();
+                }
+
+                try
+                {
+                    float zoomLevel = std::stof(text) / 100.0f;
+                    SetZoomLevel(zoomLevel);
+                    m_onUpdateCallback();
+                }
+                catch (const std::exception&)
+                {
+                    SetZoomLevel(m_zoom);                    
+                }
+            }
         }
 
         default:
@@ -88,7 +129,17 @@ float win32_models::ZoomComboBox::GetZoomLevel() const
 
 void win32_models::ZoomComboBox::SetZoomLevel(float zoomLevel)
 {
-    m_zoom = zoomLevel;
+    m_zoom = 1.0f / zoomLevel;
+    std::wstring text = std::to_wstring(static_cast<int>(zoomLevel * 100)) + L"%";
+    SetWindowText(m_hwnd, text.c_str());
+
+    int len = GetWindowTextLength(m_hwndEdit);
+
+    SendMessage(
+        m_hwndEdit,
+        EM_SETSEL,
+        len,
+        len);
 }
 
 HWND win32_models::ZoomComboBox::GetHWND() const
@@ -120,4 +171,9 @@ void win32_models::ZoomComboBox::Update()
         m_bounds.bottom - m_bounds.top,
         SWP_NOZORDER
     );
+}
+
+void win32_models::ZoomComboBox::RegisterOnUpdateCallback(std::function<void()> callback)
+{
+    m_onUpdateCallback = callback;
 }

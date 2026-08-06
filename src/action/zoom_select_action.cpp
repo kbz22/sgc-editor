@@ -25,6 +25,15 @@ void action::ZoomSelectAction::BuildWidget(HWND parent, program::ProgramContext&
         context.mainWindowContext->hInstance,
         static_cast<int>(m_actionType)
     );
+
+    m_zoomComboBox->RegisterOnUpdateCallback([this, &context]() {
+        this->Execute(context);
+    });
+
+    context.mapSection->RegisterOnZoomChangedCallback([this](float zoom) {
+        m_zoomComboBox->SetZoomLevel(1.0f / zoom);
+    });
+
 }
 
 int action::ZoomSelectAction::GetControlWidth() const

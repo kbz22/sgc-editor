@@ -77,14 +77,14 @@ void program::StartDefault()
     programContext.sections.push_back(programContext.menuSection.get());
     programContext.menuSection->Refresh(programContext);
 
+    programContext.mapSection = std::make_unique<sections::MapSection>(programContext);
+    programContext.sections.push_back(programContext.mapSection.get());    
+
     programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(programContext);
     programContext.sections.push_back(programContext.toolbarSection.get());
 
     programContext.tilesetSection = std::make_unique<sections::TilesetSection>(programContext);
-    programContext.sections.push_back(programContext.tilesetSection.get());
-
-    programContext.mapSection = std::make_unique<sections::MapSection>(programContext);
-    programContext.sections.push_back(programContext.mapSection.get());    
+    programContext.sections.push_back(programContext.tilesetSection.get());    
 
     programContext.layersSection = std::make_unique<sections::LayersSection>(programContext);
     programContext.sections.push_back(programContext.layersSection.get());

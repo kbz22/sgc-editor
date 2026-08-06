@@ -4,6 +4,7 @@
 #include "sgc_view/map_view.hpp"
 #include "command/paint_command.hpp"
 #include "editor_tools/brush.hpp"
+#include <functional>
 #include <windows.h>
 
 namespace program {
@@ -20,6 +21,7 @@ namespace sections {
             bool m_isPanning = false;
             bool m_isCaptured = false;        
             sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
+            std::function<void(float)> m_onZoomChangedCallback = nullptr;
 
             editor_tools::Brush m_brush;
 
@@ -39,6 +41,8 @@ namespace sections {
             void SetCheckTileBeforePainting(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
             void SetEraseMode(editor_tools::EraserMode eraserMode);
+
+            void RegisterOnZoomChangedCallback(std::function<void(float)> callback);
             
             editor_tools::PaintMode GetPaintMode() const;
             editor_tools::EraserMode GetEraseMode() const;

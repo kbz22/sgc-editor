@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <functional>
 
 namespace win32_models {
 
@@ -13,6 +14,7 @@ namespace win32_models {
             virtual HWND GetHWND() const = 0;
             virtual void SetPosition(int x, int y) = 0;
             virtual void Update() = 0;
+            virtual void RegisterOnUpdateCallback(std::function<void()> callback) = 0;
     };
 
 }

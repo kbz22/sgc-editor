@@ -370,5 +370,12 @@ void sections::MapSection::ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomV
         cameraDelta.y
     );
 
+    m_onZoomChangedCallback(zoomValue);
+
     Update();
+}
+
+void sections::MapSection::RegisterOnZoomChangedCallback(std::function<void(float)> callback)
+{
+    m_onZoomChangedCallback = callback;
 }
