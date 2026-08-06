@@ -46,7 +46,8 @@ add_executable(sgc-editor WIN32
     src/win32_helpers/load_bitmap.cpp
     src/win32_helpers/file_helpers.cpp
 
-    src/win32_models/layer_list_control.cpp    
+    src/win32_models/layer_list_control.cpp
+    src/win32_models/zoom_combo_box.cpp
 
     src/win32_program/windows_init.cpp    
     src/win32_program/windows_process.cpp
@@ -111,6 +112,7 @@ add_executable(sgc-editor WIN32
     src/action/zoom_action.cpp
     src/action/zoom_reset_action.cpp
     src/action/change_brush_erase_mode_action.cpp
+    src/action/zoom_select_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp

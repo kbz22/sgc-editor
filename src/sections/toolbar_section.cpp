@@ -2,6 +2,8 @@
 #include "win32_helpers/create_helpers.hpp"
 #include "win32_helpers/load_bitmap.hpp"
 #include "program/program.hpp"
+#include "action/widget_action.hpp"
+#include "win32_models/toolbarbutton.hpp"
 
 #include <windowsx.h>
 #include <commctrl.h>
@@ -59,15 +61,36 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
 
         TBBUTTON btn = {};
 
-        btn.iBitmap = action->GetToolbarImageIndex();
-        btn.idCommand = static_cast<int>(action->GetType());
-        btn.fsState = action->IsEnabled() ? TBSTATE_ENABLED : 0;   
+        if(action->IsWidget())
+        {
+            auto widgetAction = dynamic_cast<action::WidgetAction*>(action);
+
+            m_widgets.push_back(widgetAction);
+
+            widgetAction->BuildWidget(
+                hwndToolbar,
+                programContext
+            );
+
+            HFONT hFont = reinterpret_cast<HFONT>(
+            SendMessage(hwndToolbar, WM_GETFONT, 0, 0));
+
+            SendMessage(widgetAction->GetWidget()->GetHWND(), WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
+
+            btn.iBitmap = widgetAction->GetControlWidth();
+            btn.idCommand = static_cast<int>(action->GetType());
+            btn.fsState = 0;
+            btn.fsStyle = BTNS_SEP;
+        }
+        else
+        {
+            btn.iBitmap = action->GetToolbarImageIndex();
+            btn.idCommand = static_cast<int>(action->GetType());
+            btn.fsState = action->IsEnabled() ? TBSTATE_ENABLED : 0;
+            btn.fsStyle = action->IsCheckGroupItem() ? BTNS_CHECK : btn.fsStyle;   
+        }
         
         action::GroupId groupId = action->GetGroupId();
-             
-        // btn.fsStyle = action->IsCheckGroupItem() ? BTNS_CHECKGROUP : btn.fsStyle;        
-        btn.fsStyle = action->IsCheckGroupItem() ? BTNS_CHECK : btn.fsStyle;
-
         lastGroupId = groupId;
         tbButtons.push_back(btn);
     }
@@ -109,6 +132,37 @@ sections::ToolbarSection::~ToolbarSection()
 
 void sections::ToolbarSection::Update()
 {
+    for(auto widgetAction : m_widgets) {
+        auto widget = widgetAction->GetWidget();
+        auto commandId = widgetAction->GetType();
+
+        int index = static_cast<int>(
+        SendMessage(
+            m_hwndToolbar,
+            TB_COMMANDTOINDEX,
+            static_cast<int>(commandId),
+            0
+        ));
+
+        RECT rect{};
+
+        SendMessage(
+            m_hwndToolbar,
+            TB_GETITEMRECT,
+            index,
+            reinterpret_cast<LPARAM>(&rect)
+        );
+
+        MapWindowPoints(
+            m_hwndToolbar,
+            GetHwnd(),
+            reinterpret_cast<POINT*>(&rect),
+            2
+        );
+
+        widget->SetPosition(rect.left, rect.top);
+        widget->Update();
+    }
     Redraw();
     return;
 }

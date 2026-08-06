@@ -36,7 +36,7 @@ namespace action {
         ChunkModeFree,
 
         MenuView = 4001,
-        SetZoom,
+        SelectZoom,
         ResetZoom,
         ZoomIn,
         ZoomOut,

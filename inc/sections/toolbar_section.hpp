@@ -1,9 +1,10 @@
 #pragma once
 
 #include "sections/section.hpp"
-#include "win32_models/toolbarbutton.hpp"
+#include "action/widget_action.hpp"
 #include "win32_program/windows_controls.hpp"
 
+#include <vector>
 #include <windows.h>
 
 namespace program {
@@ -16,6 +17,7 @@ namespace sections {
     {
         private:
             HWND m_hwndToolbar;
+            std::vector<action::WidgetAction*> m_widgets;
 
         public:
             ToolbarSection(program::ProgramContext& programContext);
