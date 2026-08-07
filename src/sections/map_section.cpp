@@ -353,7 +353,10 @@ void sections::MapSection::ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomV
     auto worldPosBeforeZoom =
         sgc::coordinates::ScreenToWorld(anchorPoint, view);
 
-    m_mapView->SetZoom(zoomValue);
+    if(!m_mapView->SetZoom(zoomValue))
+    {
+        return;
+    }
 
     view = m_mapView->GetView();
 
@@ -368,8 +371,8 @@ void sections::MapSection::ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomV
     m_mapView->ChangeCameraPositionSingles(
         cameraDelta.x,
         cameraDelta.y
-    );
-
+    );   
+    
     m_onZoomChangedCallback(zoomValue);
 
     Update();

@@ -129,6 +129,11 @@ float win32_models::ZoomComboBox::GetZoomLevel() const
 
 void win32_models::ZoomComboBox::SetZoomLevel(float zoomLevel)
 {
+    if(m_zoom == zoomLevel)
+    {
+        return;
+    }
+
     m_zoom = zoomLevel;
     std::wstring text = std::to_wstring(static_cast<int>(zoomLevel * 100)) + L"%";
     SetWindowText(m_hwnd, text.c_str());

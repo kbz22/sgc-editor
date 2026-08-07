@@ -36,8 +36,13 @@ void sgc_view::MapView::SetScreenSize(int width, int height)
     };
 }
 
-void sgc_view::MapView::SetZoom(float zoom)
+bool sgc_view::MapView::SetZoom(float zoom)
 {
+    if(zoom == m_zoom)
+    {
+        return false;
+    }
+
     m_zoom = zoom;
 
     auto camera_x = m_renderContext.view.camera.x;
@@ -49,6 +54,8 @@ void sgc_view::MapView::SetZoom(float zoom)
         ScaleForZoom(static_cast<float>(m_renderContext.view.screen.w)),
         ScaleForZoom(static_cast<float>(m_renderContext.view.screen.h))
     };
+    
+    return true;
 }
 
 float sgc_view::MapView::GetZoom() const

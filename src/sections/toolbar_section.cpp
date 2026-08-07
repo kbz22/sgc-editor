@@ -183,7 +183,17 @@ void sections::ToolbarSection::Refresh(program::ProgramContext& programContext)
 
     for (const auto& action : toolbarActions)
     {
-        SendMessage(m_hwndToolbar, TB_ENABLEBUTTON, static_cast<int>(action->GetType()), MAKELPARAM(action->IsEnabled(), 0));
-        SendMessage(m_hwndToolbar, TB_CHECKBUTTON, static_cast<int>(action->GetType()), MAKELPARAM(action->IsChecked(), 0));
+        if(action->IsWidget())
+        {
+            auto widgetAction = dynamic_cast<action::WidgetAction*>(action);
+            auto widgetHwnd = widgetAction->GetWidget()->GetHWND();
+            // EnableWindow(widgetHwnd, action->IsEnabled());
+            continue;
+        }
+        else 
+        {
+            SendMessage(m_hwndToolbar, TB_ENABLEBUTTON, static_cast<int>(action->GetType()), MAKELPARAM(action->IsEnabled(), 0));
+            SendMessage(m_hwndToolbar, TB_CHECKBUTTON, static_cast<int>(action->GetType()), MAKELPARAM(action->IsChecked(), 0));
+        }
     }
 }

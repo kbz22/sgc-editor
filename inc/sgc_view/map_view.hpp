@@ -35,7 +35,7 @@ namespace sgc_view
             void Refresh(program::ProgramContext& programContext) override;
             void SetScreenSize(int width, int height) override;
 
-            void SetZoom(float zoom);
+            bool SetZoom(float zoom); // returns true if zoom was changed
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
             void SetCameraPositionSingles(float x, float y);
