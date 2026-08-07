@@ -17,6 +17,31 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
     m_brush{*programContext.selectionRectangleOnTileset}
 {
     AttachView(*m_mapView);
+
+    m_mapView->RegisterOnCursorPositionChangedCallback([this](sgc::math::vec2 position) {
+        auto &programContext = program::GetProgramContext();
+        auto &statusSection = programContext.statusSection;
+        auto mapDocument = programContext.fileManager->GetActiveDocument();
+        // auto currentLayer = mapDocument->GetLayerManager()->GetLayers()[mapDocument->GetLayerManager()->GetActiveLayerIndex()];
+        auto tileSize = m_mapView->GetTileSize();
+        auto layers = mapDocument->GetLayerManager()->GetLayers();
+
+        auto x = position.x / tileSize.x;
+        auto y = position.y / tileSize.y;
+
+        if(layers.empty()) {
+            statusSection->SetStatusCursorPosition({x,y});
+            statusSection->SetStatusTileId(std::nullopt);
+            return;
+        }
+        else 
+        {
+            auto currentLayer = layers[mapDocument->GetLayerManager()->GetActiveLayerIndex()];
+
+            statusSection->SetStatusCursorPosition({x,y});
+            statusSection->SetStatusTileId(currentLayer.storage->GetTileAt({x,y}));
+        }
+    });
 }
 
 void sections::MapSection::Update()

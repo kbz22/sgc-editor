@@ -6,6 +6,7 @@
 #include <sgc/math/vector.hpp>
 #include <sgc/data/chunkedtilestorage.hpp>
 #include <sgc/graphics/rectangle.hpp>
+#include <functional>
 
 namespace sections {
     class MapSection;
@@ -19,6 +20,7 @@ namespace sgc_view
     {
         private:
             std::unique_ptr<graphics::Rectangle> m_cursorTile;
+            std::function<void(sgc::math::vec2)> m_onCursorPositionChangedCallback = nullptr;
             float m_zoom = 1.0f;
 
             void SetTileset(sgc::data::AssetId tilesetId) override;
@@ -42,6 +44,8 @@ namespace sgc_view
 
             void ChangeCameraPositionSingles(float deltaX, float deltaY);
             void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
+
+            void RegisterOnCursorPositionChangedCallback(std::function<void(sgc::math::vec2)> callback);
 
             float GetZoom() const;
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;

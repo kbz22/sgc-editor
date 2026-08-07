@@ -66,10 +66,11 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
     auto hRebarTop = m_programContext.menuSection->GetHwnd();
     auto hRebarBottom = m_programContext.toolbarSection->GetHwnd();  
     
-    UpdateRebarLayout(hwnd, rc.right); // this is important to do before relaying the sections    
+    UpdateRebarLayout(hwnd, rc.right); // this is important to do before relaying the sections
 
     int hTop = m_menuBarHeight;
     int hBottom = m_toolbarHeight;
+    
     m_toolbarOffset = hTop + hBottom;
 
     m_windowWidth = rc.right;
@@ -90,21 +91,27 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
         // Fix by shrinking tileset first
         int shrink = defaults::minCollumnWidth - middle;
         tilesetWidth = std::max(defaults::minCollumnWidth, tilesetWidth - shrink);
-    }    
+    }
+
+    RECT statusBarRect;
+    GetClientRect(m_programContext.statusSection->GetHwnd(), &statusBarRect);
+
+    m_statusBarHeight = statusBarRect.bottom - statusBarRect.top;
 
     HDWP hdwp; 
     
-    hdwp = BeginDeferWindowPos(9);
+    hdwp = BeginDeferWindowPos(10);
 
     hdwp = defer(hdwp, hRebarTop, 0, 0, rc.right, hTop);
     hdwp = defer(hdwp, hRebarBottom, 0, hTop, rc.right, hBottom);
     hdwp = defer(hdwp, m_programContext.layersSection->GetHwnd(), 0, m_toolbarOffset, layerWidth, layerHeight);
-    hdwp = defer(hdwp, m_layerPackageSplitter, 0, m_toolbarOffset + layerHeight, layerWidth, m_splitH);
-    hdwp = defer(hdwp, m_programContext.packageSection->GetHwnd(), 0, m_toolbarOffset + layerHeight + m_splitH, layerWidth, rc.bottom - m_toolbarOffset - layerHeight - m_splitH);
-    hdwp = defer(hdwp, m_layerMapSplitter, layerWidth, m_toolbarOffset, m_splitW, rc.bottom - m_toolbarOffset);
-    hdwp = defer(hdwp, m_programContext.mapSection->GetHwnd(), layerWidth + m_splitW, m_toolbarOffset, rc.right - layerWidth - tilesetWidth - 2*m_splitW, rc.bottom - m_toolbarOffset);
-    hdwp = defer(hdwp, m_tilesetMapSplitter, rc.right - tilesetWidth - m_splitW, m_toolbarOffset, m_splitW, rc.bottom - m_toolbarOffset);
-    hdwp = defer(hdwp, m_programContext.tilesetSection->GetHwnd(), rc.right - tilesetWidth, m_toolbarOffset, tilesetWidth, rc.bottom - m_toolbarOffset);
+    hdwp = defer(hdwp, m_layerPackageSplitter, 0, m_toolbarOffset + layerHeight, layerWidth, m_splitH - m_statusBarHeight);
+    hdwp = defer(hdwp, m_programContext.packageSection->GetHwnd(), 0, m_toolbarOffset + layerHeight + m_splitH, layerWidth, rc.bottom - m_toolbarOffset - layerHeight - m_splitH - m_statusBarHeight);
+    hdwp = defer(hdwp, m_layerMapSplitter, layerWidth, m_toolbarOffset, m_splitW, rc.bottom - m_toolbarOffset - m_statusBarHeight);
+    hdwp = defer(hdwp, m_programContext.mapSection->GetHwnd(), layerWidth + m_splitW, m_toolbarOffset, rc.right - layerWidth - tilesetWidth - 2*m_splitW, rc.bottom - m_toolbarOffset - m_statusBarHeight);
+    hdwp = defer(hdwp, m_tilesetMapSplitter, rc.right - tilesetWidth - m_splitW, m_toolbarOffset, m_splitW, rc.bottom - m_toolbarOffset - m_statusBarHeight);
+    hdwp = defer(hdwp, m_programContext.tilesetSection->GetHwnd(), rc.right - tilesetWidth, m_toolbarOffset, tilesetWidth, rc.bottom - m_toolbarOffset - m_statusBarHeight);
+    hdwp = defer(hdwp, m_programContext.statusSection->GetHwnd(), 0, rc.bottom - m_statusBarHeight, rc.right, m_statusBarHeight);
 
     EndDeferWindowPos(hdwp);
 }

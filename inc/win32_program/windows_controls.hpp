@@ -15,6 +15,7 @@ namespace win32_program
         PackageView = 1006,
         MapView = 1007,
         TilesetView = 1008,
+        StatusView = 1009,
 
         SplitTilesetMap = 2001,
         SplitLayerPackage = 2002,

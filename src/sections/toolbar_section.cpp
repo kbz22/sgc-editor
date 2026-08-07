@@ -187,7 +187,7 @@ void sections::ToolbarSection::Refresh(program::ProgramContext& programContext)
         {
             auto widgetAction = dynamic_cast<action::WidgetAction*>(action);
             auto widgetHwnd = widgetAction->GetWidget()->GetHWND();
-            // EnableWindow(widgetHwnd, action->IsEnabled());
+            EnableWindow(widgetHwnd, action->IsEnabled());
             continue;
         }
         else 

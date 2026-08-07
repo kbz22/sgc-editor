@@ -92,6 +92,9 @@ void program::StartDefault()
     programContext.packageSection = std::make_unique<sections::PackageSection>(programContext);
     programContext.sections.push_back(programContext.packageSection.get());
 
+    programContext.statusSection = std::make_unique<sections::StatusSection>(programContext);
+    programContext.sections.push_back(programContext.statusSection.get());
+
     programContext.layersSection->RegisterSelectedLayerChangeCallback([&programContext](size_t index) {
         auto document = programContext.fileManager->GetActiveDocument();
         if(document != nullptr) {

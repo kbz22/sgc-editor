@@ -9,6 +9,7 @@
 #include "sections/menu_section.hpp"
 #include "sections/layers_section.hpp"
 #include "sections/package_section.hpp"
+#include "sections/status_section.hpp"
 
 #include "locale/string_lookup.hpp"
 
@@ -35,6 +36,7 @@ namespace program {
         std::unique_ptr<sections::MenuSection> menuSection;
         std::unique_ptr<sections::LayersSection> layersSection;
         std::unique_ptr<sections::PackageSection> packageSection;
+        std::unique_ptr<sections::StatusSection> statusSection;
 
         std::vector<sections::Section*> sections;
 

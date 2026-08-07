@@ -199,6 +199,11 @@ void sgc_view::MapView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D
         position.x,
         position.y
     });
+
+    m_onCursorPositionChangedCallback({
+        position.x,
+        position.y
+    });
 }
 
 void sgc_view::MapView::SetCursorSizeInPixels(sgc::graphics::PixelSize2D size)
@@ -254,11 +259,26 @@ void sgc_view::MapView::ChangeCameraPositionSingles(float deltaX, float deltaY)
 void sgc_view::MapView::ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta)
 {
     auto currentPosition = m_cursorTile->GetPosition();
-    
-    m_cursorTile->SetPosition({
+
+    auto newPosition = sgc::graphics::PixelPosition2D{
         currentPosition.x - delta.x,
         currentPosition.y - delta.y
+    };
+    
+    m_cursorTile->SetPosition({
+        newPosition.x,
+        newPosition.y
     });
+
+    m_onCursorPositionChangedCallback({
+        newPosition.x,
+        newPosition.y
+    });
+}
+
+void sgc_view::MapView::RegisterOnCursorPositionChangedCallback(std::function<void(sgc::math::vec2)> callback)
+{
+    m_onCursorPositionChangedCallback = callback;
 }
 
 sgc::math::fvec2 sgc_view::MapView::GetCameraPositionSingles() const

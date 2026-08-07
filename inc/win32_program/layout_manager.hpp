@@ -34,6 +34,7 @@ namespace win32_program {
             int m_windowHeight = 0;
             int m_menuBarHeight = 0;
             int m_toolbarHeight = 0;
+            int m_statusBarHeight = 0;
 
             program::ProgramContext& m_programContext; 
             
