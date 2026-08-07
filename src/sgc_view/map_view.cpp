@@ -31,8 +31,8 @@ void sgc_view::MapView::SetScreenSize(int width, int height)
     m_renderContext.view.camera = graphics::Viewport{
         camera_x,
         camera_y,
-        static_cast<float>(width) * m_zoom,
-        static_cast<float>(height) * m_zoom
+        ScaleForZoom(static_cast<float>(width)),
+        ScaleForZoom(static_cast<float>(height))
     };
 }
 
@@ -46,8 +46,8 @@ void sgc_view::MapView::SetZoom(float zoom)
     m_renderContext.view.camera = graphics::Viewport{
         camera_x,
         camera_y,
-        static_cast<float>(m_renderContext.view.screen.w) * m_zoom,
-        static_cast<float>(m_renderContext.view.screen.h) * m_zoom
+        ScaleForZoom(static_cast<float>(m_renderContext.view.screen.w)),
+        ScaleForZoom(static_cast<float>(m_renderContext.view.screen.h))
     };
 }
 

@@ -123,9 +123,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
                 auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
-                auto zoom = m_mapView->GetZoom();
-                auto deltaX = (x - m_lastMousePosPan.x) * zoom;
-                auto deltaY = (y - m_lastMousePosPan.y) * zoom;
+                auto zoom = m_mapView->GetZoom();                
+                auto deltaX = m_mapView->ScaleForZoom(static_cast<float>(x - m_lastMousePosPan.x));
+                auto deltaY = m_mapView->ScaleForZoom(static_cast<float>(y - m_lastMousePosPan.y));
 
                 m_mapView->ChangeCameraPositionSingles(
                     deltaX,
@@ -279,7 +279,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
                 auto zoomFactor = 1.1f;
 
-                if (delta > 0)
+                if (delta < 0)
                 {
                     zoomFactor = 1.0f / zoomFactor;
                 }

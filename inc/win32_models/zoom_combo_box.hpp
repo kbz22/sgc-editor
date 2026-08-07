@@ -15,15 +15,14 @@ namespace win32_models {
             float m_zoom = 1.0f;
             int m_width = 80;
             RECT m_bounds{0, 0, m_width, 24};
-            constexpr static size_t ZoomLevelPresetsCount = 7;
+            constexpr static size_t ZoomLevelPresetsCount = 6;
             const float m_zoomLevelPresets[ZoomLevelPresetsCount] = {
                 0.25f,
                 0.5f,
                 0.75f,
                 1.0f,
-                1.25f,
                 1.5f,
-                2.0f
+                2.0f,
             };
             std::function<void()> m_onUpdateCallback = nullptr;
 

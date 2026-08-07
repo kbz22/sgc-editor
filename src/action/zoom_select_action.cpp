@@ -31,7 +31,7 @@ void action::ZoomSelectAction::BuildWidget(HWND parent, program::ProgramContext&
     });
 
     context.mapSection->RegisterOnZoomChangedCallback([this](float zoom) {
-        m_zoomComboBox->SetZoomLevel(1.0f / zoom);
+        m_zoomComboBox->SetZoomLevel(zoom);
     });
 
 }

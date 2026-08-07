@@ -52,6 +52,11 @@ namespace sgc_view
             sgc::math::fvec2 GetCursorPositionSingles() const;
             sgc::graphics::View GetView() const;
 
+            inline float ScaleForZoom(float value) const
+            {
+                return value / m_zoom;
+            }
+
             friend class sections::MapSection;
     };
 }
