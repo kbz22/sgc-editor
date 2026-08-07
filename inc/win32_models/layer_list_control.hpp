@@ -40,6 +40,7 @@ namespace win32_models {
             MouseTarget m_mouseOver = MouseTarget::None;
             static bool m_isLayerListProcRegistered;
             HBRUSH m_brushHighlightHover = nullptr;
+            HFONT m_hFont = nullptr;
 
             int m_rowHeight = 32;
             int m_scrollOffsetPixels = 0;

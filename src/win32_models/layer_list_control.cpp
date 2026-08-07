@@ -62,7 +62,24 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
             Lerp(b, 255, 0.25f));
             
     m_brushHighlightHover = CreateSolidBrush(hover);
-    }    
+    }
+
+    m_hFont = CreateFontW(
+        -12,
+        0,
+        0,
+        0,
+        FW_NORMAL,
+        FALSE,
+        FALSE,
+        FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        L"Arial"
+    );
 }
 
 win32_models::LayerListControl::~LayerListControl()
@@ -182,7 +199,7 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
     );
 
     row.left += 36;
-    row.top -= 4;
+    row.top -= 2;
     
     SetBkMode(hdc, TRANSPARENT);
     DrawTextW(
@@ -219,10 +236,15 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                 &ps.rcPaint,
                 (HBRUSH)(COLOR_WINDOW + 1)
             );
+
+            HFONT oldFont = (HFONT)SelectObject(hdc, m_hFont);
             
             for(int index = 0; index < static_cast<int>(m_layers.size()); ++index){                
                 DrawEntry(hdc, index, clientRect);
             }
+            // restore old font
+            SelectObject(hdc, oldFont);
+
             int contentHeight = static_cast<int>(m_layers.size()) * m_rowHeight;
             int visibleHeight = clientRect.bottom - clientRect.top;
 

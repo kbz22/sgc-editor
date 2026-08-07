@@ -49,6 +49,12 @@ win32_models::ZoomComboBox::ZoomComboBox(HWND parent, HINSTANCE hInstance, int i
         0,
         reinterpret_cast<DWORD_PTR>(this)
     );
+
+    // Get parents font
+    HFONT hFont = reinterpret_cast<HFONT>(
+        SendMessage(parent, WM_GETFONT, 0, 0)
+    );
+    SendMessage(m_hwnd, WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
 }
 
 LRESULT CALLBACK win32_models::ZoomComboBox::ComboBoxStaticProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data)
@@ -66,6 +72,30 @@ LRESULT win32_models::ZoomComboBox::HandleMessage(HWND hwnd, UINT msg, WPARAM wp
 {
     switch (msg)
     {
+        case WM_ENABLE:
+        {
+            auto enabled = (wparam != 0);
+            std::wstring text = L"";
+
+            if(enabled){
+                text = std::to_wstring(static_cast<int>(m_zoom * 100)) + L"%";
+    
+            }
+
+            SetWindowText(m_hwnd, text.c_str());
+
+            int len = GetWindowTextLength(m_hwndEdit);
+
+            PostMessage(
+                m_hwndEdit,
+                EM_SETSEL,
+                len,
+                len
+            );
+
+            break;
+        }
+
         case WM_COMMAND:
         {
             auto code = HIWORD(wparam);
@@ -144,7 +174,8 @@ void win32_models::ZoomComboBox::SetZoomLevel(float zoomLevel)
         m_hwndEdit,
         EM_SETSEL,
         len,
-        len);
+        len
+    );
 }
 
 HWND win32_models::ZoomComboBox::GetHWND() const

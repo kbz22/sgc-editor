@@ -72,11 +72,6 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
                 programContext
             );
 
-            HFONT hFont = reinterpret_cast<HFONT>(
-            SendMessage(hwndToolbar, WM_GETFONT, 0, 0));
-
-            SendMessage(widgetAction->GetWidget()->GetHWND(), WM_SETFONT, reinterpret_cast<WPARAM>(hFont), TRUE);
-
             btn.iBitmap = widgetAction->GetControlWidth();
             btn.idCommand = static_cast<int>(action->GetType());
             btn.fsState = 0;

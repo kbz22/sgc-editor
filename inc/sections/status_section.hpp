@@ -20,8 +20,8 @@ namespace sections {
         private:            
             std::unordered_map<StatusField, std::wstring> m_statusTexts;
             const int m_partsWidths[static_cast<int>(StatusField::Count)] = {
-                100,
-                200,
+                150,
+                250,
                 -1
             };
             std::wstring m_padding = L"  ";
