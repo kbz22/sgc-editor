@@ -132,6 +132,15 @@ void program::LayerManager::SetSingleLayerMode(bool singleLayerMode)
     m_singleLayerMode = singleLayerMode;
 }
 
+void program::LayerManager::SetLayerName(size_t index, std::wstring name)
+{
+    if (index >= m_layers.size()) {
+        throw std::out_of_range("Index is out of range for setting layer name.");
+    }
+
+    m_layers[index].name = name;
+}
+
 void program::LayerManager::SetLayerTransparency(size_t index, uint8_t transparency)
 {
     if (index >= m_layers.size()) {

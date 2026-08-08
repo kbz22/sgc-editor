@@ -80,6 +80,9 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
         DEFAULT_PITCH | FF_DONTCARE,
         L"Arial"
     );
+
+    m_editTextBox = std::make_unique<win32_models::EditTextBox>(m_hwnd, hInstance);
+    PostMessage(m_editTextBox->GetHwnd(), WM_SETFONT, reinterpret_cast<WPARAM>(m_hFont), TRUE);    
 }
 
 win32_models::LayerListControl::~LayerListControl()
@@ -119,7 +122,8 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
         (index + 1) * m_rowHeight - m_scrollOffsetPixels
     };
 
-    int deltaIconHeight = (m_rowHeight - 24) / 2;
+    int deltaIconHeight = (m_rowHeight - 24) / 2;   
+    m_labelTextOffsetY = (m_rowHeight - 24) / 2 + 4;
 
     RECT eyeButtonRect =
     {
@@ -129,18 +133,32 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
         row.bottom - deltaIconHeight
     };
 
+    RECT labelRect =
+    {
+        m_labelRectXOffset,
+        row.top + m_labelTextOffsetY,
+        m_labelRectXOffset + layer.nameWidth + m_labelTextOffsetX * 2,
+        row.bottom - m_labelTextOffsetY
+    };
+
     HBRUSH brushRect;
-    HBRUSH brushEyeButton;    
+    HBRUSH brushEyeButton;
+    HBRUSH brushLabel;
 
     if (index == m_selectedLayerIndex)
     {
         brushRect = GetSysColorBrush(COLOR_HIGHLIGHT);
         brushEyeButton = GetSysColorBrush(COLOR_HIGHLIGHT);
+        brushLabel = GetSysColorBrush(COLOR_HIGHLIGHT);
 
         if(m_mouseOver == MouseTarget::EyeButton && index == m_hoveredLayerIndex)
         {
             brushEyeButton = m_brushHighlightHover;
-        }        
+        }
+        else if(m_mouseOver == MouseTarget::LayerName && index == m_hoveredLayerIndex)
+        {
+            brushLabel = m_brushHighlightHover;
+        }
     }
     else switch (m_mouseOver)
     {
@@ -154,6 +172,7 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
                 brushRect = GetSysColorBrush(COLOR_WINDOW);
             }
             brushEyeButton = brushRect;
+            brushLabel = brushRect;
             break;
 
         case MouseTarget::EyeButton:
@@ -166,11 +185,24 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
                 brushEyeButton = GetSysColorBrush(COLOR_WINDOW);
             }
             brushRect = GetSysColorBrush(COLOR_WINDOW);
+            brushLabel = brushRect;
+            break;
+
+        case MouseTarget::LayerName:
+            if (index == m_hoveredLayerIndex){
+                brushLabel = GetSysColorBrush(COLOR_BTNFACE);
+            }
+            else{
+                brushLabel = GetSysColorBrush(COLOR_WINDOW);
+            }            
+            brushRect = GetSysColorBrush(COLOR_WINDOW);
+            brushEyeButton = brushRect;
             break;
 
         default:
             brushRect = GetSysColorBrush(COLOR_WINDOW);
             brushEyeButton = brushRect;
+            brushLabel = brushRect;
             break;
     }
 
@@ -186,6 +218,12 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
         brushEyeButton
     );
 
+    FillRect(
+        hdc,
+        &labelRect,        
+        brushLabel
+    );
+
     row.top += 2;
     brushEyeButton = GetSysColorBrush(COLOR_WINDOW);    
 
@@ -198,7 +236,7 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
         ILD_NORMAL
     );
 
-    row.left += 36;
+    row.left += m_labelRectXOffset + m_labelTextOffsetX;
     row.top -= 2;
     
     SetBkMode(hdc, TRANSPARENT);
@@ -345,10 +383,13 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             switch (m_mouseOver)
             {
                 case MouseTarget::Entry:                    
+                {
                     SetSelectedLayer(m_hoveredLayerIndex);
                     break;
+                }
 
                 case MouseTarget::EyeButton:
+                {
                     if (m_hoveredLayerIndex < m_layers.size())
                     {
                         auto& layer = m_layers[m_hoveredLayerIndex];
@@ -359,6 +400,21 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                         }
                     }
                     break;
+                }
+
+                case MouseTarget::LayerName:
+                {
+                    auto editedLayerIndex = m_hoveredLayerIndex;
+                    m_editTextBox->StartEditing(
+                        m_labelRectXOffset,
+                        static_cast<int>(m_hoveredLayerIndex) * m_rowHeight + m_labelTextOffsetY,
+                        m_layers[m_hoveredLayerIndex].name,
+                        [this, editedLayerIndex](std::wstring newName) {
+                            UpdateLayerName(newName, editedLayerIndex);
+                        }
+                    );
+                    break;
+                }
 
                 default:
                     break;
@@ -367,6 +423,11 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             InvalidateRect(hwnd, nullptr, FALSE);
 
             return 0;
+        }
+
+        case WM_GETFONT:
+        {
+            return reinterpret_cast<LRESULT>(m_hFont);
         }
 
         default:
@@ -414,14 +475,34 @@ void win32_models::LayerListControl::Refresh(program::ProgramContext& programCon
 
     program::LayerManager *layerManager = mapDocument->GetLayerManager();
     m_layers.clear();
-    for(auto &layer : layerManager->GetLayers())
+
+    // HDC to get width of text
+    PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(m_hwnd, &ps);
+    
+    HFONT oldFont = static_cast<HFONT>(
+        SelectObject(hdc, m_hFont)
+    );
+
+    auto getTextWidth = [&](const std::wstring& text) -> int
     {
+        SIZE size;
+        GetTextExtentPoint32W(hdc, text.c_str(), static_cast<int>(text.length()), &size);
+        return size.cx;
+    };
+
+    for(auto &layer : layerManager->GetLayers())
+    {        
         ListItem item;
         item.name = layer.name;
         item.visible = layer.visible;
+        item.nameWidth = getTextWidth(item.name);
 
         m_layers.push_back(item);
     }
+
+    SelectObject(hdc, oldFont);
+    EndPaint(m_hwnd, &ps);
 
     SetSelectedLayer(layerManager->GetActiveLayerIndex());
 
@@ -459,8 +540,11 @@ void win32_models::LayerListControl::SetHoveredIndexAtPoint([[maybe_unused]] int
 
     m_hoveredLayerIndex = index;
 
-    if(x < 32 && x > 0) {        
+    if(x < m_labelRectXOffset && x > 0) {
         m_mouseOver = MouseTarget::EyeButton;
+    }
+    else if(x >= m_labelRectXOffset && x < m_labelRectXOffset + m_layers[index].nameWidth) {
+        m_mouseOver = MouseTarget::LayerName;
     }
     else {
         m_mouseOver = MouseTarget::Entry;
@@ -490,6 +574,19 @@ void win32_models::LayerListControl::UpdateScrollInfo()
     );
 }
 
+void win32_models::LayerListControl::UpdateLayerName(std::wstring newName, size_t layerIndex)
+{
+    if (layerIndex < m_layers.size())
+    {
+        m_layers[layerIndex].name = newName;
+        m_layers[layerIndex].nameWidth = 0;        
+
+        m_layerNameChangeCallback(layerIndex, newName);
+
+        Refresh(program::GetProgramContext());
+    }
+}
+
 void win32_models::LayerListControl::SetHImageList(HIMAGELIST imageList, HIMAGELIST imageListDisabled, int indexOpen, int indexClosed)
 {
     m_imageListIndexOpen = indexOpen;
@@ -506,4 +603,9 @@ void win32_models::LayerListControl::RegisterSelectedLayerChangeCallback(std::fu
 void win32_models::LayerListControl::RegisterLayerVisibilityChangeCallback(std::function<void(size_t, bool)> callback)
 {
     m_layerVisibilityChangeCallback = callback;
+}
+
+void win32_models::LayerListControl::RegisterLayerNameChangeCallback(std::function<void(size_t, std::wstring)> callback)
+{
+    m_layerNameChangeCallback = callback;
 }

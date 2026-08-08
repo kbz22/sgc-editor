@@ -48,6 +48,7 @@ add_executable(sgc-editor WIN32
 
     src/win32_models/layer_list_control.cpp
     src/win32_models/zoom_combo_box.cpp
+    src/win32_models/edit_text_box.cpp
 
     src/win32_program/windows_init.cpp    
     src/win32_program/windows_process.cpp

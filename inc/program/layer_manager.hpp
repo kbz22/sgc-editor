@@ -39,6 +39,7 @@ namespace program {
             void SetLayerVisibility(size_t index, bool visible);
             void SetLayerTransparency(size_t index, uint8_t transparency);
             void SetSingleLayerMode(bool singleLayerMode);
+            void SetLayerName(size_t index, std::wstring name);
 
             std::vector<LayerItem> GetLayers() const;
             size_t GetActiveLayerIndex() const;

@@ -121,6 +121,20 @@ void program::StartDefault()
         }
     });
 
+    programContext.layersSection->RegisterLayerNameChangeCallback([&programContext](size_t index, std::wstring newName) {
+        auto document = programContext.fileManager->GetActiveDocument();
+        if(document != nullptr) {
+            auto layerManager = document->GetLayerManager();
+            layerManager->SetLayerName(index, newName);
+            document->SetDirty(true);
+
+            programContext.mapSection->Refresh(programContext);
+            programContext.mapSection->Update();
+
+            programContext.packageSection->UpdateTreeViewItems(programContext);
+        }
+    });
+
     programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemSelected, [&programContext](file::IFile* file, size_t index) {
         auto fileManager = programContext.fileManager.get();
         auto location = file::DocumentLocation{file, index};

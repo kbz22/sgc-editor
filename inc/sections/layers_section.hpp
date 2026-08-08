@@ -31,6 +31,7 @@ namespace sections {
             void SetSelectedLayer(size_t layerIndex);
             void RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback);
             void RegisterLayerVisibilityChangeCallback(std::function<void(size_t, bool)> callback);
+            void RegisterLayerNameChangeCallback(std::function<void(size_t, std::wstring)> callback);
 
     };
 
