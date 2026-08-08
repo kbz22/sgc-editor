@@ -18,6 +18,7 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
         wc.lpszClassName = L"LayerListControl";
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = nullptr;
+        wc.style = CS_DBLCLKS;
 
         RegisterClassEx(&wc);
 
@@ -382,6 +383,8 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
 
             switch (m_mouseOver)
             {
+                // Ignore layer name change unless it's a double click
+                case MouseTarget::LayerName:
                 case MouseTarget::Entry:                    
                 {
                     SetSelectedLayer(m_hoveredLayerIndex);
@@ -402,26 +405,34 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                     break;
                 }
 
-                case MouseTarget::LayerName:
-                {
-                    auto editedLayerIndex = m_hoveredLayerIndex;
-                    m_editTextBox->StartEditing(
-                        m_labelRectXOffset,
-                        static_cast<int>(m_hoveredLayerIndex) * m_rowHeight + m_labelTextOffsetY,
-                        m_layers[m_hoveredLayerIndex].name,
-                        [this, editedLayerIndex](std::wstring newName) {
-                            UpdateLayerName(newName, editedLayerIndex);
-                        }
-                    );
-                    break;
-                }
-
                 default:
                     break;
             }
 
             InvalidateRect(hwnd, nullptr, FALSE);
 
+            return 0;
+        }
+
+        case WM_LBUTTONDBLCLK:
+        {
+            int y = GET_Y_LPARAM(lparam);
+            int x = GET_X_LPARAM(lparam);
+
+            SetHoveredIndexAtPoint(x, y);
+
+            if(m_mouseOver == MouseTarget::LayerName) {
+                auto editedLayerIndex = m_hoveredLayerIndex;
+                m_editTextBox->StartEditing(
+                    m_labelRectXOffset,
+                    static_cast<int>(m_hoveredLayerIndex) * m_rowHeight + m_labelTextOffsetY,
+                    m_layers[m_hoveredLayerIndex].name,
+                    [this, editedLayerIndex](std::wstring newName) {
+                        UpdateLayerName(newName, editedLayerIndex);
+                    }
+                );
+            }
+            
             return 0;
         }
 
