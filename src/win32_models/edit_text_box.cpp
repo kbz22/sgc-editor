@@ -24,7 +24,7 @@ win32_models::EditTextBox::EditTextBox(HWND hwndParent, HINSTANCE hInstance) :
         reinterpret_cast<DWORD_PTR>(this)
     );
 
-    // ShowWindow(m_hwnd, SW_HIDE);
+    ShowWindow(m_hwnd, SW_HIDE);
 }
 
 win32_models::EditTextBox::~EditTextBox()
