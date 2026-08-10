@@ -173,10 +173,11 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
     case WM_LBUTTONDOWN:
     {
+        SetFocus(hwnd);
         auto& layoutManager = GetLayoutManager();
         if (layoutManager.GetDraggedSplitter(hwnd, lParam) != DraggedSplitter::None)
         {
-            SetCapture(hwnd);
+            SetCapture(hwnd);            
             capturedMouse = true;
         }
         break;
@@ -193,6 +194,12 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
             capturedMouse = false;
         }
         return 0;
+    }
+    
+    case WM_RBUTTONDOWN:
+    {
+        SetFocus(hwnd);
+        break;
     }
 
     case WM_MOUSEMOVE:

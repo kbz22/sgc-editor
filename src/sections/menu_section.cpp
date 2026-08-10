@@ -110,6 +110,7 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
 
     SetHwnd(hwndRebar, win32context->hMainWindow);
     m_hwndToolbar = hwndToolbar;
+    SetupSubclass(hwndToolbar, this);
 }
 
 sections::MenuSection::~MenuSection()

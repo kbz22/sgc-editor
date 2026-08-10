@@ -65,6 +65,11 @@ LRESULT CALLBACK sections::Section::StaticPaneProc(HWND hwnd, UINT msg, WPARAM w
 
     if (self)
     {
+        if(msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK || msg == WM_RBUTTONDOWN || msg == WM_RBUTTONDBLCLK)
+        {
+            SetFocus(hwnd);
+        }
+        
         return self->HandleMessages(
             hwnd,
             msg,

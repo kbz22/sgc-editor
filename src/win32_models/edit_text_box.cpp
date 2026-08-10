@@ -92,6 +92,14 @@ LRESULT win32_models::EditTextBox::HandleMessage(HWND hwnd, UINT msg, WPARAM wpa
             break;
         }
 
+        case WM_KILLFOCUS:
+        {
+            m_visible = false;
+            ShowWindow(m_hwnd, SW_HIDE);
+
+            return 0;
+        }
+
         default:
             break;
     }
@@ -128,9 +136,10 @@ void win32_models::EditTextBox::StartEditing(int x, int y, std::wstring initialT
     m_onEditingFinished = onEditingFinished;
     m_visible = true;
 
-    Update();
+    SetFocus(m_hwnd);
 
-    ShowWindow(m_hwnd, SW_SHOW);    
+    Update();
+    ShowWindow(m_hwnd, SW_SHOW);
 }
 
 HWND win32_models::EditTextBox::GetHwnd() const

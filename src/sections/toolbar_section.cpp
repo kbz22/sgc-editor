@@ -112,6 +112,8 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
     SetHwnd(hwndRebar, context.hMainWindow);
     m_hwndToolbar = hwndToolbar;
 
+    SetupSubclass(hwndToolbar, this);
+
     return;
 
 }

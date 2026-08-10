@@ -380,6 +380,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             int x = GET_X_LPARAM(lparam);
 
             SetHoveredIndexAtPoint(x, y);
+            SetFocus(m_hwnd);
 
             switch (m_mouseOver)
             {
@@ -409,7 +410,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                     break;
             }
 
-            InvalidateRect(hwnd, nullptr, FALSE);
+            InvalidateRect(hwnd, nullptr, FALSE);            
 
             return 0;
         }
@@ -420,6 +421,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             int x = GET_X_LPARAM(lparam);
 
             SetHoveredIndexAtPoint(x, y);
+            SetFocus(m_hwnd);
 
             if(m_mouseOver == MouseTarget::LayerName) {
                 auto editedLayerIndex = m_hoveredLayerIndex;
@@ -433,6 +435,13 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                 );
             }
             
+            return 0;
+        }
+
+        case WM_RBUTTONDBLCLK:
+        case WM_RBUTTONDOWN:
+        {
+            SetFocus(m_hwnd);
             return 0;
         }
 
