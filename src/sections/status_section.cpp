@@ -85,6 +85,6 @@ void sections::StatusSection::SetStatusTileId(std::optional<sgc::tile::TileId> t
 
 void sections::StatusSection::SetStatusSelectionSize(const sgc::math::vec2& size)
 {
-    std::wstring text = L"Selection Size: (" + std::to_wstring(size.x) + L", " + std::to_wstring(size.y) + L")";
+    std::wstring text = L"Selection: [" + std::to_wstring(size.x) + L", " + std::to_wstring(size.y) + L"]";
     SetStatusText(StatusField::SelectionSize, text);
 }

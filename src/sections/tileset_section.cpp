@@ -8,7 +8,22 @@ sections::TilesetSection::TilesetSection(program::ProgramContext& programContext
     Section{L"TilesetView", win32_program::ControlId::TilesetView, *programContext.mainWindowContext},
     m_tilesetView{std::make_unique<sgc_view::TilesetView>(GetHwnd())}
 {
-    AttachView(*m_tilesetView);
+    AttachView(*m_tilesetView);    
+}
+
+void sections::TilesetSection::UpdateStatusBar(sgc::math::vec2 position, sgc::tile::TileId tileId, sgc::math::vec2 size)
+{
+    auto &programContext = program::GetProgramContext();
+    auto mapDocument = programContext.fileManager->GetActiveDocument();
+
+    if(mapDocument != nullptr && mapDocument->IsEditable())
+    {
+        auto statusSection = programContext.statusSection.get();
+
+        statusSection->SetStatusCursorPosition(position);
+        statusSection->SetStatusTileId(tileId);
+        statusSection->SetStatusSelectionSize(size);
+    }
 }
 
 void sections::TilesetSection::Update()
@@ -95,10 +110,6 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
 
         case WM_MOUSEMOVE:
         {
-            if (!m_selectionActive) {
-                break;
-            }
-
             int x = GET_X_LPARAM(lparam);
             int y = GET_Y_LPARAM(lparam);
 
@@ -107,16 +118,17 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
 
             auto tileset = m_tilesetView->GetTileset();
             auto tileSize = tileset->GetTileSize();
+            
+            sgc::math::vec2 currentTile = {
+                x / tileSize.x,
+                y / tileSize.y
+            };
+
             auto imageSize = tileset->GetImageSize();
 
             sgc::math::vec2 tileCount = {
                 imageSize.x / tileSize.x,
                 imageSize.y / tileSize.y
-            };
-
-            sgc::math::vec2 currentTile = {
-                x / tileSize.x,
-                y / tileSize.y
             };
 
             currentTile.x = std::min(currentTile.x, tileCount.x - 1);
@@ -131,6 +143,14 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
                 std::max(m_selectionTileStart.x, currentTile.x),
                 std::max(m_selectionTileStart.y, currentTile.y)
             };
+
+            auto tileId = tileset->ToTileId(currentTile.x, currentTile.y);
+
+            UpdateStatusBar(currentTile, tileId, m_selectionTileSize);
+
+            if (!m_selectionActive) {
+                break;
+            }            
 
             m_selectionTileSize = {
                 maxTile.x - minTile.x + 1,

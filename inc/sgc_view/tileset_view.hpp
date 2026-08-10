@@ -3,7 +3,6 @@
 #include <sgc_view/sgc_view.hpp>
 #include <sgc/graphics/rectangle.hpp>
 #include <sgc/graphics/tiledlayer.hpp>
-#include "defaults.hpp"
 
 namespace sgc_view 
 {

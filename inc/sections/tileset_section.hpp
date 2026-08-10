@@ -8,7 +8,6 @@
 
 #include "sections/section.hpp"
 #include "sgc_view/tileset_view.hpp"
-#include "defaults.hpp"
 
 namespace program {
     struct ProgramContext;
@@ -25,6 +24,8 @@ namespace sections {
             bool m_selectionActive = false;
             sgc::math::vec2 m_selectionTileStart = { 0, 0 };
             sgc::math::vec2 m_selectionTileSize = { 0, 0 };
+
+            void UpdateStatusBar(sgc::math::vec2 position, sgc::tile::TileId tileId, sgc::math::vec2 size);
         
         public:
             TilesetSection(program::ProgramContext& programContext);

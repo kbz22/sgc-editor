@@ -140,7 +140,8 @@ void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
         tileset = programContext.assetManager->MakeTileset(tilesetId, &m_renderContext);
     }
     catch ([[maybe_unused]] const program::AssetCacheException& e) {
-        // Ignore missing tileset, wait for refresh when the tileset is available        
+        // Ignore missing tileset - likely a map was loaded first
+        // wait for refresh when the tileset is available        
         return;
     }    
 
