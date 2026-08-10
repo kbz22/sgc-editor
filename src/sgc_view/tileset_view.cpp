@@ -16,10 +16,6 @@ sgc_view::TilesetView::TilesetView(HWND hwnd) :
     m_cursorTile{nullptr}
 {}
 
-sgc_view::TilesetView::~TilesetView() {
-    // nothing to do
-}
-
 void sgc_view::TilesetView::SetCursorTile(sgc::graphics::PixelPosition2D position, sgc::graphics::PixelSize2D size)
 {
     if(m_cursorTile == nullptr) {

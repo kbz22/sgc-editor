@@ -59,8 +59,7 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
         programContext.packageSection->Update();
     });
 
-    m_openFiles.push_back(std::move(newFile));
-    // SelectDocument(selectedDoc);
+    m_openFiles.push_back(std::move(newFile));    
     SetActiveDocument(selectedDoc);
 
     return;
@@ -107,8 +106,7 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
 
         m_openFiles.push_back(std::move(newFile));
 
-        openedDoc.file = m_openFiles.back().get();
-        // SelectDocument(openedDoc);
+        openedDoc.file = m_openFiles.back().get();        
         SetActiveDocument(openedDoc);
     }
     else if(extension == defaults::TilesetFileExtension.data()) 

@@ -39,7 +39,6 @@ namespace sections {
             std::optional<sgc::graphics::PixelPosition2D> GetCursorPositionInPixels() const;
             std::optional<sgc::graphics::PixelSize2D> GetCursorSizeInPixels() const;
 
-            // void LoadTileset(const std::filesystem::path& path, int tileWidth, int tileHeight, program::ProgramContext& programContext);
             void ClearTileset();
     };
 

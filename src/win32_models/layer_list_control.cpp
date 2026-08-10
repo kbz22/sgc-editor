@@ -329,8 +329,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                     m_scrollOffsetPixels = HIWORD(wparam);
                     break;
             }
-
-            // ClampScroll();
+                        
             UpdateScrollInfo();
 
             InvalidateRect(hwnd,nullptr,FALSE);

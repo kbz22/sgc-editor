@@ -24,7 +24,7 @@ namespace sgc_view
 
         public:
             TilesetView(HWND hwnd);
-            ~TilesetView();
+            ~TilesetView() = default;
 
             void Render() override;
             void Refresh(program::ProgramContext& programContext) override;

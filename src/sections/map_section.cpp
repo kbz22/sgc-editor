@@ -22,7 +22,6 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
         auto &programContext = program::GetProgramContext();
         auto &statusSection = programContext.statusSection;
         auto mapDocument = programContext.fileManager->GetActiveDocument();
-        // auto currentLayer = mapDocument->GetLayerManager()->GetLayers()[mapDocument->GetLayerManager()->GetActiveLayerIndex()];
         auto tileSize = m_mapView->GetTileSize();
         auto layers = mapDocument->GetLayerManager()->GetLayers();
 

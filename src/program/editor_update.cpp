@@ -3,8 +3,7 @@
 
 void program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
 {
-    auto &programContext = program::GetProgramContext();
-    // auto &fileManager = programContext.fileManager;
+    auto &programContext = program::GetProgramContext();    
     auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument == nullptr) {
