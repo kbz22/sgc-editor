@@ -266,8 +266,17 @@ void editor_tools::PaintFill(
         return;
     }
     else {
+        // i assume chunked storage here
+        // which for now is true for all layers
+        //!but in the future this might need a check (dynamic should throw if not chunked)
         if(targetTileId == std::nullopt) {
             targetTileId = brush.m_clearTileId;
+
+            auto& chunkedStorage = *dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
+            chunkedStorage.SetChunkAt(
+                chunkedStorage.GetChunkCoordAt(tilePosition),
+                brush.m_clearTileId
+            );
         }
 
         currentLayer->SetTileAt(tilePosition, targetTileId);
