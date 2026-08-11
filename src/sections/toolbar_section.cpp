@@ -75,7 +75,7 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
             btn.iBitmap = widgetAction->GetControlWidth();
             btn.idCommand = static_cast<int>(action->GetType());
             btn.fsState = 0;
-            btn.fsStyle = BTNS_SEP;
+            btn.fsStyle = 0;
         }
         else
         {
@@ -92,9 +92,7 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
 
     SendMessage(hwndToolbar, TB_ADDBUTTONS,
             (WPARAM)tbButtons.size(),
-            (LPARAM)tbButtons.data());
-
-    
+            (LPARAM)tbButtons.data());    
 
     SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(g_ButtonPadding, 0));
     SendMessage(hwndToolbar, TB_SETBITMAPSIZE, 0, MAKELPARAM(g_ButtonBitmapSize, g_ButtonBitmapSize));
@@ -161,7 +159,7 @@ void sections::ToolbarSection::Update()
             2
         );
 
-        widget->SetPosition(rect.left, rect.top);
+        widget->SetPosition(rect.left, rect.top + 2);
         widget->Update();
     }
     Redraw();
