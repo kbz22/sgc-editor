@@ -42,7 +42,9 @@ namespace action {
         ZoomOut,
         LayerModeMultilayer,
         LayerModeSingleLayer,
-        LayerModeSingleImage,
+        LayerModeSingleImage,        
+        GridModeTile,
+        GridModeChunk,
 
         MenuHelp = 5001,
         HelpAbout,

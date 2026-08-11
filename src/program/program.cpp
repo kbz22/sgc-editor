@@ -30,6 +30,7 @@
 #include "action/zoom_reset_action.hpp"
 #include "action/change_brush_erase_mode_action.hpp"
 #include "action/zoom_select_action.hpp"
+#include "action/change_grid_mode_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -61,7 +62,9 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::ZoomIn,
     action::ActionType::ZoomOut,
     action::ActionType::EraseModeClearTile,
-    action::ActionType::EraseModeDeleteChunk
+    action::ActionType::EraseModeDeleteChunk,
+    action::ActionType::GridModeTile,
+    action::ActionType::GridModeChunk
 };
 
 void program::StartDefault()
@@ -247,6 +250,8 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::ClearTile));
     programContext.actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::DeleteChunk));
     programContext.actionManager->Register(std::make_unique<action::ZoomSelectAction>());
+    programContext.actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::TileGrid));
+    programContext.actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::ChunkGrid));
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

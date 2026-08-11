@@ -6,6 +6,7 @@
 #include <sgc/math/vector.hpp>
 #include <sgc/data/chunkedtilestorage.hpp>
 #include <sgc/graphics/rectangle.hpp>
+#include <sgc/graphics/linegrid.hpp>
 #include <functional>
 
 namespace sections {
@@ -20,6 +21,8 @@ namespace sgc_view
     {
         private:
             std::unique_ptr<graphics::Rectangle> m_cursorTile;
+            std::shared_ptr<graphics::LineGrid> m_tileGrid;
+            std::shared_ptr<graphics::LineGrid> m_chunkGrid;
             std::function<void(sgc::math::vec2)> m_onCursorPositionChangedCallback = nullptr;
             float m_zoom = 1.0f;
 
@@ -36,6 +39,8 @@ namespace sgc_view
             void Render() override;
             void Refresh(program::ProgramContext& programContext) override;
             void SetScreenSize(int width, int height) override;
+
+            void UpdateGridPosition(sgc::graphics::Viewport cameraViewport);
 
             bool SetZoom(float zoom); // returns true if zoom was changed
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);

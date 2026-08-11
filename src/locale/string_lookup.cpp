@@ -29,6 +29,8 @@ locale::StringLookup::StringLookup()
         {StringId::TooltipEditorResetZoom, L"Set zoom to 100%"},
         {StringId::TooltipEditorEraseModeClearTile, L"Set a tile to empty"},
         {StringId::TooltipEditorEraseModeDeleteChunk, L"Delete a chunk"},
+        {StringId::TooltipEditorChunkLineGrid, L"Show chunk grid"},
+        {StringId::TooltipEditorTileLineGrid, L"Show tile grid"},
 
         {StringId::NameFile, L"File"},
         {StringId::NameEdit, L"Edit"},
@@ -64,6 +66,8 @@ locale::StringLookup::StringLookup()
         {StringId::NameZoomOut, L"Zoom out"},
         {StringId::NameEraserModeClearTile, L"Clear tile"},
         {StringId::NameEraserModeDeleteChunk, L"Delete chunk"},
+        {StringId::NameEditorChunkLineGrid, L"Chunk grid"},
+        {StringId::NameEditorTileLineGrid, L"Tile grid"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},

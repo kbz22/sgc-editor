@@ -33,6 +33,8 @@ namespace locale
         TooltipEditorSetZoom,
         TooltipEditorEraseModeClearTile,
         TooltipEditorEraseModeDeleteChunk,
+        TooltipEditorChunkLineGrid,
+        TooltipEditorTileLineGrid,
 
         NameFile,
         NameEdit,
@@ -66,6 +68,8 @@ namespace locale
         NamePaintModeEraser,
         NameEraserModeClearTile,
         NameEraserModeDeleteChunk,
+        NameEditorChunkLineGrid,
+        NameEditorTileLineGrid,
         NameZoomIn,
         NameZoomOut,
 

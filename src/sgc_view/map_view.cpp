@@ -11,7 +11,23 @@ sgc_view::MapView::MapView(HWND hwnd) :
     SgcView(hwnd),
     m_cursorTile{nullptr}
 {
-    std::vector<std::shared_ptr<graphics::IDrawable>> drawables;    
+    std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
+
+    m_tileGrid = std::make_shared<graphics::LineGrid>(
+        0, 0,
+        0, 0,
+        static_cast<int>(sgc::data::TileChunk::Size),
+        static_cast<int>(sgc::data::TileChunk::Size)
+    );
+    m_tileGrid->SetColor({ 128, 128, 128, 64 });
+
+    m_chunkGrid = std::make_shared<graphics::LineGrid>(
+        0, 0,
+        0, 0,
+        static_cast<int>(sgc::data::TileChunk::Size * sgc::data::TileChunk::Size),
+        static_cast<int>(sgc::data::TileChunk::Size * sgc::data::TileChunk::Size)
+    );
+    m_chunkGrid->SetColor({ 255, 255, 255, 255 });
 
     auto layer = std::make_shared<graphics::RenderLayer>(drawables);
 
@@ -61,6 +77,30 @@ bool sgc_view::MapView::SetZoom(float zoom)
 float sgc_view::MapView::GetZoom() const
 {
     return m_zoom;
+}
+
+void sgc_view::MapView::UpdateGridPosition(sgc::graphics::Viewport cameraViewport)
+{
+    using sgc::math::ival;
+
+    auto tileSize = m_tileset->GetTileSize();
+    auto chunkOffsetX = static_cast<ival>(cameraViewport.x) % static_cast<ival>(tileSize.x * sgc::data::TileChunk::Size) + sgc::data::TileChunk::Size * tileSize.x;
+    auto chunkOffsetY = static_cast<ival>(cameraViewport.y) % static_cast<ival>(tileSize.y * sgc::data::TileChunk::Size) + sgc::data::TileChunk::Size * tileSize.y;
+
+    auto gridPosition = sgc::graphics::PixelPosition2D{
+        static_cast<ival>(cameraViewport.x) - chunkOffsetX,
+        static_cast<ival>(cameraViewport.y) - chunkOffsetY
+    };
+    auto gridSize = sgc::graphics::PixelSize2D{
+        static_cast<ival>(cameraViewport.w) + tileSize.x + chunkOffsetX,
+        static_cast<ival>(cameraViewport.h) + tileSize.y + chunkOffsetY
+    };
+
+    m_tileGrid->SetPosition(gridPosition);
+    m_tileGrid->SetSize(gridSize);
+
+    m_chunkGrid->SetPosition(gridPosition);
+    m_chunkGrid->SetSize(gridSize);
 }
 
 void sgc_view::MapView::SetCursorTile(sgc::graphics::PixelSize2D size)
@@ -186,6 +226,16 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
         drawables.push_back(tiledImage);
     }
 
+    if(program::HasFlag(programContext.editorGridMode, program::EditorGridMode::TileGrid)) {
+        drawables.push_back(m_tileGrid);
+    }
+    
+    if(program::HasFlag(programContext.editorGridMode, program::EditorGridMode::ChunkGrid)) {
+        drawables.push_back(m_chunkGrid);
+    }
+
+    UpdateGridPosition(m_renderContext.view.camera);
+
     auto layer = std::make_shared<graphics::RenderLayer>(drawables);
 
     m_drawableImage = layer;
@@ -248,12 +298,14 @@ void sgc_view::MapView::SetCameraPositionSingles(float x, float y)
 {
     m_renderContext.view.camera.x = x;
     m_renderContext.view.camera.y = y;
+    UpdateGridPosition(m_renderContext.view.camera);
 }
 
 void sgc_view::MapView::ChangeCameraPositionSingles(float deltaX, float deltaY)
 {
     m_renderContext.view.camera.x -= deltaX;
     m_renderContext.view.camera.y -= deltaY;
+    UpdateGridPosition(m_renderContext.view.camera);
 }
 
 void sgc_view::MapView::ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta)

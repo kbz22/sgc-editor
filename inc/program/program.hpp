@@ -58,6 +58,7 @@ namespace program {
 
         program::EditorLayerMode editorLayerMode = program::EditorLayerMode::MultiLayer;
         program::EditorChunkMode editorChunkMode = program::EditorChunkMode::FixedChunks;
+        program::EditorGridMode editorGridMode = program::EditorGridMode::NoGrid;
     };
 
     ProgramContext& GetProgramContext();

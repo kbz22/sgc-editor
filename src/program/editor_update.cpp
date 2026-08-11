@@ -96,3 +96,21 @@ void program::UpdateBrushEraseMode(editor_tools::EraserMode newMode)
     programContext.toolbarSection->Refresh(programContext);
     programContext.menuSection->Refresh(programContext);
 }
+
+void program::UpdateEditorGridMode(program::EditorGridMode newMode)
+{
+    auto& programContext = program::GetProgramContext();
+
+    programContext.editorGridMode = static_cast<program::EditorGridMode>(
+        static_cast<uint8_t>(programContext.editorGridMode) ^
+        static_cast<uint8_t>(newMode)
+    );
+
+    programContext.actionManager->ActionSetChecked(action::ActionType::GridModeTile, HasFlag(programContext.editorGridMode, program::EditorGridMode::TileGrid));
+    programContext.actionManager->ActionSetChecked(action::ActionType::GridModeChunk, HasFlag(programContext.editorGridMode, program::EditorGridMode::ChunkGrid));
+
+    programContext.toolbarSection->Refresh(programContext);
+    programContext.menuSection->Refresh(programContext);
+    programContext.mapSection->Refresh(programContext);
+    programContext.mapSection->Update();
+}

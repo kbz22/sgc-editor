@@ -27,7 +27,8 @@ namespace action {
         EditorChunkMode,
         BrushMode,
         EraseMode,
-        Zoom
+        Zoom,
+        GridMode
     };
 
     struct ActionDescription
