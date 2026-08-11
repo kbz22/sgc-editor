@@ -92,9 +92,13 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
 
     SendMessage(hwndToolbar, TB_ADDBUTTONS,
             (WPARAM)tbButtons.size(),
-            (LPARAM)tbButtons.data());     
+            (LPARAM)tbButtons.data());
 
-    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(24, 24));
+    
+
+    SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(g_ButtonPadding, 0));
+    SendMessage(hwndToolbar, TB_SETBITMAPSIZE, 0, MAKELPARAM(g_ButtonBitmapSize, g_ButtonBitmapSize));
+    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(g_ButtonSize, g_ButtonSize));
     SendMessage(hwndToolbar, TB_AUTOSIZE, 0, 0);
 
     SIZE sz = {};
