@@ -7,20 +7,32 @@ command::PaintCommand::PaintCommand(file::MapDocument* mapDocument, size_t activ
 
 void command::PaintCommand::ExecuteTileChange(const TileChange &tileChange)
 {
-    m_tileChanges.insert_or_assign(tileChange.position, tileChange);
+    if(m_tileChanges.contains(tileChange.position)) {
+        TileChange& existingChange = m_tileChanges[tileChange.position];
+        existingChange.newTileId = tileChange.newTileId;            
+    }
+    else {
+        m_tileChanges[tileChange.position] = tileChange;
+    }
 
     auto layerManager = m_mapDocument->GetLayerManager();
     layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);
 }
 
-void command::PaintCommand::ExecuteTileChange(const std::vector<TileChange> &tileChanges)
+void command::PaintCommand::ExecuteTileChange(const std::unordered_map<sgc::math::vec2, TileChange> &tileChanges)
 {
     m_tileChanges.reserve(m_tileChanges.size() + tileChanges.size());
     auto layerManager = m_mapDocument->GetLayerManager();
 
     for (const auto& change : tileChanges) {
-        m_tileChanges.insert_or_assign(change.position, change);
-        layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(change.position, change.newTileId);
+        if(m_tileChanges.contains(change.first)) {
+            TileChange& existingChange = m_tileChanges[change.first];
+            existingChange.newTileId = change.second.newTileId;            
+        }
+        else {
+            m_tileChanges[change.first] = change.second;
+        }
+        layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(change.first, change.second.newTileId);
     }
 }
 

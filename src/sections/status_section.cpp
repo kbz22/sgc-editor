@@ -49,7 +49,7 @@ void sections::StatusSection::Update()
     return;
 }
 
-void sections::StatusSection::Refresh(program::ProgramContext& programContext)
+void sections::StatusSection::Refresh([[maybe_unused]] program::ProgramContext& programContext)
 {
     return;
 }

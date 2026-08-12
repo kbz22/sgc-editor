@@ -29,7 +29,7 @@ inline std::optional<sgc::tile::TileId> GetTileId(
     );
 }
 
-inline std::vector<command::TileChange> CreateTileChanges(
+inline std::unordered_map<sgc::math::vec2, command::TileChange> CreateTileChanges(
     sgc::math::ival x_start,
     sgc::math::ival x_end,
     sgc::math::ival y_start,
@@ -44,10 +44,7 @@ inline std::vector<command::TileChange> CreateTileChanges(
     bool erase
 )
 {
-    std::vector<command::TileChange> tileChanges;
-    auto size_x = sgc::math::Abs(x_end - x_start) + 1;
-    auto size_y = sgc::math::Abs(y_end - y_start) + 1;
-    tileChanges.reserve(size_x * size_y);
+    std::unordered_map<sgc::math::vec2, command::TileChange> tileChanges;  
 
     for(auto x = x_start; x <= x_end; ++x){
         for(auto y = y_start; y <= y_end; ++y)
@@ -78,7 +75,7 @@ inline std::vector<command::TileChange> CreateTileChanges(
                     erase ? clearTileId : tileId
                 };
                 
-                tileChanges.push_back(change);
+                tileChanges[{ x, y }] = change;
             }
         }        
     }
@@ -101,9 +98,7 @@ void editor_tools::PaintStroke(
         return;
     }
 
-    std::vector<command::TileChange> tileChanges;
-
-    tileChanges = CreateTileChanges(
+    auto tileChanges = CreateTileChanges(
         tilePosition.x,
         tilePosition.x + tileSize.x - 1,
         tilePosition.y,
@@ -335,10 +330,10 @@ void editor_tools::PaintFill(
 void editor_tools::EraseFill(
     Brush& brush,
     file::MapDocument& mapDocument,
-    sgc::graphics::Tileset& tileset,
+    [[maybe_unused]] sgc::graphics::Tileset& tileset,
     sgc::tile::TilePosition2D tilePosition,
-    sgc::tile::TilePosition2D cursorPositionOnTileset,
-    sgc::tile::TileSize2D tileSize
+    [[maybe_unused]] sgc::tile::TilePosition2D cursorPositionOnTileset,
+    [[maybe_unused]] sgc::tile::TileSize2D tileSize
 )
 {
     auto currentLayer = mapDocument.GetCurrentLayerStorage();

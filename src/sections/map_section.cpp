@@ -147,7 +147,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
                 auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
-                auto zoom = m_mapView->GetZoom();                
+                // auto zoom = m_mapView->GetZoom();
                 auto deltaX = m_mapView->ScaleForZoom(static_cast<float>(x - m_lastMousePosPan.x));
                 auto deltaY = m_mapView->ScaleForZoom(static_cast<float>(y - m_lastMousePosPan.y));
 

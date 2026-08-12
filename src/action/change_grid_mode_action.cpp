@@ -39,7 +39,7 @@ action::ChangeGridModeAction::ChangeGridModeAction(program::EditorGridMode newGr
     m_actionDescription.menuId = MenuId::View;    
 }
 
-void action::ChangeGridModeAction::Execute(program::ProgramContext& context)
+void action::ChangeGridModeAction::Execute([[maybe_unused]] program::ProgramContext& context)
 {
     program::UpdateEditorGridMode(m_newGridMode);
 }

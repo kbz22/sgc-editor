@@ -25,7 +25,7 @@ namespace command {
             virtual ~PaintCommand() = default;
 
             void ExecuteTileChange(const TileChange &tileChange);
-            void ExecuteTileChange(const std::vector<TileChange> &tileChanges);
+            void ExecuteTileChange(const std::unordered_map<sgc::math::vec2, TileChange> &tileChanges);
             void UndoTileChanges();
             file::MapDocument* GetMapDocument() const;
 
