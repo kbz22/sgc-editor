@@ -2,6 +2,12 @@
 #include "program/program.hpp"
 #include <string>
 
+command::LayerRemoveCommand::LayerRemoveCommand(size_t removedLayerIndex) :
+    m_removedLayerIndex{removedLayerIndex}
+{
+
+}
+
 void command::LayerRemoveCommand::Execute()
 {
     auto& programContext = program::GetProgramContext();
@@ -9,9 +15,11 @@ void command::LayerRemoveCommand::Execute()
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
-        auto activeIndex = layerManager->GetActiveLayerIndex();
-        m_removedLayerIndex = activeIndex;
-        m_removedLayerStorage = layerManager->RemoveLayer(m_removedLayerIndex);
+        // auto activeIndex = layerManager->GetActiveLayerIndex();
+
+        // m_removedLayerIndex = activeIndex;
+
+        m_removedLayerItem = layerManager->RemoveLayer(m_removedLayerIndex);
 
         mapDocument->SetDirty(true);
 
@@ -35,11 +43,7 @@ void command::LayerRemoveCommand::Undo()
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
-        layerManager->InsertLayer({
-                m_removedLayerStorage,
-                L"Layer " + std::to_wstring(m_removedLayerIndex)
-            }, m_removedLayerIndex
-        );
+        layerManager->InsertLayer(m_removedLayerItem, m_removedLayerIndex);
 
         mapDocument->SetDirty(true);
 

@@ -30,7 +30,7 @@ namespace program {
             
             size_t AddLayer(LayerItem entry);
             size_t InsertLayer(LayerItem entry, size_t index);
-            std::shared_ptr<sgc::data::ITileStorage> RemoveLayer(size_t index);
+            LayerItem RemoveLayer(size_t index);
             void MoveLayer(size_t fromIndex, int movement);
             void MoveActiveLayer(int movement);
             

@@ -2,7 +2,8 @@
 
 #include "command/icommand.hpp"
 #include <memory>
-#include <sgc/data/itilestorage.hpp>
+// #include <sgc/data/itilestorage.hpp>
+#include "program/layer_manager.hpp"
 
 namespace command {
 
@@ -10,10 +11,10 @@ namespace command {
 
         private:
             size_t m_removedLayerIndex = 0;
-            std::shared_ptr<sgc::data::ITileStorage> m_removedLayerStorage = nullptr;
+            program::LayerItem m_removedLayerItem;
 
         public:
-            LayerRemoveCommand() = default;
+            LayerRemoveCommand(size_t removedLayerIndex);
             virtual ~LayerRemoveCommand() = default;
 
             void Execute() override;

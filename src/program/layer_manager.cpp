@@ -19,7 +19,7 @@ size_t program::LayerManager::InsertLayer(LayerItem entry, size_t index)
     return index;
 }
 
-std::shared_ptr<sgc::data::ITileStorage> program::LayerManager::RemoveLayer(size_t index)
+program::LayerItem program::LayerManager::RemoveLayer(size_t index)
 {
     if(index >= m_layers.size()) {
         throw std::out_of_range("Index is out of range for removing layer.");
@@ -41,10 +41,10 @@ std::shared_ptr<sgc::data::ITileStorage> program::LayerManager::RemoveLayer(size
         }
     }
 
-    auto storage = m_layers[index].storage;
+    auto item = m_layers[index];
     m_layers.erase(m_layers.begin() + index);
 
-    return storage;
+    return item;
 }
 
 void program::LayerManager::SetActiveLayerIndex(size_t index)
