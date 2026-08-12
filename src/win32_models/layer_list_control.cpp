@@ -253,6 +253,37 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
 LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     auto mapDocument = program::GetProgramContext().fileManager->GetActiveDocument();
+    auto mouseOverHandler = [this, &hwnd](){
+        switch (m_mouseOver)
+            {
+                // Ignore layer name change unless it's a double click
+                case MouseTarget::LayerName:
+                case MouseTarget::Entry:                    
+                {
+                    SetSelectedLayer(m_hoveredLayerIndex);
+                    break;
+                }
+
+                case MouseTarget::EyeButton:
+                {
+                    if (m_hoveredLayerIndex < m_layers.size())
+                    {
+                        auto& layer = m_layers[m_hoveredLayerIndex];
+                        layer.visible = !layer.visible;
+
+                        if (m_layerVisibilityChangeCallback) {
+                            m_layerVisibilityChangeCallback(m_hoveredLayerIndex, layer.visible);
+                        }
+                    }
+                    break;
+                }
+
+                default:
+                    break;
+            }
+
+        InvalidateRect(hwnd, nullptr, FALSE);     
+    };
     
     if(mapDocument == nullptr || !mapDocument->IsEditable())
     {
@@ -381,35 +412,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             SetHoveredIndexAtPoint(x, y);
             SetFocus(m_hwnd);
 
-            switch (m_mouseOver)
-            {
-                // Ignore layer name change unless it's a double click
-                case MouseTarget::LayerName:
-                case MouseTarget::Entry:                    
-                {
-                    SetSelectedLayer(m_hoveredLayerIndex);
-                    break;
-                }
-
-                case MouseTarget::EyeButton:
-                {
-                    if (m_hoveredLayerIndex < m_layers.size())
-                    {
-                        auto& layer = m_layers[m_hoveredLayerIndex];
-                        layer.visible = !layer.visible;
-
-                        if (m_layerVisibilityChangeCallback) {
-                            m_layerVisibilityChangeCallback(m_hoveredLayerIndex, layer.visible);
-                        }
-                    }
-                    break;
-                }
-
-                default:
-                    break;
-            }
-
-            InvalidateRect(hwnd, nullptr, FALSE);            
+            mouseOverHandler();                   
 
             return 0;
         }
@@ -432,6 +435,9 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                         UpdateLayerName(newName, editedLayerIndex);
                     }
                 );
+            }
+            else {
+                mouseOverHandler();
             }
             
             return 0;
@@ -466,6 +472,9 @@ void win32_models::LayerListControl::Resize(int x, int y, int width, int height)
         height,
         TRUE
     );
+
+    m_editTextBox->SetSize(width - 2*m_labelRectXOffset, m_rowHeight - m_labelTextOffsetY * 2);
+    m_editTextBox->Update();
 
     UpdateScrollInfo();
     InvalidateRect(m_hwnd, nullptr, TRUE);
@@ -543,6 +552,11 @@ void win32_models::LayerListControl::SetSelectedLayer(size_t layerIndex)
 size_t win32_models::LayerListControl::GetSelectedLayer() const
 {
     return m_selectedLayerIndex;
+}
+
+HWND win32_models::LayerListControl::GetHwnd() const
+{
+    return m_hwnd;
 }
 
 void win32_models::LayerListControl::SetHoveredIndexAtPoint([[maybe_unused]] int x, int y)

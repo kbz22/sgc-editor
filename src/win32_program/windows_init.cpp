@@ -14,19 +14,21 @@
 
 void win32_program::Run()
 {
+    using namespace program;
+
+    ProgramContext& programContext = GetProgramContext();
+    ShortcutManager& shortcutManager = *programContext.shortcutManager;
+
     MSG msg;
-    ShortcutManager shortcutManager(
-        GetMainWindowContext().hInstance,
-        GetMainWindowContext().hMainWindow
-    );
     while (GetMessage(&msg, nullptr, 0, 0))
     {
+        // direct capture of keyboard shortcuts for actions
         if(msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) {
             ShortcutModifier modifier = ShortcutManager::GetShortcutModifierFromKeyState();
             Shortcut shortcut{ modifier, static_cast<uint32_t>(msg.wParam) };
             action::ActionType actionId = shortcutManager.GetActionForShortcut(
                 shortcut,
-                ShortcutContext::ActiveFile
+                ShortcutContext::Global
             );
 
             if(actionId != action::ActionType::Default) {

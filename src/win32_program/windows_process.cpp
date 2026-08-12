@@ -85,11 +85,14 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     ProgramContext& programContext = GetProgramContext();    
     
     static bool capturedMouse = false;
+    static bool createRunOnce = false;
 
     switch (msg)
     {
     case WM_CREATE:
     {        
+        createRunOnce = true;
+
         SetupImageLists();
 
         programContext.mainWindowContext->hMainWindow = hwnd;
@@ -212,6 +215,21 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
             layoutManager.HandleDragging(hwnd, lParam);            
             HandleResize(hwnd, lParam);
         }
+
+        return 0;
+    }
+
+    case WM_GETMINMAXINFO:
+    {
+        // I need sections to be initialized for layoutManager to work properly
+        if(!createRunOnce) break;
+
+        auto* minMaxInfo = reinterpret_cast<LPMINMAXINFO>(lParam);
+        auto& layoutManager = GetLayoutManager();
+        SIZE minSize = layoutManager.GetMinimumSize();
+
+        minMaxInfo->ptMinTrackSize.x = minSize.cx;
+        minMaxInfo->ptMinTrackSize.y = minSize.cy;
 
         return 0;
     }

@@ -50,7 +50,7 @@ namespace win32_models {
             int m_rowHeight = 32;
             int m_labelRectXOffset = 34;
             int m_labelTextOffsetX = 4;
-            int m_labelTextOffsetY = 0;
+            int m_labelTextOffsetY = 8;
             int m_scrollOffsetPixels = 0;
             int m_maxScroll = 0;
 
@@ -79,6 +79,7 @@ namespace win32_models {
             void SetHImageList(HIMAGELIST imageList, HIMAGELIST imageListDisabled, int indexOpen = 0, int indexClosed = 1);
 
             size_t GetSelectedLayer() const;
+            HWND GetHwnd() const;
 
             void RegisterSelectedLayerChangeCallback(std::function<void(size_t)> callback);            
             void RegisterLayerVisibilityChangeCallback(std::function<void(size_t, bool)> callback);            

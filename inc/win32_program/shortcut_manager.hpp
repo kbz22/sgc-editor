@@ -20,9 +20,8 @@ namespace win32_program
 
     enum class ShortcutContext : uint32_t
     {
-        ActiveFile,
-        MapEditor,
-        TextEditor
+        Global,
+        MapEditor
     };
 
     struct Shortcut

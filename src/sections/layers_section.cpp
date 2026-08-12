@@ -23,6 +23,8 @@ sections::LayersSection::LayersSection(program::ProgramContext& programContext) 
         13,
         14
     );
+
+    SetupSubclass(m_layerListControl->GetHwnd(), this);
 }
 
 sections::LayersSection::~LayersSection()

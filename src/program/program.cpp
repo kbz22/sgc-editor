@@ -73,6 +73,10 @@ void program::StartDefault()
     
     programContext.assetManager = std::make_unique<file::AssetManager>();
     programContext.fileManager = std::make_unique<file::FileManager>();
+    programContext.shortcutManager = std::make_unique<win32_program::ShortcutManager>(
+        programContext.mainWindowContext->hInstance,
+        programContext.mainWindowContext->hMainWindow
+    );
 
     programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 

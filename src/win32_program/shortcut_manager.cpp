@@ -3,13 +3,7 @@
 win32_program::ShortcutManager::ShortcutManager(HINSTANCE hInstance, HWND hwnd) :
     hInstance(hInstance),
     hwnd(hwnd)
-{
-    RegisterShortcut(
-        { ShortcutModifier::Ctrl, 'Z' },
-        ShortcutContext::ActiveFile,
-        action::ActionType::Undo
-    );
-}
+{}
 
 void win32_program::ShortcutManager::RegisterShortcut(
     const Shortcut& shortcut,

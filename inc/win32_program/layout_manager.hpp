@@ -4,6 +4,11 @@
 #include "program/program.hpp"
 #include <windows.h>
 
+namespace defaults {
+    constexpr int minCollumnWidth = 150;
+    constexpr int minCollumnHeight = 100;
+}
+
 namespace win32_program {
 
     enum class DraggedSplitter
@@ -21,9 +26,9 @@ namespace win32_program {
             HWND m_tilesetMapSplitter = HWND();
             HWND m_layerMapSplitter = HWND();
 
-            float m_layersPackageViewRatio = defaults::initialLayerHorizontalRatio;
-            float m_tilesetMapRatio = defaults::initialTilesetRatio;
-            float m_layersMapViewRatio = defaults::initialLayerVerticalRatio;
+            float m_layersPackageViewRatio = 0.15f;
+            float m_tilesetMapRatio = 0.2f;
+            float m_layersMapViewRatio = 0.5f;
 
             DraggedSplitter m_draggedSplitter = DraggedSplitter::None;
 
@@ -47,7 +52,7 @@ namespace win32_program {
             void ResetDraggedSplitter();
             void HandleResize(HWND hwnd, LPARAM lParam);
             void HandleDragging(HWND hwnd, LPARAM lParam);
-            
+            SIZE GetMinimumSize() const;            
     };
 
 }

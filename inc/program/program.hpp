@@ -18,6 +18,7 @@
 #include "action/action_manager.hpp"
 
 #include "win32_program/win32_context.hpp"
+#include "win32_program/shortcut_manager.hpp"
 #include "file/map_document.hpp"
 #include "file/asset_manager.hpp"
 #include "program/editor_mode.hpp"
@@ -39,6 +40,7 @@ namespace program {
         std::unique_ptr<sections::StatusSection> statusSection;
 
         std::vector<sections::Section*> sections;
+        sections::Section* activeSection = nullptr;
 
         std::unique_ptr<sgc::graphics::Rectangle> selectionRectangleOnTileset;
         
@@ -49,6 +51,7 @@ namespace program {
         std::unique_ptr<file::FileManager> fileManager{};
         std::unique_ptr<action::ActionManager> actionManager{};
         std::unique_ptr<file::AssetManager> assetManager{};
+        std::unique_ptr<win32_program::ShortcutManager> shortcutManager{};
 
         HIMAGELIST toolbarIcons;
         HIMAGELIST toolbarIconsDisabled;

@@ -220,3 +220,12 @@ void win32_program::LayoutManager::UpdateRebarLayout([[maybe_unused]] HWND hwnd,
 
     EndDeferWindowPos(hdwp);
 }
+
+SIZE win32_program::LayoutManager::GetMinimumSize() const
+{
+    SIZE minSize;
+    minSize.cx = 3 * defaults::minCollumnWidth + 2 * m_splitW;
+    minSize.cy = 2 * defaults::minCollumnHeight + m_splitH + m_menuBarHeight + m_toolbarHeight + m_statusBarHeight;
+
+    return minSize;
+}

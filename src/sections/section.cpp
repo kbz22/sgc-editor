@@ -1,4 +1,5 @@
 #include "sections/section.hpp"
+#include "program/program.hpp"
 #include <sgc/sdl/sdl_win32.hpp>
 #include <commctrl.h>
 
@@ -59,22 +60,36 @@ void sections::Section::SetHwnd(HWND hwnd, HWND parentHwnd)
     m_parentHwnd = parentHwnd;
 }
 
+// #include "debug.hpp"
+
 LRESULT CALLBACK sections::Section::StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data) 
 {
     auto *self = reinterpret_cast<Section*>(data);
+    auto &programContext = program::GetProgramContext();
 
     if (self)
     {
         if(msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK || msg == WM_RBUTTONDOWN || msg == WM_RBUTTONDBLCLK)
         {
             SetFocus(hwnd);
+            programContext.activeSection = self;
+            // debug::DebugLog(L"Active section set to: %p", self);
+            
+        }
+        else if(msg == WM_KILLFOCUS)
+        {
+            if(programContext.activeSection == self) {
+                programContext.activeSection = nullptr;
+                // debug::DebugLog(L"Active section cleared.");
+            }
         }
         
         return self->HandleMessages(
             hwnd,
             msg,
             wparam,
-            lparam);
+            lparam
+        );
     }
 
     return DefSubclassProc(hwnd, msg, wparam, lparam);

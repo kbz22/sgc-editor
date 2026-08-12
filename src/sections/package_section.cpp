@@ -33,8 +33,7 @@ sections::PackageSection::PackageSection(program::ProgramContext& programContext
         TVSIL_NORMAL
     );
 
-    SetupSubclass(GetHwnd(), this);
-    
+    SetupSubclass(m_packageTreeViewHandle, this);
 }
 
 sections::PackageSection::~PackageSection()
@@ -117,6 +116,7 @@ LRESULT sections::PackageSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wpa
             {
                 TreeViewNotifyHandler(info, programContext);
             }
+            break;
         }
 
         default:
