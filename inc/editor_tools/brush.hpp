@@ -30,7 +30,7 @@ namespace editor_tools {
         private:
             PaintMode m_paintMode{PaintMode::Brush};
             EraserMode m_eraserMode{EraserMode::None};
-            sgc::graphics::Rectangle& m_selectionRectangleOnTileset;            
+            sgc::graphics::Rectangle& m_selectionRectangleOnTileset;
             std::unique_ptr<sgc::tile::TilePosition2D> m_selectionStart{nullptr};
             std::unique_ptr<sgc::tile::TilePosition2D> m_lastSelection{nullptr};
             std::unique_ptr<command::PaintCommand> m_paintCommand{nullptr};

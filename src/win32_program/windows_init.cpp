@@ -1,5 +1,6 @@
 #include "win32_program/windows_init.hpp"
 #include "win32_program/windows_process.hpp"
+#include "win32_program/shortcut_manager.hpp"
 #include "program/program.hpp"
 #include "defaults.hpp"
 #include "locale/string_lookup.hpp"
@@ -14,8 +15,29 @@
 void win32_program::Run()
 {
     MSG msg;
+    ShortcutManager shortcutManager(
+        GetMainWindowContext().hInstance,
+        GetMainWindowContext().hMainWindow
+    );
     while (GetMessage(&msg, nullptr, 0, 0))
     {
+        if(msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) {
+            ShortcutModifier modifier = ShortcutManager::GetShortcutModifierFromKeyState();
+            Shortcut shortcut{ modifier, static_cast<uint32_t>(msg.wParam) };
+            action::ActionType actionId = shortcutManager.GetActionForShortcut(
+                shortcut,
+                ShortcutContext::ActiveFile
+            );
+
+            if(actionId != action::ActionType::Default) {
+                program::ProgramContext& programContext = program::GetProgramContext();
+                programContext.actionManager->Execute(
+                    actionId, programContext
+                );
+                continue;
+            }
+        }
+
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
