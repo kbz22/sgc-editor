@@ -122,7 +122,9 @@ add_executable(sgc-editor WIN32
     src/file/tileset_document.cpp
 
     src/editor_tools/brush.cpp
-    src/editor_tools/paint_modes.cpp    
+    src/editor_tools/paint_modes.cpp
+
+    src/sgc_extension/marching_ants_rectangle.cpp
 )
 
 # embed manifest in the exe
