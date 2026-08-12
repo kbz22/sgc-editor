@@ -6,36 +6,32 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(SGC_INCLUDE_PATH $ENV{SGC_INCLUDE_PATH})
-set(SGC_LIB_PATH $ENV{SGC_LIB_PATH})
-set(SDL_INCLUDE_PATH $ENV{SDL_INCLUDE_PATH})
-set(SDL_LIB_PATH $ENV{SDL_LIB_PATH})
-set(SDL_IMAGE_LIB_PATH $ENV{SDL_IMAGE_LIB_PATH})
-set(SDL_TTF_LIB_PATH $ENV{SDL_TTF_LIB_PATH})
+set(SGC_INCLUDE_PATH "$ENV{SGC_INCLUDE_PATH}" CACHE PATH "Path to SGC include directory")
+set(SGC_LIB_PATH "$ENV{SGC_LIB_PATH}" CACHE PATH "Path to SGC library directory")
+set(SDL_INCLUDE_PATH "$ENV{SDL_INCLUDE_PATH}" CACHE PATH "Path to SDL include directory")
+set(SDL_LIB_PATH "$ENV{SDL_LIB_PATH}" CACHE PATH "Path to SDL library directory")
+set(SDL_IMAGE_LIB_PATH "$ENV{SDL_IMAGE_LIB_PATH}" CACHE PATH "Path to SDL_image library directory")
 
 if(NOT SGC_INCLUDE_PATH)
-    message(FATAL_ERROR "SGC_INCLUDE_PATH environment variable is not set")
+    message(FATAL_ERROR "SGC_INCLUDE_PATH not specified.")
 endif()
 
 if(NOT SGC_LIB_PATH)
-    message(FATAL_ERROR "SGC_LIB_PATH environment variable is not set")
+    message(FATAL_ERROR "SGC_LIB_PATH not specified.")
 endif()
 
 if(NOT SDL_INCLUDE_PATH)
-    message(FATAL_ERROR "SDL_INCLUDE_PATH environment variable is not set")
+    message(FATAL_ERROR "SDL_INCLUDE_PATH not specified.")
 endif()
 
 if(NOT SDL_LIB_PATH)
-    message(FATAL_ERROR "SDL_LIB_PATH environment variable is not set")
+    message(FATAL_ERROR "SDL_LIB_PATH not specified.")
 endif()
 
 if(NOT SDL_IMAGE_LIB_PATH)
-    message(FATAL_ERROR "SDL_IMAGE_LIB_PATH environment variable is not set")
+    message(FATAL_ERROR "SDL_IMAGE_LIB_PATH not specified.")
 endif()
 
-if(NOT SDL_TTF_LIB_PATH)
-    message(FATAL_ERROR "SDL_TTF_LIB_PATH environment variable is not set")
-endif()
 
 set(APP_MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")
 
@@ -145,7 +141,6 @@ target_include_directories(sgc-editor PRIVATE
 target_link_directories(sgc-editor PRIVATE
     ${SDL_IMAGE_LIB_PATH}
     ${SDL_LIB_PATH}
-    ${SDL_TTF_LIB_PATH}
     ${SGC_LIB_PATH}
 )
 
@@ -155,7 +150,6 @@ target_link_libraries(sgc-editor PRIVATE
     windowscodecs
     SDL3
     SDL3_image
-    SDL3_ttf
     sdl-game-core
 )
 
