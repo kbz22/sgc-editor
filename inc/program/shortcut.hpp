@@ -16,7 +16,8 @@ namespace program {
     enum class ShortcutContext : uint32_t
     {
         Global,
-        MapEditor
+        MapEditor,
+        MapEditorSelection,
     };
 
     struct Shortcut
