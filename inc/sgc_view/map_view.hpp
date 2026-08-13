@@ -2,6 +2,7 @@
 
 #include "sgc_view/sgc_view.hpp"
 #include "program/layer_manager.hpp"
+#include "sgc_extension/marching_ants_rectangle.hpp"
 
 #include <sgc/math/vector.hpp>
 #include <sgc/data/chunkedtilestorage.hpp>
@@ -21,6 +22,7 @@ namespace sgc_view
     {
         private:
             std::unique_ptr<graphics::Rectangle> m_cursorTile;
+            std::shared_ptr<graphics::MarchingAntsRectangle> m_marchingAntsRectangleOnMap;
             std::shared_ptr<graphics::LineGrid> m_tileGrid;
             std::shared_ptr<graphics::LineGrid> m_chunkGrid;
             std::function<void(sgc::math::vec2)> m_onCursorPositionChangedCallback = nullptr;
@@ -59,7 +61,7 @@ namespace sgc_view
             sgc::tile::TileSize2D GetCursorSizeInTiles() const;
             sgc::math::fvec2 GetCameraPositionSingles() const;
             sgc::math::fvec2 GetCursorPositionSingles() const;
-            sgc::graphics::View GetView() const;
+            sgc::graphics::View GetView() const;            
 
             inline float ScaleForZoom(float value) const
             {

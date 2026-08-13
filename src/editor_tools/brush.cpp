@@ -2,8 +2,9 @@
 #include "command/delete_chunk_command.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
 
-editor_tools::Brush::Brush(sgc::graphics::Rectangle& selectionRectangleOnTileset) :
-    m_selectionRectangleOnTileset{selectionRectangleOnTileset}
+editor_tools::Brush::Brush(sgc::graphics::Rectangle& selectionRectangleOnTileset, sgc::graphics::MarchingAntsRectangle& marchingAntsRectangleOnTileset) :
+    m_selectionRectangleOnTileset{selectionRectangleOnTileset},
+    m_mapSelectionRect{marchingAntsRectangleOnTileset}
 {}
 
 editor_tools::PaintMode editor_tools::Brush::GetPaintMode() const
@@ -41,7 +42,7 @@ void editor_tools::Brush::PaintExecuteChange(
     sgc::graphics::Tileset& tileset,
     sgc::tile::TilePosition2D tilePosition,
     sgc::tile::TilePosition2D cursorPositionOnTileset,
-    sgc::tile::TileSize2D tileSize
+    sgc::tile::TileSize2D selectionSize
 )
 {
     // Eraser mode bypasses the standard paint control handling
@@ -72,11 +73,20 @@ void editor_tools::Brush::PaintExecuteChange(
             &mapDocument,
             layerManager->GetActiveLayerIndex()
         );
-    }    
+    }
+
+    auto tileSize = tileset.GetTileSize();
 
     if(m_selectionStart == nullptr) {
         m_selectionStart = std::make_unique<sgc::tile::TilePosition2D>(tilePosition);
         m_lastSelection = std::make_unique<sgc::tile::TilePosition2D>(tilePosition);
+        m_mapSelectionRect.SetPosition(
+            sgc::math::fvec2{
+                static_cast<float>(tilePosition.x) * static_cast<float>(tileSize.x),
+                static_cast<float>(tilePosition.y) * static_cast<float>(tileSize.y)
+            }
+        );
+            
     }
     else if(m_lastSelection->x == tilePosition.x && m_lastSelection->y == tilePosition.y) {
         m_needsRedraw = false;
@@ -91,6 +101,16 @@ void editor_tools::Brush::PaintExecuteChange(
 
     switch(m_paintMode)
     {
+        case PaintMode::Select:
+            m_mapSelectionRect.SetSize(
+                sgc::math::fvec2{
+                    static_cast<float>(std::abs(tilePosition.x - m_selectionStart->x) + 1) * static_cast<float>(tileSize.x),
+                    static_cast<float>(std::abs(tilePosition.y - m_selectionStart->y) + 1) * static_cast<float>(tileSize.y)
+                }
+            );
+            m_needsRedraw = true;
+            break;
+
         case PaintMode::Brush:
             if(m_eraserMode == EraserMode::ClearTile) {
                 EraseStroke(
@@ -99,7 +119,7 @@ void editor_tools::Brush::PaintExecuteChange(
                     tileset,
                     tilePosition,
                     cursorPositionOnTileset,
-                    tileSize
+                    selectionSize
                 );
             }
             else {
@@ -109,7 +129,7 @@ void editor_tools::Brush::PaintExecuteChange(
                     tileset,
                     tilePosition,
                     cursorPositionOnTileset,
-                    tileSize
+                    selectionSize
                 );
             }
             m_needsRedraw = true;
@@ -123,7 +143,7 @@ void editor_tools::Brush::PaintExecuteChange(
                     tileset,
                     tilePosition,
                     cursorPositionOnTileset,
-                    tileSize
+                    selectionSize
                 );
             }
             else {
@@ -133,7 +153,7 @@ void editor_tools::Brush::PaintExecuteChange(
                     tileset,
                     tilePosition,
                     cursorPositionOnTileset,
-                    tileSize
+                    selectionSize
                 );
             }
             m_needsRedraw = true;
@@ -147,7 +167,7 @@ void editor_tools::Brush::PaintExecuteChange(
                     tileset,
                     tilePosition,
                     cursorPositionOnTileset,
-                    tileSize
+                    selectionSize
                 );
             }
             else {
@@ -157,7 +177,7 @@ void editor_tools::Brush::PaintExecuteChange(
                     tileset,
                     tilePosition,
                     cursorPositionOnTileset,
-                    tileSize
+                    selectionSize
                 );
             }
             m_needsRedraw = true;

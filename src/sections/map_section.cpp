@@ -14,7 +14,10 @@
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
     Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
     m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())},
-    m_brush{*programContext.selectionRectangleOnTileset}
+    m_brush{
+        *programContext.selectionRectangleOnTileset,
+        *m_mapView->m_marchingAntsRectangleOnMap
+    }
 {
     AttachView(*m_mapView);
 
@@ -405,4 +408,13 @@ void sections::MapSection::ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomV
 void sections::MapSection::RegisterOnZoomChangedCallback(std::function<void(float)> callback)
 {
     m_onZoomChangedCallback = callback;
+}
+
+bool sections::MapSection::IsSelectionActive() const
+{
+    if (m_mapView != nullptr) {
+        auto selectionSize = m_mapView->m_marchingAntsRectangleOnMap->GetSize();
+        return selectionSize.x > 0.0f && selectionSize.y > 0.0f;
+    }
+    return false;
 }

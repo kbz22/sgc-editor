@@ -2,6 +2,7 @@
 
 #include "file/map_document.hpp"
 #include "command/paint_command.hpp"
+#include "sgc_extension/marching_ants_rectangle.hpp"
 #include <sgc/graphics/rectangle.hpp>
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/tile/tile.hpp>
@@ -31,15 +32,19 @@ namespace editor_tools {
             PaintMode m_paintMode{PaintMode::Brush};
             EraserMode m_eraserMode{EraserMode::None};
             sgc::graphics::Rectangle& m_selectionRectangleOnTileset;
+            sgc::graphics::MarchingAntsRectangle& m_mapSelectionRect;
             std::unique_ptr<sgc::tile::TilePosition2D> m_selectionStart{nullptr};
             std::unique_ptr<sgc::tile::TilePosition2D> m_lastSelection{nullptr};
             std::unique_ptr<command::PaintCommand> m_paintCommand{nullptr};
             bool m_checkTileBeforePainting{true};
-            bool m_needsRedraw{false};            
+            bool m_needsRedraw{false};
             sgc::tile::TileId m_clearTileId{0};
 
         public:
-            Brush(sgc::graphics::Rectangle& selectionRectangleOnTileset);
+            Brush(
+                sgc::graphics::Rectangle& selectionRectangleOnTileset,
+                sgc::graphics::MarchingAntsRectangle& marchingAntsRectangleOnTileset
+            );
             ~Brush() = default;
 
             PaintMode GetPaintMode() const;

@@ -48,6 +48,8 @@ namespace sections {
             editor_tools::EraserMode GetEraseMode() const;
             float GetZoom() const;
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;
+
+            bool IsSelectionActive() const;
     };
 
 }

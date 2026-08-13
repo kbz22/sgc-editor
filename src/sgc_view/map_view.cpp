@@ -11,8 +11,6 @@ sgc_view::MapView::MapView(HWND hwnd) :
     SgcView(hwnd),
     m_cursorTile{nullptr}
 {
-    std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
-
     m_tileGrid = std::make_shared<graphics::LineGrid>(
         0, 0,
         0, 0,
@@ -29,8 +27,13 @@ sgc_view::MapView::MapView(HWND hwnd) :
     );
     m_chunkGrid->SetColor({ 255, 255, 255, 255 });
 
-    auto layer = std::make_shared<graphics::RenderLayer>(drawables);
+    m_marchingAntsRectangleOnMap = std::make_shared<graphics::MarchingAntsRectangle>(
+        sgc::math::fvec2{0.0f, 0.0f},
+        sgc::math::fvec2{0.0f, 0.0f}
+    );
 
+    std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
+    auto layer = std::make_shared<graphics::RenderLayer>(drawables);
     m_drawableImage = layer;
 }
 
@@ -153,6 +156,11 @@ void sgc_view::MapView::Render()
 {
     SgcView::Clear();
     SgcView::DrawAll();
+
+    auto selectBoxSize = m_marchingAntsRectangleOnMap->GetSize();
+    if(selectBoxSize.x > 0.0f && selectBoxSize.y > 0.0f) {
+        m_marchingAntsRectangleOnMap->Draw(m_renderContext);
+    }
 
     if(m_cursorTile != nullptr) {
         m_cursorTile->Draw(m_renderContext);

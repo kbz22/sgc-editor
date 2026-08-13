@@ -25,6 +25,9 @@ namespace sgc::graphics {
             void SetColor(sgc::graphics::color color1, sgc::graphics::color color2);
             void SetOffset(float offset);
 
+            sgc::math::fvec2 GetPosition() const;
+            sgc::math::fvec2 GetSize() const;
+
             void Draw(const RenderContext& context) override;
 
     };

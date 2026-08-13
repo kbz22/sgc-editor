@@ -28,6 +28,16 @@ void sgc::graphics::MarchingAntsRectangle::SetOffset(float offset)
     m_offset = std::fmod(offset, 2 * m_segmentLength);
 }
 
+sgc::math::fvec2 sgc::graphics::MarchingAntsRectangle::GetPosition() const 
+{
+    return m_position;
+}
+
+sgc::math::fvec2 sgc::graphics::MarchingAntsRectangle::GetSize() const 
+{
+    return m_size;
+}
+
 void sgc::graphics::MarchingAntsRectangle::Draw(const RenderContext& context) 
 {    
     constexpr int numPoints = 4;
