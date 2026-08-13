@@ -17,6 +17,10 @@ namespace action {
         MenuEdit = 2001,
         Undo,
         Redo,
+        SelectionCut,
+        SelectionCopy,
+        SelectionPaste,
+        SelectionClear,
         
         PaintModeBrush,
         PaintModeRectangle,

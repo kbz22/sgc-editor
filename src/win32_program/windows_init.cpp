@@ -32,7 +32,6 @@ void win32_program::Run()
             );
 
             if(actionId != action::ActionType::Default) {
-                program::ProgramContext& programContext = program::GetProgramContext();
                 programContext.actionManager->Execute(
                     actionId, programContext
                 );

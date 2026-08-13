@@ -38,6 +38,10 @@ namespace locale
         TooltipEditorSelectModeSingleLayer,
         TooltipEditorSelectModeAllLayers,
         TooltipEditorSelectModeVisibleLayers,
+        TooltipEditorSelectionCut,
+        TooltipEditorSelectionCopy,
+        TooltipEditorSelectionPaste,
+        TooltipEditorSelectionClear,
 
         NameFile,
         NameEdit,
@@ -78,6 +82,10 @@ namespace locale
         NameEditorSelectionModeSingleLayer,
         NameEditorSelectionModeAllLayers,
         NameEditorSelectionModeVisibleLayers,
+        NameEditorSelectionCut,
+        NameEditorSelectionCopy,
+        NameEditorSelectionPaste,
+        NameEditorSelectionClear,
 
         NameTilesetFile,
         NamePackageFile,

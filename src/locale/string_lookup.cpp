@@ -34,6 +34,10 @@ locale::StringLookup::StringLookup()
         {StringId::TooltipEditorSelectModeSingleLayer, L"Active layer selection"},
         {StringId::TooltipEditorSelectModeAllLayers, L"All layers selection"},
         {StringId::TooltipEditorSelectModeVisibleLayers, L"Visible layers selection"},
+        {StringId::TooltipEditorSelectionCut, L"Cut selection"},
+        {StringId::TooltipEditorSelectionCopy, L"Copy selection"},
+        {StringId::TooltipEditorSelectionPaste, L"Paste selection"},
+        {StringId::TooltipEditorSelectionClear, L"Clear selection"},
 
         {StringId::NameFile, L"File"},
         {StringId::NameEdit, L"Edit"},
@@ -74,6 +78,10 @@ locale::StringLookup::StringLookup()
         {StringId::NameEditorSelectionModeSingleLayer, L"Single layer selection"},
         {StringId::NameEditorSelectionModeAllLayers, L"All layers selection"},
         {StringId::NameEditorSelectionModeVisibleLayers, L"Visible layers selection"},
+        {StringId::NameEditorSelectionCut, L"Cut selection"},
+        {StringId::NameEditorSelectionCopy, L"Copy selection"},
+        {StringId::NameEditorSelectionPaste, L"Paste selection"},
+        {StringId::NameEditorSelectionClear, L"Clear selection"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},
