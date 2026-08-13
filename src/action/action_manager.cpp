@@ -69,6 +69,17 @@ void action::ActionManager::ActionSetEnabled(ActionType actionType, bool enabled
     }
 }
 
+std::vector<action::Action*> action::ActionManager::GetActions() const
+{
+    std::vector<Action*> actions;
+
+    for (const auto& action : m_actions) {
+        actions.push_back(action.get());
+    }
+
+    return actions;
+}
+
 void action::ActionManager::ActionSetEnabled(const std::vector<ActionType>& actionTypes, bool enabled)
 {
     for(auto &actionType : actionTypes) {

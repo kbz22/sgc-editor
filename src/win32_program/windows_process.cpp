@@ -99,12 +99,13 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         
         programContext.actionManager = std::make_unique<action::ActionManager>();
 
-        RegisterActions();
+        RegisterActions();        
         
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
         InitCommonControlsEx(&icc);
 
         StartDefault();
+        RegisterDefaultShortcuts(programContext);
         RefreshEditor();
         HandleResize(hwnd, lParam);        
 

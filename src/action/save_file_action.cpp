@@ -20,6 +20,10 @@ action::SaveFileAction::SaveFileAction()
     m_actionDescription.menuId = MenuId::File;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipFileSave;
     m_actionDescription.nameStringId = locale::StringId::NameSaveFile;
+    m_actionDescription.shortcutContext = program::ShortcutContext::Global;
+    m_actionDescription.shortcuts = {
+        {program::ShortcutModifier::Ctrl, 'S'}
+    };
 }
 
 void action::SaveFileAction::Execute(program::ProgramContext& programContext)

@@ -200,6 +200,25 @@ void RefreshAllSection(program::ProgramContext& programContext)
     }
 }
 
+void program::RegisterDefaultShortcuts(program::ProgramContext& programContext)
+{
+    auto& shortcutManager = programContext.shortcutManager;
+    auto& actionManager = programContext.actionManager;
+
+    for(auto &action : actionManager->GetActions()) {
+        auto shortcuts = action->GetDefaultShortcuts();
+        for(auto& shortcut : shortcuts) {
+            shortcutManager->RegisterShortcut(
+                shortcut,
+                action->GetShortcutContext(),
+                action->GetType()
+            );
+        }
+    }
+
+
+}
+
 void program::RefreshEditor()
 {
     auto &programContext = GetProgramContext();

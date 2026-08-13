@@ -26,10 +26,22 @@ void win32_program::Run()
         if(msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) {
             ShortcutModifier modifier = ShortcutManager::GetShortcutModifierFromKeyState();
             Shortcut shortcut{ modifier, static_cast<uint32_t>(msg.wParam) };
-            action::ActionType actionId = shortcutManager.GetActionForShortcut(
-                shortcut,
-                ShortcutContext::Global
-            );
+            action::ActionType actionId = action::ActionType::Default;
+
+            if(programContext.activeSection != nullptr)
+            {
+                actionId = shortcutManager.GetActionForShortcut(
+                    shortcut,
+                    ShortcutContext::MapEditor
+                );
+            }
+            else
+            {
+                actionId = shortcutManager.GetActionForShortcut(
+                    shortcut,
+                    ShortcutContext::Global
+                );
+            }            
 
             if(actionId != action::ActionType::Default) {
                 programContext.actionManager->Execute(

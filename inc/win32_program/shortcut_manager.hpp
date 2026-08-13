@@ -7,30 +7,11 @@
 #include <cstdint>
 
 #include "action/action_types.hpp"
+#include "program/shortcut.hpp"
 
 namespace win32_program
 {
-    enum class ShortcutModifier : uint32_t
-    {
-        None = 0,
-        Ctrl = 1,
-        Alt = 2,
-        Shift = 4
-    };
-
-    enum class ShortcutContext : uint32_t
-    {
-        Global,
-        MapEditor
-    };
-
-    struct Shortcut
-    {        
-        ShortcutModifier modifier;
-        uint32_t key;
-
-        bool operator==(const Shortcut&) const = default;
-    };    
+    using program::Shortcut, program::ShortcutModifier, program::ShortcutContext;
 
     class ShortcutManager    
     {
@@ -62,17 +43,5 @@ namespace win32_program
             ) const;
 
             static ShortcutModifier GetShortcutModifierFromKeyState();
-    };
-}
-
-namespace std
-{
-    template<>
-    struct hash<win32_program::Shortcut>
-    {
-        std::size_t operator()(const win32_program::Shortcut& shortcut) const
-        {
-            return std::hash<uint32_t>()(static_cast<uint32_t>(shortcut.modifier)) ^ std::hash<uint32_t>()(shortcut.key);
-        }
     };
 }

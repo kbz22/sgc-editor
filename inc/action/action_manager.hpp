@@ -19,6 +19,7 @@ namespace action {
 
             std::vector<Action*> GetToolbarActions() const;
             std::vector<Action*> GetMenuActions(MenuId menu) const;
+            std::vector<Action*> GetActions() const;
 
             void ActionSetEnabled(ActionType actionType, bool enabled);
             void ActionSetEnabled(const std::vector<ActionType>& actionTypes, bool enabled);

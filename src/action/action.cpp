@@ -82,6 +82,16 @@ std::optional<locale::StringId> action::Action::GetNameStringId() const
     return m_actionDescription.nameStringId;
 }
 
+program::ShortcutContext action::Action::GetShortcutContext() const
+{
+    return m_actionDescription.shortcutContext;
+}
+
+std::vector<program::Shortcut> action::Action::GetDefaultShortcuts() const
+{
+    return m_actionDescription.shortcuts;
+}
+
 std::optional<std::vector<action::Action*>> action::Action::GetPopupMenuItems() const
 {
     return std::nullopt;
