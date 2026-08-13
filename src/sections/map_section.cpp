@@ -23,7 +23,7 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
 
     m_mapView->RegisterOnCursorPositionChangedCallback([this](sgc::math::vec2 position) {
         auto &programContext = program::GetProgramContext();
-        auto &statusSection = programContext.statusSection;
+        auto &statusSection = programContext.statusSection;        
         auto mapDocument = programContext.fileManager->GetActiveDocument();
         auto tileSize = m_mapView->GetTileSize();
         auto layers = mapDocument->GetLayerManager()->GetLayers();
@@ -39,9 +39,14 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
         else 
         {
             auto currentLayer = layers[mapDocument->GetLayerManager()->GetActiveLayerIndex()];
+            auto tileId = currentLayer.storage->GetTileAt({x,y});
 
             statusSection->SetStatusCursorPosition({x,y});
-            statusSection->SetStatusTileId(currentLayer.storage->GetTileAt({x,y}));
+            if(tileId == m_mapView->m_tileset->TileIdCount()) {
+                statusSection->SetStatusTileId(L"Empty");
+            } else {
+                statusSection->SetStatusTileId(tileId);
+            }
         }
     });
 }

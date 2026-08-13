@@ -38,6 +38,7 @@ namespace sections {
             
             void SetStatusCursorPosition(const sgc::graphics::PixelPosition2D& position);
             void SetStatusTileId(std::optional<sgc::tile::TileId> tileId);
+            void SetStatusTileId(std::wstring tileIdText);
             void SetStatusSelectionSize(const sgc::math::vec2& size);
 
     };

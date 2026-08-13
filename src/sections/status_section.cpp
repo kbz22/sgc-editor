@@ -83,6 +83,12 @@ void sections::StatusSection::SetStatusTileId(std::optional<sgc::tile::TileId> t
     SetStatusText(StatusField::TileId, text);
 }
 
+void sections::StatusSection::SetStatusTileId(std::wstring tileIdText)
+{
+    std::wstring text = L"Tile ID: " + tileIdText;
+    SetStatusText(StatusField::TileId, text);
+}
+
 void sections::StatusSection::SetStatusSelectionSize(const sgc::math::vec2& size)
 {
     std::wstring text = L"Selection: [" + std::to_wstring(size.x) + L", " + std::to_wstring(size.y) + L"]";
