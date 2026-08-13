@@ -37,5 +37,5 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
 void action::ChangeChunkModeAction::Execute(program::ProgramContext& context)
 {
     context.editorChunkMode = m_chunkMode;
-    program::UpdateEditorChunkMode(context.editorChunkMode);
+    program::UpdateEditorChunkMode(context.editorChunkMode, context);
 }

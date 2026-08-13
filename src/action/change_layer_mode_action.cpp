@@ -46,5 +46,5 @@ action::ChangeLayerModeAction::ChangeLayerModeAction(program::EditorLayerMode la
 void action::ChangeLayerModeAction::Execute(program::ProgramContext& context)
 {
     context.editorLayerMode = m_layerMode;
-    program::UpdateEditorLayerMode(context.editorLayerMode);
+    program::UpdateEditorLayerMode(context.editorLayerMode, context);
 }

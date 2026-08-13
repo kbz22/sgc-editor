@@ -60,6 +60,6 @@ void action::ChangeBrushModeAction::Execute([[maybe_unused]] program::ProgramCon
         context.mapSection->ResetSelection();
     }
 
-    program::UpdateBrushMode(m_brushMode);
-    program::UpdateEditorSelectionMode(currentSelectionMode);    
+    program::UpdateBrushMode(m_brushMode, context);
+    program::UpdateEditorSelectionMode(currentSelectionMode, context);
 }

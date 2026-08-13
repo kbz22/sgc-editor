@@ -29,6 +29,6 @@ void action::LayerMoveAction::Execute(program::ProgramContext& context)
             std::make_unique<command::LayerMoveCommand>(m_moveCount)
         );
 
-        program::UpdateEditorLayerMode(context.editorLayerMode);
+        program::UpdateEditorLayerMode(context.editorLayerMode, context);
     }
 }

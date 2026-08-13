@@ -211,10 +211,10 @@ void program::RefreshEditor()
     }
     else if(currentDocument->IsEditable()) {
         programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, true);
-        program::UpdateEditorLayerMode(programContext.editorLayerMode);
-        program::UpdateEditorChunkMode(programContext.editorChunkMode);
-        program::UpdateBrushMode(programContext.mapSection->GetPaintMode());
-        program::UpdateEditorSelectionMode(programContext.mapSection->GetSelectionMode());
+        program::UpdateEditorLayerMode(programContext.editorLayerMode, programContext);
+        program::UpdateEditorChunkMode(programContext.editorChunkMode, programContext);
+        program::UpdateBrushMode(programContext.mapSection->GetPaintMode(), programContext);
+        program::UpdateEditorSelectionMode(programContext.mapSection->GetSelectionMode(), programContext);
     }    
 
     RefreshAllSection(programContext);

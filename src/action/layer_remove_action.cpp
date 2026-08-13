@@ -28,6 +28,6 @@ void action::LayerRemoveAction::Execute(program::ProgramContext& context)
             std::make_unique<command::LayerRemoveCommand>(layerManager->GetActiveLayerIndex())
         );
 
-        program::UpdateEditorLayerMode(context.editorLayerMode);
+        program::UpdateEditorLayerMode(context.editorLayerMode, context);
     }
 }

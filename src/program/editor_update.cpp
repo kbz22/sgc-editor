@@ -1,9 +1,8 @@
 #include "program/editor_update.hpp"
 #include "program/program.hpp"
 
-void program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
+void program::UpdateEditorLayerMode(program::EditorLayerMode newMode, program::ProgramContext& programContext)
 {
-    auto &programContext = program::GetProgramContext();    
     auto mapDocument = programContext.fileManager->GetActiveDocument();
 
     if(mapDocument == nullptr) {
@@ -48,10 +47,8 @@ void program::UpdateEditorLayerMode(program::EditorLayerMode newMode)
     programContext.menuSection->Refresh(programContext);
 }
 
-void program::UpdateEditorChunkMode(program::EditorChunkMode newMode)
+void program::UpdateEditorChunkMode(program::EditorChunkMode newMode, program::ProgramContext& programContext)
 {
-    auto& programContext = program::GetProgramContext();
-
     programContext.editorChunkMode = newMode;
 
     programContext.actionManager->ActionSetChecked(action::ActionType::ChunkModeFixedSize, newMode == program::EditorChunkMode::FixedChunks);
@@ -63,10 +60,8 @@ void program::UpdateEditorChunkMode(program::EditorChunkMode newMode)
     programContext.menuSection->Refresh(programContext);
 }
 
-void program::UpdateBrushMode(editor_tools::PaintMode newMode)
+void program::UpdateBrushMode(editor_tools::PaintMode newMode, program::ProgramContext& programContext)
 {
-    auto& programContext = program::GetProgramContext();
-
     programContext.mapSection->SetPaintMode(newMode);
 
     programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeBrush, newMode == editor_tools::PaintMode::Brush);
@@ -78,10 +73,8 @@ void program::UpdateBrushMode(editor_tools::PaintMode newMode)
     programContext.menuSection->Refresh(programContext);
 }
 
-void program::UpdateBrushEraseMode(editor_tools::EraserMode newMode)
+void program::UpdateBrushEraseMode(editor_tools::EraserMode newMode, program::ProgramContext& programContext)
 {
-    auto& programContext = program::GetProgramContext();
-
     programContext.mapSection->SetEraseMode(newMode);
 
     programContext.actionManager->ActionSetChecked(
@@ -97,10 +90,8 @@ void program::UpdateBrushEraseMode(editor_tools::EraserMode newMode)
     programContext.menuSection->Refresh(programContext);
 }
 
-void program::UpdateEditorGridMode(program::EditorGridMode newMode)
+void program::UpdateEditorGridMode(program::EditorGridMode newMode, program::ProgramContext& programContext)
 {
-    auto& programContext = program::GetProgramContext();
-
     programContext.editorGridMode = static_cast<program::EditorGridMode>(
         static_cast<uint8_t>(programContext.editorGridMode) ^
         static_cast<uint8_t>(newMode)
@@ -115,9 +106,8 @@ void program::UpdateEditorGridMode(program::EditorGridMode newMode)
     programContext.mapSection->Update();
 }
 
-void program::UpdateEditorSelectionMode(editor_tools::SelectionMode newMode)
+void program::UpdateEditorSelectionMode(editor_tools::SelectionMode newMode, program::ProgramContext& programContext)
 {
-    auto& programContext = program::GetProgramContext();
     bool selectionActive = programContext.mapSection->GetPaintMode() == editor_tools::PaintMode::Select;
     constexpr int selectionModeCount = 3;
     editor_tools::SelectionMode selectionOptions[selectionModeCount] = {

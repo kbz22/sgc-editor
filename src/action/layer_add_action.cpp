@@ -28,6 +28,6 @@ void action::LayerAddAction::Execute(program::ProgramContext& context)
             std::make_unique<command::LayerAddCommand>()
         );
 
-        program::UpdateEditorLayerMode(context.editorLayerMode);
+        program::UpdateEditorLayerMode(context.editorLayerMode, context);
     }
 }
