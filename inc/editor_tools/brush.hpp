@@ -26,11 +26,19 @@ namespace editor_tools {
         DeleteChunk
     };
 
+    enum class SelectionMode
+    {
+        SingleLayer,
+        AllLayers,
+        VisibleLayers
+    };
+
     class Brush
     {
         private:
             PaintMode m_paintMode{PaintMode::Brush};
             EraserMode m_eraserMode{EraserMode::None};
+            SelectionMode m_selectionMode{SelectionMode::SingleLayer};
             sgc::graphics::Rectangle& m_selectionRectangleOnTileset;
             sgc::graphics::MarchingAntsRectangle& m_mapSelectionRect;
             std::unique_ptr<sgc::tile::TilePosition2D> m_selectionStart{nullptr};
@@ -49,11 +57,15 @@ namespace editor_tools {
 
             PaintMode GetPaintMode() const;
             EraserMode GetEraserMode() const;
+            SelectionMode GetSelectionMode() const;
             bool NeedsRedraw() const;
 
             void SetPaintMode(PaintMode paintMode);
             void SetEraserMode(EraserMode eraserMode);
+            void SetSelectionMode(SelectionMode selectionMode);
             void SetCheckTileBeforePainting(bool check);
+
+
 
             void PaintExecuteChange(
                 file::MapDocument& mapDocument,

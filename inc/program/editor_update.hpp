@@ -10,5 +10,6 @@ namespace program {
     void UpdateBrushMode(editor_tools::PaintMode newMode);
     void UpdateBrushEraseMode(editor_tools::EraserMode newMode);
     void UpdateEditorGridMode(program::EditorGridMode newMode);
+    void UpdateEditorSelectionMode(editor_tools::SelectionMode newMode);
 
 }

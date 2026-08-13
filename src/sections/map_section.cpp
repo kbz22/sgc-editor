@@ -344,6 +344,11 @@ void sections::MapSection::SetEraseMode(editor_tools::EraserMode eraserMode)
     m_brush.SetEraserMode(eraserMode);
 }
 
+void sections::MapSection::SetSelectionMode(editor_tools::SelectionMode selectionMode)
+{
+    m_brush.SetSelectionMode(selectionMode);
+}
+
 editor_tools::PaintMode sections::MapSection::GetPaintMode() const
 {
     return m_brush.GetPaintMode();
@@ -352,6 +357,11 @@ editor_tools::PaintMode sections::MapSection::GetPaintMode() const
 editor_tools::EraserMode sections::MapSection::GetEraseMode() const
 {
     return m_brush.GetEraserMode();
+}
+
+editor_tools::SelectionMode sections::MapSection::GetSelectionMode() const
+{
+    return m_brush.GetSelectionMode();
 }
 
 float sections::MapSection::GetZoom() const
@@ -422,4 +432,10 @@ bool sections::MapSection::IsSelectionActive() const
         return selectionSize.x > 0.0f && selectionSize.y > 0.0f;
     }
     return false;
+}
+
+void sections::MapSection::ResetSelection()
+{    
+    m_mapView->m_marchingAntsRectangleOnMap->SetSize({0.0f, 0.0f});
+    Update();
 }

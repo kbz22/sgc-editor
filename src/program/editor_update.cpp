@@ -114,3 +114,54 @@ void program::UpdateEditorGridMode(program::EditorGridMode newMode)
     programContext.mapSection->Refresh(programContext);
     programContext.mapSection->Update();
 }
+
+void program::UpdateEditorSelectionMode(editor_tools::SelectionMode newMode)
+{
+    auto& programContext = program::GetProgramContext();
+    bool selectionActive = programContext.mapSection->GetPaintMode() == editor_tools::PaintMode::Select;
+    constexpr int selectionModeCount = 3;
+    editor_tools::SelectionMode selectionOptions[selectionModeCount] = {
+        editor_tools::SelectionMode::SingleLayer,
+        editor_tools::SelectionMode::AllLayers,
+        editor_tools::SelectionMode::VisibleLayers
+    };
+    action::ActionType selectionActionTypes[selectionModeCount] = {
+        action::ActionType::SelectSingleLayerMode,
+        action::ActionType::SelectAllLayersMode,
+        action::ActionType::SelectVisibleLayersMode
+    };
+
+    if(selectionActive) 
+    {
+        for(int i=0; i<selectionModeCount; ++i) 
+        {
+            programContext.actionManager->ActionSetChecked(
+                selectionActionTypes[i],
+                newMode == selectionOptions[i]
+            );
+            programContext.actionManager->ActionSetEnabled(
+                selectionActionTypes[i],
+                true
+            );
+        }
+        
+        programContext.mapSection->SetSelectionMode(newMode);
+    }
+    else 
+    {
+        for(int i=0; i<selectionModeCount; ++i) 
+        {
+            programContext.actionManager->ActionSetChecked(
+                selectionActionTypes[i],
+                false
+            );
+            programContext.actionManager->ActionSetEnabled(
+                selectionActionTypes[i],
+                false
+            );
+        }
+    }
+
+    programContext.toolbarSection->Refresh(programContext);
+    programContext.menuSection->Refresh(programContext);
+}

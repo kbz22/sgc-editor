@@ -31,6 +31,7 @@
 #include "action/change_brush_erase_mode_action.hpp"
 #include "action/zoom_select_action.hpp"
 #include "action/change_grid_mode_action.hpp"
+#include "action/change_selection_mode_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -64,7 +65,10 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::EraseModeClearTile,
     action::ActionType::EraseModeDeleteChunk,
     action::ActionType::GridModeTile,
-    action::ActionType::GridModeChunk
+    action::ActionType::GridModeChunk,
+    action::ActionType::SelectSingleLayerMode,
+    action::ActionType::SelectAllLayersMode,
+    action::ActionType::SelectVisibleLayersMode
 };
 
 void program::StartDefault()
@@ -210,6 +214,7 @@ void program::RefreshEditor()
         program::UpdateEditorLayerMode(programContext.editorLayerMode);
         program::UpdateEditorChunkMode(programContext.editorChunkMode);
         program::UpdateBrushMode(programContext.mapSection->GetPaintMode());
+        program::UpdateEditorSelectionMode(programContext.mapSection->GetSelectionMode());
     }    
 
     RefreshAllSection(programContext);
@@ -256,6 +261,9 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ZoomSelectAction>());
     programContext.actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::TileGrid));
     programContext.actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::ChunkGrid));
+    programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::SingleLayer));
+    programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::AllLayers));
+    programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::VisibleLayers));
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

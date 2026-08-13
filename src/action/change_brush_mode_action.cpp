@@ -13,7 +13,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.nameStringId = locale::StringId::NamePaintModeBrush;
             m_actionDescription.imageIndex = 19;
             m_actionDescription.toolbarOrder = 1500;
-            m_actionDescription.menuOrder = 600;
+            m_actionDescription.menuOrder = 800;
             break;
 
         case editor_tools::PaintMode::Rectangle:
@@ -22,7 +22,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.nameStringId = locale::StringId::NamePaintModeRectangle;
             m_actionDescription.imageIndex = 20;
             m_actionDescription.toolbarOrder = 1600;
-            m_actionDescription.menuOrder = 610;
+            m_actionDescription.menuOrder = 810;
             break;
 
         case editor_tools::PaintMode::Fill:
@@ -31,7 +31,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.nameStringId = locale::StringId::NamePaintModeFill;
             m_actionDescription.imageIndex = 22;
             m_actionDescription.toolbarOrder = 1700;
-            m_actionDescription.menuOrder = 620;
+            m_actionDescription.menuOrder = 820;
             break;
 
         case editor_tools::PaintMode::Select:
@@ -40,7 +40,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.nameStringId = locale::StringId::NamePaintModeSelect;
             m_actionDescription.imageIndex = 24;
             m_actionDescription.toolbarOrder = 1800;
-            m_actionDescription.menuOrder = 630;
+            m_actionDescription.menuOrder = 830;
             break;
     }
 
@@ -53,6 +53,13 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
 }
 
 void action::ChangeBrushModeAction::Execute([[maybe_unused]] program::ProgramContext& context)
-{
+{    
+    auto currentSelectionMode = context.mapSection->GetSelectionMode();    
+
+    if(m_brushMode != editor_tools::PaintMode::Select) {
+        context.mapSection->ResetSelection();
+    }
+
     program::UpdateBrushMode(m_brushMode);
+    program::UpdateEditorSelectionMode(currentSelectionMode);    
 }

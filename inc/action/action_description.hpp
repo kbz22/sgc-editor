@@ -28,7 +28,9 @@ namespace action {
         BrushMode,
         EraseMode,
         Zoom,
-        GridMode
+        GridMode,
+        SelectionTools,
+        SelectionToolsMode
     };
 
     struct ActionDescription

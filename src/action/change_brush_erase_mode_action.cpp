@@ -17,7 +17,7 @@ action::ChangeBrushEraseModeAction::ChangeBrushEraseModeAction(editor_tools::Era
             m_actionDescription.nameStringId = locale::StringId::NameEraserModeClearTile;
             m_actionDescription.imageIndex = 30;
             m_actionDescription.toolbarOrder = 1900;
-            m_actionDescription.menuOrder = 650;
+            m_actionDescription.menuOrder = 850;
             break;
 
         case editor_tools::EraserMode::DeleteChunk:
@@ -25,8 +25,8 @@ action::ChangeBrushEraseModeAction::ChangeBrushEraseModeAction(editor_tools::Era
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorEraseModeDeleteChunk;
             m_actionDescription.nameStringId = locale::StringId::NameEraserModeDeleteChunk;
             m_actionDescription.imageIndex = 31;
-            m_actionDescription.toolbarOrder = 2000;
-            m_actionDescription.menuOrder = 660;
+            m_actionDescription.toolbarOrder = 1910;
+            m_actionDescription.menuOrder = 860;
             break;        
     }
 

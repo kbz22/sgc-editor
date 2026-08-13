@@ -17,6 +17,11 @@ editor_tools::EraserMode editor_tools::Brush::GetEraserMode() const
     return m_eraserMode;
 }
 
+editor_tools::SelectionMode editor_tools::Brush::GetSelectionMode() const
+{
+    return m_selectionMode;
+}
+
 bool editor_tools::Brush::NeedsRedraw() const
 {
     return m_needsRedraw;
@@ -30,6 +35,11 @@ void editor_tools::Brush::SetPaintMode(PaintMode paintMode)
 void editor_tools::Brush::SetEraserMode(EraserMode eraserMode)
 {
     m_eraserMode = eraserMode;
+}
+
+void editor_tools::Brush::SetSelectionMode(SelectionMode selectionMode)
+{
+    m_selectionMode = selectionMode;
 }
 
 void editor_tools::Brush::SetCheckTileBeforePainting(bool check)

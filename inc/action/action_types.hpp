@@ -26,6 +26,10 @@ namespace action {
         EraseModeClearTile,
         EraseModeDeleteChunk,
 
+        SelectSingleLayerMode,
+        SelectAllLayersMode,
+        SelectVisibleLayersMode,
+
         MenuMap = 3001,
         AddLayer,
         RemoveLayer,

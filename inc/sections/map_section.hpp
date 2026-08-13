@@ -37,15 +37,19 @@ namespace sections {
             void Refresh(program::ProgramContext& programContext) override;
 
             void ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomValue);
+
+            void ResetSelection();
             
             void SetCheckTileBeforePainting(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
             void SetEraseMode(editor_tools::EraserMode eraserMode);
+            void SetSelectionMode(editor_tools::SelectionMode selectionMode);
 
             void RegisterOnZoomChangedCallback(std::function<void(float)> callback);
             
             editor_tools::PaintMode GetPaintMode() const;
             editor_tools::EraserMode GetEraseMode() const;
+            editor_tools::SelectionMode GetSelectionMode() const;
             float GetZoom() const;
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;
 

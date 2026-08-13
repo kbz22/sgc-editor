@@ -31,6 +31,9 @@ locale::StringLookup::StringLookup()
         {StringId::TooltipEditorEraseModeDeleteChunk, L"Delete a chunk"},
         {StringId::TooltipEditorChunkLineGrid, L"Show chunk grid"},
         {StringId::TooltipEditorTileLineGrid, L"Show tile grid"},
+        {StringId::TooltipEditorSelectModeSingleLayer, L"Active layer selection"},
+        {StringId::TooltipEditorSelectModeAllLayers, L"All layers selection"},
+        {StringId::TooltipEditorSelectModeVisibleLayers, L"Visible layers selection"},
 
         {StringId::NameFile, L"File"},
         {StringId::NameEdit, L"Edit"},
@@ -68,6 +71,9 @@ locale::StringLookup::StringLookup()
         {StringId::NameEraserModeDeleteChunk, L"Delete chunk"},
         {StringId::NameEditorChunkLineGrid, L"Chunk grid"},
         {StringId::NameEditorTileLineGrid, L"Tile grid"},
+        {StringId::NameEditorSelectionModeSingleLayer, L"Single layer selection"},
+        {StringId::NameEditorSelectionModeAllLayers, L"All layers selection"},
+        {StringId::NameEditorSelectionModeVisibleLayers, L"Visible layers selection"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},

@@ -35,6 +35,9 @@ namespace locale
         TooltipEditorEraseModeDeleteChunk,
         TooltipEditorChunkLineGrid,
         TooltipEditorTileLineGrid,
+        TooltipEditorSelectModeSingleLayer,
+        TooltipEditorSelectModeAllLayers,
+        TooltipEditorSelectModeVisibleLayers,
 
         NameFile,
         NameEdit,
@@ -72,6 +75,9 @@ namespace locale
         NameEditorTileLineGrid,
         NameZoomIn,
         NameZoomOut,
+        NameEditorSelectionModeSingleLayer,
+        NameEditorSelectionModeAllLayers,
+        NameEditorSelectionModeVisibleLayers,
 
         NameTilesetFile,
         NamePackageFile,
