@@ -7,10 +7,12 @@ namespace program {
 
     enum class ShortcutModifier : uint32_t
     {
-        None = 0,
-        Ctrl = 1,
-        Alt = 2,
-        Shift = 4
+        None = 0x00,
+        Ctrl = 0x01,
+        Alt = 0x02,
+        Shift = 0x04,
+        Delete = 0x08,
+        Insert = 0x10
     };
 
     enum class ShortcutContext : uint32_t

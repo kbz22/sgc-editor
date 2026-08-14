@@ -4,6 +4,7 @@
 #include <memory>
 #include <windows.h>
 #include <sgc/math/vector.hpp>
+#include <sgc/tile/tile.hpp>
 #include <optional>
 
 #include "sections/section.hpp"
@@ -39,6 +40,7 @@ namespace sections {
 
             std::optional<sgc::graphics::PixelPosition2D> GetCursorPositionInPixels() const;
             std::optional<sgc::graphics::PixelSize2D> GetCursorSizeInPixels() const;
+            sgc::tile::TileId GetClearTileId() const;
 
             void ClearTileset();
     };

@@ -38,7 +38,7 @@ namespace sections {
 
             void ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomValue);
 
-            void ResetSelection();
+            void ResetSelection();            
             
             void SetCheckTileBeforePainting(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
@@ -49,9 +49,12 @@ namespace sections {
             
             editor_tools::PaintMode GetPaintMode() const;
             editor_tools::EraserMode GetEraseMode() const;
-            editor_tools::SelectionMode GetSelectionMode() const;
+            editor_tools::SelectionMode GetSelectionMode() const;            
             float GetZoom() const;
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;
+            
+            sgc::tile::TilePosition2D GetSelectionRectanglePositionTiles() const;
+            sgc::tile::TileSize2D GetSelectionRectangleSizeTiles() const;
 
             bool IsSelectionActive() const;
     };

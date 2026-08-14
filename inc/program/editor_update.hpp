@@ -11,5 +11,6 @@ namespace program {
     void UpdateBrushEraseMode(editor_tools::EraserMode newMode, program::ProgramContext& programContext);
     void UpdateEditorGridMode(program::EditorGridMode newMode, program::ProgramContext& programContext);
     void UpdateEditorSelectionMode(editor_tools::SelectionMode newMode, program::ProgramContext& programContext);
+    void UpdateEditorSelectionTools(program::ProgramContext& programContext);
 
 }

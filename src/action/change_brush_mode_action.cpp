@@ -62,4 +62,5 @@ void action::ChangeBrushModeAction::Execute([[maybe_unused]] program::ProgramCon
 
     program::UpdateBrushMode(m_brushMode, context);
     program::UpdateEditorSelectionMode(currentSelectionMode, context);
+    program::UpdateEditorSelectionTools(context);
 }

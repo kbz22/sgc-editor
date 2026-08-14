@@ -439,3 +439,31 @@ void sections::MapSection::ResetSelection()
     m_mapView->m_marchingAntsRectangleOnMap->SetSize({0.0f, 0.0f});
     Update();
 }
+
+sgc::tile::TilePosition2D sections::MapSection::GetSelectionRectanglePositionTiles() const
+{
+    if (m_mapView != nullptr) {
+        auto selectionPos = m_mapView->m_marchingAntsRectangleOnMap->GetPosition();
+        auto tileSize = m_mapView->GetTileSize();
+
+        return sgc::tile::TilePosition2D{
+            static_cast<sgc::math::ival>(selectionPos.x / tileSize.x),
+            static_cast<sgc::math::ival>(selectionPos.y / tileSize.y)
+        };
+    }
+    return sgc::tile::TilePosition2D{0, 0};
+}
+
+sgc::tile::TileSize2D sections::MapSection::GetSelectionRectangleSizeTiles() const
+{
+    if (m_mapView != nullptr) {
+        auto selectionSize = m_mapView->m_marchingAntsRectangleOnMap->GetSize();
+        auto tileSize = m_mapView->GetTileSize();
+
+        return sgc::tile::TileSize2D{
+            static_cast<sgc::math::ival>(selectionSize.x / tileSize.x),
+            static_cast<sgc::math::ival>(selectionSize.y / tileSize.y)
+        };
+    }
+    return sgc::tile::TileSize2D{0, 0};
+}

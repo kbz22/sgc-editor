@@ -12,7 +12,7 @@ action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::Selec
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorSelectModeSingleLayer;
             m_actionDescription.nameStringId = locale::StringId::NameEditorSelectionModeSingleLayer;
             m_actionDescription.imageIndex = 33;
-            m_actionDescription.toolbarOrder = 2100;
+            m_actionDescription.toolbarOrder = 2400;
             m_actionDescription.menuOrder = 900;
             break;
 
@@ -21,7 +21,7 @@ action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::Selec
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorSelectModeAllLayers;
             m_actionDescription.nameStringId = locale::StringId::NameEditorSelectionModeAllLayers;
             m_actionDescription.imageIndex = 34;
-            m_actionDescription.toolbarOrder = 2110;
+            m_actionDescription.toolbarOrder = 2410;
             m_actionDescription.menuOrder = 910;
             break;
 
@@ -30,7 +30,7 @@ action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::Selec
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorSelectModeVisibleLayers;
             m_actionDescription.nameStringId = locale::StringId::NameEditorSelectionModeVisibleLayers;
             m_actionDescription.imageIndex = 35;
-            m_actionDescription.toolbarOrder = 2120;
+            m_actionDescription.toolbarOrder = 2420;
             m_actionDescription.menuOrder = 920;
             break;
 

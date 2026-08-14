@@ -32,6 +32,7 @@
 #include "action/zoom_select_action.hpp"
 #include "action/change_grid_mode_action.hpp"
 #include "action/change_selection_mode_action.hpp"
+#include "action/selection_clear_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -68,7 +69,8 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::GridModeChunk,
     action::ActionType::SelectSingleLayerMode,
     action::ActionType::SelectAllLayersMode,
-    action::ActionType::SelectVisibleLayersMode
+    action::ActionType::SelectVisibleLayersMode,
+    action::ActionType::SelectionClear
 };
 
 void program::StartDefault()
@@ -234,6 +236,7 @@ void program::RefreshEditor()
         program::UpdateEditorChunkMode(programContext.editorChunkMode, programContext);
         program::UpdateBrushMode(programContext.mapSection->GetPaintMode(), programContext);
         program::UpdateEditorSelectionMode(programContext.mapSection->GetSelectionMode(), programContext);
+        program::UpdateEditorSelectionTools(programContext);
     }    
 
     RefreshAllSection(programContext);
@@ -283,6 +286,7 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::SingleLayer));
     programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::AllLayers));
     programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::VisibleLayers));
+    programContext.actionManager->Register(std::make_unique<action::SelectionClearAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

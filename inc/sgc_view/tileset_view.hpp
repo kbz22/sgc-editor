@@ -36,5 +36,6 @@ namespace sgc_view
 
             void SetCursorColor(sgc::graphics::color color);
             
+            friend class sections::TilesetSection;
     };
 }

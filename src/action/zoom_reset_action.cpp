@@ -8,7 +8,7 @@ action::ZoomResetAction::ZoomResetAction()
     m_checked = false;    
     
     m_actionDescription.imageIndex = 17;
-    m_actionDescription.toolbarOrder = 2200;
+    m_actionDescription.toolbarOrder = 2500;
     m_actionDescription.menuOrder = -1;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::Zoom;

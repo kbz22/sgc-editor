@@ -46,6 +46,12 @@ win32_program::ShortcutModifier win32_program::ShortcutManager::GetShortcutModif
     if(GetKeyState(VK_MENU) & 0x8000)
         modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Alt));
 
+    if(GetKeyState(VK_DELETE) & 0x8000)
+        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Delete));
+
+    if(GetKeyState(VK_INSERT) & 0x8000)
+        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Insert));
+
     return modifiers;
 }
 

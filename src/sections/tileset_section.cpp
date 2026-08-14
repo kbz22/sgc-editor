@@ -238,3 +238,12 @@ std::optional<sgc::graphics::PixelSize2D> sections::TilesetSection::GetCursorSiz
 
     return std::nullopt;
 }
+
+sgc::tile::TileId sections::TilesetSection::GetClearTileId() const
+{
+    if(m_tilesetView != nullptr) {
+        return m_tilesetView->m_tileset->TileIdCount();
+    }
+
+    return 0;
+}
