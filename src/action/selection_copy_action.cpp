@@ -38,9 +38,7 @@ void action::SelectionCopyAction::Execute(program::ProgramContext &context)
     selection.startPoint = context.mapSection->GetSelectionRectanglePositionTiles();
     selection.size = context.mapSection->GetSelectionRectangleSizeTiles();
 
-    auto layerManager = mapDocument->GetLayerManager();
-    auto selectionRectPos = context.mapSection->GetSelectionRectanglePositionTiles();
-    auto selectionRectSize = context.mapSection->GetSelectionRectangleSizeTiles();    
+    auto layerManager = mapDocument->GetLayerManager();  
     auto clearTileId = context.tilesetSection->GetClearTileId();
 
     auto iterateTiles = [layerManager, &selection, clearTileId](sgc::data::ITileStorage *layer, size_t layerIndex)
