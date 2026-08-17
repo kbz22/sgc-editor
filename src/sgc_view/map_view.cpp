@@ -5,7 +5,7 @@
 #include <commctrl.h>
 #include <stdexcept>
 
-#include <sgc/graphics/renderlayer.hpp>
+#include <sgc/graphics/drawablecontainer.hpp>
 
 sgc_view::MapView::MapView(HWND hwnd) :
     SgcView(hwnd),
@@ -32,9 +32,13 @@ sgc_view::MapView::MapView(HWND hwnd) :
         sgc::math::fvec2{0.0f, 0.0f}
     );
 
-    std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
-    auto layer = std::make_shared<graphics::RenderLayer>(drawables);
-    m_drawableImage = layer;
+    /* std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
+    auto layer = std::make_shared<graphics::DrawableContainer>(drawables);
+    m_drawableImage = layer; */
+
+    m_mapLayers = std::make_shared<graphics::DrawableLayers>();
+    m_selectionLayers = std::make_shared<graphics::DrawableLayers>();
+    m_drawableImage = m_mapLayers;
 }
 
 sgc_view::MapView::~MapView()
@@ -155,7 +159,18 @@ void sgc_view::MapView::ResetTileset()
 void sgc_view::MapView::Render()
 {
     SgcView::Clear();
-    SgcView::DrawAll();
+    // SgcView::DrawAll();
+
+    for(auto [layerIndex, layer] : *m_mapLayers) {
+        auto selectionLayer = m_selectionLayers->Get(layerIndex);
+
+        if(layer != nullptr) {
+            layer->Draw(m_renderContext);
+        }
+        if(selectionLayer != nullptr) {
+            selectionLayer->Draw(m_renderContext);
+        }
+    }
 
     auto selectBoxSize = m_marchingAntsRectangleOnMap->GetSize();
     if(selectBoxSize.x > 0.0f && selectBoxSize.y > 0.0f) {
@@ -172,6 +187,8 @@ void sgc_view::MapView::Render()
 void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 {
     sgc_view::SgcView::Refresh(programContext);
+    
+    m_mapLayers->Clear();
 
     auto selectedDocument = programContext.fileManager->GetActiveDocument();
 
@@ -198,7 +215,8 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
     auto layerManager = selectedDocument->GetLayerManager();
     auto layers = layerManager->GetLayers();
-    std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
+    size_t layerIndex = 0;
+    // std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
 
     if(!layers.empty() && layerManager->IsSingleLayerMode()){       
 
@@ -213,10 +231,11 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
         auto tiledImage = std::make_shared<graphics::TiledImage>(tiledLayer);
 
-        drawables.push_back(tiledImage);
+        // drawables.push_back(tiledImage);
+        m_mapLayers->Set(layerIndex, tiledImage);
     }
 
-    for(auto layer = layers.rbegin(); layer != layers.rend(); ++layer) {
+    for(auto layer = layers.rbegin(); layer != layers.rend(); ++layer) {        
 
         if(layer->visible == false) {
             continue;
@@ -231,22 +250,29 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
         tiledImage->SetAlpha(layer->transparency);
 
-        drawables.push_back(tiledImage);
+        m_mapLayers->Set(layerIndex, tiledImage);
+        layerIndex++;
+
+        // drawables.push_back(tiledImage);
     }
 
     if(program::HasFlag(programContext.editorGridMode, program::EditorGridMode::TileGrid)) {
-        drawables.push_back(m_tileGrid);
+        m_mapLayers->Set(layerIndex, m_tileGrid);
+        layerIndex++;
+        // drawables.push_back(m_tileGrid);
     }
     
     if(program::HasFlag(programContext.editorGridMode, program::EditorGridMode::ChunkGrid)) {
-        drawables.push_back(m_chunkGrid);
+        m_mapLayers->Set(layerIndex, m_chunkGrid);
+        layerIndex++;
+        // drawables.push_back(m_chunkGrid);
     }
 
     UpdateGridPosition(m_renderContext.view.camera);
 
-    auto layer = std::make_shared<graphics::RenderLayer>(drawables);
+    // auto layer = std::make_shared<graphics::DrawableContainer>(drawables);
 
-    m_drawableImage = layer;
+    // m_drawableImage = layer;
 
     Render();
 }

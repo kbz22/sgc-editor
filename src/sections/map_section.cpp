@@ -213,9 +213,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         });
                         break;
 
-                    case editor_tools::PaintMode::Select:
+                    /* case editor_tools::PaintMode::Select:
                         // select sets the cursor size on left button up
-                        break;
+                        break; */
                 }                
 
                 m_mapView->SetCursorPositionInPixels({
@@ -262,14 +262,14 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
                 m_brush.PaintCommitChanges(*mapDocument);
                 
-                if(m_brush.GetPaintMode() == editor_tools::PaintMode::Select)
+                /* if(m_brush.GetPaintMode() == editor_tools::PaintMode::Select)
                 {
                     auto selectionSize = m_mapView->m_marchingAntsRectangleOnMap->GetSize();
                     m_mapView->SetCursorSizeInPixels({
                         static_cast<sgc::math::ival>(selectionSize.x),
                         static_cast<sgc::math::ival>(selectionSize.y)
                     });
-                }
+                } */
 
                 ReleaseCaptureHelper();
             }

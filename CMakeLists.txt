@@ -120,6 +120,7 @@ add_executable(sgc-editor WIN32
     src/action/selection_copy_action.cpp
     src/action/selection_paste_action.cpp
     src/action/selection_cut_action.cpp
+    src/action/selection_move_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
