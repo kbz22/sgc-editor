@@ -120,7 +120,7 @@ void action::SelectionClearAction::Execute(program::ProgramContext& context)
                         layerIndex,
                         context.tilesetSection->GetClearTileId()
                     );
-                }                
+                }
             }
 
             commandManager->Execute(std::make_unique<command::PaintSelectionCommand>(

@@ -42,6 +42,7 @@ namespace locale
         TooltipEditorSelectionCopy,
         TooltipEditorSelectionPaste,
         TooltipEditorSelectionClear,
+        TooltipEditorSelectionMove,
 
         NameFile,
         NameEdit,
@@ -86,6 +87,7 @@ namespace locale
         NameEditorSelectionCopy,
         NameEditorSelectionPaste,
         NameEditorSelectionClear,
+        NameEditorSelectionMove,
 
         NameTilesetFile,
         NamePackageFile,

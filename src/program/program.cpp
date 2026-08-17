@@ -33,6 +33,8 @@
 #include "action/change_grid_mode_action.hpp"
 #include "action/change_selection_mode_action.hpp"
 #include "action/selection_clear_action.hpp"
+#include "action/selection_copy_action.hpp"
+#include "action/selection_paste_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -70,7 +72,11 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::SelectSingleLayerMode,
     action::ActionType::SelectAllLayersMode,
     action::ActionType::SelectVisibleLayersMode,
-    action::ActionType::SelectionClear
+    action::ActionType::SelectionClear,
+    action::ActionType::SelectionCopy,
+    action::ActionType::SelectionPaste,
+    action::ActionType::SelectionCut,
+    action::ActionType::SelectionMove
 };
 
 void program::StartDefault()
@@ -287,6 +293,8 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::AllLayers));
     programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::VisibleLayers));
     programContext.actionManager->Register(std::make_unique<action::SelectionClearAction>());
+    programContext.actionManager->Register(std::make_unique<action::SelectionCopyAction>());
+    programContext.actionManager->Register(std::make_unique<action::SelectionPasteAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

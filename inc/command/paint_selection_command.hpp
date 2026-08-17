@@ -5,6 +5,7 @@
 #include <sgc/tile/tile.hpp>
 
 #include <unordered_map>
+#include <optional>
 
 namespace command
 {
@@ -12,8 +13,8 @@ namespace command
     {
         size_t layerIndex;
         sgc::tile::TilePosition2D tilePosition;
-        sgc::tile::TileId oldTileId;
-        sgc::tile::TileId newTileId;
+        std::optional<sgc::tile::TileId> oldTileId;
+        std::optional<sgc::tile::TileId> newTileId;
     };
 
     using MultilayerTileChangesType = std::unordered_map<

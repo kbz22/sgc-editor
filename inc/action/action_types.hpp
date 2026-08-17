@@ -21,6 +21,7 @@ namespace action {
         SelectionCopy,
         SelectionPaste,
         SelectionClear,
+        SelectionMove,
         
         PaintModeBrush,
         PaintModeRectangle,

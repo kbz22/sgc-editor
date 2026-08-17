@@ -56,6 +56,8 @@ namespace sections {
             sgc::tile::TilePosition2D GetSelectionRectanglePositionTiles() const;
             sgc::tile::TileSize2D GetSelectionRectangleSizeTiles() const;
 
+            sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
+
             bool IsSelectionActive() const;
     };
 

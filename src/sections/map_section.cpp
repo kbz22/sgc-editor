@@ -480,3 +480,8 @@ sgc::tile::TileSize2D sections::MapSection::GetSelectionRectangleSizeTiles() con
     }
     return sgc::tile::TileSize2D{0, 0};
 }
+
+sgc::tile::TilePosition2D sections::MapSection::GetCursorPositionInTiles() const
+{
+    return m_mapView->GetCursorPositionInTiles();
+}
