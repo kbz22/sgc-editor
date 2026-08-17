@@ -158,12 +158,13 @@ void program::UpdateEditorSelectionMode(editor_tools::SelectionMode newMode, pro
 
 void program::UpdateEditorSelectionTools(program::ProgramContext& programContext)
 {
-    constexpr int selectionToolsCount = 4;
+    constexpr int selectionToolsCount = 5;
     constexpr action::ActionType selectionToolsTypes[selectionToolsCount] = {
         action::ActionType::SelectionClear,
         action::ActionType::SelectionCut,
         action::ActionType::SelectionCopy,
-        action::ActionType::SelectionPaste
+        action::ActionType::SelectionPaste,
+        action::ActionType::SelectionMove
     };
 
     auto selectionActive = programContext.mapSection->GetPaintMode() == editor_tools::PaintMode::Select;
@@ -180,7 +181,7 @@ void program::UpdateEditorSelectionTools(program::ProgramContext& programContext
                 selectionToolsTypes[i],
                 true
             );
-        }
+        }        
     }
     else 
     {
@@ -195,8 +196,9 @@ void program::UpdateEditorSelectionTools(program::ProgramContext& programContext
                 false
             );
         }
+        programContext.mapSection->SetSelectionMoveMode(false);
     }
 
     programContext.toolbarSection->Refresh(programContext);
-    programContext.menuSection->Refresh(programContext);
+    programContext.menuSection->Refresh(programContext);    
 }

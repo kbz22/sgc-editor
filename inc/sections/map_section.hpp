@@ -19,7 +19,8 @@ namespace sections {
             std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;            
             bool m_isPainting = false;
             bool m_isPanning = false;
-            bool m_isCaptured = false;        
+            bool m_isCaptured = false;
+            bool m_isMovingSelection = false;
             sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
             std::function<void(float)> m_onZoomChangedCallback = nullptr;
 
@@ -44,6 +45,7 @@ namespace sections {
             void SetPaintMode(editor_tools::PaintMode paintMode);
             void SetEraseMode(editor_tools::EraserMode eraserMode);
             void SetSelectionMode(editor_tools::SelectionMode selectionMode);
+            void SetSelectionMoveMode(bool isMovingSelection);
 
             void RegisterOnZoomChangedCallback(std::function<void(float)> callback);
             
@@ -52,6 +54,7 @@ namespace sections {
             editor_tools::SelectionMode GetSelectionMode() const;            
             float GetZoom() const;
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;
+            bool GetSelectionMoveMode() const;
             
             sgc::tile::TilePosition2D GetSelectionRectanglePositionTiles() const;
             sgc::tile::TileSize2D GetSelectionRectangleSizeTiles() const;

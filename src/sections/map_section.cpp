@@ -139,6 +139,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 sgc::tile::TileSize2D{tileWidth, tileHeight}
             );
 
+            if(m_brush.GetPaintMode() == editor_tools::PaintMode::Select)
+            {
+                m_isMovingSelection = true;
+            }
+
             m_isPainting = true;
             SetCaptureHelper(hwnd);    
 
@@ -222,6 +227,14 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     x_tile,
                     y_tile
                 });
+
+                if(m_isMovingSelection) 
+                {
+                    m_mapView->SetSelectionPositionInPixels({
+                        x_tile,
+                        y_tile
+                    });
+                }
                 
                 shouldUpdate = true;                
             }
@@ -257,6 +270,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_LBUTTONUP:
         {
+            if(m_isMovingSelection) {
+                m_isMovingSelection = false;
+            }
+            
             if(m_isPainting) {
                 m_isPainting = false;
 
@@ -377,6 +394,11 @@ editor_tools::SelectionMode sections::MapSection::GetSelectionMode() const
     return m_brush.GetSelectionMode();
 }
 
+void sections::MapSection::SetSelectionMoveMode(bool isMovingSelection)
+{
+    m_isMovingSelection = isMovingSelection;
+}
+
 float sections::MapSection::GetZoom() const
 {
     if (m_mapView != nullptr) {
@@ -484,4 +506,9 @@ sgc::tile::TileSize2D sections::MapSection::GetSelectionRectangleSizeTiles() con
 sgc::tile::TilePosition2D sections::MapSection::GetCursorPositionInTiles() const
 {
     return m_mapView->GetCursorPositionInTiles();
+}
+
+bool sections::MapSection::GetSelectionMoveMode() const
+{
+    return m_isMovingSelection;
 }

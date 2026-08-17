@@ -298,6 +298,14 @@ void sgc_view::MapView::SetCursorSizeInPixels(sgc::graphics::PixelSize2D size)
     });
 }
 
+void sgc_view::MapView::SetSelectionPositionInPixels(sgc::graphics::PixelPosition2D position)
+{
+    m_marchingAntsRectangleOnMap->SetPosition({
+        static_cast<float>(position.x),
+        static_cast<float>(position.y)
+    });
+}
+
 sgc::graphics::PixelPosition2D sgc_view::MapView::GetCursorPositionInPixels() const
 {
     return m_cursorTile->GetPosition();

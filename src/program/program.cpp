@@ -36,6 +36,7 @@
 #include "action/selection_copy_action.hpp"
 #include "action/selection_paste_action.hpp"
 #include "action/selection_cut_action.hpp"
+#include "action/selection_move_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -297,6 +298,7 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::SelectionCopyAction>());
     programContext.actionManager->Register(std::make_unique<action::SelectionPasteAction>());
     programContext.actionManager->Register(std::make_unique<action::SelectionCutAction>());
+    programContext.actionManager->Register(std::make_unique<action::SelectionMoveAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

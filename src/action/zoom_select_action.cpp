@@ -9,7 +9,7 @@ action::ZoomSelectAction::ZoomSelectAction()
     m_checked = false;
 
     m_actionDescription.imageIndex = -1;
-    m_actionDescription.toolbarOrder = 2600;
+    m_actionDescription.toolbarOrder = 2700;
     m_actionDescription.menuOrder = -1;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::Zoom;

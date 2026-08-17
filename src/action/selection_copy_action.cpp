@@ -10,7 +10,7 @@ action::SelectionCopyAction::SelectionCopyAction()
     m_checked = false;
 
     m_actionDescription.imageIndex = 25;
-    m_actionDescription.toolbarOrder = 2100;
+    m_actionDescription.toolbarOrder = 2300;
     m_actionDescription.menuOrder = 400;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::SelectionTools;

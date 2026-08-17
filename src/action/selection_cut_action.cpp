@@ -8,7 +8,7 @@ action::SelectionCutAction::SelectionCutAction()
     m_checked = false;
 
     m_actionDescription.imageIndex = 26;
-    m_actionDescription.toolbarOrder = 2000;
+    m_actionDescription.toolbarOrder = 2200;
     m_actionDescription.menuOrder = 300;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::SelectionTools;

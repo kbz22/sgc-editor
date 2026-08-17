@@ -50,6 +50,7 @@ namespace sgc_view
             bool SetZoom(float zoom); // returns true if zoom was changed
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
+            void SetSelectionPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCameraPositionSingles(float x, float y);
 
             void ChangeCameraPositionSingles(float deltaX, float deltaY);
