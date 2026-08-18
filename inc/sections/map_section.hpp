@@ -21,7 +21,9 @@ namespace sections {
             bool m_isPanning = false;
             bool m_isCaptured = false;
             bool m_isMovingSelection = false;
+            bool m_canMoveSelection = false;
             sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
+            sgc::math::vec2 m_movingSelectionOffset = { 0, 0 };
             std::function<void(float)> m_onZoomChangedCallback = nullptr;
 
             editor_tools::Brush m_brush;
@@ -45,7 +47,10 @@ namespace sections {
             void SetPaintMode(editor_tools::PaintMode paintMode);
             void SetEraseMode(editor_tools::EraserMode eraserMode);
             void SetSelectionMode(editor_tools::SelectionMode selectionMode);
-            void SetSelectionMoveMode(bool isMovingSelection);
+            void SetSelectionMoveMode(bool canMoveSelection);
+
+            void SetSelectionPositionInTiles(sgc::tile::TilePosition2D position);
+            void SetSelectionSizeInTiles(sgc::tile::TileSize2D size);
 
             void RegisterOnZoomChangedCallback(std::function<void(float)> callback);
             

@@ -14,16 +14,14 @@
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
     Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
     m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())},
-    m_brush{
-        *programContext.selectionRectangleOnTileset,
-        *m_mapView->m_marchingAntsRectangleOnMap
-    }
+    m_brush{*programContext.selectionRectangleOnTileset}
 {
     AttachView(*m_mapView);
 
-    m_mapView->RegisterOnCursorPositionChangedCallback([this](sgc::math::vec2 position) {
+    m_mapView->RegisterOnCursorPositionChangedCallback([this](sgc::math::vec2 position) 
+    {
         auto &programContext = program::GetProgramContext();
-        auto &statusSection = programContext.statusSection;        
+        auto &statusSection = programContext.statusSection;
         auto mapDocument = programContext.fileManager->GetActiveDocument();
         auto tileSize = m_mapView->GetTileSize();
         auto layers = mapDocument->GetLayerManager()->GetLayers();
@@ -36,7 +34,7 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
             statusSection->SetStatusTileId(std::nullopt);
             return;
         }
-        else 
+        else
         {
             auto currentLayer = layers[mapDocument->GetLayerManager()->GetActiveLayerIndex()];
             auto tileId = currentLayer.storage->GetTileAt({x,y});
@@ -48,6 +46,18 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
                 statusSection->SetStatusTileId(tileId);
             }
         }
+    });
+
+    m_mapView->RegisterOnSelectionSizeChangedCallback([this](sgc::math::vec2 size) 
+    {
+        auto &programContext = program::GetProgramContext();
+        auto &statusSection = programContext.statusSection;
+        auto tileSize = m_mapView->GetTileSize();
+
+        statusSection->SetStatusSelectionSize({
+            size.x / tileSize.x,
+            size.y / tileSize.y
+        });
     });
 }
 
@@ -113,9 +123,28 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 return 0;
             }
 
+            auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();            
+
+            if(m_brush.GetPaintMode() == editor_tools::PaintMode::Select && m_canMoveSelection)
+            {                
+                auto selectionPos = m_mapView->GetSelectionPositionInTiles();
+                auto selectionSize = m_mapView->GetSelectionSizeInTiles();
+
+                if(cursorPositionOnMap.x >= selectionPos.x && cursorPositionOnMap.x <= selectionPos.x + selectionSize.x &&
+                   cursorPositionOnMap.y >= selectionPos.y && cursorPositionOnMap.y <= selectionPos.y + selectionSize.y)
+                {
+                    m_isMovingSelection = true;
+                    m_movingSelectionOffset = {
+                        cursorPositionOnMap.x - selectionPos.x,
+                        cursorPositionOnMap.y - selectionPos.y
+                    };
+                    return 0;
+                }
+            }
+
             auto tileset = m_mapView->GetTileset();
             auto tileSize = tileset->GetTileSize();
-
+            
             auto mousePos = m_mapView->PixelsToTiles(
             sgc::math::vec2{ 
                 GET_X_LPARAM(lparam),
@@ -126,7 +155,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto tileWidth = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).x / tileSize.x);
             auto tileHeight = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).y / tileSize.y);
 
-            auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
+            // auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
             m_brush.PaintExecuteChange(
                 *mapDocument,
@@ -136,14 +165,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     static_cast<sgc::math::ival>(currentTilePosition.x / tileSize.x),
                     static_cast<sgc::math::ival>(currentTilePosition.y / tileSize.y)
                 },
-                sgc::tile::TileSize2D{tileWidth, tileHeight}
+                sgc::tile::TileSize2D{tileWidth, tileHeight},
+                this
             );
-
-            if(m_brush.GetPaintMode() == editor_tools::PaintMode::Select)
-            {
-                m_isMovingSelection = true;
-            }
-
+            
             m_isPainting = true;
             SetCaptureHelper(hwnd);    
 
@@ -231,8 +256,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 if(m_isMovingSelection) 
                 {
                     m_mapView->SetSelectionPositionInPixels({
-                        x_tile,
-                        y_tile
+                        x_tile - m_movingSelectionOffset.x * tileSize.x,
+                        y_tile - m_movingSelectionOffset.y * tileSize.y
                     });
                 }
                 
@@ -257,7 +282,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     *m_mapView->GetTileset(),
                     cursorPositionOnMap,
                     cursorTilePositionOnTileset,
-                    cursorTileSize
+                    cursorTileSize,
+                    this
                 );
             }
 
@@ -394,9 +420,27 @@ editor_tools::SelectionMode sections::MapSection::GetSelectionMode() const
     return m_brush.GetSelectionMode();
 }
 
-void sections::MapSection::SetSelectionMoveMode(bool isMovingSelection)
+void sections::MapSection::SetSelectionMoveMode(bool canMoveSelection)
 {
-    m_isMovingSelection = isMovingSelection;
+    m_canMoveSelection = canMoveSelection;
+}
+
+void sections::MapSection::SetSelectionPositionInTiles(sgc::tile::TilePosition2D position)
+{
+    auto tileSize = m_mapView->GetTileSize();
+    m_mapView->SetSelectionPositionInPixels({
+        static_cast<sgc::math::ival>(position.x * tileSize.x),
+        static_cast<sgc::math::ival>(position.y * tileSize.y)
+    });
+}
+
+void sections::MapSection::SetSelectionSizeInTiles(sgc::tile::TileSize2D size)
+{
+    auto tileSize = m_mapView->GetTileSize();
+    m_mapView->SetSelectionSizeInPixels({
+        static_cast<sgc::math::ival>(size.x * tileSize.x),
+        static_cast<sgc::math::ival>(size.y * tileSize.y)
+    });
 }
 
 float sections::MapSection::GetZoom() const
@@ -463,27 +507,27 @@ void sections::MapSection::RegisterOnZoomChangedCallback(std::function<void(floa
 bool sections::MapSection::IsSelectionActive() const
 {
     if (m_mapView != nullptr) {
-        auto selectionSize = m_mapView->m_marchingAntsRectangleOnMap->GetSize();
-        return selectionSize.x > 0.0f && selectionSize.y > 0.0f;
+        auto selectionSize = m_mapView->GetSelectionSizeInTiles();
+        return selectionSize.x > 0 && selectionSize.y > 0;
     }
     return false;
 }
 
 void sections::MapSection::ResetSelection()
 {    
-    m_mapView->m_marchingAntsRectangleOnMap->SetSize({0.0f, 0.0f});
+    m_mapView->SetSelectionSizeInPixels({0, 0});
     Update();
 }
 
 sgc::tile::TilePosition2D sections::MapSection::GetSelectionRectanglePositionTiles() const
 {
     if (m_mapView != nullptr) {
-        auto selectionPos = m_mapView->m_marchingAntsRectangleOnMap->GetPosition();
+        auto selectionPos = m_mapView->GetSelectionPositionInTiles();
         auto tileSize = m_mapView->GetTileSize();
 
         return sgc::tile::TilePosition2D{
-            static_cast<sgc::math::ival>(selectionPos.x / tileSize.x),
-            static_cast<sgc::math::ival>(selectionPos.y / tileSize.y)
+            static_cast<sgc::math::ival>(selectionPos.x),
+            static_cast<sgc::math::ival>(selectionPos.y)
         };
     }
     return sgc::tile::TilePosition2D{0, 0};
@@ -492,12 +536,11 @@ sgc::tile::TilePosition2D sections::MapSection::GetSelectionRectanglePositionTil
 sgc::tile::TileSize2D sections::MapSection::GetSelectionRectangleSizeTiles() const
 {
     if (m_mapView != nullptr) {
-        auto selectionSize = m_mapView->m_marchingAntsRectangleOnMap->GetSize();
-        auto tileSize = m_mapView->GetTileSize();
+        auto selectionSize = m_mapView->GetSelectionSizeInTiles();
 
         return sgc::tile::TileSize2D{
-            static_cast<sgc::math::ival>(selectionSize.x / tileSize.x),
-            static_cast<sgc::math::ival>(selectionSize.y / tileSize.y)
+            static_cast<sgc::math::ival>(selectionSize.x),
+            static_cast<sgc::math::ival>(selectionSize.y)
         };
     }
     return sgc::tile::TileSize2D{0, 0};
@@ -510,5 +553,5 @@ sgc::tile::TilePosition2D sections::MapSection::GetCursorPositionInTiles() const
 
 bool sections::MapSection::GetSelectionMoveMode() const
 {
-    return m_isMovingSelection;
+    return m_canMoveSelection;
 }

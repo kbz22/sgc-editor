@@ -29,6 +29,7 @@ namespace sgc_view
             std::shared_ptr<graphics::LineGrid> m_tileGrid;
             std::shared_ptr<graphics::LineGrid> m_chunkGrid;
             std::function<void(sgc::math::vec2)> m_onCursorPositionChangedCallback = nullptr;
+            std::function<void(sgc::math::vec2)> m_onSelectionSizeChangedCallback = nullptr;
             float m_zoom = 1.0f;
 
             void SetTileset(sgc::data::AssetId tilesetId) override;
@@ -51,12 +52,14 @@ namespace sgc_view
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
             void SetSelectionPositionInPixels(sgc::graphics::PixelPosition2D position);
+            void SetSelectionSizeInPixels(sgc::graphics::PixelSize2D size);
             void SetCameraPositionSingles(float x, float y);
 
             void ChangeCameraPositionSingles(float deltaX, float deltaY);
             void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
 
             void RegisterOnCursorPositionChangedCallback(std::function<void(sgc::math::vec2)> callback);
+            void RegisterOnSelectionSizeChangedCallback(std::function<void(sgc::math::vec2)> callback);
 
             float GetZoom() const;
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
@@ -65,7 +68,9 @@ namespace sgc_view
             sgc::tile::TileSize2D GetCursorSizeInTiles() const;
             sgc::math::fvec2 GetCameraPositionSingles() const;
             sgc::math::fvec2 GetCursorPositionSingles() const;
-            sgc::graphics::View GetView() const;            
+            sgc::graphics::View GetView() const;
+            sgc::tile::TilePosition2D GetSelectionPositionInTiles() const;
+            sgc::tile::TileSize2D GetSelectionSizeInTiles() const;
 
             inline float ScaleForZoom(float value) const
             {

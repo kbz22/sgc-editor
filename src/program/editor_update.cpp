@@ -163,8 +163,7 @@ void program::UpdateEditorSelectionTools(program::ProgramContext& programContext
         action::ActionType::SelectionClear,
         action::ActionType::SelectionCut,
         action::ActionType::SelectionCopy,
-        action::ActionType::SelectionPaste,
-        action::ActionType::SelectionMove
+        action::ActionType::SelectionPaste
     };
 
     auto selectionActive = programContext.mapSection->GetPaintMode() == editor_tools::PaintMode::Select;
@@ -172,7 +171,7 @@ void program::UpdateEditorSelectionTools(program::ProgramContext& programContext
     if(selectionActive) 
     {
         for(int i=0; i<selectionToolsCount; ++i) 
-        {
+        {            
             programContext.actionManager->ActionSetChecked(
                 selectionToolsTypes[i],
                 false
@@ -181,7 +180,16 @@ void program::UpdateEditorSelectionTools(program::ProgramContext& programContext
                 selectionToolsTypes[i],
                 true
             );
-        }        
+        }
+
+        programContext.actionManager->ActionSetChecked(
+            action::ActionType::SelectionMove,
+            programContext.mapSection->GetSelectionMoveMode()            
+        );
+        programContext.actionManager->ActionSetEnabled(
+            action::ActionType::SelectionMove,
+            true
+        );
     }
     else 
     {
@@ -196,6 +204,15 @@ void program::UpdateEditorSelectionTools(program::ProgramContext& programContext
                 false
             );
         }
+
+        programContext.actionManager->ActionSetChecked(
+            action::ActionType::SelectionMove,
+            false
+        );
+        programContext.actionManager->ActionSetEnabled(
+            action::ActionType::SelectionMove,
+            false
+        );
         programContext.mapSection->SetSelectionMoveMode(false);
     }
 

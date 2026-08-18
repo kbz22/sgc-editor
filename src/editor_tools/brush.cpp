@@ -1,10 +1,10 @@
 #include "editor_tools/brush.hpp"
 #include "command/delete_chunk_command.hpp"
+#include "sections/map_section.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
 
-editor_tools::Brush::Brush(sgc::graphics::Rectangle& selectionRectangleOnTileset, sgc::graphics::MarchingAntsRectangle& marchingAntsRectangleOnTileset) :
-    m_selectionRectangleOnTileset{selectionRectangleOnTileset},
-    m_mapSelectionRect{marchingAntsRectangleOnTileset}
+editor_tools::Brush::Brush(sgc::graphics::Rectangle& selectionRectangleOnTileset) :
+    m_selectionRectangleOnTileset{selectionRectangleOnTileset}
 {}
 
 editor_tools::PaintMode editor_tools::Brush::GetPaintMode() const
@@ -52,7 +52,8 @@ void editor_tools::Brush::PaintExecuteChange(
     sgc::graphics::Tileset& tileset,
     sgc::tile::TilePosition2D tilePosition,
     sgc::tile::TilePosition2D cursorPositionOnTileset,
-    sgc::tile::TileSize2D selectionSize
+    sgc::tile::TileSize2D selectionSize,
+    sections::MapSection* mapSection
 )
 {
     // Eraser mode bypasses the standard paint control handling
@@ -90,12 +91,19 @@ void editor_tools::Brush::PaintExecuteChange(
     if(m_selectionStart == nullptr) {
         m_selectionStart = std::make_unique<sgc::tile::TilePosition2D>(tilePosition);
         m_lastSelection = std::make_unique<sgc::tile::TilePosition2D>(tilePosition);
-        m_mapSelectionRect.SetPosition(
+        /* m_mapSelectionRect.SetPosition(
             sgc::math::fvec2{
                 static_cast<float>(tilePosition.x) * static_cast<float>(tileSize.x),
                 static_cast<float>(tilePosition.y) * static_cast<float>(tileSize.y)
             }
-        );
+        ); */
+        if(mapSection != nullptr)
+        {
+            mapSection->SetSelectionPositionInTiles({
+                static_cast<sgc::math::ival>(tilePosition.x),
+                static_cast<sgc::math::ival>(tilePosition.y)
+            });
+        }
             
     }
     else if(m_lastSelection->x == tilePosition.x && m_lastSelection->y == tilePosition.y) {
@@ -112,12 +120,30 @@ void editor_tools::Brush::PaintExecuteChange(
     switch(m_paintMode)
     {
         case PaintMode::Select:
+            /* m_mapSelectionRect.SetPosition(
+                sgc::math::fvec2{
+                    static_cast<float>(std::min(tilePosition.x, m_selectionStart->x)) * static_cast<float>(tileSize.x),
+                    static_cast<float>(std::min(tilePosition.y, m_selectionStart->y)) * static_cast<float>(tileSize.y)
+                }
+            );
             m_mapSelectionRect.SetSize(
                 sgc::math::fvec2{
                     static_cast<float>(std::abs(tilePosition.x - m_selectionStart->x) + 1) * static_cast<float>(tileSize.x),
                     static_cast<float>(std::abs(tilePosition.y - m_selectionStart->y) + 1) * static_cast<float>(tileSize.y)
                 }
-            );
+            ); */
+            if(mapSection != nullptr)
+            {
+                mapSection->SetSelectionPositionInTiles({
+                    static_cast<sgc::math::ival>(std::min(tilePosition.x, m_selectionStart->x)),
+                    static_cast<sgc::math::ival>(std::min(tilePosition.y, m_selectionStart->y))
+                });
+                mapSection->SetSelectionSizeInTiles({
+                    static_cast<sgc::math::ival>(std::abs(tilePosition.x - m_selectionStart->x) + 1),
+                    static_cast<sgc::math::ival>(std::abs(tilePosition.y - m_selectionStart->y) + 1)
+                });
+            }
+
             m_needsRedraw = true;
             break;
 

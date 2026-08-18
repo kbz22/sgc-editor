@@ -307,6 +307,16 @@ void sgc_view::MapView::SetSelectionPositionInPixels(sgc::graphics::PixelPositio
     });
 }
 
+void sgc_view::MapView::SetSelectionSizeInPixels(sgc::graphics::PixelSize2D size)
+{
+    m_marchingAntsRectangleOnMap->SetSize({
+        static_cast<float>(size.x),
+        static_cast<float>(size.y)
+    });
+
+    m_onSelectionSizeChangedCallback(size);
+}
+
 sgc::graphics::PixelPosition2D sgc_view::MapView::GetCursorPositionInPixels() const
 {
     return m_cursorTile->GetPosition();
@@ -322,6 +332,16 @@ sgc::tile::TilePosition2D sgc_view::MapView::GetCursorPositionInTiles() const
     };
 }
 
+sgc::tile::TilePosition2D sgc_view::MapView::GetSelectionPositionInTiles() const
+{
+    auto pixelPosition = m_marchingAntsRectangleOnMap->GetPosition();
+    
+    return {
+        static_cast<sgc::math::ival>(pixelPosition.x) / m_tileWidth,
+        static_cast<sgc::math::ival>(pixelPosition.y) / m_tileHeight
+    };
+}
+
 sgc::graphics::PixelSize2D sgc_view::MapView::GetCursorSizeInPixels() const
 {
     return m_cursorTile->GetSize();
@@ -334,6 +354,16 @@ sgc::tile::TileSize2D sgc_view::MapView::GetCursorSizeInTiles() const
     return {
         pixelSize.x / m_tileWidth,
         pixelSize.y / m_tileHeight
+    };
+}
+
+sgc::tile::TileSize2D sgc_view::MapView::GetSelectionSizeInTiles() const
+{
+    auto pixelSize = m_marchingAntsRectangleOnMap->GetSize();
+    
+    return {
+        static_cast<sgc::math::ival>(pixelSize.x) / m_tileWidth,
+        static_cast<sgc::math::ival>(pixelSize.y) / m_tileHeight
     };
 }
 
@@ -374,6 +404,11 @@ void sgc_view::MapView::ChangeCursorPositionInPixels(sgc::graphics::PixelPositio
 void sgc_view::MapView::RegisterOnCursorPositionChangedCallback(std::function<void(sgc::math::vec2)> callback)
 {
     m_onCursorPositionChangedCallback = callback;
+}
+
+void sgc_view::MapView::RegisterOnSelectionSizeChangedCallback(std::function<void(sgc::math::vec2)> callback)
+{
+    m_onSelectionSizeChangedCallback = callback;
 }
 
 sgc::math::fvec2 sgc_view::MapView::GetCameraPositionSingles() const

@@ -18,11 +18,15 @@ void sections::TilesetSection::UpdateStatusBar(sgc::math::vec2 position, sgc::ti
 
     if(mapDocument != nullptr && mapDocument->IsEditable())
     {
-        auto statusSection = programContext.statusSection.get();
+        if(programContext.mapSection->GetPaintMode() != editor_tools::PaintMode::Select){
 
-        statusSection->SetStatusCursorPosition(position);
-        statusSection->SetStatusTileId(tileId);
-        statusSection->SetStatusSelectionSize(size);
+        
+            auto statusSection = programContext.statusSection.get();
+
+            statusSection->SetStatusCursorPosition(position);
+            statusSection->SetStatusTileId(tileId);
+            statusSection->SetStatusSelectionSize(size);
+        }
     }
 }
 

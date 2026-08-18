@@ -2,12 +2,15 @@
 
 #include "file/map_document.hpp"
 #include "command/paint_command.hpp"
-#include "sgc_extension/marching_ants_rectangle.hpp"
 #include <sgc/graphics/rectangle.hpp>
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/tile/tile.hpp>
 #include <memory>
 #include <vector>
+
+namespace sections {
+    class MapSection;    
+}
 
 namespace editor_tools {
 
@@ -39,8 +42,7 @@ namespace editor_tools {
             PaintMode m_paintMode{PaintMode::Brush};
             EraserMode m_eraserMode{EraserMode::None};
             SelectionMode m_selectionMode{SelectionMode::SingleLayer};
-            sgc::graphics::Rectangle& m_selectionRectangleOnTileset;
-            sgc::graphics::MarchingAntsRectangle& m_mapSelectionRect;
+            sgc::graphics::Rectangle& m_selectionRectangleOnTileset;            
             std::unique_ptr<sgc::tile::TilePosition2D> m_selectionStart{nullptr};
             std::unique_ptr<sgc::tile::TilePosition2D> m_lastSelection{nullptr};
             std::unique_ptr<command::PaintCommand> m_paintCommand{nullptr};
@@ -49,10 +51,7 @@ namespace editor_tools {
             sgc::tile::TileId m_clearTileId{0};
 
         public:
-            Brush(
-                sgc::graphics::Rectangle& selectionRectangleOnTileset,
-                sgc::graphics::MarchingAntsRectangle& marchingAntsRectangleOnTileset
-            );
+            Brush(sgc::graphics::Rectangle& selectionRectangleOnTileset);
             ~Brush() = default;
 
             PaintMode GetPaintMode() const;
@@ -65,18 +64,19 @@ namespace editor_tools {
             void SetSelectionMode(SelectionMode selectionMode);
             void SetCheckTileBeforePainting(bool check);
 
-
-
             void PaintExecuteChange(
                 file::MapDocument& mapDocument,
                 sgc::graphics::Tileset& tileset,
                 sgc::tile::TilePosition2D tilePosition,
                 sgc::tile::TilePosition2D cursorPositionOnTileset,
-                sgc::tile::TileSize2D tileSize
+                sgc::tile::TileSize2D tileSize,
+                sections::MapSection* mapSection
             );
             void PaintCommitChanges(
                 file::MapDocument& mapDocument
             );
+
+            // frens
 
             friend void PaintStroke(
                 Brush& brush,
