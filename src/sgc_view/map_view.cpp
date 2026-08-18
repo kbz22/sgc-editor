@@ -233,6 +233,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
         // drawables.push_back(tiledImage);
         m_mapLayers->Set(layerIndex, tiledImage);
+        layerIndex++;
     }
 
     for(auto layer = layers.rbegin(); layer != layers.rend(); ++layer) {        
