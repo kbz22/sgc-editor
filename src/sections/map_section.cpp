@@ -4,6 +4,7 @@
 #include "command/command_manager.hpp"
 
 #include <sgc/coordinates/screenworld.hpp>
+#include <sgc/data/statictilestorage.hpp>
 #include <sgc/sdl/sdl_win32.hpp>
 #include <fstream>
 #include <filesystem>
@@ -123,7 +124,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 return 0;
             }
 
-            auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();            
+            auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
+            auto tileset = m_mapView->GetTileset();
+            auto tileSize = tileset->GetTileSize();
 
             if(m_brush.GetPaintMode() == editor_tools::PaintMode::Select && m_canMoveSelection)
             {                
@@ -132,18 +135,79 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
                 if(cursorPositionOnMap.x >= selectionPos.x && cursorPositionOnMap.x <= selectionPos.x + selectionSize.x &&
                    cursorPositionOnMap.y >= selectionPos.y && cursorPositionOnMap.y <= selectionPos.y + selectionSize.y)
-                {
+                {                    
                     m_isMovingSelection = true;
+
                     m_movingSelectionOffset = {
                         cursorPositionOnMap.x - selectionPos.x,
                         cursorPositionOnMap.y - selectionPos.y
                     };
+
+                    auto layerManager = mapDocument->GetLayerManager();
+                    auto layers = layerManager->GetLayers();                    
+                    auto selectionLayers = m_mapView->GetSelectionLayers();
+                    auto activeLayerIndex = layerManager->GetActiveLayerIndex();                                        
+
+                    auto iterateTiles = [&tileSize, &selectionPos, &selectionSize, &selectionLayers, this](program::LayerItem &layerItem, size_t layerIndex)
+                    {
+                        auto selectionStorage = std::make_shared<sgc::data::StaticTileStorage>(selectionSize);
+                        for(sgc::math::ival y = 0; y < selectionSize.y; ++y) {
+                            for(sgc::math::ival x = 0; x < selectionSize.x; ++x) 
+                            {
+                                auto tilePos = sgc::tile::TilePosition2D{
+                                    selectionPos.x + x,
+                                    selectionPos.y + y
+                                };
+
+                                auto tileId = layerItem.storage->GetTileAt(tilePos);
+                                selectionStorage->SetTileAt({x, y}, tileId);
+                            }
+                        }
+                        
+                        auto selectionImage = std::make_shared<sgc::graphics::TiledImage>(
+                            std::make_shared<sgc::graphics::TiledLayer>(
+                                m_mapView->GetTileset(),
+                                selectionStorage
+                            )
+                        );
+
+                        selectionImage->SetPositionPixels(sgc::math::vec2{
+                            selectionPos.x * tileSize.x,
+                            selectionPos.y * tileSize.y
+                        });
+                        selectionImage->SetAlpha(layerItem.transparency);
+                        selectionLayers->Set(layerIndex, selectionImage);
+                    };
+
+                    switch(GetSelectionMode())
+                    {
+                        case editor_tools::SelectionMode::SingleLayer:
+                        {                            
+                            iterateTiles(layers[activeLayerIndex], activeLayerIndex);
+                            break;
+                        }                        
+
+                        case editor_tools::SelectionMode::AllLayers:
+                        {
+                            for(size_t i = 0; i < layers.size(); i++) {
+                                iterateTiles(layers[i], layers.size() - i - 1);
+                            }
+                            break;
+                        }
+
+                        case editor_tools::SelectionMode::VisibleLayers:
+                        {
+                            for(size_t i = 0; i < layers.size(); i++) {
+                                if(layers[i].visible) {
+                                    iterateTiles(layers[i], layers.size() - i - 1);
+                                }
+                            }
+                            break;
+                        }
+                    }
                     return 0;
                 }
-            }
-
-            auto tileset = m_mapView->GetTileset();
-            auto tileSize = tileset->GetTileSize();
+            }            
             
             auto mousePos = m_mapView->PixelsToTiles(
             sgc::math::vec2{ 
@@ -154,8 +218,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             auto currentTilePosition = tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0});
             auto tileWidth = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).x / tileSize.x);
             auto tileHeight = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).y / tileSize.y);
-
-            // auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
             m_brush.PaintExecuteChange(
                 *mapDocument,
@@ -185,7 +247,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
                 auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
-                // auto zoom = m_mapView->GetZoom();
                 auto deltaX = m_mapView->ScaleForZoom(static_cast<float>(x - m_lastMousePosPan.x));
                 auto deltaY = m_mapView->ScaleForZoom(static_cast<float>(y - m_lastMousePosPan.y));
 
@@ -255,10 +316,23 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
                 if(m_isMovingSelection) 
                 {
+                    auto selectionLayers = m_mapView->GetSelectionLayers();
+
                     m_mapView->SetSelectionPositionInPixels({
                         x_tile - m_movingSelectionOffset.x * tileSize.x,
                         y_tile - m_movingSelectionOffset.y * tileSize.y
                     });
+
+                    //! I think I need a better way to handle position in the lib, but this will do for now
+                    for(auto &[layerIndex, layer] : *selectionLayers) {
+                        auto selectionImage = std::dynamic_pointer_cast<sgc::graphics::TiledImage>(layer);
+                        if(selectionImage) {
+                            selectionImage->SetPositionPixels(sgc::math::vec2{
+                                x_tile - m_movingSelectionOffset.x * tileSize.x,
+                                y_tile - m_movingSelectionOffset.y * tileSize.y
+                            });
+                        }
+                    }
                 }
                 
                 shouldUpdate = true;                
@@ -296,23 +370,23 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_LBUTTONUP:
         {
-            if(m_isMovingSelection) {
+            if(m_isMovingSelection) 
+            {
                 m_isMovingSelection = false;
+
+                auto selectionLayers = m_mapView->GetSelectionLayers();
+                selectionLayers->Clear();
+                
+
+
+                Update();
             }
             
-            if(m_isPainting) {
+            if(m_isPainting) 
+            {
                 m_isPainting = false;
 
                 m_brush.PaintCommitChanges(*mapDocument);
-                
-                /* if(m_brush.GetPaintMode() == editor_tools::PaintMode::Select)
-                {
-                    auto selectionSize = m_mapView->m_marchingAntsRectangleOnMap->GetSize();
-                    m_mapView->SetCursorSizeInPixels({
-                        static_cast<sgc::math::ival>(selectionSize.x),
-                        static_cast<sgc::math::ival>(selectionSize.y)
-                    });
-                } */
 
                 ReleaseCaptureHelper();
             }

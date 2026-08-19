@@ -53,7 +53,7 @@ namespace sgc_view
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
             void SetSelectionPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetSelectionSizeInPixels(sgc::graphics::PixelSize2D size);
-            void SetCameraPositionSingles(float x, float y);
+            void SetCameraPositionSingles(float x, float y);            
 
             void ChangeCameraPositionSingles(float deltaX, float deltaY);
             void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
@@ -71,6 +71,7 @@ namespace sgc_view
             sgc::graphics::View GetView() const;
             sgc::tile::TilePosition2D GetSelectionPositionInTiles() const;
             sgc::tile::TileSize2D GetSelectionSizeInTiles() const;
+            graphics::DrawableLayers* GetSelectionLayers() const;
 
             inline float ScaleForZoom(float value) const
             {

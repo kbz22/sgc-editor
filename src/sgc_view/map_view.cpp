@@ -164,10 +164,11 @@ void sgc_view::MapView::Render()
     for(auto [layerIndex, layer] : *m_mapLayers) {
         auto selectionLayer = m_selectionLayers->Get(layerIndex);
 
-        if(layer != nullptr) {
+        if(layer != nullptr) {            
             layer->Draw(m_renderContext);
         }
         if(selectionLayer != nullptr) {
+            
             selectionLayer->Draw(m_renderContext);
         }
     }
@@ -432,4 +433,9 @@ sgc::math::fvec2 sgc_view::MapView::GetCursorPositionSingles() const
 sgc::graphics::View sgc_view::MapView::GetView() const
 {
     return m_renderContext.view;
+}
+
+sgc::graphics::DrawableLayers* sgc_view::MapView::GetSelectionLayers() const
+{
+    return m_selectionLayers.get();
 }
