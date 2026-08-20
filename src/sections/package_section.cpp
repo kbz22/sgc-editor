@@ -33,7 +33,7 @@ sections::PackageSection::PackageSection(program::ProgramContext& programContext
         TVSIL_NORMAL
     );
 
-    SetupSubclass(m_packageTreeViewHandle, this);
+    SetupSubclass(GetHwnd(), this);
 }
 
 sections::PackageSection::~PackageSection()
