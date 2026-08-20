@@ -4,6 +4,7 @@
 #include "sgc_view/map_view.hpp"
 #include "command/paint_command.hpp"
 #include "editor_tools/brush.hpp"
+#include <sgc/data/statictilestorage.hpp>
 #include <functional>
 #include <windows.h>
 
@@ -25,6 +26,7 @@ namespace sections {
             sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
             sgc::math::vec2 m_movingSelectionOffset = { 0, 0 };
             std::function<void(float)> m_onZoomChangedCallback = nullptr;
+            std::map<size_t, std::shared_ptr<sgc::data::StaticTileStorage>> m_selectionMovedStorage;
 
             editor_tools::Brush m_brush;
 

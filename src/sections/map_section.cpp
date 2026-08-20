@@ -2,6 +2,7 @@
 #include "program/program.hpp"
 #include "command/paint_command.hpp"
 #include "command/command_manager.hpp"
+#include "command/paint_selection_command.hpp"
 
 #include <sgc/coordinates/screenworld.hpp>
 #include <sgc/data/statictilestorage.hpp>
@@ -148,7 +149,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     auto selectionLayers = m_mapView->GetSelectionLayers();
                     auto activeLayerIndex = layerManager->GetActiveLayerIndex();                                        
 
-                    auto iterateTiles = [&tileSize, &selectionPos, &selectionSize, &selectionLayers, this](program::LayerItem &layerItem, size_t layerIndex)
+                    auto iterateTiles = [&tileSize, &selectionPos, &selectionSize, &selectionLayers, this](program::LayerItem &layerItem, size_t renderingIndex, size_t storageIndex)
                     {
                         auto selectionStorage = std::make_shared<sgc::data::StaticTileStorage>(selectionSize);
                         for(sgc::math::ival y = 0; y < selectionSize.y; ++y) {
@@ -160,9 +161,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                                 };
 
                                 auto tileId = layerItem.storage->GetTileAt(tilePos);
-                                selectionStorage->SetTileAt({x, y}, tileId);
+                                selectionStorage->SetTileAt({x, y}, tileId);                                
                             }
                         }
+
+                        m_selectionMovedStorage[storageIndex] = selectionStorage;
                         
                         auto selectionImage = std::make_shared<sgc::graphics::TiledImage>(
                             std::make_shared<sgc::graphics::TiledLayer>(
@@ -176,21 +179,21 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                             selectionPos.y * tileSize.y
                         });
                         selectionImage->SetAlpha(layerItem.transparency);
-                        selectionLayers->Set(layerIndex, selectionImage);
+                        selectionLayers->Set(renderingIndex, selectionImage);
                     };
 
                     switch(GetSelectionMode())
                     {
                         case editor_tools::SelectionMode::SingleLayer:
                         {                            
-                            iterateTiles(layers[activeLayerIndex], activeLayerIndex);
+                            iterateTiles(layers[activeLayerIndex], layers.size() - activeLayerIndex - 1, activeLayerIndex);
                             break;
                         }                        
 
                         case editor_tools::SelectionMode::AllLayers:
                         {
                             for(size_t i = 0; i < layers.size(); i++) {
-                                iterateTiles(layers[i], layers.size() - i - 1);
+                                iterateTiles(layers[i], layers.size() - i - 1, i);
                             }
                             break;
                         }
@@ -199,12 +202,15 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         {
                             for(size_t i = 0; i < layers.size(); i++) {
                                 if(layers[i].visible) {
-                                    iterateTiles(layers[i], layers.size() - i - 1);
+                                    iterateTiles(layers[i], layers.size() - i - 1, i);
                                 }
                             }
                             break;
                         }
                     }
+
+                    programContext.actionManager->Find(action::ActionType::SelectionClear)->Execute(programContext);
+
                     return 0;
                 }
             }            
@@ -371,13 +377,45 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
         case WM_LBUTTONUP:
         {
             if(m_isMovingSelection) 
-            {
-                m_isMovingSelection = false;
-
+            {                
                 auto selectionLayers = m_mapView->GetSelectionLayers();
-                selectionLayers->Clear();
-                
+                auto selectionPos = m_mapView->GetSelectionPositionInTiles();
+                auto selectionSize = m_mapView->GetSelectionSizeInTiles();
+                auto layerManager = mapDocument->GetLayerManager();
+                auto layers = layerManager->GetLayers();                
+                command::MultilayerTileChangesType tileChanges;
 
+                for(auto &[storageIndex, storage] : m_selectionMovedStorage)
+                {
+                    for(sgc::math::ival y = 0; y < selectionSize.y; ++y) {
+                        for(sgc::math::ival x = 0; x < selectionSize.x; ++x)
+                        {
+                            auto tilePos = sgc::tile::TilePosition2D{
+                                selectionPos.x + x,
+                                selectionPos.y + y
+                            };
+
+                            auto movedTileId = storage->GetTileAt({x, y});
+                            auto currentTileId = layers[storageIndex].storage->GetTileAt(tilePos);
+                            
+                            tileChanges[storageIndex][tilePos] = {
+                                storageIndex,
+                                tilePos,
+                                currentTileId,
+                                movedTileId.value_or(currentTileId.value_or(m_mapView->GetTileset()->TileIdCount()))
+                            };
+                        }
+                    }
+                }
+
+                mapDocument->GetCommandManager()->Execute(std::make_unique<command::PaintSelectionCommand>(
+                    *mapDocument,
+                    tileChanges
+                ));
+
+                m_isMovingSelection = false;
+                m_selectionMovedStorage.clear();
+                selectionLayers->Clear();
 
                 Update();
             }

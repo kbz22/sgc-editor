@@ -216,8 +216,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
     auto layerManager = selectedDocument->GetLayerManager();
     auto layers = layerManager->GetLayers();
-    size_t layerIndex = 0;
-    // std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
+    size_t layerIndex = 0;    
 
     if(!layers.empty() && layerManager->IsSingleLayerMode()){       
 
@@ -231,8 +230,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
         );
 
         auto tiledImage = std::make_shared<graphics::TiledImage>(tiledLayer);
-
-        // drawables.push_back(tiledImage);
+        
         m_mapLayers->Set(layerIndex, tiledImage);
         layerIndex++;
     }
@@ -254,27 +252,19 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
         m_mapLayers->Set(layerIndex, tiledImage);
         layerIndex++;
-
-        // drawables.push_back(tiledImage);
     }
 
     if(program::HasFlag(programContext.editorGridMode, program::EditorGridMode::TileGrid)) {
         m_mapLayers->Set(layerIndex, m_tileGrid);
-        layerIndex++;
-        // drawables.push_back(m_tileGrid);
+        layerIndex++;        
     }
     
     if(program::HasFlag(programContext.editorGridMode, program::EditorGridMode::ChunkGrid)) {
         m_mapLayers->Set(layerIndex, m_chunkGrid);
-        layerIndex++;
-        // drawables.push_back(m_chunkGrid);
+        layerIndex++;        
     }
 
     UpdateGridPosition(m_renderContext.view.camera);
-
-    // auto layer = std::make_shared<graphics::DrawableContainer>(drawables);
-
-    // m_drawableImage = layer;
 
     Render();
 }
