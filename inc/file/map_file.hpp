@@ -32,6 +32,7 @@ namespace file {
 
             bool IsDirty() const override;
             bool IsContainer() const override;
+            bool IsActivable() const override;
 
             void SetFilePath(const std::filesystem::path& path) override;
 

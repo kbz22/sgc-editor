@@ -30,6 +30,7 @@ namespace file {
 
             virtual bool IsDirty() const = 0;
             virtual bool IsContainer() const = 0;
+            virtual bool IsActivable() const = 0;
 
             virtual FileType GetFileType() const = 0;
 

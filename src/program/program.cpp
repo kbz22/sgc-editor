@@ -156,7 +156,8 @@ void program::StartDefault()
         }
     });
 
-    programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemSelected, [&programContext](file::IFile* file, size_t index) {
+    programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemSelected, [&programContext](file::IFile* file, size_t index) 
+    {
         auto fileManager = programContext.fileManager.get();
         auto location = file::DocumentLocation{file, index};
         
@@ -175,9 +176,15 @@ void program::StartDefault()
         programContext.packageSection->Update();
     });
 
-    programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemDoubleClicked, [&programContext](file::IFile* file, size_t index) {
+    programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemDoubleClicked, [&programContext](file::IFile* file, size_t index) 
+    {
         auto fileManager = programContext.fileManager.get();
         auto location = file::DocumentLocation{file, index};
+        
+        if(file->IsActivable())
+        {
+            return;
+        }
         
         fileManager->SetActiveDocument(location);
 

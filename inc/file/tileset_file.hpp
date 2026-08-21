@@ -30,6 +30,7 @@ namespace file {
 
             bool IsDirty() const override;
             bool IsContainer() const override;
+            bool IsActivable() const override;
 
             FileType GetFileType() const override;
 

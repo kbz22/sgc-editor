@@ -193,6 +193,11 @@ bool file::TilesetFile::IsContainer() const
     return false;
 }
 
+bool file::TilesetFile::IsActivable() const
+{
+    return true;
+}
+
 void file::TilesetFile::SetFilePath(const std::filesystem::path& path)
 {
     m_filePath = path;

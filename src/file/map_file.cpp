@@ -169,6 +169,11 @@ bool file::MapFile::IsContainer() const
     return false;
 }
 
+bool file::MapFile::IsActivable() const
+{
+    return true;
+}
+
 std::vector<file::MapDocument*> file::MapFile::GetMapDocuments()
 {    
     if (m_document) {
