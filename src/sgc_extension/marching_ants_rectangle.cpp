@@ -38,6 +38,13 @@ sgc::math::fvec2 sgc::graphics::MarchingAntsRectangle::GetSize() const
     return m_size;
 }
 
+float sgc::graphics::MarchingAntsRectangle::GetSegmentLength() const 
+{
+    return m_segmentLength;
+}
+
+#include <sgc/debug/log.hpp>
+
 void sgc::graphics::MarchingAntsRectangle::Draw(const RenderContext& context) 
 {    
     constexpr int numPoints = 4;

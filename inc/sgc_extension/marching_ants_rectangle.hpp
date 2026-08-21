@@ -27,6 +27,7 @@ namespace sgc::graphics {
 
             sgc::math::fvec2 GetPosition() const;
             sgc::math::fvec2 GetSize() const;
+            float GetSegmentLength() const;
 
             void Draw(const RenderContext& context) override;
 

@@ -31,6 +31,8 @@ namespace sgc_view
             std::function<void(sgc::math::vec2)> m_onCursorPositionChangedCallback = nullptr;
             std::function<void(sgc::math::vec2)> m_onSelectionSizeChangedCallback = nullptr;
             float m_zoom = 1.0f;
+            std::chrono::steady_clock::time_point m_lastSelectionOffsetUpdateTime;
+            float m_offset = 0.0f;
 
             void SetTileset(sgc::data::AssetId tilesetId) override;
             void ResetTileset();
@@ -47,6 +49,7 @@ namespace sgc_view
             void SetScreenSize(int width, int height) override;
 
             void UpdateGridPosition(sgc::graphics::Viewport cameraViewport);
+            void UpdateSelectionOffset();
 
             bool SetZoom(float zoom); // returns true if zoom was changed
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);

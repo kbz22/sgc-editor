@@ -4,6 +4,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <stdexcept>
+#include <chrono>
 
 #include <sgc/graphics/drawablecontainer.hpp>
 
@@ -31,10 +32,6 @@ sgc_view::MapView::MapView(HWND hwnd) :
         sgc::math::fvec2{0.0f, 0.0f},
         sgc::math::fvec2{0.0f, 0.0f}
     );
-
-    /* std::vector<std::shared_ptr<graphics::IDrawable>> drawables;
-    auto layer = std::make_shared<graphics::DrawableContainer>(drawables);
-    m_drawableImage = layer; */
 
     m_mapLayers = std::make_shared<graphics::DrawableLayers>();
     m_selectionLayers = std::make_shared<graphics::DrawableLayers>();
@@ -108,6 +105,27 @@ void sgc_view::MapView::UpdateGridPosition(sgc::graphics::Viewport cameraViewpor
 
     m_chunkGrid->SetPosition(gridPosition);
     m_chunkGrid->SetSize(gridSize);
+}
+
+void sgc_view::MapView::UpdateSelectionOffset()
+{
+    auto segmentLength = m_marchingAntsRectangleOnMap->GetSegmentLength();
+    auto sinceLastUpdate = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - m_lastSelectionOffsetUpdateTime
+    ).count();
+
+    m_offset += static_cast<float>(sinceLastUpdate) / 100.0f;
+
+    if(m_offset > 0.0f){
+        m_lastSelectionOffsetUpdateTime = std::chrono::steady_clock::now();
+        if(m_offset > segmentLength * 2.0f) {
+            m_offset = 0.0f;
+        }
+    }
+
+    m_marchingAntsRectangleOnMap->SetOffset(
+        m_offset
+    );
 }
 
 void sgc_view::MapView::SetCursorTile(sgc::graphics::PixelSize2D size)

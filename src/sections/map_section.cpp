@@ -13,6 +13,8 @@
 #include <commctrl.h>
 #include <cmath>
 
+constexpr int gc_TimerId = 1;
+
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
     Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
     m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())},
@@ -61,14 +63,28 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
             size.y / tileSize.y
         });
     });
+
+    SetTimer(
+        GetHwnd(),
+        gc_TimerId,
+        static_cast<int>(m_selectionRectUpdateInterval.count()),
+        nullptr
+    );
+
+    m_mapView->Render();
 }
 
 void sections::MapSection::Update()
-{    
-    Redraw();
-    if (m_mapView != nullptr) {        
-        m_mapView->Render();
-    }    
+{
+    auto currentTime = std::chrono::steady_clock::now();
+    if (currentTime - m_lastUpdateTime >= m_timeBetweenUpdates) 
+    {
+        m_lastUpdateTime = currentTime;
+
+        if (m_mapView != nullptr) {
+            m_mapView->Render();
+        }
+    }
 }
 
 void sections::MapSection::Refresh(program::ProgramContext& programContext)
@@ -490,6 +506,16 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 );
             }
 
+            break;
+        }
+
+        case WM_TIMER:
+        {
+            if (wparam == gc_TimerId && m_brush.GetPaintMode() == editor_tools::PaintMode::Select)
+            {
+                m_mapView->UpdateSelectionOffset();
+                Update();                
+            }
             break;
         }
     }

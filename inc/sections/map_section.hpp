@@ -6,6 +6,7 @@
 #include "editor_tools/brush.hpp"
 #include <sgc/data/statictilestorage.hpp>
 #include <functional>
+#include <mutex>
 #include <windows.h>
 
 namespace program {
@@ -23,10 +24,15 @@ namespace sections {
             bool m_isCaptured = false;
             bool m_isMovingSelection = false;
             bool m_canMoveSelection = false;
+            bool m_needsRedraw = false;
+            std::mutex m_needsRedrawMutex{};
             sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
             sgc::math::vec2 m_movingSelectionOffset = { 0, 0 };
             std::function<void(float)> m_onZoomChangedCallback = nullptr;
             std::map<size_t, std::shared_ptr<sgc::data::StaticTileStorage>> m_selectionMovedStorage;
+            std::chrono::milliseconds m_timeBetweenUpdates = std::chrono::milliseconds(8);
+            std::chrono::milliseconds m_selectionRectUpdateInterval = std::chrono::milliseconds(50);
+            std::chrono::steady_clock::time_point m_lastUpdateTime = std::chrono::steady_clock::now();
 
             editor_tools::Brush m_brush;
 
