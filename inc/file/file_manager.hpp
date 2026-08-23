@@ -22,6 +22,7 @@ namespace file {
             std::vector<std::unique_ptr<IFile>> m_openFiles{};
             DocumentLocation m_selectedDocument{nullptr, 0};
             DocumentLocation m_activeDocument{nullptr, 0};
+            std::function<void(DocumentLocation)> m_onActiveDocumentChangedCallback{nullptr};
 
         public:
             FileManager() = default;
@@ -39,9 +40,13 @@ namespace file {
             IFile* GetSelectedFile() const;
             size_t GetSelectedFileIndex() const;
             size_t GetFileIndex(IFile* file) const;
+            DocumentLocation GetSelectedDocumentLocation() const;
+            DocumentLocation GetActiveDocumentLocation() const;
 
             std::vector<IFile*> GetOpenFiles() const;
             std::vector<TilesetDocument*> GetAllTilesetDocuments() const;
+
+            void RegisterOnActiveDocumentChangedCallback(std::function<void(DocumentLocation)> callback);
     };
 
 }

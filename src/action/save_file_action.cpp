@@ -26,6 +26,8 @@ action::SaveFileAction::SaveFileAction()
     };
 }
 
+void SaveAndUpdate(file::IFile* activeFile, std::filesystem::path filePath, program::ProgramContext& programContext);
+
 void action::SaveFileAction::Execute(program::ProgramContext& programContext)
 {       
     static std::unordered_map<file::FileType, locale::StringId> extensionToStringIdMap = {
@@ -44,42 +46,15 @@ void action::SaveFileAction::Execute(program::ProgramContext& programContext)
         
         std::optional<std::filesystem::path> filePath = activeFile->GetFilePath();
 
-        if(filePath.has_value() && filePath.value().empty()) {
-
-            auto allFilesString = programContext.stringLookup.Get(locale::StringId::NameAllFiles);
-            auto thisTypeString = programContext.stringLookup.Get(
-                extensionToStringIdMap[activeFile->GetFileType()]
-            );
-
-            if(!thisTypeString.has_value() || !allFilesString.has_value()) {
-                throw program::StringNotFoundException("Missing string for file type or all files");
-            }
-
-            std::wstring thisTypeStr = std::format(
-                L"{} ({})",
-                thisTypeString.value(),
-                activeFile->GetExtension()
-            );
-
-            filePath = win32_helpers::ShowSaveDialog(
-                programContext.mainWindowContext->hMainWindow,
-                {
-                    { thisTypeStr.c_str(), { activeFile->GetExtension().c_str() } },
-                    { allFilesString.value().c_str(), { L"*" } }
-                }
+        if(filePath.has_value() && filePath.value().empty()) 
+        {
+            programContext.actionManager->Execute(
+                action::ActionType::SaveAs, programContext
             );
         }
-
-        if(filePath.has_value())
+        else if(filePath.has_value())
         {
-            activeFile->SetFilePath(filePath.value());
-
-            programContext.fileManager->SaveFile(
-                programContext.fileManager->GetSelectedFileIndex()
-            );
-
-            programContext.packageSection->UpdateTreeViewItems(programContext);
-            programContext.packageSection->Update();
+            SaveAndUpdate(activeFile, filePath.value(), programContext);
         }
     }
 }

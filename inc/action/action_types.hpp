@@ -12,6 +12,10 @@ namespace action {
         NewTilesetDocument,
         OpenFile,
         SaveFile,
+        SaveAs,
+        ExportFile,
+        ExportAsImage,
+        ExportAsPackage,
         CloseFile,
 
         MenuEdit = 2001,

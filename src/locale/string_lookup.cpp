@@ -84,6 +84,10 @@ locale::StringLookup::StringLookup()
         {StringId::NameEditorSelectionPaste, L"Paste"},
         {StringId::NameEditorSelectionClear, L"Clear"},
         {StringId::NameEditorSelectionMove, L"Move"},
+        {StringId::NameSaveAs, L"Save As"},
+        {StringId::NameExportFile, L"Export"},
+        {StringId::NameExportAsImage, L"Image"},
+        {StringId::NameExportAsPackage, L"Package"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},

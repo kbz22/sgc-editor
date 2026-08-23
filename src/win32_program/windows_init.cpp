@@ -137,3 +137,8 @@ void win32_program::Init(HINSTANCE hInstance)
 
     return;
 }
+
+void win32_program::SetTitle(HWND hwnd, const std::wstring& title)
+{
+    SetWindowText(hwnd, title.c_str());
+}

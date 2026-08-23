@@ -163,7 +163,8 @@ void file::FileManager::SelectDocument(const DocumentLocation &document)
         m_selectedDocument.index = 0;
     };
 
-    if(!document.file) {
+    if(!document.file) 
+    {
         clearSelection();
         return;
     }
@@ -182,6 +183,8 @@ void file::FileManager::SelectDocument(const DocumentLocation &document)
     else {
         clearSelection();
     }
+
+    return;
 }
 
 void file::FileManager::SetActiveDocument(const DocumentLocation &document)
@@ -191,20 +194,26 @@ void file::FileManager::SetActiveDocument(const DocumentLocation &document)
         m_activeDocument.index = 0;
     };
 
-    if(!document.file) {
+    if(!document.file) 
+    {
         clearActive();
-        return;
+    }
+    else
+    {
+        auto doc = document.file->GetMapDocument(document.index);
+
+        if(!doc) 
+        {
+            clearActive();
+        }
+        else
+        {
+            m_activeDocument.file = document.file;
+            m_activeDocument.index = document.index;
+        }
     }
 
-    auto doc = document.file->GetMapDocument(document.index);
-
-    if(!doc) {
-        clearActive();
-        return;
-    }
-
-    m_activeDocument.file = document.file;
-    m_activeDocument.index = document.index;
+    m_onActiveDocumentChangedCallback(m_activeDocument);
 }
 
 file::MapDocument* file::FileManager::GetActiveDocument() const
@@ -267,4 +276,19 @@ std::vector<file::TilesetDocument*> file::FileManager::GetAllTilesetDocuments() 
     }
 
     return allTilesetDocs;
+}
+
+file::DocumentLocation file::FileManager::GetSelectedDocumentLocation() const
+{
+    return m_selectedDocument;
+}
+
+file::DocumentLocation file::FileManager::GetActiveDocumentLocation() const
+{
+    return m_activeDocument;
+}
+
+void file::FileManager::RegisterOnActiveDocumentChangedCallback(std::function<void(DocumentLocation)> callback)
+{
+    m_onActiveDocumentChangedCallback = callback;
 }

@@ -107,7 +107,30 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         StartDefault();
         RegisterDefaultShortcuts(programContext);
         RefreshEditor();
-        HandleResize(hwnd, lParam);        
+        HandleResize(hwnd, lParam);
+
+        programContext.fileManager->RegisterOnActiveDocumentChangedCallback([&programContext](file::DocumentLocation documentLocation) 
+        {
+            static const auto defaultWindowTitle = programContext.stringLookup.Get(locale::StringId::WindowTitle);
+
+            if(documentLocation.file == nullptr) 
+            {
+                win32_program::SetTitle(
+                    programContext.mainWindowContext->hMainWindow,
+                    defaultWindowTitle.value().c_str()
+                );
+            }
+            else
+            {
+                auto fileName = documentLocation.file->GetFileName();
+                auto newTitle = std::format(L"{} - {}", fileName, defaultWindowTitle.value());
+
+                win32_program::SetTitle(
+                    programContext.mainWindowContext->hMainWindow,
+                    newTitle
+                );
+            }
+        });
 
         break;
     }

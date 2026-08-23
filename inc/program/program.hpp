@@ -68,8 +68,7 @@ namespace program {
 
     void RegisterActions();
     void RegisterDefaultShortcuts(program::ProgramContext& programContext);
-    void StartDefault();
-    
+    void StartDefault();    
     
     void RefreshEditor();
 
