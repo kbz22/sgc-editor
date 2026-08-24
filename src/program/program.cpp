@@ -201,6 +201,40 @@ void program::StartDefault()
         programContext.packageSection->UpdateTreeViewItems(programContext);
         programContext.packageSection->Update();
     });
+
+    programContext.fileManager->RegisterOnFileUpdatedCallback([&programContext](file::IFile* file) 
+    {
+        if(file == nullptr){
+            programContext.packageSection->Refresh(programContext);
+        }
+        programContext.packageSection->UpdateTreeViewItems(programContext);
+        programContext.packageSection->Update();
+    });
+
+    programContext.fileManager->RegisterOnActiveDocumentChangedCallback([&programContext](file::DocumentLocation documentLocation) 
+    {
+        static const auto defaultWindowTitle = programContext.stringLookup.Get(locale::StringId::WindowTitle);
+
+        if(documentLocation.file == nullptr) 
+        {
+            win32_program::SetTitle(
+                programContext.mainWindowContext->hMainWindow,
+                defaultWindowTitle.value().c_str()
+            );
+        }
+        else
+        {
+            auto fileName = documentLocation.file->GetFileName();
+            auto newTitle = std::format(L"{} - {}", fileName, defaultWindowTitle.value());
+
+            win32_program::SetTitle(
+                programContext.mainWindowContext->hMainWindow,
+                newTitle
+            );
+        }
+
+        RefreshEditor();
+    });
 }
 
 void RedrawAllSections(program::ProgramContext& programContext)

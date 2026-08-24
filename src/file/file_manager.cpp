@@ -62,6 +62,8 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
     m_openFiles.push_back(std::move(newFile));    
     SetActiveDocument(selectedDoc);
 
+    m_onFileUpdatedCallback(nullptr);
+
     return;
 }
 
@@ -77,7 +79,9 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
     auto newFile = std::make_unique<TilesetFile>(assetManager);
     newFile->m_tilesetDocument = std::make_unique<TilesetDocument>(name, tilesetId, imageId);
 
-    m_openFiles.push_back(std::move(newFile));    
+    m_openFiles.push_back(std::move(newFile));
+
+    m_onFileUpdatedCallback(nullptr);
 
     return;
 }
@@ -125,6 +129,8 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
         throw program::AssetLoadException(errorMsg);
     }
 
+    m_onFileUpdatedCallback(nullptr);
+
     return;
 }
 
@@ -132,6 +138,7 @@ void file::FileManager::SaveFile(size_t index)
 {
     if(index < m_openFiles.size()) {
         m_openFiles[index]->Save();
+        m_onFileUpdatedCallback(nullptr);
     }
     return;
 }
@@ -150,7 +157,9 @@ void file::FileManager::CloseFile(size_t index)
             m_activeDocument.index = 0;
         }
         
-        m_openFiles.erase(m_openFiles.begin() + index);        
+        m_openFiles.erase(m_openFiles.begin() + index);
+
+        m_onFileUpdatedCallback(nullptr);
     }
 
     return;
@@ -291,4 +300,9 @@ file::DocumentLocation file::FileManager::GetActiveDocumentLocation() const
 void file::FileManager::RegisterOnActiveDocumentChangedCallback(std::function<void(DocumentLocation)> callback)
 {
     m_onActiveDocumentChangedCallback = callback;
+}
+
+void file::FileManager::RegisterOnFileUpdatedCallback(std::function<void(IFile*)> callback)
+{
+    m_onFileUpdatedCallback = callback;
 }

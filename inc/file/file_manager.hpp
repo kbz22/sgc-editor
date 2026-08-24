@@ -23,6 +23,7 @@ namespace file {
             DocumentLocation m_selectedDocument{nullptr, 0};
             DocumentLocation m_activeDocument{nullptr, 0};
             std::function<void(DocumentLocation)> m_onActiveDocumentChangedCallback{nullptr};
+            std::function<void(IFile*)> m_onFileUpdatedCallback{nullptr};
 
         public:
             FileManager() = default;
@@ -47,6 +48,7 @@ namespace file {
             std::vector<TilesetDocument*> GetAllTilesetDocuments() const;
 
             void RegisterOnActiveDocumentChangedCallback(std::function<void(DocumentLocation)> callback);
+            void RegisterOnFileUpdatedCallback(std::function<void(IFile*)> callback);
     };
 
 }
