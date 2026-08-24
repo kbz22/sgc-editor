@@ -117,7 +117,8 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                         return TRUE;
                     }
 
-                    program::RefreshEditor();
+                    // program::RefreshEditor();
+                    // refresh is now handled by the file manager's on file updated callback
 
                     EndDialog(hDlg, IDOK);
                     return TRUE;

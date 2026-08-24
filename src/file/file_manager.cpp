@@ -86,7 +86,7 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
     return;
 }
 
-void file::FileManager::OpenFile(std::filesystem::path filePath)
+void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *assetManager)
 {
     auto extension = filePath.extension().wstring();
     DocumentLocation openedDoc{ nullptr, 0 };
@@ -94,10 +94,11 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
     if(extension == defaults::MapFileExtension.data())
     {
         auto newFile = std::make_unique<MapFile>();
+        auto newFilePtr = newFile.get();
         newFile->SetFilePath(filePath);
         newFile->Open();
 
-        newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
+        /* newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
 
             if(!dirty) {
                 return;
@@ -106,30 +107,38 @@ void file::FileManager::OpenFile(std::filesystem::path filePath)
             auto &programContext = program::GetProgramContext();
             programContext.packageSection->UpdateTreeViewItems(programContext);
             programContext.packageSection->Update();
+        }); */
+
+        newFile->m_document->RegisterOnSetDirtyCallback([this, newFilePtr](bool dirty) {
+            m_onMapDirtyCallback(newFilePtr->m_document.get(), dirty);
         });
 
         m_openFiles.push_back(std::move(newFile));
 
         openedDoc.file = m_openFiles.back().get();        
         SetActiveDocument(openedDoc);
+        m_onFileUpdatedCallback(newFile.get());
     }
     else if(extension == defaults::TilesetFileExtension.data()) 
     {
-        auto &programContext = program::GetProgramContext();
-        auto &assetManager = programContext.assetManager;
+        /* auto &programContext = program::GetProgramContext();
+        auto &assetManager = programContext.assetManager; */
+
+        if(assetManager == nullptr) {
+            throw program::AssetLoadException("AssetManager is null. Cannot load tileset file.");
+        }
 
         auto newFile = std::make_unique<TilesetFile>(*assetManager);
         newFile->SetFilePath(filePath);
         newFile->Open();
         m_openFiles.push_back(std::move(newFile));
+        m_onFileUpdatedCallback(newFile.get());
     }
     else
     {
         auto errorMsg = "Unsupported file extension: " + filePath.extension().string();
         throw program::AssetLoadException(errorMsg);
     }
-
-    m_onFileUpdatedCallback(nullptr);
 
     return;
 }
@@ -305,4 +314,9 @@ void file::FileManager::RegisterOnActiveDocumentChangedCallback(std::function<vo
 void file::FileManager::RegisterOnFileUpdatedCallback(std::function<void(IFile*)> callback)
 {
     m_onFileUpdatedCallback = callback;
+}
+
+void file::FileManager::RegisterOnMapDirtyCallback(std::function<void(MapDocument*, bool)> callback)
+{
+    m_onMapDirtyCallback = callback;
 }

@@ -125,7 +125,8 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                     auto &programContext = program::GetProgramContext();
                     programContext.fileManager->NewMapFile(mapName, static_cast<sgc::data::AssetId>(tilesetId));
 
-                    program::RefreshEditor();
+                    // program::RefreshEditor();
+                    // refresh is now handled by the file manager's on file updated callback
 
                     EndDialog(hDlg, IDOK);
                     return TRUE;

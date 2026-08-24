@@ -25,5 +25,6 @@ void action::CloseFileAction::Execute(program::ProgramContext& context)
         context.fileManager->CloseFile(context.fileManager->GetSelectedFileIndex());
     }
     
-    program::RefreshEditor();
+    // program::RefreshEditor();
+    // refresh is now handled by the file manager's on file updated callback
 }

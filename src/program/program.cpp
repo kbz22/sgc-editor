@@ -164,15 +164,6 @@ void program::StartDefault()
         
         fileManager->SelectDocument(location);
 
-        programContext.mapSection->Refresh(programContext);
-        programContext.mapSection->Update();
-
-        programContext.layersSection->Refresh(programContext);
-        programContext.layersSection->Update();
-
-        programContext.tilesetSection->Refresh(programContext);
-        programContext.tilesetSection->Update();
-
         programContext.packageSection->UpdateTreeViewItems(programContext);
         programContext.packageSection->Update();
     });
@@ -182,12 +173,15 @@ void program::StartDefault()
         auto fileManager = programContext.fileManager.get();
         auto location = file::DocumentLocation{file, index};
         
-        if(index == 0 && !file->IsActivable())
+        if(index == 0)
         {
-            return;
+            if(!file->IsActivable())
+            {
+                return;
+            }
+            
+            fileManager->SetActiveDocument(location);
         }
-        
-        fileManager->SetActiveDocument(location);
 
         programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
@@ -204,11 +198,8 @@ void program::StartDefault()
 
     programContext.fileManager->RegisterOnFileUpdatedCallback([&programContext](file::IFile* file) 
     {
-        if(file == nullptr){
-            programContext.packageSection->Refresh(programContext);
-        }
         programContext.packageSection->UpdateTreeViewItems(programContext);
-        programContext.packageSection->Update();
+        program::RefreshEditor();
     });
 
     programContext.fileManager->RegisterOnActiveDocumentChangedCallback([&programContext](file::DocumentLocation documentLocation) 
@@ -234,6 +225,12 @@ void program::StartDefault()
         }
 
         RefreshEditor();
+    });
+
+    programContext.fileManager->RegisterOnMapDirtyCallback([&programContext](file::MapDocument* document, bool dirty) 
+    {
+        programContext.packageSection->UpdateTreeViewItems(programContext);
+        programContext.packageSection->Update();
     });
 }
 

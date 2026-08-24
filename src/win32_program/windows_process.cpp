@@ -36,10 +36,6 @@ void HandleResize(HWND hwnd, LPARAM lParam)
     for(auto section : programContext.sections) {
         section->HandleSectionResize();        
     }
-
-    for(auto section : programContext.sections) {
-        section->Update();
-    }
 }
 
 void UpdateAllSections()
@@ -105,9 +101,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         InitCommonControlsEx(&icc);
 
         StartDefault();
-        RegisterDefaultShortcuts(programContext);
+        RegisterDefaultShortcuts(programContext);        
+        HandleResize(hwnd, lParam);
         RefreshEditor();
-        HandleResize(hwnd, lParam);        
 
         break;
     }

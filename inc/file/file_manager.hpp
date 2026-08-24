@@ -24,6 +24,7 @@ namespace file {
             DocumentLocation m_activeDocument{nullptr, 0};
             std::function<void(DocumentLocation)> m_onActiveDocumentChangedCallback{nullptr};
             std::function<void(IFile*)> m_onFileUpdatedCallback{nullptr};
+            std::function<void(MapDocument*, bool)> m_onMapDirtyCallback{nullptr};
 
         public:
             FileManager() = default;
@@ -31,7 +32,7 @@ namespace file {
 
             void NewMapFile(std::wstring name, sgc::data::AssetId tilesetId);
             void NewTilesetFile(std::wstring name, std::filesystem::path filePath, size_t tileWidth, size_t tileHeight, AssetManager &assetManager);
-            void OpenFile(std::filesystem::path filePath);
+            void OpenFile(std::filesystem::path filePath, AssetManager *assetManager);
             void SaveFile(size_t index);
             void CloseFile(size_t index);
 
@@ -49,6 +50,7 @@ namespace file {
 
             void RegisterOnActiveDocumentChangedCallback(std::function<void(DocumentLocation)> callback);
             void RegisterOnFileUpdatedCallback(std::function<void(IFile*)> callback);
+            void RegisterOnMapDirtyCallback(std::function<void(MapDocument*, bool)> callback);
     };
 
 }

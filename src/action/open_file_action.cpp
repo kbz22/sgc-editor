@@ -37,8 +37,9 @@ void action::OpenFileAction::Execute(program::ProgramContext& programContext)
     );
 
     if(filePath.has_value()) {
-        programContext.fileManager->OpenFile(filePath.value());
-        program::RefreshEditor();
+        programContext.fileManager->OpenFile(filePath.value(), programContext.assetManager.get());
+        // program::RefreshEditor();
+        // refresh is now handled by the file manager's on file updated callback
     }
    return;
 }
