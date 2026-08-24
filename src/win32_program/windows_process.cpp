@@ -122,6 +122,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_SIZE:
     {    
         HandleResize(hwnd, lParam);
+        UpdateAllSections();
         return TRUE;
     }
 
@@ -192,7 +193,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         {
             ReleaseCapture();
             capturedMouse = false;
-        }
+            UpdateAllSections();
+        }        
+
         return 0;
     }
     
@@ -209,8 +212,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
         if (draggedSplitter != DraggedSplitter::None && capturedMouse)
         {
-            layoutManager.HandleDragging(hwnd, lParam);            
+            layoutManager.HandleDragging(hwnd, lParam);
             HandleResize(hwnd, lParam);
+            UpdateAllSections();
         }
 
         return 0;
