@@ -182,7 +182,7 @@ void program::StartDefault()
         auto fileManager = programContext.fileManager.get();
         auto location = file::DocumentLocation{file, index};
         
-        if(file->IsActivable())
+        if(index == 0 && !file->IsActivable())
         {
             return;
         }

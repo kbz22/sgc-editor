@@ -51,7 +51,7 @@ void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, [[maybe_unu
     auto getItemAndCallback = [this](FileAction action) {
         POINT pt;
         GetCursorPos(&pt);
-        ScreenToClient(m_packageTreeViewHandle, &pt);
+        ScreenToClient(GetHwnd(), &pt);
 
         TVHITTESTINFO hit{};
         hit.pt = pt;
