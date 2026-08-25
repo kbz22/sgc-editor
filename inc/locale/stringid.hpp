@@ -92,6 +92,7 @@ namespace locale
         NameExportFile,
         NameExportAsImage,
         NameExportAsPackage,
+        NameExportAsMapFile,
 
         NameTilesetFile,
         NamePackageFile,

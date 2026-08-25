@@ -182,11 +182,10 @@ void sgc_view::MapView::Render()
     for(auto [layerIndex, layer] : *m_mapLayers) {
         auto selectionLayer = m_selectionLayers->Get(layerIndex);
 
-        if(layer != nullptr) {            
+        if(layer != nullptr) {
             layer->Draw(m_renderContext);
         }
         if(selectionLayer != nullptr) {
-            
             selectionLayer->Draw(m_renderContext);
         }
     }
@@ -201,6 +200,25 @@ void sgc_view::MapView::Render()
     }
 
     sdl::Render(m_renderContext);
+}
+
+void sgc_view::MapView::RenderToImage(std::filesystem::path outputPath)
+{
+    sdl::RenderAsImage(
+        outputPath,
+        m_renderContext,
+        [this](graphics::RenderContext const& context) {
+            SgcView::Clear();
+
+            for(auto [layerIndex, layer] : *m_mapLayers) {
+                if(layer != nullptr) {
+                    layer->Draw(m_renderContext);
+                }
+            }
+
+            sdl::Render(m_renderContext);
+        }
+    );
 }
 
 void sgc_view::MapView::Refresh(program::ProgramContext& programContext)

@@ -22,6 +22,7 @@ namespace action {
     {   
         Default,
         File,
+        Export,
         UndoRedo,
         LayerManagement,
         EditorLayerMode,

@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <sgc/math/vector.hpp>
 #include <sgc/tile/tile.hpp>
+#include <sgc/graphics/rendercontext.hpp>
 #include <optional>
 
 #include "sections/section.hpp"

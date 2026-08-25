@@ -88,6 +88,7 @@ locale::StringLookup::StringLookup()
         {StringId::NameExportFile, L"Export"},
         {StringId::NameExportAsImage, L"Image"},
         {StringId::NameExportAsPackage, L"Package"},
+        {StringId::NameExportAsMapFile, L"Map file"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},

@@ -38,6 +38,8 @@
 #include "action/selection_cut_action.hpp"
 #include "action/selection_move_action.hpp"
 #include "action/save_as_action.hpp"
+#include "action/export_file_action.hpp"
+#include "action/export_image_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -79,7 +81,10 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::SelectionCopy,
     action::ActionType::SelectionPaste,
     action::ActionType::SelectionCut,
-    action::ActionType::SelectionMove
+    action::ActionType::SelectionMove,
+    action::ActionType::SaveAs,
+    action::ActionType::ExportFile,
+    action::ActionType::ExportAsImage
 };
 
 void program::StartDefault()
@@ -339,10 +344,16 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::SelectionCutAction>());
     programContext.actionManager->Register(std::make_unique<action::SelectionMoveAction>());    
     programContext.actionManager->Register(std::make_unique<action::SaveAsAction>());
+    auto exportAction = programContext.actionManager->Register(std::make_unique<action::ExportFileAction>());
+    auto exportImageAction = programContext.actionManager->Register(std::make_unique<action::ExportImageAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,
         newTilesetAction
+    });
+
+    reinterpret_cast<action::ExportFileAction*>(exportAction)->SetItems({
+        exportImageAction
     });
 
     programContext.actionManager->Register(std::make_unique<action::FileMenuAction>());

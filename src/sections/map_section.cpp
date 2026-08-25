@@ -693,3 +693,10 @@ bool sections::MapSection::GetSelectionMoveMode() const
 {
     return m_canMoveSelection;
 }
+
+void sections::MapSection::RenderToImage(std::filesystem::path outputPath)
+{
+    if (m_mapView != nullptr) {
+        m_mapView->RenderToImage(outputPath);
+    }
+}

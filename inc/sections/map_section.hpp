@@ -43,9 +43,11 @@ namespace sections {
             MapSection(program::ProgramContext& programContext);
             
             void Update() override;
-            void HandleSectionResize() override;
+            void HandleSectionResize() override;            
 
             void Refresh(program::ProgramContext& programContext) override;
+
+            void RenderToImage(std::filesystem::path outputPath);
 
             void ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomValue);
 

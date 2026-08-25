@@ -44,9 +44,11 @@ namespace sgc_view
             MapView(HWND hwnd);
             ~MapView();
             
-            void Render() override;
+            void Render() override;            
             void Refresh(program::ProgramContext& programContext) override;
             void SetScreenSize(int width, int height) override;
+
+            void RenderToImage(std::filesystem::path outputPath);
 
             void UpdateGridPosition(sgc::graphics::Viewport cameraViewport);
             void UpdateSelectionOffset();
