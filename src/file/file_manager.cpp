@@ -3,6 +3,7 @@
 #include "program/except.hpp"
 #include "file/map_file.hpp"
 #include "file/tileset_file.hpp"
+#include "file/package_file.hpp"
 #include <sgc/data/helpers.hpp>
 
 sgc::data::AssetId LoadImageAsset(std::wstring name, const std::filesystem::path& path)
@@ -86,6 +87,24 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
     return;
 }
 
+void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocument*> mapDocuments, std::vector<TilesetDocument*> tilesetDocuments)
+{
+    auto newFile = std::make_unique<file::PackageFile>(name);
+
+    for(auto mapDoc : mapDocuments) {
+        newFile->AddMapDocument(std::unique_ptr<MapDocument>(mapDoc));
+    }
+    for(auto tilesetDoc : tilesetDocuments) {
+        newFile->AddTilesetDocument(std::unique_ptr<TilesetDocument>(tilesetDoc));
+    }
+
+    m_openFiles.push_back(std::move(newFile));
+
+    m_onFileUpdatedCallback(nullptr);
+
+    return;
+}
+
 void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *assetManager)
 {
     auto extension = filePath.extension().wstring();
@@ -97,17 +116,6 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
         auto newFilePtr = newFile.get();
         newFile->SetFilePath(filePath);
         newFile->Open();
-
-        /* newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
-
-            if(!dirty) {
-                return;
-            }
-
-            auto &programContext = program::GetProgramContext();
-            programContext.packageSection->UpdateTreeViewItems(programContext);
-            programContext.packageSection->Update();
-        }); */
 
         newFile->m_document->RegisterOnSetDirtyCallback([this, newFilePtr](bool dirty) {
             m_onMapDirtyCallback(newFilePtr->m_document.get(), dirty);
@@ -121,9 +129,6 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
     }
     else if(extension == defaults::TilesetFileExtension.data()) 
     {
-        /* auto &programContext = program::GetProgramContext();
-        auto &assetManager = programContext.assetManager; */
-
         if(assetManager == nullptr) {
             throw program::AssetLoadException("AssetManager is null. Cannot load tileset file.");
         }

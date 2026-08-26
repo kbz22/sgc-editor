@@ -10,6 +10,7 @@ namespace action {
         NewFile = 1002,
         NewMapDocument,
         NewTilesetDocument,
+        NewPackage,
         OpenFile,
         SaveFile,
         SaveAs,

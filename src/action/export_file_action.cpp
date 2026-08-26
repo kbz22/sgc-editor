@@ -3,7 +3,7 @@
 action::ExportFileAction::ExportFileAction() 
 {
     m_hMenu = CreatePopupMenu();
-    m_menuId = static_cast<int>(action::ActionType::NewFile);
+    m_menuId = static_cast<int>(action::ActionType::ExportFile);
 
     m_actionType = ActionType::ExportFile;    
     m_enabled = true;

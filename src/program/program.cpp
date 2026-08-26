@@ -40,6 +40,7 @@
 #include "action/save_as_action.hpp"
 #include "action/export_file_action.hpp"
 #include "action/export_image_action.hpp"
+#include "action/new_package_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -83,8 +84,8 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::SelectionCut,
     action::ActionType::SelectionMove,
     action::ActionType::SaveAs,
-    action::ActionType::ExportFile,
-    action::ActionType::ExportAsImage
+    action::ActionType::ExportAsImage,
+    action::ActionType::ExportFile    
 };
 
 void program::StartDefault()
@@ -201,7 +202,7 @@ void program::StartDefault()
         programContext.packageSection->Update();
     });
 
-    programContext.fileManager->RegisterOnFileUpdatedCallback([&programContext](file::IFile* file) 
+    programContext.fileManager->RegisterOnFileUpdatedCallback([&programContext]([[maybe_unsused]] file::IFile* file) 
     {
         programContext.packageSection->UpdateTreeViewItems(programContext);
         program::RefreshEditor();
@@ -269,8 +270,6 @@ void program::RegisterDefaultShortcuts(program::ProgramContext& programContext)
             );
         }
     }
-
-
 }
 
 void program::RefreshEditor()
@@ -309,6 +308,7 @@ void program::RegisterActions()
     auto newDocAction = programContext.actionManager->Register(std::make_unique<action::NewDocumentAction>());
     auto newMapAction = programContext.actionManager->Register(std::make_unique<action::NewMapDocumentAction>());
     auto newTilesetAction = programContext.actionManager->Register(std::make_unique<action::NewTilesetDocumentAction>());
+    auto newPackageAction = programContext.actionManager->Register(std::make_unique<action::NewPackageAction>());
     programContext.actionManager->Register(std::make_unique<action::OpenFileAction>());
     programContext.actionManager->Register(std::make_unique<action::SaveFileAction>());
     programContext.actionManager->Register(std::make_unique<action::CloseFileAction>());
@@ -349,7 +349,8 @@ void program::RegisterActions()
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,
-        newTilesetAction
+        newTilesetAction,
+        newPackageAction
     });
 
     reinterpret_cast<action::ExportFileAction*>(exportAction)->SetItems({

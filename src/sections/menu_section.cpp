@@ -150,7 +150,7 @@ void sections::MenuSection::Refresh(program::ProgramContext& context)
             {
                 auto popup = reinterpret_cast<action::PopupMenuAction*>(action);
                 popup->RefreshMenu();
-            }
+            }            
         }
     }
 }

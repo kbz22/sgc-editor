@@ -42,11 +42,18 @@ void action::PopupMenuAction::BuildMenu(program::ProgramContext &context)
 
             popupItem->BuildMenu(context);
 
-            AppendMenuW(
+            MENUITEMINFOW info{};
+            info.cbSize = sizeof(info);
+            info.fMask = MIIM_ID | MIIM_SUBMENU | MIIM_STRING;
+            info.wID = static_cast<UINT>(item->GetType());
+            info.hSubMenu = popupItem->GetHMenu();
+            info.dwTypeData = text.value().data();
+
+            InsertMenuItemW(
                 m_hMenu,
-                MF_POPUP,
-                reinterpret_cast<UINT_PTR>(popupItem->GetHMenu()),
-                text.value().c_str()
+                GetMenuItemCount(m_hMenu),
+                TRUE,
+                &info
             );
         }
         else
@@ -57,7 +64,7 @@ void action::PopupMenuAction::BuildMenu(program::ProgramContext &context)
                 static_cast<int>(item->GetType()),
                 text.value().c_str()
             );
-        }
+        }        
     }
 }
 
@@ -124,23 +131,23 @@ void action::PopupMenuAction::Execute(program::ProgramContext& context)
 
 void action::PopupMenuAction::RefreshMenu()
 {
-    for (auto& item : m_popupMenuItems)
+    for(auto& item : m_popupMenuItems)
     {
+        EnableMenuItem(
+            m_hMenu,
+            static_cast<UINT>(item->GetType()),
+            item->IsEnabled()
+                ? MF_ENABLED | MF_BYCOMMAND
+            : MF_GRAYED
+        );
+        
         if(item->IsPopup())
         {
             auto popupItem = dynamic_cast<PopupMenuAction*>(item);
             popupItem->RefreshMenu();
         }
         else
-        {
-            EnableMenuItem(
-                m_hMenu,
-                static_cast<UINT>(item->GetType()),
-                item->IsEnabled()
-                    ? MF_ENABLED | MF_BYCOMMAND
-                    : MF_GRAYED
-            );
-
+        {            
             CheckMenuItem(
                 m_hMenu,
                 static_cast<UINT>(item->GetType()),

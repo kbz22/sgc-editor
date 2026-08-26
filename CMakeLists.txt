@@ -124,6 +124,7 @@ add_executable(sgc-editor WIN32
     src/action/save_as_action.cpp
     src/action/export_file_action.cpp
     src/action/export_image_action.cpp
+    src/action/new_package_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
@@ -131,6 +132,7 @@ add_executable(sgc-editor WIN32
     src/file/file_manager.cpp
     src/file/tileset_file.cpp
     src/file/tileset_document.cpp
+    src/file/package_file.cpp
 
     src/editor_tools/brush.cpp
     src/editor_tools/paint_modes.cpp

@@ -232,7 +232,7 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
         auto root = TVI_ROOT;        
 
         if(file->IsContainer()) {
-            auto tli = addItem(file, reinterpret_cast<file::ITreeViewListable*>(file), TVI_ROOT);
+            auto tli = addItem(file, dynamic_cast<file::ITreeViewListable*>(file), TVI_ROOT);
             root = tli->treeItem;
         }
 

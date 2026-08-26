@@ -53,6 +53,7 @@ namespace locale
         NameNewFile,
         NameNewMapDocument,
         NameNewTilesetDocument,
+        NameNewPackage,
         NameOpenFile,
         NameSaveFile,
         NameCloseFile,

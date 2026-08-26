@@ -32,6 +32,7 @@ namespace file {
 
             void NewMapFile(std::wstring name, sgc::data::AssetId tilesetId);
             void NewTilesetFile(std::wstring name, std::filesystem::path filePath, size_t tileWidth, size_t tileHeight, AssetManager &assetManager);
+            void NewPackageFile(std::wstring name, std::vector<MapDocument*> mapDocuments, std::vector<TilesetDocument*> tilesetDocuments);
             void OpenFile(std::filesystem::path filePath, AssetManager *assetManager);
             void SaveFile(size_t index);
             void CloseFile(size_t index);
