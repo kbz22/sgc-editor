@@ -2,6 +2,7 @@
 
 #include "new_map_dialog.h"
 #include "new_tileset_dialog.h"
+#include "new_package_dialog.h"
 #include <sgc/data/asset.hpp>
 #include <string>
 #include <filesystem>
@@ -20,6 +21,11 @@ namespace file {
         std::filesystem::path imagePath;
         int tileWidth;
         int tileHeight;
+    };
+
+    struct NewPackageDialogResult
+    {
+        std::wstring packageName;
     };
 
 }

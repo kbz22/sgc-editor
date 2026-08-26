@@ -24,6 +24,7 @@ action::NewTilesetDocumentAction::NewTilesetDocumentAction()
 }
 
 INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam);
+INT_PTR CALLBACK NewPackageFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam);
 
 void action::NewTilesetDocumentAction::Execute(program::ProgramContext& context)
 {

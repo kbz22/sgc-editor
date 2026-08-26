@@ -83,6 +83,11 @@ file::FileType file::PackageFile::GetFileType() const
     return FileType::Package;
 }
 
+file::ListableType file::PackageFile::GetListableType() const
+{
+    return ListableType::PackageFile;
+}
+
 void file::PackageFile::SetFilePath(const std::filesystem::path& path)
 {
     m_filePath = path;
@@ -98,8 +103,8 @@ std::vector<file::MapDocument*> file::PackageFile::GetMapDocuments()
 }
 
 std::optional<file::MapDocument*> file::PackageFile::GetMapDocument(size_t index)
-{
-    if(index < m_mapDocuments.size()) {
+{    
+    if(index < m_mapDocuments.size() && index >= 0) {
         return m_mapDocuments[index].get();
     }
     return std::nullopt;
@@ -116,7 +121,8 @@ std::vector<file::TilesetDocument*> file::PackageFile::GetTilesetDocuments()
 
 std::optional<file::TilesetDocument*> file::PackageFile::GetTilesetDocument(size_t index)
 {
-    if(index < m_tilesetDocuments.size()) {
+    index -= m_mapDocuments.size(); // Adjust index to account for map documents and the package file itself
+    if(index < m_tilesetDocuments.size() && index >= 0) {
         return m_tilesetDocuments[index].get();
     }
     return std::nullopt;

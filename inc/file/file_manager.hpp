@@ -3,6 +3,8 @@
 #include "file/ifile.hpp"
 #include "file/map_document.hpp"
 #include "file/asset_manager.hpp"
+#include "file/package_file.hpp"
+#include "file/tileset_document.hpp"
 #include <vector>
 #include <memory>
 #include <filesystem>
@@ -35,7 +37,7 @@ namespace file {
             void NewPackageFile(std::wstring name, std::vector<MapDocument*> mapDocuments, std::vector<TilesetDocument*> tilesetDocuments);
             void OpenFile(std::filesystem::path filePath, AssetManager *assetManager);
             void SaveFile(size_t index);
-            void CloseFile(size_t index);
+            void CloseFile(size_t index);            
 
             void SelectDocument(const DocumentLocation &document);
             void SetActiveDocument(const DocumentLocation &document);
@@ -48,6 +50,7 @@ namespace file {
 
             std::vector<IFile*> GetOpenFiles() const;
             std::vector<TilesetDocument*> GetAllTilesetDocuments() const;
+            std::vector<PackageFile*> GetAllPackages() const;
 
             void RegisterOnActiveDocumentChangedCallback(std::function<void(DocumentLocation)> callback);
             void RegisterOnFileUpdatedCallback(std::function<void(IFile*)> callback);

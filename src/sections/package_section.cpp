@@ -190,19 +190,19 @@ void sections::PackageSection::UpdateTreeViewItems(program::ProgramContext& prog
 
 void sections::PackageSection::Refresh(program::ProgramContext& programContext)
 {
-    auto addItem = [this](file::IFile *file, file::ITreeViewListable *listable, HTREEITEM hParent = TVI_ROOT)
+    auto addItem = [this](file::IFile *file, file::ITreeViewListable *listable, HTREEITEM hParent = TVI_ROOT, size_t index = 0) -> TreeListItem*
     {
         m_treeListItems.push_back(std::make_unique<TreeListItem>(
             TreeListItem{
                 listable,
                 file,
                 nullptr,
-                0
+                index
             }
         ));
 
         auto &returnItem = m_treeListItems.back();
-        auto imageIndex = static_cast<int>(file->GetFileType());
+        auto imageIndex = static_cast<int>(listable->GetListableType());
 
         TVINSERTSTRUCT insert{};
         insert.hParent = hParent;
@@ -225,27 +225,28 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
     TreeView_DeleteAllItems(m_packageTreeViewHandle);
     m_treeListItems.clear();
 
-    auto allFiles = programContext.fileManager->GetOpenFiles();
+    auto allFiles = programContext.fileManager->GetOpenFiles();    
 
-    for(auto file : allFiles) {
-
+    for(auto file : allFiles) 
+    {
+        size_t index = 0;
         auto root = TVI_ROOT;        
 
         if(file->IsContainer()) {
-            auto tli = addItem(file, dynamic_cast<file::ITreeViewListable*>(file), TVI_ROOT);
+            auto tli = addItem(file, dynamic_cast<file::ITreeViewListable*>(file), TVI_ROOT, index++);
             root = tli->treeItem;
         }
 
         for(auto mapDoc : file->GetMapDocuments()) 
         {
             auto listable = reinterpret_cast<file::ITreeViewListable*>(mapDoc);
-            addItem(file, listable, root);
+            addItem(file, listable, root, index++);
         }
 
         for(auto tilesetDoc : file->GetTilesetDocuments()) 
         {
             auto listable = reinterpret_cast<file::ITreeViewListable*>(tilesetDoc);
-            addItem(file, listable, root);
+            addItem(file, listable, root, index++);
         }
 
     }    

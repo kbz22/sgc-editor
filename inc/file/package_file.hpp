@@ -35,6 +35,7 @@ namespace file {
             bool IsActivable() const override;
 
             FileType GetFileType() const override;
+            ListableType GetListableType() const override;
 
             void SetFilePath(const std::filesystem::path& path) override;
 

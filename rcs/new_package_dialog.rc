@@ -1,0 +1,19 @@
+#include "new_package_dialog.h"
+#include <windows.h>
+
+IDD_NEW_PACKAGE_DIALOG DIALOGEX 0, 0, 240, 50
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create New Package"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT       "Name:", IDC_LABEL_PACKAGE_NAME, 10, 12, 40, 10
+    EDITTEXT    IDC_PACKAGE_NAME, 60, 10, 120, 12, ES_AUTOHSCROLL
+
+    DEFPUSHBUTTON "Create",
+                   IDOK,
+                   70, 30, 50, 14
+
+    PUSHBUTTON    "Cancel",
+                   IDCANCEL,
+                   130, 30, 50, 14
+END

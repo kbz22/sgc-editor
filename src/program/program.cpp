@@ -179,15 +179,17 @@ void program::StartDefault()
         auto fileManager = programContext.fileManager.get();
         auto location = file::DocumentLocation{file, index};
         
-        if(index == 0)
+        if(index == 0 && !file->IsActivable())
         {
-            if(!file->IsActivable())
-            {
-                return;
-            }
-            
-            fileManager->SetActiveDocument(location);
+            return;
         }
+        
+        if(file->IsContainer())
+        {
+            location.index -= 1;
+        }
+
+        fileManager->SetActiveDocument(location);
 
         programContext.mapSection->Refresh(programContext);
         programContext.mapSection->Update();
@@ -202,7 +204,7 @@ void program::StartDefault()
         programContext.packageSection->Update();
     });
 
-    programContext.fileManager->RegisterOnFileUpdatedCallback([&programContext]([[maybe_unsused]] file::IFile* file) 
+    programContext.fileManager->RegisterOnFileUpdatedCallback([&programContext]([[maybe_unused]] file::IFile* file) 
     {
         programContext.packageSection->UpdateTreeViewItems(programContext);
         program::RefreshEditor();

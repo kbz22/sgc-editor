@@ -301,6 +301,19 @@ std::vector<file::TilesetDocument*> file::FileManager::GetAllTilesetDocuments() 
     return allTilesetDocs;
 }
 
+std::vector<file::PackageFile*> file::FileManager::GetAllPackages() const
+{
+    std::vector<PackageFile*> allPackages{};
+
+    for (const auto& file : m_openFiles) {
+        if(file->GetFileType() == FileType::Package) {
+            allPackages.push_back(static_cast<PackageFile*>(file.get()));
+        }        
+    }
+
+    return allPackages;
+}
+
 file::DocumentLocation file::FileManager::GetSelectedDocumentLocation() const
 {
     return m_selectedDocument;

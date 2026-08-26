@@ -74,3 +74,8 @@ bool file::MapDocument::IsActivable() const
 {
     return true;
 }
+
+file::ListableType file::MapDocument::GetListableType() const
+{
+    return ListableType::MapDocument;
+}

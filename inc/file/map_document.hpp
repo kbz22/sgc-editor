@@ -35,6 +35,7 @@ namespace file {
             bool IsDirty() const override;
             bool IsActivable() const override;
             const std::wstring& GetName() const override;
+            ListableType GetListableType() const override;
 
             bool IsEditable() const;
             void SetDirty(bool dirty);

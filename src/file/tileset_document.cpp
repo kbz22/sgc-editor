@@ -35,3 +35,8 @@ bool file::TilesetDocument::IsActivable() const
 {
     return false;
 }
+
+file::ListableType file::TilesetDocument::GetListableType() const
+{
+    return ListableType::TilesetDocument;
+}

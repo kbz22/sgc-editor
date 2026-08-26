@@ -21,6 +21,8 @@ namespace file {
             bool IsDirty() const override;
             bool IsActivable() const override;
 
+            ListableType GetListableType() const override;
+
             sgc::data::AssetId GetTilesetAssetId() const;
             sgc::data::AssetId GetImageAssetId() const;
             
