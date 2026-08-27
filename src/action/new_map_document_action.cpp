@@ -50,7 +50,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
         auto &programContext = program::GetProgramContext();
         auto tilesetAssetList = programContext.fileManager->GetAllTilesetDocuments();        
 
-        auto tilesetCombo = GetDlgItem(hDlg, IDC_TILESET_COMBO);
+        auto tilesetCombo = GetDlgItem(hDlg, IDC_MAP_TILESET_COMBO);
         SendMessage(tilesetCombo, CB_RESETCONTENT, 0, 0);
 
         for (const auto& tilesetDoc : tilesetAssetList) {
@@ -58,7 +58,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
             SendMessage(tilesetCombo, CB_SETITEMDATA, index, tilesetDoc->GetTilesetAssetId());
         }
 
-        HWND hTilesetCombo = GetDlgItem(hDlg, IDC_TILESET_COMBO);
+        HWND hTilesetCombo = GetDlgItem(hDlg, IDC_MAP_TILESET_COMBO);
         bool hasTilesets = (SendMessage(hTilesetCombo, CB_GETCOUNT, 0, 0) > 0);
         auto selectedTilesetIndex = SendMessage(hTilesetCombo, CB_GETCURSEL, 0, 0);
 
@@ -72,7 +72,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
         auto &programContext = program::GetProgramContext();
         auto packagesList = programContext.fileManager->GetAllPackages();
 
-        auto packageCombo = GetDlgItem(hDlg, IDC_PACKAGE_COMBO);
+        auto packageCombo = GetDlgItem(hDlg, IDC_MAP_PACKAGE_COMBO);
         SendMessage(packageCombo, CB_RESETCONTENT, 0, 0);
 
         for (const auto& package : packagesList) {
@@ -80,15 +80,16 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
             SendMessage(packageCombo, CB_SETITEMDATA, index, reinterpret_cast<LPARAM>(package));
         }
 
-        HWND hPackageCombo = GetDlgItem(hDlg, IDC_PACKAGE_COMBO);
-        bool includePackage = (IsDlgButtonChecked(hDlg, IDC_INCLUDE_PACKAGE_CHECKBOX) == BST_CHECKED);
+        HWND hPackageCombo = GetDlgItem(hDlg, IDC_MAP_PACKAGE_COMBO);
+        bool includePackage = (IsDlgButtonChecked(hDlg, IDC_MAP_INCLUDE_PACKAGE_CHECKBOX) == BST_CHECKED);
         bool hasPackages = (SendMessage(hPackageCombo, CB_GETCOUNT, 0, 0) > 0);
+        auto selectedPackageIndex = SendMessage(hPackageCombo, CB_GETCURSEL, 0, 0);
         
-        if(!hasPackages) {
+        if(selectedPackageIndex == -1){
             SendMessage(hPackageCombo, CB_SETCURSEL, 0, 0);
         }
 
-        EnableWindow(GetDlgItem(hDlg, IDC_NEW_PACKAGE_BUTTON), includePackage);        
+        EnableWindow(GetDlgItem(hDlg, IDC_MAP_NEW_PACKAGE_BUTTON), includePackage);        
         EnableWindow(hPackageCombo, includePackage && hasPackages);
     };
 
@@ -107,7 +108,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
 
             switch (commandId)
             {
-                case IDC_NEW_TILESET_BUTTON:
+                case IDC_MAP_NEW_TILESET_BUTTON:
                 {
                     auto &programContext = program::GetProgramContext();
 
@@ -125,7 +126,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                     return TRUE;
                 }
 
-                case IDC_NEW_PACKAGE_BUTTON:
+                case IDC_MAP_NEW_PACKAGE_BUTTON:
                 {
                     auto &programContext = program::GetProgramContext();
 
@@ -143,7 +144,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                     return TRUE;
                 }
 
-                case IDC_INCLUDE_PACKAGE_CHECKBOX:
+                case IDC_MAP_INCLUDE_PACKAGE_CHECKBOX:
                 {
                     if (HIWORD(wParam) == BN_CLICKED)
                     {
@@ -160,9 +161,9 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                     GetDlgItemText(hDlg, IDC_MAP_NAME, buffer, 1024);
                     std::wstring mapName(buffer);
 
-                    auto tilesetCombo = GetDlgItem(hDlg, IDC_TILESET_COMBO);
+                    auto tilesetCombo = GetDlgItem(hDlg, IDC_MAP_TILESET_COMBO);
                     auto selectedTilesetIndex = SendMessage(tilesetCombo, CB_GETCURSEL, 0, 0);
-                    auto packageCombo = GetDlgItem(hDlg, IDC_PACKAGE_COMBO);
+                    auto packageCombo = GetDlgItem(hDlg, IDC_MAP_PACKAGE_COMBO);
                     auto selectedPackageIndex = SendMessage(packageCombo, CB_GETCURSEL, 0, 0);
 
                     if(mapName.empty()) {

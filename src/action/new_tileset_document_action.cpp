@@ -42,12 +42,38 @@ void action::NewTilesetDocumentAction::Execute(program::ProgramContext& context)
 
 INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
+    auto refreshPackageCombobox = [](HWND hDlg) {
+        auto &programContext = program::GetProgramContext();
+        auto packagesList = programContext.fileManager->GetAllPackages();
+
+        auto packageCombo = GetDlgItem(hDlg, IDC_TILESET_PACKAGE_COMBO);
+        SendMessage(packageCombo, CB_RESETCONTENT, 0, 0);
+
+        for (const auto& package : packagesList) {
+            auto index = SendMessage(packageCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(package->GetName().c_str()));
+            SendMessage(packageCombo, CB_SETITEMDATA, index, reinterpret_cast<LPARAM>(package));
+        }
+
+        HWND hPackageCombo = GetDlgItem(hDlg, IDC_TILESET_PACKAGE_COMBO);
+        bool includePackage = (IsDlgButtonChecked(hDlg, IDC_TILESET_INCLUDE_PACKAGE_CHECKBOX) == BST_CHECKED);
+        bool hasPackages = (SendMessage(hPackageCombo, CB_GETCOUNT, 0, 0) > 0);
+        auto selectedPackageIndex = SendMessage(hPackageCombo, CB_GETCURSEL, 0, 0);
+        
+        if(selectedPackageIndex == -1){
+            SendMessage(hPackageCombo, CB_SETCURSEL, 0, 0);
+        }
+
+        EnableWindow(GetDlgItem(hDlg, IDC_TILESET_NEW_PACKAGE_BUTTON), includePackage);
+        EnableWindow(hPackageCombo, includePackage && hasPackages);
+    };
+
     switch (msg)
     {
         case WM_INITDIALOG:
         {
-            SetDlgItemInt(hDlg, IDC_TILE_WIDTH, defaults::tileSize, FALSE);
-            SetDlgItemInt(hDlg, IDC_TILE_HEIGHT, defaults::tileSize, FALSE);
+            SetDlgItemInt(hDlg, IDC_TILESET_TILE_WIDTH, defaults::tileSize, FALSE);
+            SetDlgItemInt(hDlg, IDC_TILESET_TILE_HEIGHT, defaults::tileSize, FALSE);
+            refreshPackageCombobox(hDlg);
             return TRUE;
         }
 
@@ -57,7 +83,7 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
 
             switch (commandId)
             {
-                case IDC_BROWSE_IMAGE_BUTTON:
+                case IDC_TILESET_BROWSE_IMAGE_BUTTON:
                 {
                     auto &programContext = program::GetProgramContext();
 
@@ -76,7 +102,35 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                     });
 
                     if(result.has_value()) {
-                        SetDlgItemText(hDlg, IDC_IMAGE_PATH, result->c_str());
+                        SetDlgItemText(hDlg, IDC_TILESET_IMAGE_PATH, result->c_str());
+                    }
+
+                    return TRUE;
+                }
+
+                case IDC_TILESET_NEW_PACKAGE_BUTTON:
+                {
+                    auto &programContext = program::GetProgramContext();
+
+                    auto result = DialogBox(
+                        programContext.mainWindowContext->hInstance,
+                        MAKEINTRESOURCE(IDD_NEW_PACKAGE_DIALOG),
+                        programContext.mainWindowContext->hMainWindow,
+                        NewPackageFileDialogProc
+                    );
+
+                    if(result == IDOK) {
+                        refreshPackageCombobox(hDlg);
+                    }
+
+                    return TRUE;
+                }
+
+                case IDC_TILESET_INCLUDE_PACKAGE_CHECKBOX:
+                {
+                    if (HIWORD(wParam) == BN_CLICKED)
+                    {
+                        refreshPackageCombobox(hDlg);
                     }
 
                     return TRUE;
@@ -89,11 +143,11 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                     GetDlgItemText(hDlg, IDC_TILESET_NAME, buffer, 1024);
                     std::wstring tilesetName(buffer);
 
-                    GetDlgItemText(hDlg, IDC_IMAGE_PATH, buffer, 1024);
+                    GetDlgItemText(hDlg, IDC_TILESET_IMAGE_PATH, buffer, 1024);
                     std::filesystem::path imagePath(buffer);
 
-                    auto tileWidth = GetDlgItemInt(hDlg, IDC_TILE_WIDTH, nullptr, FALSE);
-                    auto tileHeight = GetDlgItemInt(hDlg, IDC_TILE_HEIGHT, nullptr, FALSE);
+                    auto tileWidth = GetDlgItemInt(hDlg, IDC_TILESET_TILE_WIDTH, nullptr, FALSE);
+                    auto tileHeight = GetDlgItemInt(hDlg, IDC_TILESET_TILE_HEIGHT, nullptr, FALSE);
 
                     if(tilesetName.empty() || imagePath.empty()) {
                         MessageBox(hDlg, L"Please provide a name and select an image.", L"Error", MB_OK | MB_ICONERROR);
