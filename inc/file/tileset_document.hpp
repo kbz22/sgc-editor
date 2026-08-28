@@ -25,7 +25,6 @@ namespace file {
 
             sgc::data::AssetId GetTilesetAssetId() const;
             sgc::data::AssetId GetImageAssetId() const;
-            
     };
 
 }

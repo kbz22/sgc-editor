@@ -165,6 +165,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                     auto selectedTilesetIndex = SendMessage(tilesetCombo, CB_GETCURSEL, 0, 0);
                     auto packageCombo = GetDlgItem(hDlg, IDC_MAP_PACKAGE_COMBO);
                     auto selectedPackageIndex = SendMessage(packageCombo, CB_GETCURSEL, 0, 0);
+                    bool includePackage = (IsDlgButtonChecked(hDlg, IDC_MAP_INCLUDE_PACKAGE_CHECKBOX) == BST_CHECKED);
 
                     if(mapName.empty()) {
                         MessageBox(hDlg, L"Please provide a name for the map.", L"Error", MB_OK | MB_ICONERROR);
@@ -175,18 +176,18 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                         MessageBox(hDlg, L"Please select a tileset.", L"Error", MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
-
-                    if (selectedPackageIndex == CB_ERR) {
+                    
+                    if (selectedPackageIndex == CB_ERR && includePackage) {
                         MessageBox(hDlg, L"Please select a package.", L"Error", MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
 
-                    auto tilesetId = SendMessage(tilesetCombo, CB_GETITEMDATA, selectedTilesetIndex, 0);
-                    auto packagePtr = reinterpret_cast<file::PackageFile*>(SendMessage(packageCombo, CB_GETITEMDATA, selectedPackageIndex, 0));
+                    auto tilesetId = SendMessage(tilesetCombo, CB_GETITEMDATA, selectedTilesetIndex, 0);                    
 
                     auto &programContext = program::GetProgramContext();
-                    if(packagePtr != nullptr) 
+                    if(includePackage)
                     {
+                        auto packagePtr = reinterpret_cast<file::PackageFile*>(SendMessage(packageCombo, CB_GETITEMDATA, selectedPackageIndex, 0));
                         auto mapDocument = std::make_unique<file::MapDocument>(mapName, static_cast<sgc::data::AssetId>(tilesetId));
                         packagePtr->AddMapDocument(std::move(mapDocument));
                         

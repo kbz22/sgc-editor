@@ -153,7 +153,7 @@ void sections::PackageSection::HandleSectionResize()
 }
 
 void sections::PackageSection::UpdateTreeItem(TreeListItem &tli)
-{   
+{       
     auto name = tli.file->IsDirty() ? L" *" + tli.listable->GetName() : tli.listable->GetName();
     auto state = tli.treeItem == m_activeTreeItem ? TVIS_BOLD : 0;
 

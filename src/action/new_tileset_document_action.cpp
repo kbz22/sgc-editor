@@ -147,7 +147,10 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                     std::filesystem::path imagePath(buffer);
 
                     auto tileWidth = GetDlgItemInt(hDlg, IDC_TILESET_TILE_WIDTH, nullptr, FALSE);
-                    auto tileHeight = GetDlgItemInt(hDlg, IDC_TILESET_TILE_HEIGHT, nullptr, FALSE);
+                    auto tileHeight = GetDlgItemInt(hDlg, IDC_TILESET_TILE_HEIGHT, nullptr, FALSE);                    
+                    bool includePackage = (IsDlgButtonChecked(hDlg, IDC_TILESET_INCLUDE_PACKAGE_CHECKBOX) == BST_CHECKED);
+                    auto packageCombo = GetDlgItem(hDlg, IDC_TILESET_PACKAGE_COMBO);
+                    auto selectedPackageIndex = SendMessage(packageCombo, CB_GETCURSEL, 0, 0);
 
                     if(tilesetName.empty() || imagePath.empty()) {
                         MessageBox(hDlg, L"Please provide a name and select an image.", L"Error", MB_OK | MB_ICONERROR);
@@ -156,6 +159,11 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                     
                     if(tileWidth <= 0 || tileHeight <= 0) {
                         MessageBox(hDlg, L"Tile width and height must be greater than zero.", L"Error", MB_OK | MB_ICONERROR);
+                        return TRUE;
+                    }
+                    
+                    if (selectedPackageIndex == CB_ERR && includePackage) {
+                        MessageBox(hDlg, L"Please select a package.", L"Error", MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
 

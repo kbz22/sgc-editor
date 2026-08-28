@@ -1,6 +1,7 @@
 #include "file/map_file.hpp"
 #include "defaults.hpp"
 #include "program/except.hpp"
+#include "file/document_serializer.hpp"
 #include <sgc/asset/mapasset.hpp>
 #include <sgc/asset/mapassetserializer.hpp>
 #include <sgc/asset/mapassetdeserializer.hpp>
@@ -82,7 +83,7 @@ void file::MapFile::Save(){
         return;
     }
 
-    auto layers = m_document->GetLayerManager()->GetLayers();
+    /* auto layers = m_document->GetLayerManager()->GetLayers();
 
     std::vector<sgc::asset::MapLayerAsset> layerAssets;
     layerAssets.reserve(layers.size());
@@ -104,10 +105,11 @@ void file::MapFile::Save(){
 
     auto bytes = sgc::asset::AssetSerializer<sgc::asset::MapAsset>::Serialize(
         mapAsset
-    );
+    ); */
 
     uint8_t mapFileMagic[4] = { 'S', 'G', 'C', 'M' };
 
+    auto bytes = file::DocumentSerializer<file::MapDocument>::Serialize(m_document.get());
     bytes.insert(bytes.begin(), mapFileMagic, mapFileMagic + 4);
 
     std::ofstream file(m_filePath, std::ios::binary);
