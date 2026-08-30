@@ -9,6 +9,7 @@
 #include "sgc/data/resourcecontext.hpp"
 #include "sgc/data/asset.hpp"
 #include "program/except.hpp"
+#include "file/document_serializer.hpp"
 #include <fstream>
 
 file::TilesetFile::TilesetFile(AssetManager &assetManager)

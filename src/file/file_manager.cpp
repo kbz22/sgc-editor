@@ -87,9 +87,9 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
     return;
 }
 
-void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocument*> mapDocuments, std::vector<TilesetDocument*> tilesetDocuments)
+void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocument*> mapDocuments, std::vector<TilesetDocument*> tilesetDocuments, AssetManager &assetManager)
 {
-    auto newFile = std::make_unique<file::PackageFile>(name);
+    auto newFile = std::make_unique<file::PackageFile>(name, assetManager);
 
     for(auto mapDoc : mapDocuments) {
         newFile->AddMapDocument(std::unique_ptr<MapDocument>(mapDoc));

@@ -67,7 +67,8 @@ INT_PTR CALLBACK NewPackageFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                     programContext.fileManager->NewPackageFile(
                         packageName,
                         {},
-                        {}
+                        {},
+                        *programContext.assetManager
                     );
 
                     EndDialog(hDlg, IDOK);

@@ -2,6 +2,7 @@
 
 #include "file/ifile.hpp"
 #include "file/itreeviewlistable.hpp"
+#include "file/asset_manager.hpp"
 
 namespace file {
 
@@ -14,9 +15,11 @@ namespace file {
             std::wstring m_name{};
             std::vector<std::unique_ptr<MapDocument>> m_mapDocuments{};
             std::vector<std::unique_ptr<TilesetDocument>> m_tilesetDocuments{};
+            file::AssetManager& m_assetManager;
+            bool m_fileAdded{false};
 
         public:
-            PackageFile(std::wstring name);
+            PackageFile(std::wstring name, AssetManager& assetManager);
             ~PackageFile() = default;
 
             void AddMapDocument(std::unique_ptr<MapDocument> mapDocument);

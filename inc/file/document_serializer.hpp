@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include "file/asset_manager.hpp"
 
 namespace file {    
 

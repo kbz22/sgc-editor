@@ -169,7 +169,19 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
 
                     auto &programContext = program::GetProgramContext();
                     try {
-                        programContext.fileManager->NewTilesetFile(tilesetName, imagePath, tileWidth, tileHeight, *programContext.assetManager);
+                        if(includePackage && selectedPackageIndex != CB_ERR) 
+                        {
+                            auto packagePtr = reinterpret_cast<file::PackageFile*>(SendMessage(packageCombo, CB_GETITEMDATA, selectedPackageIndex, 0));
+                            if(packagePtr) {
+                                auto newTilesetDoc = std::make_unique<file::TilesetDocument>(tilesetName, 0, 0);
+                                packagePtr->AddTilesetDocument(std::move(newTilesetDoc));
+                            }
+                        }
+                        else 
+                        {
+                            programContext.fileManager->NewTilesetFile(tilesetName, imagePath, tileWidth, tileHeight, *programContext.assetManager);
+                        }
+                        
                     }
                     catch (const program::AssetCacheException) {
                         MessageBox(hDlg, L"An asset with the same identifier already exists.", L"Error", MB_OK | MB_ICONERROR);

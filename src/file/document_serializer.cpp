@@ -44,19 +44,3 @@ std::unique_ptr<file::MapDocument> file::DocumentSerializer<file::MapDocument>::
     
     return document;
 }
-
-std::vector<uint8_t> file::DocumentSerializer<file::TilesetDocument>::Serialize(file::TilesetDocument* document)
-{
-    std::vector<uint8_t> serializedData;
-
-    return serializedData;
-}
-
-std::unique_ptr<file::TilesetDocument> file::DocumentSerializer<file::TilesetDocument>::Deserialize(const std::vector<uint8_t>& bytes)
-{
-    std::unique_ptr<file::TilesetDocument> document = nullptr;
-
-    //! to do
-
-    return document;
-}

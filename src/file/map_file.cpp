@@ -107,7 +107,7 @@ void file::MapFile::Save(){
         mapAsset
     ); */
 
-    uint8_t mapFileMagic[4] = { 'S', 'G', 'C', 'M' };
+    const uint8_t mapFileMagic[4] = { 'S', 'G', 'C', 'M' };
 
     auto bytes = file::DocumentSerializer<file::MapDocument>::Serialize(m_document.get());
     bytes.insert(bytes.begin(), mapFileMagic, mapFileMagic + 4);
