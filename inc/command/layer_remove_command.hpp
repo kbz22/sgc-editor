@@ -15,6 +15,7 @@ namespace command {
 
         public:
             LayerRemoveCommand(size_t removedLayerIndex);
+            LayerRemoveCommand(const LayerRemoveCommand& other);
             virtual ~LayerRemoveCommand() = default;
 
             void Execute() override;

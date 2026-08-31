@@ -14,6 +14,7 @@ namespace command {
 
         public:
             CommandManager() = default;
+            CommandManager(const CommandManager&) {};
             ~CommandManager() = default;
 
             void Execute(std::unique_ptr<ICommand> command);

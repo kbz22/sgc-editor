@@ -5,6 +5,8 @@ command::PaintCommand::PaintCommand(file::MapDocument* mapDocument, size_t activ
     m_activeLayerIndex{activeLayerIndex}
 {}
 
+command::PaintCommand::PaintCommand(const PaintCommand& other) = default;
+
 void command::PaintCommand::ExecuteTileChange(const TileChange &tileChange)
 {
     if(m_tileChanges.contains(tileChange.position)) {

@@ -26,6 +26,7 @@ namespace program {
 
         public:
             LayerManager() = default;
+            LayerManager(const LayerManager& other) = default;
             ~LayerManager() = default;
             
             size_t AddLayer(LayerItem entry);

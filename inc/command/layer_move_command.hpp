@@ -11,6 +11,7 @@ namespace command {
 
         public:
             LayerMoveCommand(int movement) : m_movement{movement} {}
+            LayerMoveCommand(const LayerMoveCommand& other);
             virtual ~LayerMoveCommand() = default;
 
             void Execute() override;

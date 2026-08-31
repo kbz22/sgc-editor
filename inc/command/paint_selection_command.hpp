@@ -33,6 +33,7 @@ namespace command
                 file::MapDocument& mapDocument,
                 const MultilayerTileChangesType& tileChanges
             );
+            PaintSelectionCommand(const PaintSelectionCommand& other);
 
             void Execute() override;
             void Commit() override;

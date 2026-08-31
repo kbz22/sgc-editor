@@ -24,7 +24,7 @@ namespace file {
 
         public:
             MapDocument(std::wstring name, sgc::data::AssetId tilesetId);
-            virtual ~MapDocument() = default;
+            MapDocument(const MapDocument&);
 
             program::LayerManager* GetLayerManager();
             command::CommandManager* GetCommandManager();

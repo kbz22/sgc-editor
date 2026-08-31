@@ -2,6 +2,8 @@
 #include "program/program.hpp"
 #include <stdexcept>
 
+command::LayerMoveCommand::LayerMoveCommand(const LayerMoveCommand& other) = default;
+
 void command::LayerMoveCommand::Execute()
 {
     auto &programContext = program::GetProgramContext();

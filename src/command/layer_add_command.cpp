@@ -4,6 +4,8 @@
 #include <sgc/data/chunkedtilestorage.hpp>
 #include <memory>
 
+command::LayerAddCommand::LayerAddCommand(const LayerAddCommand& other) = default;
+
 void command::LayerAddCommand::Execute()
 {
     auto &programContext = program::GetProgramContext();

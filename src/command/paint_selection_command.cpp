@@ -5,6 +5,8 @@ command::PaintSelectionCommand::PaintSelectionCommand(file::MapDocument& mapDocu
     m_tileChanges(tileChanges)
 {}
 
+command::PaintSelectionCommand::PaintSelectionCommand(const PaintSelectionCommand& other) = default;
+
 void command::PaintSelectionCommand::Execute()
 {
     auto layerManager = m_mapDocument.GetLayerManager();

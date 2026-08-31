@@ -45,11 +45,25 @@ sgc::data::AssetId LoadTilesetAsset(std::wstring name, sgc::data::AssetId imageI
 void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tilesetId)
 {
     auto newFile = std::make_unique<MapFile>();
-    newFile->m_document = std::make_unique<MapDocument>(name, tilesetId);
+    newFile->m_document = std::make_unique<MapDocument>(
+        NewMapDocument(name, tilesetId)
+    );
 
-    DocumentLocation selectedDoc{ newFile.get(), 0 };
+    DocumentLocation selectedDoc{ newFile.get(), 0 };    
 
-    newFile->m_document->RegisterOnSetDirtyCallback([this](bool dirty) {
+    m_openFiles.push_back(std::move(newFile));
+    SetActiveDocument(selectedDoc);
+
+    m_onFileUpdatedCallback(nullptr);
+
+    return;
+}
+
+file::MapDocument file::FileManager::NewMapDocument(std::wstring name, sgc::data::AssetId tilesetId)
+{
+    auto newDocument = MapDocument(name, tilesetId);
+
+    newDocument.RegisterOnSetDirtyCallback([this](bool dirty) {
 
         if(!dirty) {
             return;
@@ -60,15 +74,24 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
         programContext.packageSection->Update();
     });
 
-    m_openFiles.push_back(std::move(newFile));    
-    SetActiveDocument(selectedDoc);
+    return newDocument;
+}
+
+void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path filePath, size_t tileWidth, size_t tileHeight, AssetManager &assetManager)
+{
+    auto newFile = std::make_unique<TilesetFile>(assetManager);
+    newFile->m_tilesetDocument = std::make_unique<TilesetDocument>(
+        NewTilesetDocument(name, filePath, tileWidth, tileHeight)
+    );
+
+    m_openFiles.push_back(std::move(newFile));
 
     m_onFileUpdatedCallback(nullptr);
 
     return;
 }
 
-void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path filePath, size_t tileWidth, size_t tileHeight, AssetManager &assetManager)
+file::TilesetDocument file::FileManager::NewTilesetDocument(std::wstring name, std::filesystem::path filePath, size_t tileWidth, size_t tileHeight)
 {
     if(tileWidth <= 0 || tileHeight <= 0) {
         throw program::TileSizeException("Tile size must be greater than zero.");
@@ -77,14 +100,7 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
     auto imageId = LoadImageAsset(name, filePath);
     auto tilesetId = LoadTilesetAsset(name, imageId, static_cast<int>(tileWidth), static_cast<int>(tileHeight));
 
-    auto newFile = std::make_unique<TilesetFile>(assetManager);
-    newFile->m_tilesetDocument = std::make_unique<TilesetDocument>(name, tilesetId, imageId);
-
-    m_openFiles.push_back(std::move(newFile));
-
-    m_onFileUpdatedCallback(nullptr);
-
-    return;
+    return {name, tilesetId, imageId};
 }
 
 void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocument*> mapDocuments, std::vector<TilesetDocument*> tilesetDocuments, AssetManager &assetManager)

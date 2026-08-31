@@ -9,6 +9,15 @@ file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId) 
     m_tilesetId{tilesetId}
 {}
 
+file::MapDocument::MapDocument(const MapDocument& other) :
+    name{other.name},
+    m_layerManager{std::make_unique<program::LayerManager>(*other.m_layerManager)},
+    m_commandManager{std::make_unique<command::CommandManager>(*other.m_commandManager)},
+    m_tilesetId{other.m_tilesetId},
+    m_dirty{other.m_dirty},
+    m_onSetDirtyCallback{other.m_onSetDirtyCallback}
+{}
+
 program::LayerManager* file::MapDocument::GetLayerManager()
 {
     return m_layerManager.get();

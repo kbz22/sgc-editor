@@ -173,7 +173,9 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                         {
                             auto packagePtr = reinterpret_cast<file::PackageFile*>(SendMessage(packageCombo, CB_GETITEMDATA, selectedPackageIndex, 0));
                             if(packagePtr) {
-                                auto newTilesetDoc = std::make_unique<file::TilesetDocument>(tilesetName, 0, 0);
+                                auto newTilesetDoc = std::make_unique<file::TilesetDocument>(
+                                    programContext.fileManager->NewTilesetDocument(tilesetName, imagePath, tileWidth, tileHeight)
+                                );
                                 packagePtr->AddTilesetDocument(std::move(newTilesetDoc));
                             }
                         }

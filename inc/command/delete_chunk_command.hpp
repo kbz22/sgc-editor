@@ -15,6 +15,7 @@ namespace command {
 
         public:
             DeleteChunkCommand(sgc::tile::TilePosition2D chunkPosition) : m_chunkPosition(chunkPosition) {}
+            DeleteChunkCommand(const DeleteChunkCommand& other);
 
             void Execute() override;
             void Commit() override;

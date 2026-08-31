@@ -71,5 +71,6 @@ namespace program {
     void StartDefault();    
     
     void RefreshEditor();
+    void EnableSaving(bool enable);
 
 }

@@ -49,8 +49,7 @@ program::ProgramContext& program::GetProgramContext()
     return context;
 }
 
-std::vector<action::ActionType> g_activeEditorButtons {
-    action::ActionType::SaveFile,
+std::vector<action::ActionType> g_activeEditorButtons {    
     action::ActionType::CloseFile,
     action::ActionType::Undo,
     action::ActionType::Redo,
@@ -83,7 +82,6 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::SelectionPaste,
     action::ActionType::SelectionCut,
     action::ActionType::SelectionMove,
-    action::ActionType::SaveAs,
     action::ActionType::ExportAsImage,
     action::ActionType::ExportFile    
 };
@@ -289,8 +287,15 @@ void program::RefreshEditor()
         program::UpdateEditorChunkMode(programContext.editorChunkMode, programContext);
         program::UpdateBrushMode(programContext.mapSection->GetPaintMode(), programContext);
         program::UpdateEditorSelectionMode(programContext.mapSection->GetSelectionMode(), programContext);
-        program::UpdateEditorSelectionTools(programContext);
-    }    
+        program::UpdateEditorSelectionTools(programContext);        
+    }
+
+    if(programContext.fileManager->GetOpenFiles().empty()) {
+        EnableSaving(false);
+    }
+    else {
+        EnableSaving(true);
+    }
 
     RefreshAllSection(programContext);
     RedrawAllSections(programContext);
@@ -364,4 +369,14 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::MapMenuAction>());
     programContext.actionManager->Register(std::make_unique<action::ViewMenuAction>());
     programContext.actionManager->Register(std::make_unique<action::HelpMenuAction>());
+}
+
+void program::EnableSaving(bool enable)
+{
+    auto& programContext = GetProgramContext();
+    std::vector<action::ActionType> saveActions = {
+        action::ActionType::SaveFile,
+        action::ActionType::SaveAs
+    };
+    programContext.actionManager->ActionSetEnabled(saveActions, enable);
 }

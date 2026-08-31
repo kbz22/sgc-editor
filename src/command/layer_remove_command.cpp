@@ -2,6 +2,8 @@
 #include "program/program.hpp"
 #include <string>
 
+command::LayerRemoveCommand::LayerRemoveCommand(const LayerRemoveCommand& other) = default;
+
 command::LayerRemoveCommand::LayerRemoveCommand(size_t removedLayerIndex) :
     m_removedLayerIndex{removedLayerIndex}
 {

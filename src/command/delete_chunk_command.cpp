@@ -1,6 +1,8 @@
 #include "command/delete_chunk_command.hpp"
 #include "program/program.hpp"
 
+command::DeleteChunkCommand::DeleteChunkCommand(const DeleteChunkCommand& other) = default;
+
 void command::DeleteChunkCommand::Execute()
 {
     auto& programContext = program::GetProgramContext();

@@ -12,6 +12,7 @@ namespace command {
 
         public:
             LayerAddCommand() = default;
+            LayerAddCommand(const LayerAddCommand& other);
             virtual ~LayerAddCommand() = default;
 
             void Execute() override;

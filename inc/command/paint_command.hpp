@@ -21,6 +21,7 @@ namespace command {
                 file::MapDocument* mapDocument,
                 size_t activeLayerIndex
             );
+            PaintCommand(const PaintCommand& other);
             
             virtual ~PaintCommand() = default;
 
