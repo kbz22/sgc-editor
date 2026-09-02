@@ -11,6 +11,7 @@ namespace file {
             std::wstring name;
             sgc::data::AssetId m_tilesetId{0};
             sgc::data::AssetId m_imageId{0};
+            sgc::data::AssetId m_tilesetDocumentId{0};
 
         public:
             TilesetDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId imageId);
@@ -25,6 +26,7 @@ namespace file {
 
             sgc::data::AssetId GetTilesetAssetId() const;
             sgc::data::AssetId GetImageAssetId() const;
+            sgc::data::AssetId GetTilesetDocumentAssetId() const;
     };
 
 }

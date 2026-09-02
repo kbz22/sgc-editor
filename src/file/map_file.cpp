@@ -1,12 +1,14 @@
 #include "file/map_file.hpp"
 #include "defaults.hpp"
 #include "program/except.hpp"
-#include "file/document_serializer.hpp"
 #include <sgc/asset/mapasset.hpp>
-#include <sgc/asset/mapassetserializer.hpp>
-#include <sgc/asset/mapassetdeserializer.hpp>
-#include <sgc/asset/tilestorageassetbuilder.hpp>
-#include <sgc/asset/chunkedtilestoragebuilder.hpp>
+#include <sgc/asset/tilestorageasset.hpp>
+#include <sgc/asset/chunkedtilestorageasset.hpp>
+#include "sgc_extension/asset_builder.hpp"
+#include "sgc_extension/runtime_builder.hpp"
+#include "sgc_extension/asset_deserializer.hpp"
+#include <sgc/data/packagebuilder.hpp>
+#include <sgc/data/package.hpp>
 #include <fstream>
 #include <variant>
 
@@ -25,7 +27,7 @@ void file::MapFile::Open(){
     std::vector<uint8_t> bytes;
 
     file.seekg(0, std::ios::end);
-    bytes.resize(file.tellg());
+    bytes.resize(static_cast<size_t>(file.tellg()));
     file.seekg(0, std::ios::beg);
     file.read(reinterpret_cast<char*>(bytes.data()), bytes.size());
 
@@ -39,36 +41,39 @@ void file::MapFile::Open(){
         }
     }
 
-    auto mapAsset = sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
-        std::vector<uint8_t>(bytes.begin() + mapFileMagic.size(), bytes.end())
-    );
-
-    m_document = std::make_unique<MapDocument>(
-        m_filePath.stem().wstring(),
-        mapAsset.tilesetId
-    );
-
-    auto layerManager = m_document->GetLayerManager();
-
-    for(const auto &layerAsset : mapAsset.layers) {
-        std::shared_ptr<sgc::data::ITileStorage> tileStorage;
-
-        if(std::holds_alternative<sgc::asset::ChunkedTileStorageAsset>(layerAsset.tileStorage)) {
-            auto &chunkedStorage = std::get<sgc::asset::ChunkedTileStorageAsset>(layerAsset.tileStorage);
-            tileStorage = sgc::asset::RuntimeBuilder<sgc::data::ChunkedTileStorage>::Build(chunkedStorage);
-        } else {
-            throw std::runtime_error("Unknown tile storage type");
-        }
-
-        program::LayerItem layerItem = {
-            tileStorage,
-            layerAsset.name,
-            true,
-            255
-        };
-
-        layerManager->AddLayer(layerItem);
+    sgc::data::Package package;
+    if(!package.Open(std::span<uint8_t>(bytes.begin()+mapFileMagic.size(), bytes.end()))) {
+        throw program::AssetLoadException("Failed to open map package.");
     }
+
+    sgc::data::AssetId mapAssetId = 0;
+    sgc::data::AssetId mapDocId = 0;
+
+    for(auto &[id, entry] : package) {
+        if(entry.type == sgc::data::AssetType::Map) {
+            mapAssetId = id;
+        }        
+        if(entry.type == sgc::data::AssetType::External) {
+            mapDocId = id;
+        }
+    }
+
+    if(mapAssetId == 0) {
+        throw program::AssetLoadException("Map asset not found in package.");
+    }
+
+    if(mapDocId == 0) {
+        throw program::AssetLoadException("Map document asset not found in package.");
+    }
+
+    m_document = sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
+        sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Deserialize(
+            package.ReadAssetData(mapDocId)
+        ),
+        sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
+            package.ReadAssetData(mapAssetId)
+        )
+    );
 
     return;
 }
@@ -82,39 +87,31 @@ void file::MapFile::Save(){
     if(m_document == nullptr) {
         return;
     }
+    
+    sgc::data::PackageBuilder packageBuilder;
 
-    /* auto layers = m_document->GetLayerManager()->GetLayers();
+    packageBuilder.AddAsset(
+        m_document->GetMapAssetId(),
+        sgc::data::AssetType::Map,
+        sgc::asset::AssetSerializer<sgc::asset::MapAsset>::Serialize(
+            sgc::asset::AssetBuilder<sgc::asset::MapAsset, file::MapDocument>::Build(*m_document)
+    ));
 
-    std::vector<sgc::asset::MapLayerAsset> layerAssets;
-    layerAssets.reserve(layers.size());
+    packageBuilder.AddAsset(
+        m_document->GetMapDocumentAssetId(),
+        sgc::data::AssetType::External,
+        sgc::asset::AssetSerializer<file::MapDocumentInfo>::Serialize(
+            sgc::asset::AssetBuilder<file::MapDocumentInfo, file::MapDocument>::Build(*m_document)
+    ));
 
-    for(auto &layer : layers) {
-        sgc::asset::MapLayerAsset layerAsset = {
-            layer.name,
-            {},
-            sgc::asset::AssetBuilder<sgc::asset::TileStorageAsset>::Build(*layer.storage)
-        };
+    auto packageData = packageBuilder.Build();
 
-        layerAssets.push_back(layerAsset);
-    }
-
-    sgc::asset::MapAsset mapAsset = {
-        m_document->GetTilesetAssetId(),
-        layerAssets
-    };
-
-    auto bytes = sgc::asset::AssetSerializer<sgc::asset::MapAsset>::Serialize(
-        mapAsset
-    ); */
-
+    // insert extra magic bytes at the beginning to identify the file as a map file
     const uint8_t mapFileMagic[4] = { 'S', 'G', 'C', 'M' };
-
-    auto bytes = file::DocumentSerializer<file::MapDocument>::Serialize(m_document.get());
-    bytes.insert(bytes.begin(), mapFileMagic, mapFileMagic + 4);
+    packageData.insert(packageData.begin(), mapFileMagic, mapFileMagic + 4);
 
     std::ofstream file(m_filePath, std::ios::binary);
-    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
-
+    file.write(reinterpret_cast<const char*>(packageData.data()), packageData.size());
     file.close();
 
     m_document->SetDirty(false);

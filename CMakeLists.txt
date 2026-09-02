@@ -134,12 +134,16 @@ add_executable(sgc-editor WIN32
     src/file/tileset_file.cpp
     src/file/tileset_document.cpp
     src/file/package_file.cpp
-    src/file/document_serializer.cpp
+    # src/file/document_serializer.cpp    
 
     src/editor_tools/brush.cpp
     src/editor_tools/paint_modes.cpp
 
     src/sgc_extension/marching_ants_rectangle.cpp
+    src/sgc_extension/asset_builder.cpp
+    src/sgc_extension/asset_serializer.cpp
+    src/sgc_extension/runtime_builder.cpp
+    src/sgc_extension/asset_deserializer.cpp
 )
 
 # embed manifest in the exe

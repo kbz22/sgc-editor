@@ -4,7 +4,9 @@ file::TilesetDocument::TilesetDocument(std::wstring name, sgc::data::AssetId til
     name{name},
     m_tilesetId{tilesetId},
     m_imageId{imageId}
-{}
+{
+    m_tilesetDocumentId = sgc::data::HashAsset(L"tileset.doc."+name);
+}
 
 sgc::data::AssetId file::TilesetDocument::GetTilesetAssetId() const
 {
@@ -29,6 +31,11 @@ bool file::TilesetDocument::IsDirty() const
 sgc::data::AssetId file::TilesetDocument::GetImageAssetId() const
 {
     return m_imageId;
+}
+
+sgc::data::AssetId file::TilesetDocument::GetTilesetDocumentAssetId() const
+{
+    return m_tilesetDocumentId;
 }
 
 bool file::TilesetDocument::IsActivable() const

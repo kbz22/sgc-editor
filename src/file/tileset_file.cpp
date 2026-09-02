@@ -4,12 +4,10 @@
 #include "sgc/graphics/image.hpp"
 #include "sgc/asset/tilesetasset.hpp"
 #include "sgc/asset/imageasset.hpp"
-#include "sgc/asset/tilesetassetserializer.hpp"
-#include "sgc/asset/assetheaderdeserializer.hpp"
+#include "sgc/asset/assetheader.hpp"
 #include "sgc/data/resourcecontext.hpp"
 #include "sgc/data/asset.hpp"
 #include "program/except.hpp"
-#include "file/document_serializer.hpp"
 #include <fstream>
 
 file::TilesetFile::TilesetFile(AssetManager &assetManager)
@@ -33,7 +31,7 @@ void file::TilesetFile::Open(){
     file.seekg(0, std::ios::beg);
     file.read(reinterpret_cast<char*>(bytes.data()), bytes.size());
 
-    std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
+    /* std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
 
     for(int i = 0; i < tilesetFileMagic.size(); ++i) {
         if(bytes[i] != tilesetFileMagic[i]) {
@@ -65,22 +63,33 @@ void file::TilesetFile::Open(){
         std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + tilesetHeader.size)
     );
 
-    std::shared_ptr<sgc::asset::ImageAsset> imagePtr = std::make_shared<sgc::asset::ImageAsset>(image);
-    std::shared_ptr<sgc::asset::TilesetAsset> tilesetPtr = std::make_shared<sgc::asset::TilesetAsset>(tileset);
-    
-    if(!m_assetManager.CheckAssetExists(imageHeader.id)) {
-        m_assetManager.AddAsset<sgc::asset::ImageAsset>(imageHeader.id, imagePtr);
-    }
+    bytesIndex += tilesetHeader.size;
 
-    if(!m_assetManager.CheckAssetExists(tilesetHeader.id)) {
-        m_assetManager.AddAsset<sgc::asset::TilesetAsset>(tilesetHeader.id, tilesetPtr);
-    }
-
-    m_tilesetDocument = std::make_unique<TilesetDocument>(
-        m_filePath.stem().wstring(),
-        tilesetHeader.id,
-        imageHeader.id
+    auto tilesetDocInfoHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Deserialize(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + sgc::data::PackedAssetHeaderSize)
     );
+
+    bytesIndex += sgc::data::PackedAssetHeaderSize;
+
+    m_tilesetDocument = file::DocumentSerializer<file::TilesetDocument>::Deserialize(
+        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + tilesetDocInfoHeader.size)
+    );
+
+    if(!m_assetManager.CheckAssetExists(m_tilesetDocument->GetImageAssetId())) {
+        if(imageHeader.id == m_tilesetDocument->GetImageAssetId()) {
+            std::shared_ptr<sgc::asset::ImageAsset> imagePtr = std::make_shared<sgc::asset::ImageAsset>(image);
+            m_assetManager.AddAsset<sgc::asset::ImageAsset>(m_tilesetDocument->GetImageAssetId(), imagePtr);
+        }
+        else throw program::AssetLoadException("Image asset ID mismatch.");
+    }
+
+    if(!m_assetManager.CheckAssetExists(m_tilesetDocument->GetTilesetAssetId())) {
+        if(tilesetHeader.id == m_tilesetDocument->GetTilesetAssetId()) {
+            std::shared_ptr<sgc::asset::TilesetAsset> tilesetPtr = std::make_shared<sgc::asset::TilesetAsset>(tileset);
+            m_assetManager.AddAsset<sgc::asset::TilesetAsset>(m_tilesetDocument->GetTilesetAssetId(), tilesetPtr);
+        }
+        else throw program::AssetLoadException("Tileset asset ID mismatch.");
+    } */
 
     m_savedOrLoaded = true;
 
@@ -97,7 +106,7 @@ void file::TilesetFile::Save(){
         return;
     }
 
-    auto imageAsset = m_assetManager.GetAsset<sgc::asset::ImageAsset>(
+    /* auto imageAsset = m_assetManager.GetAsset<sgc::asset::ImageAsset>(
         m_tilesetDocument->GetImageAssetId()
     );
     
@@ -133,8 +142,21 @@ void file::TilesetFile::Save(){
         imageHeader
     );
 
-    std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
+    auto tilesetDocumentBytes = file::DocumentSerializer<file::TilesetDocument>::Serialize(
+        m_tilesetDocument.get()
+    );
 
+    auto tilesetDocumentHeader = sgc::data::AssetHeader{
+        sgc::data::HashAsset(L"document.tileset."+m_tilesetDocument->GetName()),
+        sgc::data::AssetType::External,
+        tilesetDocumentBytes.size()
+    };
+
+    auto tilesetDocumentHeaderBytes = sgc::asset::AssetSerializer<sgc::data::AssetHeader>::Serialize(
+        tilesetDocumentHeader
+    );
+    
+    std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
     std::vector<uint8_t> bytes;
     
     auto appendBytes = [&bytes](const std::vector<uint8_t>& data) {        
@@ -146,9 +168,11 @@ void file::TilesetFile::Save(){
     appendBytes(imageBytes);
     appendBytes(tilesetHeaderBytes);
     appendBytes(tilesetBytes);
+    appendBytes(tilesetDocumentHeaderBytes);
+    appendBytes(tilesetDocumentBytes);
 
     std::ofstream file(m_filePath, std::ios::binary);
-    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size()); */
 
     m_savedOrLoaded = true;
 

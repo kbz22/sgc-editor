@@ -18,18 +18,23 @@ namespace file {
             std::unique_ptr<program::LayerManager> m_layerManager{nullptr};
             std::unique_ptr<command::CommandManager> m_commandManager{nullptr};
             sgc::data::AssetId m_tilesetId{0};
+            sgc::data::AssetId m_mapAssetId{0};
+            sgc::data::AssetId m_mapDocumentId{0};
             std::wstring name;
             bool m_dirty{false};
             std::function<void(bool)> m_onSetDirtyCallback{nullptr};
 
         public:
             MapDocument(std::wstring name, sgc::data::AssetId tilesetId);
+            MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId);
             MapDocument(const MapDocument&);
 
-            program::LayerManager* GetLayerManager();
-            command::CommandManager* GetCommandManager();
-            sgc::data::ITileStorage* GetCurrentLayerStorage();
-            sgc::data::AssetId GetTilesetAssetId();
+            program::LayerManager* GetLayerManager() const;
+            command::CommandManager* GetCommandManager() const;
+            sgc::data::ITileStorage* GetCurrentLayerStorage() const;
+            sgc::data::AssetId GetTilesetAssetId() const;
+            sgc::data::AssetId GetMapAssetId() const;
+            sgc::data::AssetId GetMapDocumentAssetId() const;
 
             bool IsContainer() const override;            
             bool IsDirty() const override;
