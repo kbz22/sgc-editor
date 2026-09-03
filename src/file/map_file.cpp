@@ -62,17 +62,23 @@ void file::MapFile::Open(){
         throw program::AssetLoadException("Map asset not found in package.");
     }
 
+    auto mapAssetBytes = package.ReadAssetData(mapAssetId);
+    auto mapAsset = sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
+        mapAssetBytes
+    );    
+
     if(mapDocId == 0) {
         throw program::AssetLoadException("Map document asset not found in package.");
     }
 
+    auto docInfoBytes = package.ReadAssetData(mapDocId);
+    auto docInfo = sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Deserialize(
+        docInfoBytes
+    );
+
     m_document = sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
-        sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Deserialize(
-            package.ReadAssetData(mapDocId)
-        ),
-        sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
-            package.ReadAssetData(mapAssetId)
-        )
+        docInfo,
+        mapAsset
     );
 
     return;
