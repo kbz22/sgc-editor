@@ -70,7 +70,7 @@ void file::MapFile::Open(){
     auto mapAssetBytes = package.ReadAssetData(mapAssetId);
     auto mapAsset = sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
         mapAssetBytes
-    );    
+    );
 
     if(mapDocId == 0) {
         throw program::AssetLoadException("Map document asset not found in package.");

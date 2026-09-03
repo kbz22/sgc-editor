@@ -155,6 +155,18 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
         m_openFiles.push_back(std::move(newFile));
         m_onFileUpdatedCallback(newFile.get());
     }
+    else if(extension == defaults::PackageFileExtension.data())
+    {
+        if(assetManager == nullptr) {
+            throw program::AssetLoadException("AssetManager is null. Cannot load package file.");
+        }
+
+        auto newFile = std::make_unique<PackageFile>(filePath.stem().wstring(), *assetManager);
+        newFile->SetFilePath(filePath);
+        newFile->Open();
+        m_openFiles.push_back(std::move(newFile));
+        m_onFileUpdatedCallback(m_openFiles.back().get());
+    }
     else
     {
         auto errorMsg = "Unsupported file extension: " + filePath.extension().string();

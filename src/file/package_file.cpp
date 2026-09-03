@@ -1,9 +1,16 @@
 #include "file/package_file.hpp"
+#include "program/except.hpp"
+#include "sgc_extension/asset_builder.hpp"
+#include "sgc_extension/asset_serializer.hpp"
+#include "sgc_extension/runtime_builder.hpp"
+#include "sgc_extension/asset_deserializer.hpp"
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/graphics/image.hpp>
 #include <sgc/asset/tilesetasset.hpp>
 #include <sgc/asset/imageasset.hpp>
 #include <sgc/asset/assetheader.hpp>
+#include <sgc/data/package.hpp>
+#include <sgc/data/packagebuilder.hpp>
 #include <fstream>
 
 file::PackageFile::PackageFile(std::wstring name, AssetManager& assetManager) :
@@ -26,7 +33,12 @@ void file::PackageFile::AddTilesetDocument(std::unique_ptr<TilesetDocument> tile
 
 void file::PackageFile::Open()
 {
-    const uint8_t packageFileMagic[4] = { 'S', 'G', 'C', 'P' };
+    sgc::data::Package package{};
+
+    if(!package.Open(m_filePath))
+    {
+        throw program::AssetLoadException("Failed to open package file: " + m_filePath.string());
+    }
 
 
 }
@@ -35,9 +47,62 @@ void file::PackageFile::Save()
 {
     std::vector<uint8_t> bytes{};
 
-    auto appendBytes = [&bytes](const std::vector<uint8_t>& data) {        
-        bytes.insert(bytes.end(), data.begin(), data.end());
-    };
+    sgc::data::PackageBuilder packageBuilder{};
+    
+    for(const auto& mapDoc : m_mapDocuments) 
+    {
+        packageBuilder.AddAsset(
+            mapDoc->GetMapAssetId(),
+            sgc::data::AssetType::Map,
+            sgc::asset::AssetSerializer<sgc::asset::MapAsset>::Serialize(
+                sgc::asset::AssetBuilder<sgc::asset::MapAsset, file::MapDocument>::Build(*mapDoc)
+        ));
+
+        packageBuilder.AddAsset(
+            mapDoc->GetMapDocumentAssetId(),
+            sgc::data::AssetType::External,
+            sgc::asset::AssetSerializer<file::MapDocumentInfo>::Serialize(
+                sgc::asset::AssetBuilder<file::MapDocumentInfo, file::MapDocument>::Build(*mapDoc)
+        ));
+    }
+
+    for(const auto& tilesetDoc : m_tilesetDocuments) 
+    {
+        // PackageBuilder uses a std::unordered_map internally, so adding the same asset multiple times will overwrite the previous
+        //! if need be there might be a check here to only dump an image to the package once, since they contain the most data
+        auto imageId = tilesetDoc->GetImageAssetId();
+        packageBuilder.AddAsset(
+            imageId,
+            sgc::data::AssetType::Texture,
+            sgc::asset::AssetSerializer<sgc::asset::ImageAsset>::Serialize(
+                *m_assetManager.GetAsset<sgc::asset::ImageAsset>(imageId)
+            )
+        );
+
+        auto tilesetId = tilesetDoc->GetTilesetAssetId();
+        packageBuilder.AddAsset(
+            tilesetId,
+            sgc::data::AssetType::Tileset,
+            sgc::asset::AssetSerializer<sgc::asset::TilesetAsset>::Serialize(
+                *m_assetManager.GetAsset<sgc::asset::TilesetAsset>(tilesetId)
+            )
+        );
+        
+        packageBuilder.AddAsset(
+            tilesetDoc->GetTilesetDocumentAssetId(),
+            sgc::data::AssetType::External,
+            sgc::asset::AssetSerializer<file::TilesetDocumentInfo>::Serialize(
+                sgc::asset::AssetBuilder<file::TilesetDocumentInfo, file::TilesetDocument>::Build(*tilesetDoc)
+        ));
+    }
+
+    auto packageData = packageBuilder.Build();
+
+    std::ofstream outFile(m_filePath, std::ios::binary);
+    if(outFile.is_open()) {
+        outFile.write(reinterpret_cast<char*>(packageData.data()), packageData.size());
+        outFile.close();
+    }
 
     return;
 }

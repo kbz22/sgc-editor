@@ -24,10 +24,12 @@ void action::OpenFileAction::Execute(program::ProgramContext& programContext)
     auto allFilesString = programContext.stringLookup.Get(locale::StringId::NameAllFiles);
     auto mapFilesString = programContext.stringLookup.Get(locale::StringId::NameMapFile);
     auto tilesetFilesString = programContext.stringLookup.Get(locale::StringId::NameTilesetFile);
+    auto packageFilesString = programContext.stringLookup.Get(locale::StringId::NamePackageFile);
 
     std::vector<win32_helpers::FileFilter> filters = {
         { mapFilesString.value_or(L"Map Files").c_str(), { defaults::MapFileExtension.data() } },
         { tilesetFilesString.value_or(L"Tileset Files").c_str(), { defaults::TilesetFileExtension.data() } },
+        { packageFilesString.value_or(L"Package Files").c_str(), { defaults::PackageFileExtension.data() } },
         { allFilesString.value_or(L"All Files").c_str(), { L"*.*" } }
     };
 
