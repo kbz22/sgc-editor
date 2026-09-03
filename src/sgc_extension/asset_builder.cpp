@@ -37,3 +37,15 @@ file::MapDocumentInfo sgc::asset::AssetBuilder<file::MapDocumentInfo, file::MapD
 
     return documentInfo;
 }
+
+file::TilesetDocumentInfo sgc::asset::AssetBuilder<file::TilesetDocumentInfo, file::TilesetDocument>::Build(const file::TilesetDocument& document)
+{
+    file::TilesetDocumentInfo documentInfo = {
+        file::DocumentType::Tileset,
+        document.GetName(),
+        document.GetImageAssetId(),
+        document.GetTilesetAssetId()
+    };
+
+    return documentInfo;
+}

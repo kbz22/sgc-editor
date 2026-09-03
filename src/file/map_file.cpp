@@ -50,11 +50,16 @@ void file::MapFile::Open(){
     sgc::data::AssetId mapDocId = 0;
 
     for(auto &[id, entry] : package) {
-        if(entry.type == sgc::data::AssetType::Map) {
-            mapAssetId = id;
-        }        
-        if(entry.type == sgc::data::AssetType::External) {
-            mapDocId = id;
+        switch(entry.type)
+        {
+            case sgc::data::AssetType::Map:
+                mapAssetId = id;
+                break;
+            case sgc::data::AssetType::External:
+                mapDocId = id;
+                break;
+            default:
+                break;
         }
     }
 

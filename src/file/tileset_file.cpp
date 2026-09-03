@@ -1,13 +1,17 @@
 #include "file/tileset_file.hpp"
-#include "defaults.hpp"
-#include "sgc/graphics/tileset.hpp"
-#include "sgc/graphics/image.hpp"
-#include "sgc/asset/tilesetasset.hpp"
-#include "sgc/asset/imageasset.hpp"
-#include "sgc/asset/assetheader.hpp"
-#include "sgc/data/resourcecontext.hpp"
-#include "sgc/data/asset.hpp"
+#include "file/document_info.hpp"
+#include "sgc_extension/asset_serializer.hpp"
+#include "sgc_extension/asset_deserializer.hpp"
+#include "sgc_extension/asset_builder.hpp"
+#include "sgc_extension/runtime_builder.hpp"
 #include "program/except.hpp"
+#include "defaults.hpp"
+#include <sgc/graphics/tileset.hpp>
+#include <sgc/graphics/image.hpp>
+#include <sgc/data/resourcecontext.hpp>
+#include <sgc/data/asset.hpp>
+#include <sgc/data/package.hpp>
+#include <sgc/data/packagebuilder.hpp>
 #include <fstream>
 
 file::TilesetFile::TilesetFile(AssetManager &assetManager)
@@ -31,65 +35,74 @@ void file::TilesetFile::Open(){
     file.seekg(0, std::ios::beg);
     file.read(reinterpret_cast<char*>(bytes.data()), bytes.size());
 
-    /* std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
-
-    for(int i = 0; i < tilesetFileMagic.size(); ++i) {
+    std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
+    for(int i=0; i<tilesetFileMagic.size(); i++)
+    {
         if(bytes[i] != tilesetFileMagic[i]) {
             throw program::AssetLoadException("Invalid tileset file format.");
         }
     }
 
-    size_t bytesIndex = tilesetFileMagic.size();
-    
-    auto imageHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Deserialize(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end())
-    );
-
-    bytesIndex += sgc::data::PackedAssetHeaderSize;
-
-    auto image = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Deserialize(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + imageHeader.size)
-    );
-
-    bytesIndex += imageHeader.size;
-
-    auto tilesetHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Deserialize(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.end())
-    );
-
-    bytesIndex += sgc::data::PackedAssetHeaderSize;
-
-    auto tileset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Deserialize(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + tilesetHeader.size)
-    );
-
-    bytesIndex += tilesetHeader.size;
-
-    auto tilesetDocInfoHeader = sgc::asset::AssetDeserializer<sgc::data::AssetHeader>::Deserialize(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + sgc::data::PackedAssetHeaderSize)
-    );
-
-    bytesIndex += sgc::data::PackedAssetHeaderSize;
-
-    m_tilesetDocument = file::DocumentSerializer<file::TilesetDocument>::Deserialize(
-        std::vector<uint8_t>(bytes.begin() + bytesIndex, bytes.begin() + bytesIndex + tilesetDocInfoHeader.size)
-    );
-
-    if(!m_assetManager.CheckAssetExists(m_tilesetDocument->GetImageAssetId())) {
-        if(imageHeader.id == m_tilesetDocument->GetImageAssetId()) {
-            std::shared_ptr<sgc::asset::ImageAsset> imagePtr = std::make_shared<sgc::asset::ImageAsset>(image);
-            m_assetManager.AddAsset<sgc::asset::ImageAsset>(m_tilesetDocument->GetImageAssetId(), imagePtr);
-        }
-        else throw program::AssetLoadException("Image asset ID mismatch.");
+    sgc::data::Package package;
+    if(!package.Open(std::span<uint8_t>(bytes.data() + tilesetFileMagic.size(), bytes.size() - tilesetFileMagic.size()))) {
+        throw program::AssetLoadException("Failed to open tileset package.");
     }
 
-    if(!m_assetManager.CheckAssetExists(m_tilesetDocument->GetTilesetAssetId())) {
-        if(tilesetHeader.id == m_tilesetDocument->GetTilesetAssetId()) {
-            std::shared_ptr<sgc::asset::TilesetAsset> tilesetPtr = std::make_shared<sgc::asset::TilesetAsset>(tileset);
-            m_assetManager.AddAsset<sgc::asset::TilesetAsset>(m_tilesetDocument->GetTilesetAssetId(), tilesetPtr);
+    sgc::data::AssetId tilesetDocumentAssetId = 0;
+    sgc::data::AssetId tilesetAssetId = 0;
+    sgc::data::AssetId imageAssetId = 0;
+
+    for(auto &[id, entry] : package){
+        switch(entry.type) 
+        {
+            case sgc::data::AssetType::External:
+                tilesetDocumentAssetId = id;
+                break;
+            case sgc::data::AssetType::Tileset:
+                tilesetAssetId = id;
+                break;
+            case sgc::data::AssetType::Texture:
+                imageAssetId = id;
+                break;
+            default:
+                break;
         }
-        else throw program::AssetLoadException("Tileset asset ID mismatch.");
-    } */
+    }
+
+    if(tilesetDocumentAssetId == 0) {
+        throw program::AssetLoadException("Tileset document asset not found in package.");
+    }
+    if(tilesetAssetId == 0) {
+        throw program::AssetLoadException("Tileset asset not found in package.");
+    }
+    if(imageAssetId == 0) {
+        throw program::AssetLoadException("Image asset not found in package.");
+    }
+
+    auto tilesetInfo = sgc::asset::AssetDeserializer<file::TilesetDocumentInfo>::Deserialize(
+        package.ReadAssetData(tilesetDocumentAssetId)
+    );
+
+    m_tilesetDocument = sgc::asset::RuntimeBuilder<file::TilesetDocument>::Build(
+        tilesetInfo
+    );
+
+    if(!m_assetManager.CheckAssetExists(imageAssetId)){
+        auto imageAsset = std::make_shared<sgc::asset::ImageAsset>(
+            sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Deserialize(
+                package.ReadAssetData(imageAssetId)
+            )
+        );
+        m_assetManager.AddAsset(imageAssetId, imageAsset);
+    }
+    if(!m_assetManager.CheckAssetExists(tilesetAssetId)){
+        auto tilesetAsset = std::make_shared<sgc::asset::TilesetAsset>(
+            sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Deserialize(
+                package.ReadAssetData(tilesetAssetId)
+            )
+        );
+        m_assetManager.AddAsset(tilesetAssetId, tilesetAsset);
+    }
 
     m_savedOrLoaded = true;
 
@@ -106,73 +119,42 @@ void file::TilesetFile::Save(){
         return;
     }
 
-    /* auto imageAsset = m_assetManager.GetAsset<sgc::asset::ImageAsset>(
-        m_tilesetDocument->GetImageAssetId()
-    );
-    
-    auto tilesetAsset = m_assetManager.GetAsset<sgc::asset::TilesetAsset>(
-        m_tilesetDocument->GetTilesetAssetId()
+    sgc::data::PackageBuilder packageBuilder;
+
+    auto imageId = m_tilesetDocument->GetImageAssetId();
+    packageBuilder.AddAsset(
+        imageId,
+        sgc::data::AssetType::Texture,
+        sgc::asset::AssetSerializer<sgc::asset::ImageAsset>::Serialize(
+            *m_assetManager.GetAsset<sgc::asset::ImageAsset>(imageId)
+        )
     );
 
-    auto tilesetBytes = sgc::asset::AssetSerializer<sgc::asset::TilesetAsset>::Serialize(
-        *tilesetAsset
+    auto tilesetId = m_tilesetDocument->GetTilesetAssetId();
+    packageBuilder.AddAsset(
+        tilesetId,
+        sgc::data::AssetType::Tileset,
+        sgc::asset::AssetSerializer<sgc::asset::TilesetAsset>::Serialize(
+            *m_assetManager.GetAsset<sgc::asset::TilesetAsset>(tilesetId)
+        )
+    );
+
+    packageBuilder.AddAsset(
+        m_tilesetDocument->GetTilesetDocumentAssetId(),
+        sgc::data::AssetType::External,
+        sgc::asset::AssetSerializer<file::TilesetDocumentInfo>::Serialize(
+            sgc::asset::AssetBuilder<file::TilesetDocumentInfo, file::TilesetDocument>::Build(*m_tilesetDocument)
+        )
     );    
 
-    auto imageBytes = sgc::asset::AssetSerializer<sgc::asset::ImageAsset>::Serialize(
-        *imageAsset
-    );
-    
-    sgc::data::AssetHeader imageHeader = {
-        m_tilesetDocument->GetImageAssetId(),
-        sgc::data::AssetType::Texture,
-        imageBytes.size()      
-    };
-
-    sgc::data::AssetHeader tilesetHeader = {
-        m_tilesetDocument->GetTilesetAssetId(),
-        sgc::data::AssetType::Tileset,
-        tilesetBytes.size()
-    };
-
-    auto tilesetHeaderBytes = sgc::asset::AssetSerializer<sgc::data::AssetHeader>::Serialize(
-        tilesetHeader
-    );
-
-    auto imageHeaderBytes = sgc::asset::AssetSerializer<sgc::data::AssetHeader>::Serialize(
-        imageHeader
-    );
-
-    auto tilesetDocumentBytes = file::DocumentSerializer<file::TilesetDocument>::Serialize(
-        m_tilesetDocument.get()
-    );
-
-    auto tilesetDocumentHeader = sgc::data::AssetHeader{
-        sgc::data::HashAsset(L"document.tileset."+m_tilesetDocument->GetName()),
-        sgc::data::AssetType::External,
-        tilesetDocumentBytes.size()
-    };
-
-    auto tilesetDocumentHeaderBytes = sgc::asset::AssetSerializer<sgc::data::AssetHeader>::Serialize(
-        tilesetDocumentHeader
-    );
-    
     std::vector<uint8_t> tilesetFileMagic = { 'S', 'G', 'C', 'T' };
-    std::vector<uint8_t> bytes;
-    
-    auto appendBytes = [&bytes](const std::vector<uint8_t>& data) {        
-        bytes.insert(bytes.end(), data.begin(), data.end());
-    };   
+    std::vector<uint8_t> bytes = packageBuilder.Build();
 
-    appendBytes(tilesetFileMagic);
-    appendBytes(imageHeaderBytes);
-    appendBytes(imageBytes);
-    appendBytes(tilesetHeaderBytes);
-    appendBytes(tilesetBytes);
-    appendBytes(tilesetDocumentHeaderBytes);
-    appendBytes(tilesetDocumentBytes);
+    bytes.insert(bytes.begin(), tilesetFileMagic.begin(), tilesetFileMagic.end());
 
     std::ofstream file(m_filePath, std::ios::binary);
-    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size()); */
+    file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+    file.close();
 
     m_savedOrLoaded = true;
 

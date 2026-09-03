@@ -34,3 +34,12 @@ std::unique_ptr<file::MapDocument> sgc::asset::RuntimeBuilder<file::MapDocument>
 
     return std::move(document);
 }
+
+std::unique_ptr<file::TilesetDocument> sgc::asset::RuntimeBuilder<file::TilesetDocument>::Build(const file::TilesetDocumentInfo& info)
+{
+    return std::make_unique<file::TilesetDocument>(
+        info.name,
+        info.tilesetAssetId,
+        info.imageAssetId
+    );
+}
