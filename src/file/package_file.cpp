@@ -40,6 +40,105 @@ void file::PackageFile::Open()
         throw program::AssetLoadException("Failed to open package file: " + m_filePath.string());
     }
 
+    std::vector<file::MapDocumentInfo> mapDocumentInfos{};
+    std::vector<file::TilesetDocumentInfo> tilesetDocumentInfos{};
+
+    for(auto &[id, entry] : package) 
+    {
+        switch(entry.type)
+        {
+            case sgc::data::AssetType::Map:
+            {
+                auto mapAsset = sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
+                    package.ReadAssetData(id)
+                );
+
+                m_assetManager.AddAsset<sgc::asset::MapAsset>(
+                    id,
+                    std::make_shared<sgc::asset::MapAsset>(std::move(mapAsset))
+                );
+
+                break;
+            }
+
+            case sgc::data::AssetType::Tileset:
+            {
+                auto tilesetAsset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Deserialize(
+                    package.ReadAssetData(id)
+                );
+
+                m_assetManager.AddAsset<sgc::asset::TilesetAsset>(
+                    id,
+                    std::make_shared<sgc::asset::TilesetAsset>(std::move(tilesetAsset))
+                );
+
+                break;
+            }
+
+            case sgc::data::AssetType::Texture:
+            {
+                auto imageAsset = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Deserialize(
+                    package.ReadAssetData(id)
+                );
+
+                m_assetManager.AddAsset<sgc::asset::ImageAsset>(
+                    id,
+                    std::make_shared<sgc::asset::ImageAsset>(std::move(imageAsset))
+                );
+
+                break;
+            }
+                
+            case sgc::data::AssetType::External:
+            {
+                auto entryData = package.ReadAssetData(id);
+                auto externalType = static_cast<file::DocumentType>(entryData[0]);
+
+                switch(externalType)
+                {
+                    default:
+                        throw program::AssetLoadException("Unknown external document type: " + std::to_string(static_cast<int>(externalType)));
+
+                    case file::DocumentType::Map:
+                    {
+                        mapDocumentInfos.push_back(
+                            sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Deserialize(entryData)
+                        );
+                        break;
+                    }
+                    case file::DocumentType::Tileset:
+                    {
+                        tilesetDocumentInfos.push_back(
+                            sgc::asset::AssetDeserializer<file::TilesetDocumentInfo>::Deserialize(entryData)
+                        );
+                        break;
+                    }
+                }
+
+                break;
+            }
+
+            default:
+                continue;                
+        }
+    }
+
+    for(const auto& mapDocInfo : mapDocumentInfos) 
+    {
+        AddMapDocument(
+            sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
+                mapDocInfo,
+                *m_assetManager.GetAsset<sgc::asset::MapAsset>(mapDocInfo.mapAssetId)
+        ));
+    }
+
+    for(const auto& tilesetDocInfo : tilesetDocumentInfos) 
+    {
+        AddTilesetDocument(
+            sgc::asset::RuntimeBuilder<file::TilesetDocument>::Build(
+                tilesetDocInfo
+        ));
+    }
 
 }
 

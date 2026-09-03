@@ -77,6 +77,29 @@ void file::AssetManager::AddAsset<sgc::asset::TilesetAsset>(
 }
 
 template<>
+void file::AssetManager::AddAsset<sgc::asset::MapAsset>(
+    sgc::data::AssetId assetId,
+    std::shared_ptr<sgc::asset::MapAsset> mapAsset
+)
+{
+    if(m_cache.find(assetId) != m_cache.end()) {
+        throw program::AssetCacheException("Asset with the same ID already exists in the cache.");
+    }
+
+    m_cache[assetId] = mapAsset;
+}
+
+template<>
+std::shared_ptr<sgc::asset::MapAsset> file::AssetManager::GetAsset<sgc::asset::MapAsset>(sgc::data::AssetId assetId) const
+{
+    if(m_cache.find(assetId) == m_cache.end()) {
+        throw program::AssetCacheException("Map asset not found in the cache.");
+    }
+
+    return std::get<std::shared_ptr<sgc::asset::MapAsset>>(m_cache.at(assetId));
+}
+
+template<>
 std::shared_ptr<sgc::asset::ImageAsset> file::AssetManager::GetAsset<sgc::asset::ImageAsset>(sgc::data::AssetId assetId) const
 {
     if(m_cache.find(assetId) == m_cache.end()) {
@@ -94,4 +117,14 @@ std::shared_ptr<sgc::asset::TilesetAsset> file::AssetManager::GetAsset<sgc::asse
     }
 
     return std::get<std::shared_ptr<sgc::asset::TilesetAsset>>(m_cache.at(assetId));
+}
+
+bool file::AssetManager::RemoveAsset(sgc::data::AssetId assetId)
+{
+    if(m_cache.find(assetId) == m_cache.end()) {
+        return false;
+    }
+
+    m_cache.erase(assetId);
+    return true;
 }

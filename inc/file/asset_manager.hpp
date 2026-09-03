@@ -3,6 +3,7 @@
 #include <sgc/data/asset.hpp>
 #include <sgc/asset/imageasset.hpp>
 #include <sgc/asset/tilesetasset.hpp>
+#include <sgc/asset/mapasset.hpp>
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/graphics/image.hpp>
 #include <sgc/graphics/rendercontext.hpp>
@@ -14,7 +15,8 @@ namespace file {
 
     using AssetType = std::variant<
         std::shared_ptr<sgc::asset::ImageAsset>,
-        std::shared_ptr<sgc::asset::TilesetAsset>
+        std::shared_ptr<sgc::asset::TilesetAsset>,
+        std::shared_ptr<sgc::asset::MapAsset>
     >;
 
     class AssetManager
@@ -33,6 +35,7 @@ namespace file {
             std::shared_ptr<T> GetAsset(sgc::data::AssetId assetId) const;
 
             bool CheckAssetExists(sgc::data::AssetId assetId) const;
+            bool RemoveAsset(sgc::data::AssetId assetId);
 
             std::shared_ptr<sgc::graphics::Tileset> MakeTileset(
                 sgc::data::AssetId assetId,
