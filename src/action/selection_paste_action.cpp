@@ -39,22 +39,23 @@ void action::SelectionPasteAction::Execute(program::ProgramContext &context)
     auto layerManager = mapDocument->GetLayerManager();
     auto commandManager = mapDocument->GetCommandManager();
     auto selectionMode = context.mapSection->GetSelectionMode();
-    MapSelection selection;
-    Clipboard::Get<MapSelection>(selection);   
+    auto currentSelectionPosition = context.mapSection->GetSelectionRectanglePositionTiles();
+    MapSelection copiedSelection;
+    Clipboard::Get<MapSelection>(copiedSelection);   
 
     command::MultilayerTileChangesType tileChanges;
     auto cursorPosition = context.mapSection->GetCursorPositionInTiles();
 
-    auto iterateTiles = [layerManager, &selection, &tileChanges, &cursorPosition](sgc::data::ITileStorage *layer, size_t pastedLayerIndex, size_t copiedLayerIndex)
+    auto iterateTiles = [layerManager, &copiedSelection, &tileChanges, &currentSelectionPosition](sgc::data::ITileStorage *layer, size_t pastedLayerIndex, size_t copiedLayerIndex)
     {
-        auto &tiles = selection.layerTiles[copiedLayerIndex];
+        auto &tiles = copiedSelection.layerTiles[copiedLayerIndex];
         auto tileCount = tiles.size();        
 
         for(int i=0;i<tileCount;i++)
         {
-            auto x = i % selection.size.x;
-            auto y = i / selection.size.x;
-            auto tilePos = sgc::tile::TilePosition2D{x,y} + cursorPosition;
+            auto x = i % copiedSelection.size.x;
+            auto y = i / copiedSelection.size.x;
+            auto tilePos = sgc::tile::TilePosition2D{x,y} + currentSelectionPosition;
 
             tileChanges[pastedLayerIndex][tilePos] = {
                 pastedLayerIndex,
@@ -73,10 +74,10 @@ void action::SelectionPasteAction::Execute(program::ProgramContext &context)
             auto activeLayer = layerManager->GetLayers()[activeLayerIndex].storage;
             auto copiedLayerIndex = activeLayerIndex;
 
-            if(!selection.layerTiles.contains(activeLayerIndex))
+            if(!copiedSelection.layerTiles.contains(activeLayerIndex))
             {
-                auto beginIterator = selection.layerTiles.begin();
-                if(beginIterator != selection.layerTiles.end()){
+                auto beginIterator = copiedSelection.layerTiles.begin();
+                if(beginIterator != copiedSelection.layerTiles.end()){
                     copiedLayerIndex = beginIterator->first;
                 }
             }

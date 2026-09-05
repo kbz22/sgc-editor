@@ -25,9 +25,9 @@ file::TilesetDocumentInfo sgc::asset::AssetDeserializer<file::TilesetDocumentInf
     file::TilesetDocumentInfo info;
 
     reader.Read<file::DocumentType>();
-    info.name = reader.ReadString();
-    info.tilesetAssetId = reader.Read<sgc::data::AssetId>();
+    info.name = reader.ReadString();    
     info.imageAssetId = reader.Read<sgc::data::AssetId>();
+    info.tilesetAssetId = reader.Read<sgc::data::AssetId>();
 
     return info;
 }

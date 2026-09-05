@@ -56,10 +56,6 @@ void file::AssetManager::AddAsset<sgc::asset::ImageAsset>(
     std::shared_ptr<sgc::asset::ImageAsset> imageAsset
 )
 {
-    if(m_cache.find(assetId) != m_cache.end()) {
-        throw program::AssetCacheException("Asset with the same ID already exists in the cache.");
-    }
-
     m_cache[assetId] = imageAsset;
 }
 
@@ -69,10 +65,6 @@ void file::AssetManager::AddAsset<sgc::asset::TilesetAsset>(
     std::shared_ptr<sgc::asset::TilesetAsset> tilesetAsset
 )
 {
-    if(m_cache.find(assetId) != m_cache.end()) {
-        throw program::AssetCacheException("Asset with the same ID already exists in the cache.");
-    }
-
     m_cache[assetId] = tilesetAsset;
 }
 
@@ -82,10 +74,6 @@ void file::AssetManager::AddAsset<sgc::asset::MapAsset>(
     std::shared_ptr<sgc::asset::MapAsset> mapAsset
 )
 {
-    if(m_cache.find(assetId) != m_cache.end()) {
-        throw program::AssetCacheException("Asset with the same ID already exists in the cache.");
-    }
-
     m_cache[assetId] = mapAsset;
 }
 
