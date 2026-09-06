@@ -22,7 +22,7 @@ namespace file {
             sgc::data::AssetId m_mapDocumentId{0};
             std::wstring name;
             bool m_dirty{false};
-            std::function<void(bool)> m_onSetDirtyCallback{nullptr};
+            std::function<void(MapDocument*, bool)> m_onSetDirtyCallback{nullptr};
 
         public:
             MapDocument(std::wstring name, sgc::data::AssetId tilesetId);
@@ -44,6 +44,6 @@ namespace file {
 
             bool IsEditable() const;
             void SetDirty(bool dirty);
-            void RegisterOnSetDirtyCallback(std::function<void(bool)> callback);            
+            void RegisterOnSetDirtyCallback(std::function<void(MapDocument*, bool)> callback);            
     };
 }

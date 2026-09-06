@@ -63,16 +63,7 @@ file::MapDocument file::FileManager::NewMapDocument(std::wstring name, sgc::data
 {
     auto newDocument = MapDocument(name, tilesetId);
 
-    newDocument.RegisterOnSetDirtyCallback([this](bool dirty) {
-
-        if(!dirty) {
-            return;
-        }
-
-        auto &programContext = program::GetProgramContext();
-        programContext.packageSection->UpdateTreeViewItems(programContext);
-        programContext.packageSection->Update();
-    });
+    newDocument.RegisterOnSetDirtyCallback(m_onMapDirtyCallback);
 
     return newDocument;
 }
@@ -114,6 +105,7 @@ void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocumen
         newFile->AddTilesetDocument(std::unique_ptr<TilesetDocument>(tilesetDoc));
     }
 
+    newFile->RegisterOnSetDirtyCallback(m_onMapDirtyCallback);
     m_openFiles.push_back(std::move(newFile));
 
     m_onFileUpdatedCallback(nullptr);
@@ -133,9 +125,7 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
         newFile->SetFilePath(filePath);
         newFile->Open();
 
-        newFile->m_document->RegisterOnSetDirtyCallback([this, newFilePtr](bool dirty) {
-            m_onMapDirtyCallback(newFilePtr->m_document.get(), dirty);
-        });
+        newFile->m_document->RegisterOnSetDirtyCallback(m_onMapDirtyCallback);
 
         m_openFiles.push_back(std::move(newFile));
 
@@ -164,8 +154,10 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
         auto newFile = std::make_unique<PackageFile>(filePath.stem().wstring(), *assetManager);
         newFile->SetFilePath(filePath);
         newFile->Open();
-        m_openFiles.push_back(std::move(newFile));
-        m_onFileUpdatedCallback(m_openFiles.back().get());
+        newFile->RegisterOnSetDirtyCallback(m_onMapDirtyCallback);
+
+        m_openFiles.push_back(std::move(newFile));        
+        m_onFileUpdatedCallback(m_openFiles.back().get());        
     }
     else
     {

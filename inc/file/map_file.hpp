@@ -41,7 +41,7 @@ namespace file {
             std::vector<TilesetDocument*> GetTilesetDocuments() override;
             std::optional<TilesetDocument*> GetTilesetDocument(size_t index) override;
 
-            void RegisterOnSetDirtyCallback(std::function<void(bool)> callback);
+            void RegisterOnSetDirtyCallback(std::function<void(MapDocument*, bool)> callback);
 
             friend class FileManager;
     };

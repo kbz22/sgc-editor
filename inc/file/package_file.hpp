@@ -3,6 +3,7 @@
 #include "file/ifile.hpp"
 #include "file/itreeviewlistable.hpp"
 #include "file/asset_manager.hpp"
+#include <functional>
 
 namespace file {
 
@@ -15,7 +16,7 @@ namespace file {
             std::wstring m_name{};
             std::vector<std::unique_ptr<MapDocument>> m_mapDocuments{};
             std::vector<std::unique_ptr<TilesetDocument>> m_tilesetDocuments{};
-            file::AssetManager& m_assetManager;
+            file::AssetManager& m_assetManager;            
             bool m_fileAdded{false};
 
         public:
@@ -48,6 +49,8 @@ namespace file {
             std::optional<TilesetDocument*> GetTilesetDocument(size_t index) override;
 
             const std::wstring& GetName() const override;
+
+            void RegisterOnSetDirtyCallback(std::function<void(MapDocument*, bool)> callback);
     };
 
 }

@@ -215,7 +215,7 @@ std::optional<file::TilesetDocument*> file::MapFile::GetTilesetDocument([[maybe_
     return std::nullopt;
 }
 
-void file::MapFile::RegisterOnSetDirtyCallback(std::function<void(bool)> callback)
+void file::MapFile::RegisterOnSetDirtyCallback(std::function<void(MapDocument*, bool)> callback)
 {
     if (m_document) {
         m_document->RegisterOnSetDirtyCallback(callback);

@@ -204,6 +204,9 @@ void file::PackageFile::Save()
         outFile.close();
     }
 
+    for(auto &mapDoc : m_mapDocuments) {
+        mapDoc->SetDirty(false);
+    }
     m_fileAdded = false;
 
     return;
@@ -313,4 +316,11 @@ std::optional<file::TilesetDocument*> file::PackageFile::GetTilesetDocument(size
 const std::wstring& file::PackageFile::GetName() const
 {
     return m_name;
+}
+
+void file::PackageFile::RegisterOnSetDirtyCallback(std::function<void(MapDocument*, bool)> callback)
+{
+    for(auto &mapDoc : m_mapDocuments) {
+        mapDoc->RegisterOnSetDirtyCallback(callback);
+    }
 }

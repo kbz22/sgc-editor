@@ -86,11 +86,11 @@ void file::MapDocument::SetDirty(bool dirty)
 {
     m_dirty = dirty;
     if(m_onSetDirtyCallback) {
-        m_onSetDirtyCallback(dirty);
+        m_onSetDirtyCallback(this, dirty);
     }
 }
 
-void file::MapDocument::RegisterOnSetDirtyCallback(std::function<void(bool)> callback)
+void file::MapDocument::RegisterOnSetDirtyCallback(std::function<void(MapDocument*, bool)> callback)
 {
     m_onSetDirtyCallback = callback;
 }
