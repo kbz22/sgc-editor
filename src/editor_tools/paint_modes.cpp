@@ -63,10 +63,36 @@ inline std::unordered_map<sgc::math::vec2, command::TileChange> CreateTileChange
 
                 if(!checkTile.has_value()){
                     auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
+                    auto chunkCoord = chunkStorage->GetChunkCoordAt({ x, y });
+
                     chunkStorage->SetChunkAt(
-                        chunkStorage->GetChunkCoordAt({ x, y }),
+                        chunkCoord,
                         clearTileId
                     );
+
+                    // this is kinda hacky but should work for now
+                    // I added this chunk setting so that Empty would be used instead of
+                    // std::array defaulting to 0, but this obviously doesn't work on Redo.
+                    // so for now we just dump all tile changes, which could be as much as 4*32*32.
+                    // or with tileset selection larger than 32x32 this will be even worse lol
+                    for(int __x = 0; __x < sgc::data::TileChunk::Size; ++__x){
+                        for(int __y = 0; __y < sgc::data::TileChunk::Size; ++__y){
+                            auto localX = chunkCoord.x * sgc::data::TileChunk::Size + __x;
+                            auto localY = chunkCoord.y * sgc::data::TileChunk::Size + __y;
+
+                            if(tileChanges.contains({ localX, localY })) {
+                                continue;
+                            }
+
+                            command::TileChange change{
+                                { localX, localY },
+                                checkTile,
+                                clearTileId
+                            };
+                            
+                            tileChanges[{ localX, localY }] = change;
+                        }
+                    }
                 }            
 
                 command::TileChange change{

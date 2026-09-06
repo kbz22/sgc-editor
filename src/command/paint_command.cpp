@@ -54,9 +54,9 @@ void command::PaintCommand::Execute()
     if(m_mapDocument == nullptr) {
         return;
     }
-
+    
     auto layerManager = m_mapDocument->GetLayerManager();
-    for (const auto& [position, change] : m_tileChanges) {        
+    for (const auto& [position, change] : m_tileChanges) {
         layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(position, change.newTileId);
     }
     m_mapDocument->SetDirty(true);
