@@ -17,9 +17,9 @@ action::SelectionCopyAction::SelectionCopyAction()
     m_actionDescription.menuId = MenuId::Edit;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorSelectionCopy;
     m_actionDescription.nameStringId = locale::StringId::NameEditorSelectionCopy;
-    m_actionDescription.shortcutContext = program::ShortcutContext::MapEditorSelection;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditorSelection;
     m_actionDescription.shortcuts = {
-        {program::ShortcutModifier::Ctrl, 'C'}
+        {win32_program::ShortcutModifier::Ctrl, 'C'}
     };
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "locale/stringid.hpp"
-#include "program/shortcut.hpp"
+#include "win32_program/shortcut.hpp"
 #include <optional>
 
 namespace action {
@@ -49,8 +49,8 @@ namespace action {
         std::optional<locale::StringId> tooltipStringId = std::nullopt;
         locale::StringId nameStringId = locale::StringId::TextMissing;
 
-        program::ShortcutContext shortcutContext = program::ShortcutContext::MapEditor;
-        std::vector<program::Shortcut> shortcuts;
+        win32_program::ShortcutContext shortcutContext = win32_program::ShortcutContext::MapEditor;
+        std::vector<win32_program::Shortcut> shortcuts;
     };
 
 }

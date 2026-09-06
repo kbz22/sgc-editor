@@ -19,6 +19,10 @@ action::ActionType win32_program::ShortcutManager::GetActionForShortcut(
     ShortcutContext context
 ) const
 {
+    if (shortcut.key == ShortcutKey::None && shortcut.modifier == ShortcutModifier::None) {
+        return action::ActionType::Default;
+    }
+
     auto contextIt = m_shortcuts.find(context);
     if (contextIt == m_shortcuts.end()) {
         return action::ActionType::Default;
@@ -35,23 +39,17 @@ action::ActionType win32_program::ShortcutManager::GetActionForShortcut(
 
 win32_program::ShortcutModifier win32_program::ShortcutManager::GetShortcutModifierFromKeyState()
 {
-    ShortcutModifier modifiers = ShortcutModifier::None;
+    uint32_t modifiers = static_cast<uint32_t>(ShortcutModifier::None);
 
     if(GetKeyState(VK_CONTROL) & 0x8000)
-        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Ctrl));
+        modifiers |= static_cast<uint32_t>(ShortcutModifier::Ctrl);
 
     if(GetKeyState(VK_SHIFT) & 0x8000)
-        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Shift));
+        modifiers |= static_cast<uint32_t>(ShortcutModifier::Shift);
 
     if(GetKeyState(VK_MENU) & 0x8000)
-        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Alt));
+        modifiers |= static_cast<uint32_t>(ShortcutModifier::Alt);
 
-    if(GetKeyState(VK_DELETE) & 0x8000)
-        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Delete));
-
-    if(GetKeyState(VK_INSERT) & 0x8000)
-        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Insert));
-
-    return modifiers;
+    return static_cast<ShortcutModifier>(modifiers);
 }
 

@@ -15,9 +15,9 @@ action::SelectionMoveAction::SelectionMoveAction()
     m_actionDescription.menuId = MenuId::Edit;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorSelectionMove;
     m_actionDescription.nameStringId = locale::StringId::NameEditorSelectionMove;
-    m_actionDescription.shortcutContext = program::ShortcutContext::MapEditorSelection;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditorSelection;
     m_actionDescription.shortcuts = {
-        {program::ShortcutModifier::Ctrl, 'M'}
+        {win32_program::ShortcutModifier::Ctrl, 'M'}
     };
 }
 

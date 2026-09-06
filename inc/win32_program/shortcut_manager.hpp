@@ -7,12 +7,10 @@
 #include <cstdint>
 
 #include "action/action_types.hpp"
-#include "program/shortcut.hpp"
+#include "win32_program/shortcut.hpp"
 
 namespace win32_program
 {
-    using program::Shortcut, program::ShortcutModifier, program::ShortcutContext;
-
     class ShortcutManager    
     {
         private:

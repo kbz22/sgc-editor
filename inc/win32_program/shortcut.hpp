@@ -2,17 +2,26 @@
 
 #include <cstdint>
 #include <unordered_map>
+#include <windows.h>
 
-namespace program {
+namespace win32_program {
 
     enum class ShortcutModifier : uint32_t
     {
         None = 0x00,
         Ctrl = 0x01,
         Alt = 0x02,
-        Shift = 0x04,
-        Delete = 0x08,
-        Insert = 0x10
+        Shift = 0x04
+    };
+
+    enum ShortcutKey : uint32_t
+    {
+        None = 0,
+        Ctrl = VK_CONTROL,
+        Alt = VK_MENU,
+        Shift = VK_SHIFT,
+        Delete = VK_DELETE,
+        Insert = VK_INSERT,        
     };
 
     enum class ShortcutContext : uint32_t
@@ -24,8 +33,8 @@ namespace program {
 
     struct Shortcut
     {        
-        ShortcutModifier modifier;
-        uint32_t key;
+        ShortcutModifier modifier = ShortcutModifier::None;
+        uint32_t key = ShortcutKey::None;
 
         bool operator==(const Shortcut&) const = default;
     };
@@ -54,9 +63,9 @@ namespace program {
 namespace std
 {
     template<>
-    struct hash<program::Shortcut>
+    struct hash<win32_program::Shortcut>
     {
-        std::size_t operator()(const program::Shortcut& shortcut) const
+        std::size_t operator()(const win32_program::Shortcut& shortcut) const
         {
             return std::hash<uint32_t>()(static_cast<uint32_t>(shortcut.modifier)) ^ std::hash<uint32_t>()(shortcut.key);
         }

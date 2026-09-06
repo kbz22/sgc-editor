@@ -15,9 +15,9 @@ action::UndoAction::UndoAction()
     m_actionDescription.menuId = MenuId::Edit;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipEditUndo;
     m_actionDescription.nameStringId = locale::StringId::NameUndo;
-    m_actionDescription.shortcutContext = program::ShortcutContext::MapEditor;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditor;
     m_actionDescription.shortcuts = {
-        {program::ShortcutModifier::Ctrl, 'Z'}
+        {win32_program::ShortcutModifier::Ctrl, 'Z'}
     };
 }
 

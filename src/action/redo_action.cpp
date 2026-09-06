@@ -15,10 +15,10 @@ action::RedoAction::RedoAction()
     m_actionDescription.menuId = MenuId::Edit;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipEditRedo;
     m_actionDescription.nameStringId = locale::StringId::NameRedo;
-    m_actionDescription.shortcutContext = program::ShortcutContext::MapEditor;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditor;
     m_actionDescription.shortcuts = {
-        {program::ShortcutModifier::Ctrl, 'Y'},
-        {program::ShortcutModifier::Ctrl | program::ShortcutModifier::Shift, 'Z'}
+        {win32_program::ShortcutModifier::Ctrl, 'Y'},
+        {win32_program::ShortcutModifier::Ctrl | win32_program::ShortcutModifier::Shift, 'Z'}
     };
 }
 

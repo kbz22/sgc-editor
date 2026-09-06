@@ -16,9 +16,9 @@ action::SelectionClearAction::SelectionClearAction()
     m_actionDescription.menuId = MenuId::Edit;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorSelectionClear;
     m_actionDescription.nameStringId = locale::StringId::NameEditorSelectionClear;
-    m_actionDescription.shortcutContext = program::ShortcutContext::MapEditorSelection;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditorSelection;
     m_actionDescription.shortcuts = {
-        {program::ShortcutModifier::Delete, 0}
+        {win32_program::ShortcutModifier::None, win32_program::ShortcutKey::Delete}
     };
 }
 

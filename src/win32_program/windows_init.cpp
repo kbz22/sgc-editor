@@ -28,20 +28,25 @@ void win32_program::Run()
             Shortcut shortcut{ modifier, static_cast<uint32_t>(msg.wParam) };
             action::ActionType actionId = action::ActionType::Default;
 
-            if(programContext.activeSection != nullptr)
+            actionId = shortcutManager.GetActionForShortcut(
+                shortcut,
+                ShortcutContext::Global
+            );
+
+            if(actionId == action::ActionType::Default && programContext.mapSection != nullptr)
             {
                 actionId = shortcutManager.GetActionForShortcut(
                     shortcut,
                     ShortcutContext::MapEditor
                 );
-            }
-            else
-            {
-                actionId = shortcutManager.GetActionForShortcut(
-                    shortcut,
-                    ShortcutContext::Global
-                );
-            }            
+
+                if(actionId == action::ActionType::Default && programContext.mapSection->GetPaintMode() == editor_tools::PaintMode::Select) {
+                    actionId = shortcutManager.GetActionForShortcut(
+                        shortcut,
+                        ShortcutContext::MapEditorSelection
+                    );
+                }
+            }        
 
             if(actionId != action::ActionType::Default) {
                 programContext.actionManager->Execute(

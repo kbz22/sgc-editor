@@ -18,10 +18,10 @@ action::SelectionPasteAction::SelectionPasteAction()
     m_actionDescription.menuId = MenuId::Edit;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorSelectionPaste;
     m_actionDescription.nameStringId = locale::StringId::NameEditorSelectionPaste;
-    m_actionDescription.shortcutContext = program::ShortcutContext::MapEditorSelection;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditorSelection;
     m_actionDescription.shortcuts = {
-        {program::ShortcutModifier::Ctrl, 'V'},
-        {program::ShortcutModifier::Shift | program::ShortcutModifier::Insert, 0}
+        {win32_program::ShortcutModifier::Ctrl, 'V'},
+        {win32_program::ShortcutModifier::Shift, win32_program::ShortcutKey::Insert}
     };
 }
 
