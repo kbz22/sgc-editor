@@ -97,6 +97,17 @@ void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, [[maybe_unu
             break;
         }
 
+        case TVN_ITEMEXPANDED:
+        {
+            auto *item = reinterpret_cast<TreeListItem*>(nm->itemNew.lParam);
+            if (item != nullptr)
+            {
+                item->collapsed = (nm->action == TVE_COLLAPSE);
+            }
+            // UpdateTreeItem(*item);
+            break;
+        }
+
         default:
             break;
 
@@ -154,7 +165,7 @@ void sections::PackageSection::HandleSectionResize()
 
 void sections::PackageSection::UpdateTreeItem(TreeListItem &tli)
 {       
-    auto name = tli.file->IsDirty() ? L" *" + tli.listable->GetName() : tli.listable->GetName();
+    auto name = tli.listable->IsDirty() ? L" *" + tli.listable->GetName() : tli.listable->GetName();
     auto state = tli.treeItem == m_activeTreeItem ? TVIS_BOLD : 0;
 
     TVITEM item{};
@@ -164,7 +175,8 @@ void sections::PackageSection::UpdateTreeItem(TreeListItem &tli)
     item.stateMask = TVIS_BOLD;
     item.state = state;
 
-    TreeView_SetItem(m_packageTreeViewHandle, &item);    
+    TreeView_SetItem(m_packageTreeViewHandle, &item);
+    TreeView_Expand(m_packageTreeViewHandle, tli.treeItem, tli.collapsed ? TVE_COLLAPSE : TVE_EXPAND);
 }
 
 void sections::PackageSection::SetTreeItemActive(TreeListItem &tli)
@@ -190,14 +202,15 @@ void sections::PackageSection::UpdateTreeViewItems(program::ProgramContext& prog
 
 void sections::PackageSection::Refresh(program::ProgramContext& programContext)
 {
-    auto addItem = [this](file::IFile *file, file::ITreeViewListable *listable, HTREEITEM hParent = TVI_ROOT, size_t index = 0) -> TreeListItem*
+    auto addItem = [this](file::IFile *file, file::ITreeViewListable *listable, HTREEITEM hParent = TVI_ROOT, size_t index = 0, bool collapsed = true) -> TreeListItem*
     {
         m_treeListItems.push_back(std::make_unique<TreeListItem>(
             TreeListItem{
                 listable,
                 file,
                 nullptr,
-                index
+                index,
+                collapsed
             }
         ));
 
@@ -223,6 +236,8 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
     };
 
     TreeView_DeleteAllItems(m_packageTreeViewHandle);
+    // m_treeListItems.clear();
+    auto oldTreeListItems = std::move(m_treeListItems);
     m_treeListItems.clear();
 
     auto allFiles = programContext.fileManager->GetOpenFiles();    
@@ -230,11 +245,24 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
     for(auto file : allFiles) 
     {
         size_t index = 0;
-        auto root = TVI_ROOT;        
+        auto root = TVI_ROOT;
 
-        if(file->IsContainer()) {
-            auto tli = addItem(file, dynamic_cast<file::ITreeViewListable*>(file), TVI_ROOT, index++);
-            root = tli->treeItem;
+        if(file->IsContainer())         
+        {
+            bool collapsed = false;
+
+            for(auto &oldFile : oldTreeListItems) 
+            {
+                if(oldFile->file == file) 
+                {
+                    collapsed = oldFile->collapsed;
+                    oldTreeListItems.erase(std::remove(oldTreeListItems.begin(), oldTreeListItems.end(), oldFile), oldTreeListItems.end());
+                    break;
+                }
+            }
+
+            auto tli = addItem(file, dynamic_cast<file::ITreeViewListable*>(file), TVI_ROOT, index++, collapsed);
+            root = tli->treeItem;            
         }
 
         for(auto mapDoc : file->GetMapDocuments()) 
@@ -249,7 +277,9 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
             addItem(file, listable, root, index++);
         }
 
-    }    
+    }
+
+    UpdateTreeViewItems(programContext);
     
     return;
 }

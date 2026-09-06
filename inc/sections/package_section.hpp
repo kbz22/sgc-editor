@@ -26,6 +26,7 @@ namespace sections {
         file::IFile* file;
         HTREEITEM treeItem;
         size_t inFileIndex = 0;
+        bool collapsed = false;
     };
 
     class PackageSection : public Section

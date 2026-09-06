@@ -140,6 +140,7 @@ void file::PackageFile::Open()
         ));
     }
 
+    m_fileAdded = false;
 }
 
 void file::PackageFile::Save()
@@ -202,6 +203,8 @@ void file::PackageFile::Save()
         outFile.write(reinterpret_cast<char*>(packageData.data()), packageData.size());
         outFile.close();
     }
+
+    m_fileAdded = false;
 
     return;
 }
