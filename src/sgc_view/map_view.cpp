@@ -207,7 +207,7 @@ void sgc_view::MapView::RenderToImage(std::filesystem::path outputPath)
     sdl::RenderAsImage(
         outputPath,
         m_renderContext,
-        [this](graphics::RenderContext const& context) {
+        [this]([[maybe_unused]] graphics::RenderContext const& context) {
             SgcView::Clear();
 
             for(auto [layerIndex, layer] : *m_mapLayers) {

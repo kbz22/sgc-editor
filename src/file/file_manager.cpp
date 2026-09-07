@@ -97,6 +97,7 @@ file::TilesetDocument file::FileManager::NewTilesetDocument(std::wstring name, s
 void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocument*> mapDocuments, std::vector<TilesetDocument*> tilesetDocuments, AssetManager &assetManager)
 {
     auto newFile = std::make_unique<file::PackageFile>(name, assetManager);
+    auto topDoc = mapDocuments.empty() ? nullptr : mapDocuments.front();
 
     for(auto mapDoc : mapDocuments) {
         newFile->AddMapDocument(std::unique_ptr<MapDocument>(mapDoc));
@@ -106,6 +107,10 @@ void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocumen
     }
 
     newFile->RegisterOnSetDirtyCallback(m_onMapDirtyCallback);
+    if(topDoc != nullptr) {        
+        SetActiveDocument({newFile.get(), 0});
+    }    
+
     m_openFiles.push_back(std::move(newFile));
 
     m_onFileUpdatedCallback(nullptr);
@@ -121,7 +126,7 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
     if(extension == defaults::MapFileExtension.data())
     {
         auto newFile = std::make_unique<MapFile>();
-        auto newFilePtr = newFile.get();
+        // auto newFilePtr = newFile.get();
         newFile->SetFilePath(filePath);
         newFile->Open();
 
@@ -155,6 +160,14 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
         newFile->SetFilePath(filePath);
         newFile->Open();
         newFile->RegisterOnSetDirtyCallback(m_onMapDirtyCallback);
+
+        auto mapDocuments = newFile->GetMapDocuments();
+
+        if(!mapDocuments.empty()) {
+            openedDoc.file = newFile.get();
+            openedDoc.index = 0;
+            SetActiveDocument(openedDoc);
+        }
 
         m_openFiles.push_back(std::move(newFile));        
         m_onFileUpdatedCallback(m_openFiles.back().get());        
@@ -212,7 +225,7 @@ void file::FileManager::SelectDocument(const DocumentLocation &document)
         return;
     }
 
-    auto mapDoc = document.file->GetMapDocument(document.index);
+    /* auto mapDoc = document.file->GetMapDocument(document.index);
     auto tilesetDoc = document.file->GetTilesetDocument(document.index);
 
     if(mapDoc) {
@@ -220,6 +233,16 @@ void file::FileManager::SelectDocument(const DocumentLocation &document)
         m_selectedDocument.index = document.index;
     }
     else if(tilesetDoc) {
+        m_selectedDocument.file = document.file;
+        m_selectedDocument.index = document.index;
+    }
+    else {
+        clearSelection();
+    } */
+
+    auto doc = document.file->GetDocument(document.index);
+
+    if(doc) {
         m_selectedDocument.file = document.file;
         m_selectedDocument.index = document.index;
     }
@@ -243,9 +266,9 @@ void file::FileManager::SetActiveDocument(const DocumentLocation &document)
     }
     else
     {
-        auto doc = document.file->GetMapDocument(document.index);
+        auto doc = document.file->GetDocument(document.index);
 
-        if(!doc) 
+        if(!doc || !doc.value()->IsActivable())
         {
             clearActive();
         }
@@ -263,11 +286,23 @@ file::MapDocument* file::FileManager::GetActiveDocument() const
 {
     if(m_activeDocument.file != nullptr) 
     {
-        auto docs = m_activeDocument.file->GetMapDocuments();
+        auto docs = m_activeDocument.file->GetDocuments();
 
-        if(!docs.empty()) {
-            return docs[m_activeDocument.index];
+        try
+        {
+            auto mapDoc = dynamic_cast<MapDocument*>(docs[m_activeDocument.index]);
+            if(mapDoc != nullptr) {
+                return mapDoc;
+            }
         }
+        catch([[maybe_unused]]const std::bad_cast& e)
+        {
+            return nullptr;
+        }
+
+        /* if(!docs.empty()) {
+            return docs[m_activeDocument.index];
+        } */
     }    
 
     return nullptr;

@@ -134,7 +134,9 @@ add_executable(sgc-editor WIN32
     src/file/tileset_file.cpp
     src/file/tileset_document.cpp
     src/file/package_file.cpp
-    # src/file/document_serializer.cpp    
+    # src/file/document_serializer.cpp
+    src/file/package_document.cpp
+
 
     src/editor_tools/brush.cpp
     src/editor_tools/paint_modes.cpp

@@ -2,6 +2,7 @@
 
 #include "file/map_document.hpp"
 #include "file/tileset_document.hpp"
+#include "file/idocument.hpp"
 #include <string>
 #include <span>
 #include <filesystem>
@@ -40,6 +41,8 @@ namespace file {
             virtual std::optional<MapDocument*> GetMapDocument(size_t index) = 0;
             virtual std::vector<TilesetDocument*> GetTilesetDocuments() = 0;
             virtual std::optional<TilesetDocument*> GetTilesetDocument(size_t index) = 0;
+            virtual std::vector<IDocument*> GetDocuments() = 0;
+            virtual std::optional<IDocument*> GetDocument(size_t index) = 0;
     };
 
 }

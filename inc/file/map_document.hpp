@@ -2,6 +2,7 @@
 
 #include "program/layer_manager.hpp"
 #include "file/itreeviewlistable.hpp"
+#include "file/idocument.hpp"
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/data/itilestorage.hpp>
 #include <sgc/data/asset.hpp>
@@ -12,7 +13,7 @@
 
 namespace file {
 
-    class MapDocument : public ITreeViewListable
+    class MapDocument : public ITreeViewListable, public IDocument
     {
         private:
             std::unique_ptr<program::LayerManager> m_layerManager{nullptr};

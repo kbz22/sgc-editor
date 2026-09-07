@@ -241,6 +241,29 @@ std::optional<file::TilesetDocument*> file::TilesetFile::GetTilesetDocument(size
     }
 }
 
+std::vector<file::IDocument*> file::TilesetFile::GetDocuments()
+{
+    std::vector<IDocument*> documents{};
+    if (m_tilesetDocument) {
+        documents.push_back(
+            reinterpret_cast<IDocument*>(m_tilesetDocument.get())
+        );
+    }
+    return documents;
+}
+
+std::optional<file::IDocument*> file::TilesetFile::GetDocument(size_t index)
+{
+    if (m_tilesetDocument && index == 0)
+    {
+        return reinterpret_cast<IDocument*>(m_tilesetDocument.get());
+    }
+    else 
+    {
+        return std::nullopt;
+    }
+}
+
 file::FileType file::TilesetFile::GetFileType() const
 {
     return FileType::Tileset;

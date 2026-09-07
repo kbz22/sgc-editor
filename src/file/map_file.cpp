@@ -215,6 +215,29 @@ std::optional<file::TilesetDocument*> file::MapFile::GetTilesetDocument([[maybe_
     return std::nullopt;
 }
 
+std::vector<file::IDocument*> file::MapFile::GetDocuments()
+{
+    if (m_document) {
+        return std::vector<IDocument*>{
+            reinterpret_cast<IDocument*>(m_document.get())
+        };
+    } else {
+        return std::vector<IDocument*>{};
+    }
+}
+
+std::optional<file::IDocument*> file::MapFile::GetDocument(size_t index)
+{
+    if (m_document && index == 0) 
+    {
+        return reinterpret_cast<IDocument*>(m_document.get());
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
 void file::MapFile::RegisterOnSetDirtyCallback(std::function<void(MapDocument*, bool)> callback)
 {
     if (m_document) {

@@ -1,4 +1,5 @@
 #include "file/package_file.hpp"
+#include "file/package_document.hpp"
 #include "program/except.hpp"
 #include "sgc_extension/asset_builder.hpp"
 #include "sgc_extension/asset_serializer.hpp"
@@ -17,17 +18,27 @@ file::PackageFile::PackageFile(std::wstring name, AssetManager& assetManager) :
     m_name(std::move(name)),
     m_assetManager(assetManager)
 {
+    auto packageDocument = std::make_unique<PackageDocument>(*this);
+    m_documents.push_back(std::move(packageDocument));
 }
 
 void file::PackageFile::AddMapDocument(std::unique_ptr<MapDocument> mapDocument)
-{
-    m_mapDocuments.push_back(std::move(mapDocument));
+{    
+    m_mapDocuments.push_back(mapDocument.get());
+
+    std::unique_ptr<IDocument> doc = std::move(mapDocument);    
+    m_documents.push_back(std::move(doc));
+
     m_fileAdded = true;
 }
 
 void file::PackageFile::AddTilesetDocument(std::unique_ptr<TilesetDocument> tilesetDocument)
 {
-    m_tilesetDocuments.push_back(std::move(tilesetDocument));
+    m_tilesetDocuments.push_back(tilesetDocument.get());
+
+    std::unique_ptr<IDocument> doc = std::move(tilesetDocument);
+    m_documents.push_back(std::move(doc));
+    
     m_fileAdded = true;
 }
 
@@ -280,36 +291,56 @@ void file::PackageFile::SetFilePath(const std::filesystem::path& path)
 
 std::vector<file::MapDocument*> file::PackageFile::GetMapDocuments()
 {
-    std::vector<MapDocument*> mapDocs{};
+    /* std::vector<MapDocument*> mapDocs{};
     for(const auto& doc : m_mapDocuments) {
         mapDocs.push_back(doc.get());
     }
-    return mapDocs;
+    return mapDocs; */
+    return m_mapDocuments;
 }
 
 std::optional<file::MapDocument*> file::PackageFile::GetMapDocument(size_t index)
-{    
+{
     if(index < m_mapDocuments.size() && index >= 0) {
-        return m_mapDocuments[index].get();
+        return m_mapDocuments[index];
     }
     return std::nullopt;
 }
 
 std::vector<file::TilesetDocument*> file::PackageFile::GetTilesetDocuments()
 {
-    std::vector<TilesetDocument*> tilesetDocs{};
+    /* std::vector<TilesetDocument*> tilesetDocs{};
     for(const auto& doc : m_tilesetDocuments) {
         tilesetDocs.push_back(doc.get());
     }
-    return tilesetDocs;
+    return tilesetDocs; */
+    return m_tilesetDocuments;
 }
 
 std::optional<file::TilesetDocument*> file::PackageFile::GetTilesetDocument(size_t index)
 {
-    index -= m_mapDocuments.size(); // Adjust index to account for map documents and the package file itself
+    // index -= m_mapDocuments.size(); // Adjust index to account for map documents and the package file itself
+    // I'm refactoring this out and using generic interface for global indexes now, which makes sense not sure why I decided not to do that from the get-go
     if(index < m_tilesetDocuments.size() && index >= 0) {
-        return m_tilesetDocuments[index].get();
+        return m_tilesetDocuments[index];
     }
+    return std::nullopt;
+}
+
+std::vector<file::IDocument*> file::PackageFile::GetDocuments()
+{
+    std::vector<IDocument*> documents{};
+    for(auto &doc : m_documents) {
+        documents.push_back(doc.get());
+    }
+    return documents;
+}
+
+std::optional<file::IDocument*> file::PackageFile::GetDocument(size_t index)
+{
+    if(index < m_documents.size() && index >= 0) {
+        return m_documents[index].get();
+    }    
     return std::nullopt;
 }
 

@@ -14,8 +14,9 @@ namespace file {
         private:
             std::filesystem::path m_filePath{};
             std::wstring m_name{};
-            std::vector<std::unique_ptr<MapDocument>> m_mapDocuments{};
-            std::vector<std::unique_ptr<TilesetDocument>> m_tilesetDocuments{};
+            std::vector<std::unique_ptr<IDocument>> m_documents{};
+            std::vector<MapDocument*> m_mapDocuments{};
+            std::vector<TilesetDocument*> m_tilesetDocuments{};
             file::AssetManager& m_assetManager;            
             bool m_fileAdded{false};
 
@@ -47,6 +48,8 @@ namespace file {
             std::optional<MapDocument*> GetMapDocument(size_t index) override;
             std::vector<TilesetDocument*> GetTilesetDocuments() override;
             std::optional<TilesetDocument*> GetTilesetDocument(size_t index) override;
+            std::vector<IDocument*> GetDocuments() override;
+            std::optional<IDocument*> GetDocument(size_t index) override;
 
             const std::wstring& GetName() const override;
 

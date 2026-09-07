@@ -1,12 +1,13 @@
 #pragma once
 
 #include "file/itreeviewlistable.hpp"
+#include "file/idocument.hpp"
 #include <sgc/data/asset.hpp>
 
 namespace file {
 
-    class TilesetDocument : public ITreeViewListable{
-
+    class TilesetDocument : public ITreeViewListable, public IDocument 
+    {
         private:
             std::wstring name;
             sgc::data::AssetId m_tilesetId{0};

@@ -243,29 +243,38 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
     auto allFiles = programContext.fileManager->GetOpenFiles();    
 
     for(auto file : allFiles) 
-    {
+    {        
         size_t index = 0;
         auto root = TVI_ROOT;
+        auto docs = file->GetDocuments();
 
-        if(file->IsContainer())         
+        for(auto &doc : docs)
         {
-            bool collapsed = false;
-
-            for(auto &oldFile : oldTreeListItems) 
+            if(doc->IsContainer())
             {
-                if(oldFile->file == file) 
-                {
-                    collapsed = oldFile->collapsed;
-                    oldTreeListItems.erase(std::remove(oldTreeListItems.begin(), oldTreeListItems.end(), oldFile), oldTreeListItems.end());
-                    break;
-                }
-            }
+                bool collapsed = false;
 
-            auto tli = addItem(file, dynamic_cast<file::ITreeViewListable*>(file), TVI_ROOT, index++, collapsed);
-            root = tli->treeItem;            
+                for(auto &oldFile : oldTreeListItems) 
+                {
+                    if(oldFile->file == file) 
+                    {
+                        collapsed = oldFile->collapsed;
+                        oldTreeListItems.erase(std::remove(oldTreeListItems.begin(), oldTreeListItems.end(), oldFile), oldTreeListItems.end());
+                        break;
+                    }
+                }
+
+                auto tli = addItem(file, dynamic_cast<file::ITreeViewListable*>(file), TVI_ROOT, index++, collapsed);
+                root = tli->treeItem;
+            }
+            else
+            {
+                addItem(file, dynamic_cast<file::ITreeViewListable*>(doc), root, index++);
+            }
         }
 
-        for(auto mapDoc : file->GetMapDocuments()) 
+        //! use GetDocuments()
+        /* for(auto mapDoc : file->GetMapDocuments()) 
         {
             auto listable = reinterpret_cast<file::ITreeViewListable*>(mapDoc);
             addItem(file, listable, root, index++);
@@ -275,7 +284,7 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
         {
             auto listable = reinterpret_cast<file::ITreeViewListable*>(tilesetDoc);
             addItem(file, listable, root, index++);
-        }
+        } */
 
     }
 

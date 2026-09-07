@@ -40,6 +40,8 @@ namespace file {
             std::optional<MapDocument*> GetMapDocument(size_t index) override;
             std::vector<TilesetDocument*> GetTilesetDocuments() override;
             std::optional<TilesetDocument*> GetTilesetDocument(size_t index) override;
+            std::vector<IDocument*> GetDocuments() override;
+            std::optional<IDocument*> GetDocument(size_t index) override;
 
             friend class FileManager;
     };

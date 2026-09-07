@@ -182,10 +182,11 @@ void program::StartDefault()
             return;
         }
         
-        if(file->IsContainer())
+        // I'm making this the Package's responsibility
+        /* if(file->IsContainer())
         {
             location.index -= 1;
-        }
+        } */
 
         fileManager->SetActiveDocument(location);
 
@@ -233,7 +234,7 @@ void program::StartDefault()
         RefreshEditor();
     });
 
-    programContext.fileManager->RegisterOnMapDirtyCallback([&programContext](file::MapDocument* document, bool dirty) 
+    programContext.fileManager->RegisterOnMapDirtyCallback([&programContext]([[maybe_unused]]file::MapDocument* document, [[maybe_unused]]bool dirty) 
     {
         programContext.packageSection->UpdateTreeViewItems(programContext);
         programContext.packageSection->Update();
