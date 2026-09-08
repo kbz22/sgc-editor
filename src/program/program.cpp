@@ -41,6 +41,7 @@
 #include "action/export_file_action.hpp"
 #include "action/export_image_action.hpp"
 #include "action/new_package_action.hpp"
+#include "action/change_active_layer_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -354,6 +355,10 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::SaveAsAction>());
     auto exportAction = programContext.actionManager->Register(std::make_unique<action::ExportFileAction>());
     auto exportImageAction = programContext.actionManager->Register(std::make_unique<action::ExportImageAction>());
+    programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Up));
+    programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Down));
+    programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Top));
+    programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Bottom));
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

@@ -14,6 +14,9 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
             m_actionDescription.imageIndex = 16;
             m_actionDescription.toolbarOrder = 1300;
             m_actionDescription.menuOrder = 501;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::None, 'X' }
+            };
             break;
 
         case program::EditorChunkMode::DynamicChunks:
@@ -23,6 +26,9 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
             m_actionDescription.imageIndex = 15;
             m_actionDescription.toolbarOrder = 1400;
             m_actionDescription.menuOrder = 502;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::None, 'C' }
+            };
             break;
     }
     
@@ -32,6 +38,7 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
     m_actionDescription.checkGroupItem = true;
     m_actionDescription.groupId = GroupId::EditorChunkMode;
     m_actionDescription.menuId = MenuId::Map;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditor;
 }
 
 void action::ChangeChunkModeAction::Execute(program::ProgramContext& context)

@@ -95,6 +95,11 @@ namespace locale
         NameExportAsPackage,
         NameExportAsMapFile,
 
+        NameChangeLayerUp,
+        NameChangeLayerDown,
+        NameChangeLayerTop,
+        NameChangeLayerBottom,
+
         NameTilesetFile,
         NamePackageFile,
         NameMapFile,

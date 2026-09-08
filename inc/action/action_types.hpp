@@ -62,6 +62,11 @@ namespace action {
 
         MenuHelp = 5001,
         HelpAbout,
-        HelpGithubHyperlink
+        HelpGithubHyperlink,
+
+        ChangeActiveLayerUp = 6001,
+        ChangeActiveLayerDown,
+        ChangeActiveLayerTop,
+        ChangeActiveLayerBottom
     };
 }

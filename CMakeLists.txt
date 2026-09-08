@@ -126,6 +126,7 @@ add_executable(sgc-editor WIN32
     src/action/export_file_action.cpp
     src/action/export_image_action.cpp
     src/action/new_package_action.cpp
+    src/action/change_active_layer_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
