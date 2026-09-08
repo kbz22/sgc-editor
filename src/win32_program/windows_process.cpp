@@ -98,7 +98,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
         RegisterActions();        
         
-        INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };    
+        INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES };    
         InitCommonControlsEx(&icc);
 
         StartDefault();

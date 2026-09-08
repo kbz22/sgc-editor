@@ -108,6 +108,9 @@ namespace locale
         NamePackageFile,
         NameMapFile,
         NameAllFiles,
-        NameImageFile
+        NameImageFile,
+
+        SettingsNameGeneral,
+        SettingsNameShortcuts,
     };
 }

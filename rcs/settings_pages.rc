@@ -1,0 +1,18 @@
+#include "settings_dialog.h"
+#include <windows.h>
+
+IDD_SETTINGS_GENERAL DIALOGEX SETTINGS_LIST_WIDTH + 10, 0, PAGE_WIDTH, PAGE_HEIGHT
+STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
+FONT 9, "Segoe UI"
+BEGIN
+    LTEXT           "General", 0,
+                    5, 5, 100, 12
+END
+
+IDD_SETTINGS_SHORTCUTS DIALOGEX SETTINGS_LIST_WIDTH + 10, 0, PAGE_WIDTH, PAGE_HEIGHT
+STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
+FONT 9, "Segoe UI"
+BEGIN
+    LTEXT           "Shortcuts", 0,
+                    5, 5, 100, 12
+END

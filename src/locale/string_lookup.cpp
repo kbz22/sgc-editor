@@ -101,6 +101,9 @@ locale::StringLookup::StringLookup()
         {StringId::NameAllFiles, L"All files"},
         {StringId::NamePackageFile, L"Package file"},
 
+        {StringId::SettingsNameGeneral, L"General"},
+        {StringId::SettingsNameShortcuts, L"Shortcuts"},
+
         {StringId::TextMissing, L"Text missing"}
     };
 }

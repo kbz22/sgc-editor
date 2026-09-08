@@ -88,8 +88,7 @@ void sections::PackageSection::TreeViewNotifyHandler(NMTREEVIEW* nm, [[maybe_unu
         {
             getItemAndCallback(FileAction::ItemSelected);
             break;
-        }
-        
+        }        
 
         case NM_DBLCLK:
         {

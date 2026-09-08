@@ -19,6 +19,7 @@
 
 #include "win32_program/win32_context.hpp"
 #include "win32_program/shortcut_manager.hpp"
+#include "win32_program/settings_manager.hpp"
 #include "file/map_document.hpp"
 #include "file/asset_manager.hpp"
 #include "program/editor_mode.hpp"
@@ -52,6 +53,7 @@ namespace program {
         std::unique_ptr<action::ActionManager> actionManager{};
         std::unique_ptr<file::AssetManager> assetManager{};
         std::unique_ptr<win32_program::ShortcutManager> shortcutManager{};
+        std::unique_ptr<win32_program::SettingsManager> settingsManager{};
 
         HIMAGELIST toolbarIcons;
         HIMAGELIST toolbarIconsDisabled;

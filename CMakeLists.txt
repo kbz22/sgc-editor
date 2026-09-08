@@ -50,7 +50,8 @@ add_executable(sgc-editor WIN32
     src/win32_program/windows_process.cpp
     src/win32_program/layout_manager.cpp
     src/win32_program/shortcut_manager.cpp
-    src/win32_program/map_selection_serializer.cpp   
+    src/win32_program/map_selection_serializer.cpp
+    src/win32_program/settings_manager.cpp
 
     src/program/program.cpp
     src/program/layer_manager.cpp
@@ -76,6 +77,7 @@ add_executable(sgc-editor WIN32
     rcs/editor_graphics.rc
     rcs/new_package_dialog.rc
     rcs/settings_dialog.rc
+    rcs/settings_pages.rc
 
     src/debug.cpp
 
@@ -129,6 +131,7 @@ add_executable(sgc-editor WIN32
     src/action/new_package_action.cpp
     src/action/change_active_layer_action.cpp
     src/action/settings_action.cpp
+    src/action/settings_pages_processes.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
@@ -139,7 +142,6 @@ add_executable(sgc-editor WIN32
     src/file/package_file.cpp
     # src/file/document_serializer.cpp
     src/file/package_document.cpp
-
 
     src/editor_tools/brush.cpp
     src/editor_tools/paint_modes.cpp

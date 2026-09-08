@@ -98,6 +98,7 @@ void program::StartDefault()
         programContext.mainWindowContext->hInstance,
         programContext.mainWindowContext->hMainWindow
     );
+    programContext.settingsManager = std::make_unique<win32_program::SettingsManager>();
 
     programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 
