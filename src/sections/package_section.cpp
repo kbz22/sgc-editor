@@ -29,7 +29,7 @@ sections::PackageSection::PackageSection(program::ProgramContext& programContext
 
     TreeView_SetImageList(
         m_packageTreeViewHandle,
-        programContext.packageViewFileIcons,
+        programContext.listViewIcons,
         TVSIL_NORMAL
     );
 

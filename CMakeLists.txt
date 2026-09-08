@@ -75,6 +75,7 @@ add_executable(sgc-editor WIN32
     rcs/new_tileset_dialog.rc
     rcs/editor_graphics.rc
     rcs/new_package_dialog.rc
+    rcs/settings_dialog.rc
 
     src/debug.cpp
 
@@ -127,6 +128,7 @@ add_executable(sgc-editor WIN32
     src/action/export_image_action.cpp
     src/action/new_package_action.cpp
     src/action/change_active_layer_action.cpp
+    src/action/settings_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp

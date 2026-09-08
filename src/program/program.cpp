@@ -42,6 +42,7 @@
 #include "action/export_image_action.hpp"
 #include "action/new_package_action.hpp"
 #include "action/change_active_layer_action.hpp"
+#include "action/settings_action.hpp"
 #include "defaults.hpp"
 
 program::ProgramContext& program::GetProgramContext()
@@ -359,6 +360,7 @@ void program::RegisterActions()
     programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Down));
     programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Top));
     programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Bottom));
+    programContext.actionManager->Register(std::make_unique<action::SettingsAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

@@ -18,6 +18,7 @@ namespace action {
         ExportAsImage,
         ExportAsPackage,
         CloseFile,
+        Settings,
 
         MenuEdit = 2001,
         Undo,

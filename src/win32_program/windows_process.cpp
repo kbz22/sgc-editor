@@ -53,7 +53,7 @@ void SetupImageLists()
 
     programContext.toolbarIcons = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
     programContext.toolbarIconsDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
-    programContext.packageViewFileIcons = ImageList_Create(16, 16, ILC_COLOR32, 10, 0);
+    programContext.listViewIcons = ImageList_Create(16, 16, ILC_COLOR32, 10, 0);
 
     auto hInstance = programContext.mainWindowContext->hInstance;
     auto hBmp = win32_helpers::LoadBitmapFromResource(
@@ -66,12 +66,13 @@ void SetupImageLists()
     );
     auto hBmpPackageIcons = win32_helpers::LoadBitmapFromResource(
         hInstance,
-        IDB_PACKAGEVIEWICONS
+        // IDB_PACKAGEVIEWICONS
+        IDB_LISTVIEWICONS
     );
 
     ImageList_Add(programContext.toolbarIcons, hBmp, NULL);
     ImageList_Add(programContext.toolbarIconsDisabled, hBmpDisabled, NULL);
-    ImageList_Add(programContext.packageViewFileIcons, hBmpPackageIcons, NULL);
+    ImageList_Add(programContext.listViewIcons, hBmpPackageIcons, NULL);
 }
 
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

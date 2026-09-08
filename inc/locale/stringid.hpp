@@ -42,7 +42,8 @@ namespace locale
         TooltipEditorSelectionCopy,
         TooltipEditorSelectionPaste,
         TooltipEditorSelectionClear,
-        TooltipEditorSelectionMove,        
+        TooltipEditorSelectionMove,
+        TooltipSettings,
 
         NameFile,
         NameEdit,
@@ -94,6 +95,9 @@ namespace locale
         NameExportAsImage,
         NameExportAsPackage,
         NameExportAsMapFile,
+        NameSettings,
+        NameHelpAbout,
+        NameHelpGithub,
 
         NameChangeLayerUp,
         NameChangeLayerDown,

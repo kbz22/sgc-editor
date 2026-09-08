@@ -39,6 +39,7 @@ locale::StringLookup::StringLookup()
         {StringId::TooltipEditorSelectionPaste, L"Paste selection"},
         {StringId::TooltipEditorSelectionClear, L"Clear selection"},
         {StringId::TooltipEditorSelectionMove, L"Move selection"},
+        {StringId::TooltipSettings, L"Settings"},        
 
         {StringId::NameFile, L"File"},
         {StringId::NameEdit, L"Edit"},
@@ -90,6 +91,9 @@ locale::StringLookup::StringLookup()
         {StringId::NameExportAsPackage, L"Package"},
         {StringId::NameExportAsMapFile, L"Map file"},
         {StringId::NameNewPackage, L"Package"},
+        {StringId::NameSettings, L"Settings"},
+        {StringId::NameHelpAbout, L"About"},
+        {StringId::NameHelpGithub, L"Github repository"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},

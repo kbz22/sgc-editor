@@ -1,0 +1,6 @@
+#pragma once
+
+#define IDD_SETTINGS 24000
+
+#define IDC_SETTINGS_LIST 24001
+#define IDC_APPLY_BUTTON 24002
