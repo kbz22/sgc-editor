@@ -21,7 +21,11 @@ namespace win32_program {
         Alt = VK_MENU,
         Shift = VK_SHIFT,
         Delete = VK_DELETE,
-        Insert = VK_INSERT,        
+        Insert = VK_INSERT,
+        Home = VK_HOME,
+        End = VK_END,
+        PageUp = VK_PRIOR,
+        PageDown = VK_NEXT,
     };
 
     enum class ShortcutContext : uint32_t

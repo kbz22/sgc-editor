@@ -530,12 +530,35 @@ void sections::MapSection::SetCheckTileBeforePainting(bool check)
 
 void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
 {
-    m_brush.SetPaintMode(paintMode);
+    m_brush.SetPaintMode(paintMode);    
 }
 
 void sections::MapSection::SetEraseMode(editor_tools::EraserMode eraserMode)
 {
     m_brush.SetEraserMode(eraserMode);
+
+    switch(m_brush.GetEraserMode())
+    {
+        case editor_tools::EraserMode::None:
+        {
+            m_mapView->SetCursorMode(sgc_view::CursorTileMode::Default);
+            break;
+        }
+
+        case editor_tools::EraserMode::DeleteChunk:
+        {
+            m_mapView->SetCursorMode(sgc_view::CursorTileMode::RemoveChunk);
+            break;
+        }
+
+        case editor_tools::EraserMode::ClearTile:
+        {
+            m_mapView->SetCursorMode(sgc_view::CursorTileMode::RemoveTile);
+            break;
+        }
+    }
+
+    Update();
 }
 
 void sections::MapSection::SetSelectionMode(editor_tools::SelectionMode selectionMode)

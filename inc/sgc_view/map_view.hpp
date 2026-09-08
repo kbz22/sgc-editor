@@ -19,10 +19,18 @@ namespace sgc_view
 {
     using namespace sgc;
 
+    enum class CursorTileMode {
+        Invisible,
+        Default,
+        RemoveTile,
+        RemoveChunk
+    };
+
     class MapView : public SgcView
     {
         private:
             std::unique_ptr<graphics::Rectangle> m_cursorTile;
+            CursorTileMode m_cursorTileMode = CursorTileMode::Default;
             std::shared_ptr<graphics::MarchingAntsRectangle> m_marchingAntsRectangleOnMap;
             std::shared_ptr<graphics::DrawableLayers> m_mapLayers;
             std::shared_ptr<graphics::DrawableLayers> m_selectionLayers;
@@ -58,7 +66,8 @@ namespace sgc_view
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
             void SetSelectionPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetSelectionSizeInPixels(sgc::graphics::PixelSize2D size);
-            void SetCameraPositionSingles(float x, float y);            
+            void SetCameraPositionSingles(float x, float y);
+            void SetCursorMode(CursorTileMode mode);            
 
             void ChangeCameraPositionSingles(float deltaX, float deltaY);
             void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);

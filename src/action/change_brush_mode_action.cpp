@@ -14,6 +14,9 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.imageIndex = 19;
             m_actionDescription.toolbarOrder = 1500;
             m_actionDescription.menuOrder = 800;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::None, 'B' }
+            };
             break;
 
         case editor_tools::PaintMode::Rectangle:
@@ -23,6 +26,9 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.imageIndex = 20;
             m_actionDescription.toolbarOrder = 1600;
             m_actionDescription.menuOrder = 810;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::None, 'R' }
+            };
             break;
 
         case editor_tools::PaintMode::Fill:
@@ -32,6 +38,9 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.imageIndex = 22;
             m_actionDescription.toolbarOrder = 1700;
             m_actionDescription.menuOrder = 820;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::None, 'F' }
+            };
             break;
 
         case editor_tools::PaintMode::Select:
@@ -41,6 +50,9 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.imageIndex = 24;
             m_actionDescription.toolbarOrder = 1800;
             m_actionDescription.menuOrder = 830;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::None, 'S' }
+            };
             break;
     }
 
@@ -50,6 +62,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
     m_actionDescription.checkGroupItem = true;
     m_actionDescription.groupId = GroupId::BrushMode;
     m_actionDescription.menuId = MenuId::Edit;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditor;
 }
 
 void action::ChangeBrushModeAction::Execute([[maybe_unused]] program::ProgramContext& context)

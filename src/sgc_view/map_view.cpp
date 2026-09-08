@@ -7,6 +7,7 @@
 #include <chrono>
 
 #include <sgc/graphics/drawablecontainer.hpp>
+#include <sgc/math/value.hpp>
 
 sgc_view::MapView::MapView(HWND hwnd) :
     SgcView(hwnd),
@@ -138,7 +139,7 @@ void sgc_view::MapView::SetCursorTile(sgc::graphics::PixelSize2D size)
         size.x,
         size.y
     });
-    m_cursorTile->SetColor({ 255, 255, 255, 64 });
+    // m_cursorTile->SetColor({ 255, 255, 255, 64 });
 }
 
 void sgc_view::MapView::ResetCursorTile()
@@ -195,7 +196,7 @@ void sgc_view::MapView::Render()
         m_marchingAntsRectangleOnMap->Draw(m_renderContext);
     }
 
-    if(m_cursorTile != nullptr) {
+    if(m_cursorTileMode != CursorTileMode::Invisible && m_cursorTile != nullptr) {
         m_cursorTile->Draw(m_renderContext);
     }
 
@@ -307,6 +308,21 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
 void sgc_view::MapView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position)
 {
+    switch(m_cursorTileMode) 
+    {
+        default:
+        {            
+            break;
+        }
+
+        case CursorTileMode::RemoveChunk:        
+        {
+            position.x = sgc::math::FloorDiv(position.x, (sgc::data::TileChunk::Size * m_tileWidth)) * (sgc::data::TileChunk::Size * m_tileWidth);
+            position.y = sgc::math::FloorDiv(position.y, (sgc::data::TileChunk::Size * m_tileHeight)) * (sgc::data::TileChunk::Size * m_tileHeight);
+            break;
+        }
+    }
+
     m_cursorTile->SetPosition({
         position.x,
         position.y
@@ -320,6 +336,21 @@ void sgc_view::MapView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D
 
 void sgc_view::MapView::SetCursorSizeInPixels(sgc::graphics::PixelSize2D size)
 {
+    switch(m_cursorTileMode) 
+    {
+        default:
+        {            
+            break;
+        }
+
+        case CursorTileMode::RemoveChunk:        
+        {
+            size.x = sgc::data::TileChunk::Size * m_tileWidth;
+            size.y = sgc::data::TileChunk::Size * m_tileHeight;
+            break;
+        }
+    }
+
     m_cursorTile->SetSize({
         size.x,
         size.y
@@ -399,6 +430,30 @@ void sgc_view::MapView::SetCameraPositionSingles(float x, float y)
     m_renderContext.view.camera.x = x;
     m_renderContext.view.camera.y = y;
     UpdateGridPosition(m_renderContext.view.camera);
+}
+
+void sgc_view::MapView::SetCursorMode(CursorTileMode mode)
+{
+    m_cursorTileMode = mode;
+
+    switch(mode) 
+    {
+        default:
+        {
+            m_cursorTile->SetColor({ 255, 255, 255, 255 });
+            break;
+        }
+
+        case CursorTileMode::RemoveChunk:
+        case CursorTileMode::RemoveTile:
+        {
+            m_cursorTile->SetColor({ 255, 64, 64, 255 });
+            break;
+        }
+    }
+
+    SetCursorSizeInPixels(m_cursorTile->GetSize());
+    SetCursorPositionInPixels(m_cursorTile->GetPosition());
 }
 
 void sgc_view::MapView::ChangeCameraPositionSingles(float deltaX, float deltaY)
