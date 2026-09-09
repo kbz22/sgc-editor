@@ -131,5 +131,7 @@ namespace locale
         ShortcutNameNewTileset,
         ShortcutNameNewPackage,
         ShortcutNameExportAsImage,
+
+        ShortcutTextSetNewShortcut,
     };
 }

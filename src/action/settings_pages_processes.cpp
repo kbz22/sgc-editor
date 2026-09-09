@@ -77,10 +77,10 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
                 auto shorcuts = shortcutManager.GetShortcutsForAction(action->GetType());
 
-                if(shorcuts.empty())
-                {
+                auto insertItem = [&action, &actionName, &listView](const std::wstring &text){
                     LVITEM item{};
-                    item.mask = LVIF_TEXT;
+                    item.mask = LVIF_TEXT | LVIF_PARAM;
+                    item.lParam = static_cast<LPARAM>(action->GetType());
                     item.pszText = const_cast<LPWSTR>(actionName.c_str());
                     item.iItem = ListView_GetItemCount(listView);
                     ListView_InsertItem(listView, &item);
@@ -89,8 +89,13 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                         listView,
                         item.iItem,
                         1,
-                        const_cast<LPWSTR>(L"")
+                        const_cast<LPWSTR>(text.c_str())
                     );
+                };
+
+                if(shorcuts.empty())
+                {
+                    insertItem(L"");
                 }
 
                 for(auto &shortcut : shorcuts)
@@ -100,26 +105,50 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                     if(str.empty())
                         continue;
 
-                    LVITEM item{};
-                    item.mask = LVIF_TEXT;
-                    item.pszText = const_cast<LPWSTR>(actionName.c_str());
-                    item.iItem = ListView_GetItemCount(listView);
-                    ListView_InsertItem(listView, &item);
-
-                    ListView_SetItemText(
-                        listView,
-                        item.iItem,
-                        1,
-                        const_cast<LPWSTR>(str.c_str())
-                    );
+                    insertItem(str);
                 }
             }
 
             return TRUE;
         }
 
-        case WM_COMMAND:
+        case WM_NOTIFY:
         {
+            auto* notification = reinterpret_cast<NMHDR*>(lParam);
+
+            if (notification->idFrom == IDC_SHORTCUT_LIST)
+            {
+                switch (notification->code)
+                {
+                    case NM_DBLCLK:
+                    {
+                        auto* info = reinterpret_cast<NMITEMACTIVATE*>(lParam);
+
+                        int row = info->iItem;
+                        int column = info->iSubItem;
+                        auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
+
+                        LVITEM item{};
+                        item.mask = LVIF_PARAM;
+                        item.iItem = info->iItem;
+
+                        ListView_GetItem(listView, &item);
+
+                        auto &stringLookup = programContext.stringLookup;
+                        auto str = stringLookup.Get(locale::StringId::ShortcutTextSetNewShortcut).value_or(L"");
+
+                        ListView_SetItemText(
+                            listView,
+                            item.iItem,
+                            1,
+                            const_cast<LPWSTR>(str.c_str())
+                        );
+                        
+                        break;
+                    }
+                }
+            }
+
             break;
         }
     }

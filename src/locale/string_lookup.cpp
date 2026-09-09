@@ -127,6 +127,8 @@ locale::StringLookup::StringLookup()
         {StringId::ShortcutNameNewPackage, L"New package"},
         {StringId::ShortcutNameExportAsImage, L"Export as image"},
 
+        {StringId::ShortcutTextSetNewShortcut, L"Press and hold the new shortcut"},
+
         {StringId::TextMissing, L"Text missing"}
     };
 }
