@@ -26,6 +26,10 @@ namespace win32_program {
         End = VK_END,
         PageUp = VK_PRIOR,
         PageDown = VK_NEXT,
+        ArrowUp = VK_UP,
+        ArrowDown = VK_DOWN,
+        ArrowLeft = VK_LEFT,
+        ArrowRight = VK_RIGHT,
     };
 
     enum class ShortcutContext : uint32_t

@@ -94,6 +94,10 @@ locale::StringLookup::StringLookup()
         {StringId::NameSettings, L"Settings"},
         {StringId::NameHelpAbout, L"About"},
         {StringId::NameHelpGithub, L"Github repository"},
+        {StringId::NameChangeLayerDown, L"Layer down"},
+        {StringId::NameChangeLayerUp, L"Layer up"},
+        {StringId::NameChangeLayerTop, L"Top layer"},
+        {StringId::NameChangeLayerBottom, L"Bottom layer"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},
@@ -103,6 +107,20 @@ locale::StringLookup::StringLookup()
 
         {StringId::SettingsNameGeneral, L"General"},
         {StringId::SettingsNameShortcuts, L"Shortcuts"},
+
+        {StringId::ShortcutNameCtrl, L"Ctrl"},
+        {StringId::ShortcutNameAlt, L"Alt"},
+        {StringId::ShortcutNameShift, L"Shift"},
+        {StringId::ShortcutNameInsert, L"Insert"},
+        {StringId::ShortcutNameDelete, L"Delete"},
+        {StringId::ShortcutNamePageUp, L"Page Up"},
+        {StringId::ShortcutNamePageDown, L"Page Down"},
+        {StringId::ShortcutNameHome, L"Home"},
+        {StringId::ShortcutNameEnd, L"End"},
+        {StringId::ShortcutNameArrowUp, L"Arrow Up"},
+        {StringId::ShortcutNameArrowDown, L"Arrow Down"},
+        {StringId::ShortcutNameArrowLeft, L"Arrow Left"},
+        {StringId::ShortcutNameArrowRight, L"Arrow Right"},
 
         {StringId::TextMissing, L"Text missing"}
     };

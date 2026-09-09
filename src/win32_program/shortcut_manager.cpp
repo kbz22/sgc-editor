@@ -37,6 +37,24 @@ action::ActionType win32_program::ShortcutManager::GetActionForShortcut(
     return shortcutIt->second;
 }
 
+std::vector<win32_program::Shortcut> win32_program::ShortcutManager::GetShortcutsForAction(action::ActionType actionId) const
+{
+    std::vector<Shortcut> result;
+
+    for (const auto& contextPair : m_shortcuts)
+    {
+        for (const auto& shortcutPair : contextPair.second)
+        {
+            if (shortcutPair.second == actionId)
+            {
+                result.push_back(shortcutPair.first);
+            }
+        }
+    }
+
+    return result;
+}
+
 win32_program::ShortcutModifier win32_program::ShortcutManager::GetShortcutModifierFromKeyState()
 {
     uint32_t modifiers = static_cast<uint32_t>(ShortcutModifier::None);
@@ -53,3 +71,42 @@ win32_program::ShortcutModifier win32_program::ShortcutManager::GetShortcutModif
     return static_cast<ShortcutModifier>(modifiers);
 }
 
+std::vector<locale::StringId> win32_program::ShortcutManager::GetStringIdsForShortcutModifier(ShortcutModifier modifier)
+{
+    using namespace locale;
+    std::vector<StringId> result;
+
+    if(static_cast<uint32_t>(modifier) & static_cast<uint32_t>(ShortcutModifier::Ctrl))
+        result.push_back(StringId::ShortcutNameCtrl);
+
+    if(static_cast<uint32_t>(modifier) & static_cast<uint32_t>(ShortcutModifier::Alt))
+        result.push_back(StringId::ShortcutNameAlt);
+
+    if(static_cast<uint32_t>(modifier) & static_cast<uint32_t>(ShortcutModifier::Shift))
+        result.push_back(StringId::ShortcutNameShift);
+
+    return result;
+}
+
+std::optional<locale::StringId> win32_program::ShortcutManager::GetStringIdForShortcutKey(uint32_t key)
+{
+    using namespace locale;
+
+    switch (static_cast<ShortcutKey>(key))
+    {
+        case ShortcutKey::Ctrl: return StringId::ShortcutNameCtrl;
+        case ShortcutKey::Alt: return StringId::ShortcutNameAlt;
+        case ShortcutKey::Shift: return StringId::ShortcutNameShift;
+        case ShortcutKey::Insert: return StringId::ShortcutNameInsert;
+        case ShortcutKey::Delete: return StringId::ShortcutNameDelete;
+        case ShortcutKey::PageUp: return StringId::ShortcutNamePageUp;
+        case ShortcutKey::PageDown: return StringId::ShortcutNamePageDown;
+        case ShortcutKey::Home: return StringId::ShortcutNameHome;
+        case ShortcutKey::End: return StringId::ShortcutNameEnd;
+        case ShortcutKey::ArrowUp: return StringId::ShortcutNameArrowUp;
+        case ShortcutKey::ArrowDown: return StringId::ShortcutNameArrowDown;
+        case ShortcutKey::ArrowLeft: return StringId::ShortcutNameArrowLeft;
+        case ShortcutKey::ArrowRight: return StringId::ShortcutNameArrowRight;
+        default: return std::nullopt;
+    }
+}

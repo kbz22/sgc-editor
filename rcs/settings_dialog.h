@@ -11,3 +11,7 @@
 #define PAGE_WIDTH 225
 #define PAGE_HEIGHT 195
 #define SETTINGS_LIST_WIDTH 80
+
+// shorcuts
+#define IDC_SHORTCUT_FILTER        24304
+#define IDC_SHORTCUT_LIST          24305

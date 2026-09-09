@@ -5,9 +5,11 @@
 #include <unordered_map>
 #include <vector>
 #include <cstdint>
+#include <optional>
 
 #include "action/action_types.hpp"
 #include "win32_program/shortcut.hpp"
+#include "locale/stringid.hpp"
 
 namespace win32_program
 {
@@ -40,6 +42,10 @@ namespace win32_program
                 ShortcutContext context
             ) const;
 
+            std::vector<Shortcut> GetShortcutsForAction(action::ActionType actionId) const;
+
             static ShortcutModifier GetShortcutModifierFromKeyState();
+            static std::optional<locale::StringId> GetStringIdForShortcutKey(uint32_t key);
+            static std::vector<locale::StringId> GetStringIdsForShortcutModifier(ShortcutModifier modifier);
     };
 }

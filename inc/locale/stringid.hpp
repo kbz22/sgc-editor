@@ -112,5 +112,19 @@ namespace locale
 
         SettingsNameGeneral,
         SettingsNameShortcuts,
+
+        ShortcutNameCtrl,
+        ShortcutNameAlt,
+        ShortcutNameShift,
+        ShortcutNameInsert,
+        ShortcutNameDelete,
+        ShortcutNamePageUp,
+        ShortcutNamePageDown,
+        ShortcutNameHome,
+        ShortcutNameEnd,
+        ShortcutNameArrowUp,
+        ShortcutNameArrowDown,
+        ShortcutNameArrowLeft,
+        ShortcutNameArrowRight,
     };
 }
