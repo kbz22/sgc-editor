@@ -17,6 +17,7 @@ action::ExportImageAction::ExportImageAction()
     m_actionDescription.menuId = MenuId::None;
     m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameExportAsImage;
+    m_actionDescription.shortcutStringId = locale::StringId::ShortcutNameExportAsImage;
 }
 
 void action::ExportImageAction::Execute(program::ProgramContext& context)

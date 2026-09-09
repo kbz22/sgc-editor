@@ -57,17 +57,41 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
             for(auto &action : allActions)
             {
-                auto actionStringId = action->GetNameStringId();
-
-                if(!actionStringId.has_value())
+                if(action->IsPopup())
                     continue;
 
-                auto actionName = stringLookup.Get(actionStringId.value());
+                auto actionStringId = action->GetNameStringId();
+                auto shortcutStringId = action->GetShortcutStringId();
+                std::wstring actionName;
 
-                if(!actionName.has_value())
+                if(shortcutStringId.has_value()){
+                    actionName = stringLookup.Get(shortcutStringId.value()).value_or(L"");
+                }
+                else if(actionStringId.has_value()){
+                    actionName = stringLookup.Get(actionStringId.value()).value_or(L"");
+                }
+                else continue;
+
+                if(actionName.empty())
                     continue;
 
                 auto shorcuts = shortcutManager.GetShortcutsForAction(action->GetType());
+
+                if(shorcuts.empty())
+                {
+                    LVITEM item{};
+                    item.mask = LVIF_TEXT;
+                    item.pszText = const_cast<LPWSTR>(actionName.c_str());
+                    item.iItem = ListView_GetItemCount(listView);
+                    ListView_InsertItem(listView, &item);
+
+                    ListView_SetItemText(
+                        listView,
+                        item.iItem,
+                        1,
+                        const_cast<LPWSTR>(L"")
+                    );
+                }
 
                 for(auto &shortcut : shorcuts)
                 {
@@ -78,7 +102,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
                     LVITEM item{};
                     item.mask = LVIF_TEXT;
-                    item.pszText = const_cast<LPWSTR>(actionName.value().c_str());
+                    item.pszText = const_cast<LPWSTR>(actionName.c_str());
                     item.iItem = ListView_GetItemCount(listView);
                     ListView_InsertItem(listView, &item);
 

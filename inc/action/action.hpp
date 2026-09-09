@@ -44,6 +44,7 @@ namespace action {
             MenuId GetMenuId() const;
             std::optional<locale::StringId> GetTooltipStringId() const;
             std::optional<locale::StringId> GetNameStringId() const;
+            std::optional<locale::StringId> GetShortcutStringId() const;
             win32_program::ShortcutContext GetShortcutContext() const;
             std::vector<win32_program::Shortcut> GetDefaultShortcuts() const;
             virtual std::optional<std::vector<Action*>> GetPopupMenuItems() const;

@@ -126,5 +126,10 @@ namespace locale
         ShortcutNameArrowDown,
         ShortcutNameArrowLeft,
         ShortcutNameArrowRight,
+
+        ShortcutNameNewMap,
+        ShortcutNameNewTileset,
+        ShortcutNameNewPackage,
+        ShortcutNameExportAsImage,
     };
 }

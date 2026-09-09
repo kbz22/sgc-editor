@@ -48,6 +48,7 @@ namespace action {
         MenuId menuId = MenuId::None;
 
         std::optional<locale::StringId> tooltipStringId = std::nullopt;
+        std::optional<locale::StringId> shortcutStringId = std::nullopt;
         locale::StringId nameStringId = locale::StringId::TextMissing;
 
         win32_program::ShortcutContext shortcutContext = win32_program::ShortcutContext::MapEditor;

@@ -21,6 +21,7 @@ action::NewTilesetDocumentAction::NewTilesetDocumentAction()
     m_actionDescription.menuId = MenuId::None;    
     m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameNewTilesetDocument;
+    m_actionDescription.shortcutStringId = locale::StringId::ShortcutNameNewTileset;
 }
 
 INT_PTR CALLBACK NewTilesetFileDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -19,6 +19,7 @@ action::NewPackageAction::NewPackageAction()
     m_actionDescription.menuId = MenuId::None;
     m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameNewPackage;
+    m_actionDescription.shortcutStringId = locale::StringId::ShortcutNameNewPackage;
 }
 
 INT_PTR CALLBACK NewPackageFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused]] UINT msg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam);

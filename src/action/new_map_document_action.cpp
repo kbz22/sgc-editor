@@ -24,6 +24,7 @@ action::NewMapDocumentAction::NewMapDocumentAction()
     m_actionDescription.menuId = MenuId::None;    
     m_actionDescription.tooltipStringId = locale::StringId::TooltipNewMapDocument;
     m_actionDescription.nameStringId = locale::StringId::NameNewMapDocument;
+    m_actionDescription.shortcutStringId = locale::StringId::ShortcutNameNewMap;
 }
 
 INT_PTR CALLBACK NewMapFileDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);

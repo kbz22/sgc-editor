@@ -82,6 +82,11 @@ std::optional<locale::StringId> action::Action::GetNameStringId() const
     return m_actionDescription.nameStringId;
 }
 
+std::optional<locale::StringId> action::Action::GetShortcutStringId() const
+{
+    return m_actionDescription.shortcutStringId;
+}
+
 win32_program::ShortcutContext action::Action::GetShortcutContext() const
 {
     return m_actionDescription.shortcutContext;

@@ -60,12 +60,12 @@ locale::StringLookup::StringLookup()
         {StringId::NameMoveLayerUp, L"Move layer up"},
         {StringId::NameMoveLayerDown, L"Move layer down"},
         {StringId::NameSelectEditorLayerMode, L"Layer mode"},
-        {StringId::NameEditorLayerModeMultilayer, L"Transparent"},
-        {StringId::NameEditorLayerModeSingleLayer, L"Single layer"},
-        {StringId::NameEditorLayerModeSingleImage, L"Single image"},
+        {StringId::NameEditorLayerModeMultilayer, L"Transparent mode"},
+        {StringId::NameEditorLayerModeSingleLayer, L"Single layer mode"},
+        {StringId::NameEditorLayerModeSingleImage, L"Single image mode"},
         {StringId::NameSelectEditorChunkMode, L"Chunk mode"},
-        {StringId::NameEditorChunkModeFixedSize, L"Fixed size chunk"},
-        {StringId::NameEditorChunkModeFree, L"Free chunk"},
+        {StringId::NameEditorChunkModeFixedSize, L"Fixed chunks mode"},
+        {StringId::NameEditorChunkModeFree, L"Free chunks mode"},
         {StringId::NamePaintModeBrush, L"Brush"},
         {StringId::NamePaintModeRectangle, L"Rectangle"},
         {StringId::NamePaintModeFill, L"Fill"},
@@ -121,6 +121,11 @@ locale::StringLookup::StringLookup()
         {StringId::ShortcutNameArrowDown, L"Arrow Down"},
         {StringId::ShortcutNameArrowLeft, L"Arrow Left"},
         {StringId::ShortcutNameArrowRight, L"Arrow Right"},
+
+        {StringId::ShortcutNameNewMap, L"New map"},
+        {StringId::ShortcutNameNewTileset, L"New tileset"},
+        {StringId::ShortcutNameNewPackage, L"New package"},
+        {StringId::ShortcutNameExportAsImage, L"Export as image"},
 
         {StringId::TextMissing, L"Text missing"}
     };
