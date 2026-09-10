@@ -252,7 +252,16 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
 
 LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-    auto mapDocument = program::GetProgramContext().GetManager<file::FileManager>()->GetActiveDocument();
+    // auto mapDocument = program::GetProgramContext().GetManager<file::FileManager>()->GetActiveDocument();
+
+    program::ProgramContext& programContext = program::GetProgramContext();
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
+
+    if(mapDocument == nullptr || !mapDocument->IsEditable())
+    {
+        return DefSubclassProc(hwnd, msg, wparam, lparam);
+    }
+
     auto mouseOverHandler = [this, &hwnd](){
         switch (m_mouseOver)
             {
@@ -284,11 +293,6 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
 
         InvalidateRect(hwnd, nullptr, FALSE);     
     };
-    
-    if(mapDocument == nullptr || !mapDocument->IsEditable())
-    {
-        return DefSubclassProc(hwnd, msg, wparam, lparam);
-    }
 
     switch (msg)
     {        

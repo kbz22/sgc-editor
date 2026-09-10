@@ -49,13 +49,16 @@ void sections::LayersSection::Refresh(program::ProgramContext& programContext)
 
 void sections::LayersSection::HandleSectionResize()
 {
-    RECT rect;
-    GetClientRect(GetHwnd(), &rect);
+    if(m_layerListControl != nullptr)
+    {        
+        RECT rect;
+        GetClientRect(GetHwnd(), &rect);
 
-    m_layerListControl->Resize(
-        rect.right - rect.left,
-        rect.bottom - rect.top
-    );
+        m_layerListControl->Resize(
+            rect.right - rect.left,
+            rect.bottom - rect.top
+        );
+    }
 
     return;
 }

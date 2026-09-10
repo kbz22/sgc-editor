@@ -69,6 +69,7 @@ program::ProgramContext::ProgramContext()
         m_hInstance,
         m_mainWindowHandle
     );
+    m_stringLookup = std::make_unique<locale::StringLookup>();
 
     SetupImageLists();
     RegisterActions();

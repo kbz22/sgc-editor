@@ -274,19 +274,6 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
             }
         }
 
-        //! use GetDocuments()
-        /* for(auto mapDoc : file->GetMapDocuments()) 
-        {
-            auto listable = reinterpret_cast<file::ITreeViewListable*>(mapDoc);
-            addItem(file, listable, root, index++);
-        }
-
-        for(auto tilesetDoc : file->GetTilesetDocuments()) 
-        {
-            auto listable = reinterpret_cast<file::ITreeViewListable*>(tilesetDoc);
-            addItem(file, listable, root, index++);
-        } */
-
     }
 
     UpdateTreeViewItems(programContext);

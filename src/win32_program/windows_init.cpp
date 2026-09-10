@@ -25,7 +25,7 @@ void win32_program::Run()
         // direct capture of keyboard shortcuts for actions
         if(msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) 
         {
-            if(!programContext.ShortcutsEnabled()) break;
+            if(!programContext.ShortcutsEnabled()) continue;
 
             ShortcutModifier modifier = ShortcutManager::GetShortcutModifierFromKeyState();
             Shortcut shortcut{ modifier, static_cast<uint32_t>(msg.wParam) };
