@@ -36,6 +36,7 @@ namespace sections {
             HTREEITEM m_activeTreeItem = HTREEITEM();
             std::unordered_map<FileAction, std::function<void(file::IFile*, size_t)>> m_fileActionCallbacks;
             std::vector<std::unique_ptr<TreeListItem>> m_treeListItems;
+            bool m_treeViewClassRegistered = false;
 
             void UpdateTreeItem(TreeListItem &tli);
             void SetTreeItemActive(TreeListItem &tli);

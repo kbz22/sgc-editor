@@ -34,6 +34,7 @@ sections::PackageSection::PackageSection(program::ProgramContext& programContext
     );
 
     SetupSubclass(GetHwnd(), this);
+    SetupSubclass(m_packageTreeViewHandle, this);
 }
 
 sections::PackageSection::~PackageSection()
