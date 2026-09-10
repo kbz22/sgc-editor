@@ -22,7 +22,7 @@ void action::ZoomSelectAction::BuildWidget(HWND parent, program::ProgramContext&
 {
     m_zoomComboBox = std::make_unique<win32_models::ZoomComboBox>(
         parent,
-        context.mainWindowContext->hInstance,
+        context.GetHInstance(),
         static_cast<int>(m_actionType)
     );
 
@@ -30,7 +30,7 @@ void action::ZoomSelectAction::BuildWidget(HWND parent, program::ProgramContext&
         this->Execute(context);
     });
 
-    context.mapSection->RegisterOnZoomChangedCallback([this](float zoom) {
+    context.GetSection<sections::MapSection>()->RegisterOnZoomChangedCallback([this](float zoom) {
         m_zoomComboBox->SetZoomLevel(zoom);
     });
 
@@ -54,10 +54,11 @@ win32_models::IWidget* action::ZoomSelectAction::GetWidget() const
 void action::ZoomSelectAction::Execute(program::ProgramContext& context)
 {
     float zoomLevel = m_zoomComboBox->GetZoomLevel();
+    auto mapSection = context.GetSection<sections::MapSection>();
 
-    context.mapSection->ExecuteZoom(
-        context.mapSection->GetScreenCenterWorldPosition(),
+    mapSection->ExecuteZoom(
+        mapSection->GetScreenCenterWorldPosition(),
         zoomLevel
     );
-    context.mapSection->Update();
+    mapSection->Update();
 }

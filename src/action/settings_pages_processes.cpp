@@ -53,9 +53,9 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             column.cx = c_shortcutColumnWidth;
             ListView_InsertColumn(listView, 1, &column);
 
-            auto &stringLookup = programContext.stringLookup;
-            auto &shortcutManager = *programContext.shortcutManager;            
-            auto allActions = programContext.actionManager->GetActions();
+            auto &stringLookup = programContext.GetStringLookup();
+            auto &shortcutManager = *programContext.GetManager<win32_program::ShortcutManager>();
+            auto allActions = programContext.GetManager<action::ActionManager>()->GetActions();
 
             for(auto &action : allActions)
             {
@@ -136,7 +136,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
                         ListView_GetItem(listView, &item);
 
-                        auto &stringLookup = programContext.stringLookup;
+                        auto &stringLookup = programContext.GetStringLookup();
                         auto str = stringLookup.Get(locale::StringId::ShortcutTextSetNewShortcut).value_or(L"");
 
                         ListView_SetItemText(

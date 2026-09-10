@@ -21,13 +21,13 @@ action::LayerRemoveAction::LayerRemoveAction()
 
 void action::LayerRemoveAction::Execute(program::ProgramContext& context)
 {
-    auto selectedDocument = context.fileManager->GetActiveDocument();
+    auto selectedDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
     if(selectedDocument != nullptr) {
         auto layerManager = selectedDocument->GetLayerManager();
         selectedDocument->GetCommandManager()->Execute(
             std::make_unique<command::LayerRemoveCommand>(layerManager->GetActiveLayerIndex())
         );
 
-        program::UpdateEditorLayerMode(context.editorLayerMode, context);
+        context.UpdateEditorLayerMode(context.GetEditorLayerMode());
     }
 }

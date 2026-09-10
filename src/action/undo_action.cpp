@@ -23,10 +23,10 @@ action::UndoAction::UndoAction()
 
 void action::UndoAction::Execute(program::ProgramContext& context)
 {
-    auto selectedDocument = context.fileManager->GetActiveDocument();
+    auto selectedDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
     if(selectedDocument != nullptr) {
         selectedDocument->GetCommandManager()->Undo();
     }
 
-    context.mapSection->Update();
+    context.GetSection<sections::MapSection>()->Update();
 }

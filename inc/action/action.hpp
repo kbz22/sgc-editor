@@ -9,7 +9,7 @@
 #include <memory>
 
 namespace program {
-    struct ProgramContext;
+    class ProgramContext;
 }
 
 namespace action {

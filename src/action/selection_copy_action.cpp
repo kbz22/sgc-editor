@@ -27,7 +27,7 @@ void action::SelectionCopyAction::Execute(program::ProgramContext &context)
 {
     using namespace win32_program;
 
-    auto mapDocument = context.fileManager->GetActiveDocument();
+    auto mapDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument == nullptr)
     {
@@ -35,11 +35,12 @@ void action::SelectionCopyAction::Execute(program::ProgramContext &context)
     }
 
     MapSelection selection{};
-    selection.startPoint = context.mapSection->GetSelectionRectanglePositionTiles();
-    selection.size = context.mapSection->GetSelectionRectangleSizeTiles();
+    auto mapSection = context.GetSection<sections::MapSection>();
+    selection.startPoint = mapSection->GetSelectionRectanglePositionTiles();
+    selection.size = mapSection->GetSelectionRectangleSizeTiles();
 
     auto layerManager = mapDocument->GetLayerManager();  
-    auto clearTileId = context.tilesetSection->GetClearTileId();
+    auto clearTileId = context.GetSection<sections::TilesetSection>()->GetClearTileId();
 
     auto iterateTiles = [layerManager, &selection, clearTileId](sgc::data::ITileStorage *layer, size_t layerIndex)
     {
@@ -59,7 +60,7 @@ void action::SelectionCopyAction::Execute(program::ProgramContext &context)
         }
     };
 
-    auto selectionMode = context.mapSection->GetSelectionMode();
+    auto selectionMode = mapSection->GetSelectionMode();
 
     switch(selectionMode)
     {

@@ -67,13 +67,14 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
 
 void action::ChangeBrushModeAction::Execute([[maybe_unused]] program::ProgramContext& context)
 {    
-    auto currentSelectionMode = context.mapSection->GetSelectionMode();    
+    auto mapSection = context.GetSection<sections::MapSection>();
+    auto currentSelectionMode = mapSection->GetSelectionMode();
 
     if(m_brushMode != editor_tools::PaintMode::Select) {
-        context.mapSection->ResetSelection();
+        mapSection->ResetSelection();
     }
 
-    program::UpdateBrushMode(m_brushMode, context);
-    program::UpdateEditorSelectionMode(currentSelectionMode, context);
-    program::UpdateEditorSelectionTools(context);
+    context.UpdateBrushMode(m_brushMode);
+    context.UpdateEditorSelectionMode(currentSelectionMode);
+    context.UpdateEditorSelectionTools();
 }

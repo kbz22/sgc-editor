@@ -7,7 +7,7 @@ command::LayerMoveCommand::LayerMoveCommand(const LayerMoveCommand& other) = def
 void command::LayerMoveCommand::Execute()
 {
     auto &programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument != nullptr)
     {
@@ -20,12 +20,14 @@ void command::LayerMoveCommand::Execute()
             //! no need to note the out of range error
         }
 
-        programContext.mapSection->Refresh(programContext);
-        programContext.mapSection->Update();
+        auto mapSection = programContext.GetSection<sections::MapSection>();
+        mapSection->Refresh(programContext);
+        mapSection->Update();
 
-        programContext.layersSection->SetSelectedLayer(layerManager->GetActiveLayerIndex());
-        programContext.layersSection->Refresh(programContext);
-        programContext.layersSection->Update();
+        auto layersSection = programContext.GetSection<sections::LayersSection>();
+        layersSection->SetSelectedLayer(layerManager->GetActiveLayerIndex());
+        layersSection->Refresh(programContext);
+        layersSection->Update();
     }
 }
 
@@ -37,7 +39,7 @@ void command::LayerMoveCommand::Commit()
 void command::LayerMoveCommand::Undo()
 {
     auto &programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument != nullptr)
     {
@@ -50,11 +52,13 @@ void command::LayerMoveCommand::Undo()
             //! no need to note the out of range error
         }        
 
-        programContext.mapSection->Refresh(programContext);
-        programContext.mapSection->Update();
+        auto mapSection = programContext.GetSection<sections::MapSection>();
+        mapSection->Refresh(programContext);
+        mapSection->Update();
 
-        programContext.layersSection->SetSelectedLayer(layerManager->GetActiveLayerIndex());
-        programContext.layersSection->Refresh(programContext);
-        programContext.layersSection->Update();
+        auto layersSection = programContext.GetSection<sections::LayersSection>();
+        layersSection->SetSelectedLayer(layerManager->GetActiveLayerIndex());
+        layersSection->Refresh(programContext);
+        layersSection->Update();
     }
 }

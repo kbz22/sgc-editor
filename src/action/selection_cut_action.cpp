@@ -23,7 +23,7 @@ action::SelectionCutAction::SelectionCutAction()
 
 void action::SelectionCutAction::Execute(program::ProgramContext &context)
 {
-    auto &actionManager = *context.actionManager;
+    auto &actionManager = *context.GetManager<action::ActionManager>();
 
     actionManager.Find(action::ActionType::SelectionCopy)->Execute(context);
     actionManager.Find(action::ActionType::SelectionClear)->Execute(context);

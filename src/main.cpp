@@ -10,9 +10,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     Init(hInstance);
 
     program::ProgramContext& programContext = program::GetProgramContext();
+    programContext.StartDefault();
 
     ShowWindow(
-        programContext.mainWindowContext->hMainWindow,
+        programContext.GetMainWindowHandle(),
         nCmdShow
     );
 

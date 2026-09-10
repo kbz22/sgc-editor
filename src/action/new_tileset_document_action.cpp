@@ -28,13 +28,18 @@ INT_PTR CALLBACK NewTilesetFileDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LP
 INT_PTR CALLBACK NewPackageFileDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void action::NewTilesetDocumentAction::Execute(program::ProgramContext& context)
-{
-    if(context.tilesetSection != nullptr) {
-        if(context.mainWindowContext->hMainWindow != nullptr){
+{    
+    if(context.GetSection<sections::TilesetSection>() != nullptr) 
+    {
+        auto hMainWindow = context.GetMainWindowHandle();
+        auto hInstance = context.GetHInstance();
+
+        if(hMainWindow != nullptr)
+        {
             DialogBox(
-                context.mainWindowContext->hInstance,            
+                hInstance,            
                 MAKEINTRESOURCE(IDD_NEWTILESET_DIALOG),
-                context .mainWindowContext->hMainWindow,
+                hMainWindow,
                 NewTilesetFileDialogProc
             );
         }
@@ -45,7 +50,7 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
 {
     auto refreshPackageCombobox = [](HWND hDlg) {
         auto &programContext = program::GetProgramContext();
-        auto packagesList = programContext.fileManager->GetAllPackages();
+        auto packagesList = programContext.GetManager<file::FileManager>()->GetAllPackages();
 
         auto packageCombo = GetDlgItem(hDlg, IDC_TILESET_PACKAGE_COMBO);
         SendMessage(packageCombo, CB_RESETCONTENT, 0, 0);
@@ -88,8 +93,9 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                 {
                     auto &programContext = program::GetProgramContext();
 
-                    auto allFilesString = programContext.stringLookup.Get(locale::StringId::NameAllFiles);
-                    auto imageFilesString = programContext.stringLookup.Get(locale::StringId::NameImageFile);
+                    auto stringLookup = programContext.GetStringLookup();
+                    auto allFilesString = stringLookup.Get(locale::StringId::NameAllFiles);
+                    auto imageFilesString = stringLookup.Get(locale::StringId::NameImageFile);
 
                     if(allFilesString == std::nullopt || imageFilesString == std::nullopt) {
                         throw program::StringNotFoundException("String not found for AllFiles or NameImageFile.");
@@ -112,11 +118,13 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                 case IDC_TILESET_NEW_PACKAGE_BUTTON:
                 {
                     auto &programContext = program::GetProgramContext();
+                    auto hMainWindow = programContext.GetMainWindowHandle();
+                    auto hInstance = programContext.GetHInstance();
 
                     auto result = DialogBox(
-                        programContext.mainWindowContext->hInstance,
+                        hInstance,
                         MAKEINTRESOURCE(IDD_NEW_PACKAGE_DIALOG),
-                        programContext.mainWindowContext->hMainWindow,
+                        hMainWindow,
                         NewPackageFileDialogProc
                     );
 
@@ -169,20 +177,22 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                     }
 
                     auto &programContext = program::GetProgramContext();
+                    auto fileManager = programContext.GetManager<file::FileManager>(); 
                     try {
                         if(includePackage && selectedPackageIndex != CB_ERR) 
                         {
                             auto packagePtr = reinterpret_cast<file::PackageFile*>(SendMessage(packageCombo, CB_GETITEMDATA, selectedPackageIndex, 0));
                             if(packagePtr) {
                                 auto newTilesetDoc = std::make_unique<file::TilesetDocument>(
-                                    programContext.fileManager->NewTilesetDocument(tilesetName, imagePath, tileWidth, tileHeight)
+                                    fileManager->NewTilesetDocument(tilesetName, imagePath, tileWidth, tileHeight)
                                 );
                                 packagePtr->AddTilesetDocument(std::move(newTilesetDoc));
                             }
                         }
                         else 
                         {
-                            programContext.fileManager->NewTilesetFile(tilesetName, imagePath, tileWidth, tileHeight, *programContext.assetManager);
+                            auto assetManager = programContext.GetManager<file::AssetManager>();
+                            fileManager->NewTilesetFile(tilesetName, imagePath, tileWidth, tileHeight, *assetManager);
                         }
                         
                     }

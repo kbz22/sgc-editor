@@ -16,17 +16,17 @@
 constexpr int gc_TimerId = 1;
 
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
-    Section{L"MapView", win32_program::ControlId::MapView, *programContext.mainWindowContext},
+    Section{L"MapView", win32_program::ControlId::MapView, programContext.GetMainWindowHandle(), programContext.GetHInstance()},
     m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())},
-    m_brush{*programContext.selectionRectangleOnTileset}
+    m_brush{programContext.GetSelectionRectangleOnTileset()}
 {
     AttachView(*m_mapView);
 
     m_mapView->RegisterOnCursorPositionChangedCallback([this](sgc::math::vec2 position) 
     {
         auto &programContext = program::GetProgramContext();
-        auto &statusSection = programContext.statusSection;
-        auto mapDocument = programContext.fileManager->GetActiveDocument();
+        auto statusSection = programContext.GetSection<sections::StatusSection>();
+        auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
         auto tileSize = m_mapView->GetTileSize();
         auto layers = mapDocument->GetLayerManager()->GetLayers();
 
@@ -55,7 +55,7 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
     m_mapView->RegisterOnSelectionSizeChangedCallback([this](sgc::math::vec2 size) 
     {
         auto &programContext = program::GetProgramContext();
-        auto &statusSection = programContext.statusSection;
+        auto statusSection = programContext.GetSection<sections::StatusSection>();
         auto tileSize = m_mapView->GetTileSize();
 
         statusSection->SetStatusSelectionSize({
@@ -107,8 +107,8 @@ void sections::MapSection::HandleSectionResize()
 LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 { 
     program::ProgramContext& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
-    auto &tilesetSection = programContext.tilesetSection;
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
+    auto tilesetSection = programContext.GetSection<sections::TilesetSection>();
 
     if(mapDocument == nullptr || !mapDocument->IsEditable())
     {
@@ -161,7 +161,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     };
 
                     auto layerManager = mapDocument->GetLayerManager();
-                    auto layers = layerManager->GetLayers();                    
+                    auto layers = layerManager->GetLayers();
                     auto selectionLayers = m_mapView->GetSelectionLayers();
                     auto activeLayerIndex = layerManager->GetActiveLayerIndex();                                        
 
@@ -225,7 +225,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         }
                     }
 
-                    programContext.actionManager->Find(action::ActionType::SelectionClear)->Execute(programContext);
+                    programContext.GetManager<action::ActionManager>()->Find(action::ActionType::SelectionClear)->Execute(programContext);
 
                     return 0;
                 }

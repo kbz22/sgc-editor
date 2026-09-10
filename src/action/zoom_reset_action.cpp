@@ -19,9 +19,10 @@ action::ZoomResetAction::ZoomResetAction()
 
 void action::ZoomResetAction::Execute(program::ProgramContext& context)
 {
-    context.mapSection->ExecuteZoom(
-        context.mapSection->GetScreenCenterWorldPosition(),
+    auto mapSection = context.GetSection<sections::MapSection>();
+    mapSection->ExecuteZoom(
+        mapSection->GetScreenCenterWorldPosition(),
         1.0f
     );
-    context.mapSection->Update();
+    mapSection->Update();
 }

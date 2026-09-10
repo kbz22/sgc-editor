@@ -1,9 +1,9 @@
 #include "program/editor_update.hpp"
 #include "program/program.hpp"
 
-void program::UpdateEditorLayerMode(program::EditorLayerMode newMode, program::ProgramContext& programContext)
+void program::ProgramContext::UpdateEditorLayerMode(program::EditorLayerMode newMode)
 {
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto mapDocument = m_fileManager->GetActiveDocument();
 
     if(mapDocument == nullptr) {
         return;
@@ -11,11 +11,11 @@ void program::UpdateEditorLayerMode(program::EditorLayerMode newMode, program::P
 
     auto layerManager = mapDocument->GetLayerManager();
 
-    programContext.editorLayerMode = newMode;
+    m_editorLayerMode = newMode;
 
-    programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, newMode == program::EditorLayerMode::MultiLayer);
-    programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeSingleLayer, newMode == program::EditorLayerMode::SingleLayer);
-    programContext.actionManager->ActionSetChecked(action::ActionType::LayerModeSingleImage, newMode == program::EditorLayerMode::SingleImage);
+    m_actionManager->ActionSetChecked(action::ActionType::LayerModeMultilayer, newMode == program::EditorLayerMode::MultiLayer);
+    m_actionManager->ActionSetChecked(action::ActionType::LayerModeSingleLayer, newMode == program::EditorLayerMode::SingleLayer);
+    m_actionManager->ActionSetChecked(action::ActionType::LayerModeSingleImage, newMode == program::EditorLayerMode::SingleImage);
     
     switch(newMode) {
 
@@ -28,87 +28,87 @@ void program::UpdateEditorLayerMode(program::EditorLayerMode newMode, program::P
         case program::EditorLayerMode::MultiLayer:
         {
             layerManager->SetSingleLayerMode(false);
-            program::MultiLayerModeSetup(programContext);
+            program::MultiLayerModeSetup(*this);
             break;
         }
 
         case program::EditorLayerMode::SingleImage:
         {
             layerManager->SetSingleLayerMode(false);
-            program::SingleImageModeSetup(programContext);
+            program::SingleImageModeSetup(*this);
             break;
         }
     }
 
-    programContext.mapSection->Refresh(programContext);
-    programContext.mapSection->Update();
+    m_mapSection->Refresh(*this);
+    m_mapSection->Update();
 
-    programContext.toolbarSection->Refresh(programContext);
-    programContext.menuSection->Refresh(programContext);
+    m_toolbarSection->Refresh(*this);
+    m_menuSection->Refresh(*this);
 }
 
-void program::UpdateEditorChunkMode(program::EditorChunkMode newMode, program::ProgramContext& programContext)
+void program::ProgramContext::UpdateEditorChunkMode(program::EditorChunkMode newMode)
 {
-    programContext.editorChunkMode = newMode;
+    m_editorChunkMode = newMode;
 
-    programContext.actionManager->ActionSetChecked(action::ActionType::ChunkModeFixedSize, newMode == program::EditorChunkMode::FixedChunks);
-    programContext.actionManager->ActionSetChecked(action::ActionType::ChunkModeFree, newMode == program::EditorChunkMode::DynamicChunks);
+    m_actionManager->ActionSetChecked(action::ActionType::ChunkModeFixedSize, newMode == program::EditorChunkMode::FixedChunks);
+    m_actionManager->ActionSetChecked(action::ActionType::ChunkModeFree, newMode == program::EditorChunkMode::DynamicChunks);
 
-    programContext.mapSection->SetCheckTileBeforePainting(newMode == program::EditorChunkMode::FixedChunks);
+    m_mapSection->SetCheckTileBeforePainting(newMode == program::EditorChunkMode::FixedChunks);
 
-    programContext.toolbarSection->Refresh(programContext);
-    programContext.menuSection->Refresh(programContext);
+    m_toolbarSection->Refresh(*this);
+    m_menuSection->Refresh(*this);
 }
 
-void program::UpdateBrushMode(editor_tools::PaintMode newMode, program::ProgramContext& programContext)
+void program::ProgramContext::UpdateBrushMode(editor_tools::PaintMode newMode)
 {
-    programContext.mapSection->SetPaintMode(newMode);
+    m_mapSection->SetPaintMode(newMode);
 
-    programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeBrush, newMode == editor_tools::PaintMode::Brush);
-    programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeRectangle, newMode == editor_tools::PaintMode::Rectangle);
-    programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeFill, newMode == editor_tools::PaintMode::Fill);
-    programContext.actionManager->ActionSetChecked(action::ActionType::PaintModeSelect, newMode == editor_tools::PaintMode::Select);
+    m_actionManager->ActionSetChecked(action::ActionType::PaintModeBrush, newMode == editor_tools::PaintMode::Brush);
+    m_actionManager->ActionSetChecked(action::ActionType::PaintModeRectangle, newMode == editor_tools::PaintMode::Rectangle);
+    m_actionManager->ActionSetChecked(action::ActionType::PaintModeFill, newMode == editor_tools::PaintMode::Fill);
+    m_actionManager->ActionSetChecked(action::ActionType::PaintModeSelect, newMode == editor_tools::PaintMode::Select);
 
-    programContext.toolbarSection->Refresh(programContext);
-    programContext.menuSection->Refresh(programContext);
+    m_toolbarSection->Refresh(*this);
+    m_menuSection->Refresh(*this);
 }
 
-void program::UpdateBrushEraseMode(editor_tools::EraserMode newMode, program::ProgramContext& programContext)
+void program::ProgramContext::UpdateBrushEraseMode(editor_tools::EraserMode newMode)
 {
-    programContext.mapSection->SetEraseMode(newMode);
+    m_mapSection->SetEraseMode(newMode);
 
-    programContext.actionManager->ActionSetChecked(
+    m_actionManager->ActionSetChecked(
         action::ActionType::EraseModeClearTile,
         newMode == editor_tools::EraserMode::ClearTile
     );
-    programContext.actionManager->ActionSetChecked(
+    m_actionManager->ActionSetChecked(
         action::ActionType::EraseModeDeleteChunk,
         newMode == editor_tools::EraserMode::DeleteChunk
     );
 
-    programContext.toolbarSection->Refresh(programContext);
-    programContext.menuSection->Refresh(programContext);
+    m_toolbarSection->Refresh(*this);
+    m_menuSection->Refresh(*this);
 }
 
-void program::UpdateEditorGridMode(program::EditorGridMode newMode, program::ProgramContext& programContext)
+void program::ProgramContext::UpdateEditorGridMode(program::EditorGridMode newMode)
 {
-    programContext.editorGridMode = static_cast<program::EditorGridMode>(
-        static_cast<uint8_t>(programContext.editorGridMode) ^
+    m_editorGridMode = static_cast<program::EditorGridMode>(
+        static_cast<uint8_t>(m_editorGridMode) ^
         static_cast<uint8_t>(newMode)
     );
 
-    programContext.actionManager->ActionSetChecked(action::ActionType::GridModeTile, HasFlag(programContext.editorGridMode, program::EditorGridMode::TileGrid));
-    programContext.actionManager->ActionSetChecked(action::ActionType::GridModeChunk, HasFlag(programContext.editorGridMode, program::EditorGridMode::ChunkGrid));
+    m_actionManager->ActionSetChecked(action::ActionType::GridModeTile, HasFlag(m_editorGridMode, program::EditorGridMode::TileGrid));
+    m_actionManager->ActionSetChecked(action::ActionType::GridModeChunk, HasFlag(m_editorGridMode, program::EditorGridMode::ChunkGrid));
 
-    programContext.toolbarSection->Refresh(programContext);
-    programContext.menuSection->Refresh(programContext);
-    programContext.mapSection->Refresh(programContext);
-    programContext.mapSection->Update();
+    m_toolbarSection->Refresh(*this);
+    m_menuSection->Refresh(*this);
+    m_mapSection->Refresh(*this);
+    m_mapSection->Update();
 }
 
-void program::UpdateEditorSelectionMode(editor_tools::SelectionMode newMode, program::ProgramContext& programContext)
+void program::ProgramContext::UpdateEditorSelectionMode(editor_tools::SelectionMode newMode)
 {
-    bool selectionActive = programContext.mapSection->GetPaintMode() == editor_tools::PaintMode::Select;
+    bool selectionActive = m_mapSection->GetPaintMode() == editor_tools::PaintMode::Select;
     constexpr int selectionModeCount = 3;
     editor_tools::SelectionMode selectionOptions[selectionModeCount] = {
         editor_tools::SelectionMode::SingleLayer,
@@ -125,38 +125,38 @@ void program::UpdateEditorSelectionMode(editor_tools::SelectionMode newMode, pro
     {
         for(int i=0; i<selectionModeCount; ++i) 
         {
-            programContext.actionManager->ActionSetChecked(
+            m_actionManager->ActionSetChecked(
                 selectionActionTypes[i],
                 newMode == selectionOptions[i]
             );
-            programContext.actionManager->ActionSetEnabled(
+            m_actionManager->ActionSetEnabled(
                 selectionActionTypes[i],
                 true
             );
         }
         
-        programContext.mapSection->SetSelectionMode(newMode);
+        m_mapSection->SetSelectionMode(newMode);
     }
     else 
     {
         for(int i=0; i<selectionModeCount; ++i) 
         {
-            programContext.actionManager->ActionSetChecked(
+            m_actionManager->ActionSetChecked(
                 selectionActionTypes[i],
                 false
             );
-            programContext.actionManager->ActionSetEnabled(
+            m_actionManager->ActionSetEnabled(
                 selectionActionTypes[i],
                 false
             );
         }
     }
 
-    programContext.toolbarSection->Refresh(programContext);
-    programContext.menuSection->Refresh(programContext);
+    m_toolbarSection->Refresh(*this);
+    m_menuSection->Refresh(*this);
 }
 
-void program::UpdateEditorSelectionTools(program::ProgramContext& programContext)
+void program::ProgramContext::UpdateEditorSelectionTools()
 {
     constexpr int selectionToolsCount = 5;
     constexpr action::ActionType selectionToolsTypes[selectionToolsCount] = {
@@ -166,27 +166,27 @@ void program::UpdateEditorSelectionTools(program::ProgramContext& programContext
         action::ActionType::SelectionPaste
     };
 
-    auto selectionActive = programContext.mapSection->GetPaintMode() == editor_tools::PaintMode::Select;
+    auto selectionActive = m_mapSection->GetPaintMode() == editor_tools::PaintMode::Select;
 
     if(selectionActive) 
     {
         for(int i=0; i<selectionToolsCount; ++i) 
         {            
-            programContext.actionManager->ActionSetChecked(
+            m_actionManager->ActionSetChecked(
                 selectionToolsTypes[i],
                 false
             );
-            programContext.actionManager->ActionSetEnabled(
+            m_actionManager->ActionSetEnabled(
                 selectionToolsTypes[i],
                 true
             );
         }
 
-        programContext.actionManager->ActionSetChecked(
+        m_actionManager->ActionSetChecked(
             action::ActionType::SelectionMove,
-            programContext.mapSection->GetSelectionMoveMode()            
+            m_mapSection->GetSelectionMoveMode()            
         );
-        programContext.actionManager->ActionSetEnabled(
+        m_actionManager->ActionSetEnabled(
             action::ActionType::SelectionMove,
             true
         );
@@ -195,27 +195,27 @@ void program::UpdateEditorSelectionTools(program::ProgramContext& programContext
     {
         for(int i=0; i<selectionToolsCount; ++i) 
         {
-            programContext.actionManager->ActionSetChecked(
+            m_actionManager->ActionSetChecked(
                 selectionToolsTypes[i],
                 false
             );
-            programContext.actionManager->ActionSetEnabled(
+            m_actionManager->ActionSetEnabled(
                 selectionToolsTypes[i],
                 false
             );
         }
 
-        programContext.actionManager->ActionSetChecked(
+        m_actionManager->ActionSetChecked(
             action::ActionType::SelectionMove,
             false
         );
-        programContext.actionManager->ActionSetEnabled(
+        m_actionManager->ActionSetEnabled(
             action::ActionType::SelectionMove,
             false
         );
-        programContext.mapSection->SetSelectionMoveMode(false);
+        m_mapSection->SetSelectionMoveMode(false);
     }
 
-    programContext.toolbarSection->Refresh(programContext);
-    programContext.menuSection->Refresh(programContext);    
+    m_toolbarSection->Refresh(*this);
+    m_menuSection->Refresh(*this);    
 }

@@ -4,7 +4,7 @@
 
 namespace program {
 
-    struct ProgramContext;
+    class ProgramContext;
 
     enum class EditorLayerMode {
         SingleLayer = 0,

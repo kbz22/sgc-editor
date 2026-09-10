@@ -11,17 +11,18 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
 {
     using namespace win32_program;
 
-    auto win32context = programContext.mainWindowContext.get();
+    auto hMainWindow = programContext.GetMainWindowHandle();
+    auto hInstance = programContext.GetHInstance();
 
     auto hwndRebar = win32_helpers::CreateRebar(
-        win32context->hMainWindow,
-        win32context->hInstance,
+        hMainWindow,
+        hInstance,
         static_cast<types::ctrid_t>(ControlId::MenuRebar)
     );
 
     auto hwndToolbar = win32_helpers::CreateToolbar(
         hwndRebar,
-        win32context->hInstance,
+        hInstance,
         static_cast<types::ctrid_t>(ControlId::MenuToolbar)
     );
 
@@ -33,9 +34,12 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
     std::vector<TBBUTTON> tbButtons;
     tbButtons.reserve(static_cast<int>(action::MenuId::Count));
 
+    auto actionManager = programContext.GetManager<action::ActionManager>();
+    auto stringLookup = programContext.GetStringLookup();
+
     for (int i=static_cast<int>(action::MenuId::File); i<static_cast<int>(action::MenuId::Count); ++i)
-    {
-        auto menuItems = programContext.actionManager->GetMenuActions(static_cast<action::MenuId>(i));        
+    {        
+        auto menuItems = actionManager->GetMenuActions(static_cast<action::MenuId>(i));        
 
         std::sort(menuItems.begin(), menuItems.end(), [](const action::Action* a, const action::Action* b) {
             return a->GetMenuIndex() < b->GetMenuIndex();
@@ -52,7 +56,7 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
             continue;
         }
 
-        auto &menuNameText = programContext.stringLookup.Get(menuNameId.value());
+        auto &menuNameText = stringLookup.Get(menuNameId.value());
         
         if(menuNameText == std::nullopt) {
             throw std::runtime_error("PopupMenuAction::BuildMenu: Missing text for menu item.");
@@ -108,7 +112,7 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
 
     SendMessage(hwndRebar, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rb);
 
-    SetHwnd(hwndRebar, win32context->hMainWindow);
+    SetHwnd(hwndRebar, hMainWindow);
     m_hwndToolbar = hwndToolbar;
     SetupSubclass(hwndToolbar, this);
 }
@@ -142,7 +146,7 @@ void sections::MenuSection::Refresh(program::ProgramContext& context)
 {
     for (int i=static_cast<int>(action::MenuId::File); i<static_cast<int>(action::MenuId::Count); ++i) 
     {
-        auto menuActions = context.actionManager->GetMenuActions(static_cast<action::MenuId>(i));
+        auto menuActions = context.GetManager<action::ActionManager>()->GetMenuActions(static_cast<action::MenuId>(i));
 
         for(auto* action : menuActions)
         {

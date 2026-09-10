@@ -3,14 +3,14 @@
 #include "program/program.hpp"
 
 sections::LayersSection::LayersSection(program::ProgramContext& programContext) :
-    Section{L"LayerList", win32_program::ControlId::LayerList, *programContext.mainWindowContext}    
+    Section{L"LayerList", win32_program::ControlId::LayerList, programContext.GetMainWindowHandle(), programContext.GetHInstance()}
 {
     RECT rect;
     GetClientRect(GetHwnd(), &rect);
 
     m_layerListControl = std::make_unique<win32_models::LayerListControl>(
         GetHwnd(),
-        programContext.mainWindowContext->hInstance,
+        programContext.GetHInstance(),
         0,
         0,
         rect.right - rect.left,
@@ -18,8 +18,8 @@ sections::LayersSection::LayersSection(program::ProgramContext& programContext) 
     );
 
     m_layerListControl->SetHImageList(
-        programContext.toolbarIcons,
-        programContext.toolbarIconsDisabled,
+        programContext.GetImageList(program::ImageListType::Toolbar),
+        programContext.GetImageList(program::ImageListType::ToolbarDisabled),
         13,
         14
     );

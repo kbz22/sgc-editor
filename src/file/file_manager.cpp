@@ -9,7 +9,7 @@
 sgc::data::AssetId LoadImageAsset(std::wstring name, const std::filesystem::path& path)
 {
     auto &programContext = program::GetProgramContext();
-    auto &assetManager = programContext.assetManager;
+    auto assetManager = programContext.GetManager<file::AssetManager>();
     auto hashableName = L"image/" + name;
 
     auto imageData = sgc::data::ReadFile(path);
@@ -27,7 +27,7 @@ sgc::data::AssetId LoadImageAsset(std::wstring name, const std::filesystem::path
 sgc::data::AssetId LoadTilesetAsset(std::wstring name, sgc::data::AssetId imageId, int tileWidth, int tileHeight)
 {
     auto &programContext = program::GetProgramContext();
-    auto &assetManager = programContext.assetManager;
+    auto assetManager = programContext.GetManager<file::AssetManager>();
     auto hashableName = L"tileset/" + name;
 
     auto tilesetAsset = sgc::asset::TilesetAsset{
@@ -225,21 +225,6 @@ void file::FileManager::SelectDocument(const DocumentLocation &document)
         return;
     }
 
-    /* auto mapDoc = document.file->GetMapDocument(document.index);
-    auto tilesetDoc = document.file->GetTilesetDocument(document.index);
-
-    if(mapDoc) {
-        m_selectedDocument.file = document.file;
-        m_selectedDocument.index = document.index;
-    }
-    else if(tilesetDoc) {
-        m_selectedDocument.file = document.file;
-        m_selectedDocument.index = document.index;
-    }
-    else {
-        clearSelection();
-    } */
-
     auto doc = document.file->GetDocument(document.index);
 
     if(doc) {
@@ -299,10 +284,6 @@ file::MapDocument* file::FileManager::GetActiveDocument() const
         {
             return nullptr;
         }
-
-        /* if(!docs.empty()) {
-            return docs[m_activeDocument.index];
-        } */
     }    
 
     return nullptr;

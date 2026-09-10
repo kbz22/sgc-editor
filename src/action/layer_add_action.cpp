@@ -21,13 +21,13 @@ action::LayerAddAction::LayerAddAction()
 
 void action::LayerAddAction::Execute(program::ProgramContext& context)
 {    
-    auto selectedDocument = context.fileManager->GetActiveDocument();
+    auto selectedDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
     if(selectedDocument != nullptr) {
         
         selectedDocument->GetCommandManager()->Execute(
             std::make_unique<command::LayerAddCommand>()
         );
 
-        program::UpdateEditorLayerMode(context.editorLayerMode, context);
+        context.UpdateEditorLayerMode(context.GetEditorLayerMode());
     }
 }

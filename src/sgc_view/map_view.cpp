@@ -228,7 +228,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
     
     m_mapLayers->Clear();
 
-    auto selectedDocument = programContext.fileManager->GetActiveDocument();
+    auto selectedDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(selectedDocument == nullptr && m_tileset != nullptr) {
         ResetTileset();
@@ -291,12 +291,12 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
         layerIndex++;
     }
 
-    if(program::HasFlag(programContext.editorGridMode, program::EditorGridMode::TileGrid)) {
+    if(program::HasFlag(programContext.GetEditorGridMode(), program::EditorGridMode::TileGrid)) {
         m_mapLayers->Set(layerIndex, m_tileGrid);
         layerIndex++;        
     }
     
-    if(program::HasFlag(programContext.editorGridMode, program::EditorGridMode::ChunkGrid)) {
+    if(program::HasFlag(programContext.GetEditorGridMode(), program::EditorGridMode::ChunkGrid)) {
         m_mapLayers->Set(layerIndex, m_chunkGrid);
         layerIndex++;        
     }

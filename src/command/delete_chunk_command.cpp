@@ -6,7 +6,7 @@ command::DeleteChunkCommand::DeleteChunkCommand(const DeleteChunkCommand& other)
 void command::DeleteChunkCommand::Execute()
 {
     auto& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
@@ -22,8 +22,9 @@ void command::DeleteChunkCommand::Execute()
         if(m_deletedChunk.has_value()) {
             mapDocument->SetDirty(true);
 
-            programContext.mapSection->Refresh(programContext);
-            programContext.mapSection->Update();
+            auto mapSection = programContext.GetSection<sections::MapSection>();
+            mapSection->Refresh(programContext);
+            mapSection->Update();
         }        
     }
 }
@@ -37,7 +38,7 @@ void command::DeleteChunkCommand::Undo()
 {
     if(m_deletedChunk.has_value()) {
         auto& programContext = program::GetProgramContext();
-        auto mapDocument = programContext.fileManager->GetActiveDocument();
+        auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
         if(mapDocument != nullptr) {
             auto layerManager = mapDocument->GetLayerManager();
@@ -51,8 +52,9 @@ void command::DeleteChunkCommand::Undo()
 
             mapDocument->SetDirty(true);
 
-            programContext.mapSection->Refresh(programContext);
-            programContext.mapSection->Update();
+            auto mapSection = programContext.GetSection<sections::MapSection>();
+            mapSection->Refresh(programContext);
+            mapSection->Update();
         }
     }
 }

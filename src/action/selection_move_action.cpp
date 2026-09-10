@@ -23,8 +23,9 @@ action::SelectionMoveAction::SelectionMoveAction()
 
 void action::SelectionMoveAction::Execute(program::ProgramContext &context)
 {
-    bool canMove = context.mapSection->GetSelectionMoveMode();
-    context.mapSection->SetSelectionMoveMode(!canMove);
+    auto mapSection = context.GetSection<sections::MapSection>();
+    bool canMove = mapSection->GetSelectionMoveMode();
+    mapSection->SetSelectionMoveMode(!canMove);
 
     // I can't figure out what unchecks the button. When you click certain other toolbar buttons this one unchecks.
     // This makes it stay checked

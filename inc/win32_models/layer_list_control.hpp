@@ -1,7 +1,6 @@
 #pragma once
 
 #include "program/layer_manager.hpp"
-#include "win32_program/win32_context.hpp"
 #include "win32_models/edit_text_box.hpp"
 
 #include <windows.h>
@@ -11,7 +10,7 @@
 #include <commctrl.h>
 
 namespace program {
-    struct ProgramContext;
+    class ProgramContext;
 }
 
 namespace win32_models {

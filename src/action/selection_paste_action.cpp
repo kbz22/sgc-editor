@@ -29,7 +29,7 @@ void action::SelectionPasteAction::Execute(program::ProgramContext &context)
 {
     using namespace win32_program;
 
-    auto mapDocument = context.fileManager->GetActiveDocument();
+    auto mapDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument == nullptr)
     {
@@ -38,13 +38,14 @@ void action::SelectionPasteAction::Execute(program::ProgramContext &context)
 
     auto layerManager = mapDocument->GetLayerManager();
     auto commandManager = mapDocument->GetCommandManager();
-    auto selectionMode = context.mapSection->GetSelectionMode();
-    auto currentSelectionPosition = context.mapSection->GetSelectionRectanglePositionTiles();
+    auto mapSection = context.GetSection<sections::MapSection>();
+    auto selectionMode = mapSection->GetSelectionMode();
+    auto currentSelectionPosition = mapSection->GetSelectionRectanglePositionTiles();
     MapSelection copiedSelection;
     Clipboard::Get<MapSelection>(copiedSelection);   
 
     command::MultilayerTileChangesType tileChanges;
-    auto cursorPosition = context.mapSection->GetCursorPositionInTiles();
+    auto cursorPosition = mapSection->GetCursorPositionInTiles();
 
     auto iterateTiles = [layerManager, &copiedSelection, &tileChanges, &currentSelectionPosition](sgc::data::ITileStorage *layer, size_t pastedLayerIndex, size_t copiedLayerIndex)
     {
@@ -147,7 +148,7 @@ void action::SelectionPasteAction::Execute(program::ProgramContext &context)
 
     }
 
-    context.mapSection->Update();
+    mapSection->Update();
 
     return;
 }

@@ -13,7 +13,8 @@ command::LayerRemoveCommand::LayerRemoveCommand(size_t removedLayerIndex) :
 void command::LayerRemoveCommand::Execute()
 {
     auto& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto fileManager = programContext.GetManager<file::FileManager>();
+    auto mapDocument = fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
@@ -25,11 +26,13 @@ void command::LayerRemoveCommand::Execute()
 
         mapDocument->SetDirty(true);
 
-        programContext.mapSection->Refresh(programContext);
-        programContext.mapSection->Update();
+        auto mapSection = programContext.GetSection<sections::MapSection>();
+        mapSection->Refresh(programContext);
+        mapSection->Update();
 
-        programContext.layersSection->Refresh(programContext);
-        programContext.layersSection->Update();
+        auto layersSection = programContext.GetSection<sections::LayersSection>();
+        layersSection->Refresh(programContext);
+        layersSection->Update();
     }
 }
 
@@ -41,7 +44,8 @@ void command::LayerRemoveCommand::Commit()
 void command::LayerRemoveCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto fileManager = programContext.GetManager<file::FileManager>();
+    auto mapDocument = fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
@@ -49,10 +53,12 @@ void command::LayerRemoveCommand::Undo()
 
         mapDocument->SetDirty(true);
 
-        programContext.mapSection->Refresh(programContext);
-        programContext.mapSection->Update();
+        auto mapSection = programContext.GetSection<sections::MapSection>();
+        mapSection->Refresh(programContext);
+        mapSection->Update();
 
-        programContext.layersSection->Refresh(programContext);
-        programContext.layersSection->Update();
+        auto layersSection = programContext.GetSection<sections::LayersSection>();
+        layersSection->Refresh(programContext);
+        layersSection->Update();
     }
 }

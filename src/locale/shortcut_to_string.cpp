@@ -19,7 +19,7 @@ std::wstring locale::KeyToString(uint32_t key)
 std::wstring locale::ShortcutToString(const win32_program::Shortcut& shortcut, program::ProgramContext &context)
 {
     std::wstring result;
-    auto &stringLookup = context.stringLookup;
+    auto &stringLookup = context.GetStringLookup();
 
     auto modifierStringIds = win32_program::ShortcutManager::GetStringIdsForShortcutModifier(shortcut.modifier);
     for (const auto& stringId : modifierStringIds)

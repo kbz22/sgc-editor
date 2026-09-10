@@ -5,7 +5,7 @@
 #include <algorithm>
 
 sections::TilesetSection::TilesetSection(program::ProgramContext& programContext) :
-    Section{L"TilesetView", win32_program::ControlId::TilesetView, *programContext.mainWindowContext},
+    Section{L"TilesetView", win32_program::ControlId::TilesetView, programContext.GetMainWindowHandle(), programContext.GetHInstance()},
     m_tilesetView{std::make_unique<sgc_view::TilesetView>(GetHwnd())}
 {
     AttachView(*m_tilesetView);    
@@ -14,14 +14,15 @@ sections::TilesetSection::TilesetSection(program::ProgramContext& programContext
 void sections::TilesetSection::UpdateStatusBar(sgc::math::vec2 position, sgc::tile::TileId tileId, sgc::math::vec2 size)
 {
     auto &programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto fileManager = programContext.GetManager<file::FileManager>(); 
+    auto mapDocument = fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr && mapDocument->IsEditable())
     {
-        if(programContext.mapSection->GetPaintMode() != editor_tools::PaintMode::Select){
-
-        
-            auto statusSection = programContext.statusSection.get();
+        auto mapSection = programContext.GetSection<sections::MapSection>();
+        if(mapSection->GetPaintMode() != editor_tools::PaintMode::Select)
+        {        
+            auto statusSection = programContext.GetSection<sections::StatusSection>();
 
             statusSection->SetStatusCursorPosition(position);
             statusSection->SetStatusTileId(tileId);
@@ -64,7 +65,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
 {
     using namespace program;
     ProgramContext& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument == nullptr || !mapDocument->IsEditable())
     {

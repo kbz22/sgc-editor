@@ -22,14 +22,15 @@ action::ExportImageAction::ExportImageAction()
 
 void action::ExportImageAction::Execute(program::ProgramContext& context)
 {
-    auto mapDocument = context.fileManager->GetActiveDocument();
+    auto mapDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument == nullptr) {
         return;
     }
 
-    auto imageFileName = context.stringLookup.Get(locale::StringId::NameImageFile);
-    auto allFilesString = context.stringLookup.Get(locale::StringId::NameAllFiles);
+    auto stringLookup = context.GetStringLookup(); 
+    auto imageFileName = stringLookup.Get(locale::StringId::NameImageFile);
+    auto allFilesString = stringLookup.Get(locale::StringId::NameAllFiles);
     auto acceptableImageExtensions = std::vector<std::wstring>{ L"png", L"jpg", L"jpeg", L"bmp" };
 
     if(!imageFileName.has_value() || !allFilesString.has_value()) {
@@ -37,7 +38,7 @@ void action::ExportImageAction::Execute(program::ProgramContext& context)
     }
 
     auto filePath = win32_helpers::ShowSaveDialog(
-        context.mainWindowContext->hMainWindow,
+        context.GetMainWindowHandle(),
         {
             { imageFileName.value().c_str(), acceptableImageExtensions },
             { allFilesString.value().c_str(), { L"*" } }
@@ -48,5 +49,5 @@ void action::ExportImageAction::Execute(program::ProgramContext& context)
         return;
     }
 
-    context.mapSection->RenderToImage(filePath.value());
+    context.GetSection<sections::MapSection>()->RenderToImage(filePath.value());
 }

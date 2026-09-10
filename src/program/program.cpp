@@ -45,6 +45,36 @@
 #include "action/settings_action.hpp"
 #include "defaults.hpp"
 
+#include "editor_graphics.h"
+#include "win32_helpers/load_bitmap.hpp"
+
+bool program::ProgramContext::m_win32Set = false;
+auto program::ProgramContext::m_hInstance = HINSTANCE();
+auto program::ProgramContext::m_mainWindowHandle = HWND();
+
+program::ProgramContext::ProgramContext(HWND hMainWindow, HINSTANCE hInstance)
+{
+    if(m_win32Set) return;
+
+    m_hInstance = hInstance;
+    m_mainWindowHandle = hMainWindow;
+    m_stringLookup = std::make_unique<locale::StringLookup>(); // for default text
+    m_win32Set = true;
+}
+
+program::ProgramContext::ProgramContext()
+{
+    m_actionManager = std::make_unique<action::ActionManager>();
+    m_shortcutManager = std::make_unique<win32_program::ShortcutManager>(
+        m_hInstance,
+        m_mainWindowHandle
+    );
+
+    SetupImageLists();
+    RegisterActions();
+    RegisterDefaultShortcuts();    
+}
+
 program::ProgramContext& program::GetProgramContext()
 {
     static ProgramContext context = {};
@@ -88,96 +118,95 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::ExportFile    
 };
 
-void program::StartDefault()
+void program::ProgramContext::StartDefault()
 {
-    auto& programContext = GetProgramContext();    
-    
-    programContext.assetManager = std::make_unique<file::AssetManager>();
-    programContext.fileManager = std::make_unique<file::FileManager>();
-    programContext.shortcutManager = std::make_unique<win32_program::ShortcutManager>(
-        programContext.mainWindowContext->hInstance,
-        programContext.mainWindowContext->hMainWindow
-    );
-    programContext.settingsManager = std::make_unique<win32_program::SettingsManager>();
+    m_assetManager = std::make_unique<file::AssetManager>();
+    m_fileManager = std::make_unique<file::FileManager>();
+    /* m_shortcutManager = std::make_unique<win32_program::ShortcutManager>(
+        m_hInstance,
+        m_mainWindowHandle
+    ); */
+    m_settingsManager = std::make_unique<win32_program::SettingsManager>();
+    m_stringLookup = std::make_unique<locale::StringLookup>();
 
-    programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
+    m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 
-    programContext.menuSection = std::make_unique<sections::MenuSection>(programContext);
-    programContext.sections.push_back(programContext.menuSection.get());
-    programContext.menuSection->Refresh(programContext);
+    m_menuSection = std::make_unique<sections::MenuSection>(*this);
+    m_sections.push_back(m_menuSection.get());
+    m_menuSection->Refresh(*this);
 
-    programContext.mapSection = std::make_unique<sections::MapSection>(programContext);
-    programContext.sections.push_back(programContext.mapSection.get());    
+    m_mapSection = std::make_unique<sections::MapSection>(*this);
+    m_sections.push_back(m_mapSection.get());    
 
-    programContext.toolbarSection = std::make_unique<sections::ToolbarSection>(programContext);
-    programContext.sections.push_back(programContext.toolbarSection.get());
+    m_toolbarSection = std::make_unique<sections::ToolbarSection>(*this);
+    m_sections.push_back(m_toolbarSection.get());
 
-    programContext.tilesetSection = std::make_unique<sections::TilesetSection>(programContext);
-    programContext.sections.push_back(programContext.tilesetSection.get());    
+    m_tilesetSection = std::make_unique<sections::TilesetSection>(*this);
+    m_sections.push_back(m_tilesetSection.get());    
 
-    programContext.layersSection = std::make_unique<sections::LayersSection>(programContext);
-    programContext.sections.push_back(programContext.layersSection.get());
+    m_layersSection = std::make_unique<sections::LayersSection>(*this);
+    m_sections.push_back(m_layersSection.get());
 
-    programContext.packageSection = std::make_unique<sections::PackageSection>(programContext);
-    programContext.sections.push_back(programContext.packageSection.get());
+    m_packageSection = std::make_unique<sections::PackageSection>(*this);
+    m_sections.push_back(m_packageSection.get());
 
-    programContext.statusSection = std::make_unique<sections::StatusSection>(programContext);
-    programContext.sections.push_back(programContext.statusSection.get());
+    m_statusSection = std::make_unique<sections::StatusSection>(*this);
+    m_sections.push_back(m_statusSection.get());
 
-    programContext.layersSection->RegisterSelectedLayerChangeCallback([&programContext](size_t index) {
-        auto document = programContext.fileManager->GetActiveDocument();
+    m_layersSection->RegisterSelectedLayerChangeCallback([this](size_t index) {
+        auto document = m_fileManager->GetActiveDocument();
         if(document != nullptr) {
             auto layerManager = document->GetLayerManager();
             layerManager->SetActiveLayerIndex(index);
 
-            if(programContext.editorLayerMode == EditorLayerMode::MultiLayer) {
-                MultiLayerModeSetup(programContext);
+            if(m_editorLayerMode == EditorLayerMode::MultiLayer) {
+                MultiLayerModeSetup(*this);
             }
 
-            programContext.mapSection->Refresh(programContext);
-            programContext.mapSection->Update();
+            m_mapSection->Refresh(*this);
+            m_mapSection->Update();
         }
     });
 
-    programContext.layersSection->RegisterLayerVisibilityChangeCallback([&programContext](size_t index, bool visible) {
-        auto document = programContext.fileManager->GetActiveDocument();
+    m_layersSection->RegisterLayerVisibilityChangeCallback([this](size_t index, bool visible) {
+        auto document = m_fileManager->GetActiveDocument();
         if(document != nullptr) {
             auto layerManager = document->GetLayerManager();
             layerManager->SetLayerVisibility(index, visible);
 
-            programContext.mapSection->Refresh(programContext);
-            programContext.mapSection->Update();
+            m_mapSection->Refresh(*this);
+            m_mapSection->Update();
         }
     });
 
-    programContext.layersSection->RegisterLayerNameChangeCallback([&programContext](size_t index, std::wstring newName) {
-        auto document = programContext.fileManager->GetActiveDocument();
+    m_layersSection->RegisterLayerNameChangeCallback([this](size_t index, std::wstring newName) {
+        auto document = m_fileManager->GetActiveDocument();
         if(document != nullptr) {
             auto layerManager = document->GetLayerManager();
             layerManager->SetLayerName(index, newName);
             document->SetDirty(true);
 
-            programContext.mapSection->Refresh(programContext);
-            programContext.mapSection->Update();
+            m_mapSection->Refresh(*this);
+            m_mapSection->Update();
 
-            programContext.packageSection->UpdateTreeViewItems(programContext);
+            m_packageSection->UpdateTreeViewItems(*this);
         }
     });
 
-    programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemSelected, [&programContext](file::IFile* file, size_t index) 
+    m_packageSection->RegisterFileActionCallback(sections::FileAction::ItemSelected, [this](file::IFile* file, size_t index) 
     {
-        auto fileManager = programContext.fileManager.get();
+        auto fileManager = m_fileManager.get();
         auto location = file::DocumentLocation{file, index};
         
         fileManager->SelectDocument(location);
 
-        programContext.packageSection->UpdateTreeViewItems(programContext);
-        programContext.packageSection->Update();
+        m_packageSection->UpdateTreeViewItems(*this);
+        m_packageSection->Update();
     });
 
-    programContext.packageSection->RegisterFileActionCallback(sections::FileAction::ItemDoubleClicked, [&programContext](file::IFile* file, size_t index) 
+    m_packageSection->RegisterFileActionCallback(sections::FileAction::ItemDoubleClicked, [this](file::IFile* file, size_t index) 
     {
-        auto fileManager = programContext.fileManager.get();
+        auto fileManager = m_fileManager.get();
         auto location = file::DocumentLocation{file, index};
         
         if(index == 0 && !file->IsActivable())
@@ -193,33 +222,33 @@ void program::StartDefault()
 
         fileManager->SetActiveDocument(location);
 
-        programContext.mapSection->Refresh(programContext);
-        programContext.mapSection->Update();
+        m_mapSection->Refresh(*this);
+        m_mapSection->Update();
 
-        programContext.layersSection->Refresh(programContext);
-        programContext.layersSection->Update();
+        m_layersSection->Refresh(*this);
+        m_layersSection->Update();
 
-        programContext.tilesetSection->Refresh(programContext);
-        programContext.tilesetSection->Update();
+        m_tilesetSection->Refresh(*this);
+        m_tilesetSection->Update();
 
-        programContext.packageSection->UpdateTreeViewItems(programContext);
-        programContext.packageSection->Update();
+        m_packageSection->UpdateTreeViewItems(*this);
+        m_packageSection->Update();
     });
 
-    programContext.fileManager->RegisterOnFileUpdatedCallback([&programContext]([[maybe_unused]] file::IFile* file) 
+    m_fileManager->RegisterOnFileUpdatedCallback([this]([[maybe_unused]] file::IFile* file) 
     {
-        programContext.packageSection->UpdateTreeViewItems(programContext);
-        program::RefreshEditor();
+        m_packageSection->UpdateTreeViewItems(*this);
+        Refresh();
     });
 
-    programContext.fileManager->RegisterOnActiveDocumentChangedCallback([&programContext](file::DocumentLocation documentLocation) 
+    m_fileManager->RegisterOnActiveDocumentChangedCallback([this](file::DocumentLocation documentLocation) 
     {
-        static const auto defaultWindowTitle = programContext.stringLookup.Get(locale::StringId::WindowTitle);
+        static const auto defaultWindowTitle = m_stringLookup->Get(locale::StringId::WindowTitle);        
 
         if(documentLocation.file == nullptr) 
         {
             win32_program::SetTitle(
-                programContext.mainWindowContext->hMainWindow,
+                m_mainWindowHandle,
                 defaultWindowTitle.value().c_str()
             );
         }
@@ -229,24 +258,24 @@ void program::StartDefault()
             auto newTitle = std::format(L"{} - {}", fileName, defaultWindowTitle.value());
 
             win32_program::SetTitle(
-                programContext.mainWindowContext->hMainWindow,
+                m_mainWindowHandle,
                 newTitle
             );
         }
 
-        RefreshEditor();
+        Refresh();
     });
 
-    programContext.fileManager->RegisterOnMapDirtyCallback([&programContext]([[maybe_unused]]file::MapDocument* document, [[maybe_unused]]bool dirty) 
+    m_fileManager->RegisterOnMapDirtyCallback([this]([[maybe_unused]]file::MapDocument* document, [[maybe_unused]]bool dirty) 
     {
-        programContext.packageSection->UpdateTreeViewItems(programContext);
-        programContext.packageSection->Update();
+        m_packageSection->UpdateTreeViewItems(*this);
+        m_packageSection->Update();
     });
 }
 
 void RedrawAllSections(program::ProgramContext& programContext)
 {
-    for(auto section : programContext.sections) {
+    for(auto section : programContext.GetSections()) {
         section->HandleSectionResize();
         section->Update();
     }
@@ -254,15 +283,15 @@ void RedrawAllSections(program::ProgramContext& programContext)
 
 void RefreshAllSection(program::ProgramContext& programContext)
 {
-    for(auto section : programContext.sections) {
+    for(auto section : programContext.GetSections()) {
         section->Refresh(programContext);        
     }
 }
 
-void program::RegisterDefaultShortcuts(program::ProgramContext& programContext)
+void program::ProgramContext::RegisterDefaultShortcuts()
 {
-    auto& shortcutManager = programContext.shortcutManager;
-    auto& actionManager = programContext.actionManager;
+    auto& shortcutManager = m_shortcutManager;
+    auto& actionManager = m_actionManager;
 
     for(auto &action : actionManager->GetActions()) {
         auto shortcuts = action->GetDefaultShortcuts();
@@ -276,92 +305,88 @@ void program::RegisterDefaultShortcuts(program::ProgramContext& programContext)
     }
 }
 
-void program::RefreshEditor()
+void program::ProgramContext::Refresh()
 {
-    auto &programContext = GetProgramContext();
-    auto currentDocument = programContext.fileManager->GetActiveDocument();
+    auto currentDocument = m_fileManager->GetActiveDocument();
 
     if(currentDocument == nullptr || !currentDocument->IsEditable()) {
-        programContext.actionManager->ActionSetChecked(g_activeEditorButtons, false);
-        programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, false);
+        m_actionManager->ActionSetChecked(g_activeEditorButtons, false);
+        m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
     }
     else if(currentDocument->IsEditable()) {
-        programContext.actionManager->ActionSetEnabled(g_activeEditorButtons, true);
-        program::UpdateEditorLayerMode(programContext.editorLayerMode, programContext);
-        program::UpdateEditorChunkMode(programContext.editorChunkMode, programContext);
-        program::UpdateBrushMode(programContext.mapSection->GetPaintMode(), programContext);
-        program::UpdateEditorSelectionMode(programContext.mapSection->GetSelectionMode(), programContext);
-        program::UpdateEditorSelectionTools(programContext);        
+        m_actionManager->ActionSetEnabled(g_activeEditorButtons, true);
+        UpdateEditorLayerMode(m_editorLayerMode);
+        UpdateEditorChunkMode(m_editorChunkMode);
+        UpdateBrushMode(m_mapSection->GetPaintMode());
+        UpdateEditorSelectionMode(m_mapSection->GetSelectionMode());
+        UpdateEditorSelectionTools();
     }
 
-    if(programContext.fileManager->GetOpenFiles().empty()) {
+    if(m_fileManager->GetOpenFiles().empty()) {
         EnableSaving(false);
     }
     else {
         EnableSaving(true);
     }
 
-    RefreshAllSection(programContext);
-    RedrawAllSections(programContext);
+    RefreshAllSection(*this);
+    RedrawAllSections(*this);
 
     return;
 }
-    
 
-void program::RegisterActions()
+void program::ProgramContext::RegisterActions()
 {
-    auto& programContext = GetProgramContext();
-
-    if(programContext.actionManager == nullptr) {
-        programContext.actionManager = std::make_unique<action::ActionManager>();
+    if(m_actionManager == nullptr) {
+        m_actionManager = std::make_unique<action::ActionManager>();
     }
 
-    auto newDocAction = programContext.actionManager->Register(std::make_unique<action::NewDocumentAction>());
-    auto newMapAction = programContext.actionManager->Register(std::make_unique<action::NewMapDocumentAction>());
-    auto newTilesetAction = programContext.actionManager->Register(std::make_unique<action::NewTilesetDocumentAction>());
-    auto newPackageAction = programContext.actionManager->Register(std::make_unique<action::NewPackageAction>());
-    programContext.actionManager->Register(std::make_unique<action::OpenFileAction>());
-    programContext.actionManager->Register(std::make_unique<action::SaveFileAction>());
-    programContext.actionManager->Register(std::make_unique<action::CloseFileAction>());
-    programContext.actionManager->Register(std::make_unique<action::UndoAction>());
-    programContext.actionManager->Register(std::make_unique<action::RedoAction>());
-    programContext.actionManager->Register(std::make_unique<action::LayerAddAction>());
-    programContext.actionManager->Register(std::make_unique<action::LayerRemoveAction>());
-    programContext.actionManager->Register(std::make_unique<action::LayerMoveAction>(-1));
-    programContext.actionManager->Register(std::make_unique<action::LayerMoveAction>(1));
-    programContext.actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::MultiLayer));
-    programContext.actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::SingleLayer));
-    programContext.actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::SingleImage));
-    programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::FixedChunks));
-    programContext.actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::DynamicChunks));
-    programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Brush));
-    programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Rectangle));
-    programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Fill));
-    programContext.actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Select));
-    programContext.actionManager->Register(std::make_unique<action::ZoomResetAction>());
-    programContext.actionManager->Register(std::make_unique<action::ZoomAction>(defaults::zoomFactor));
-    programContext.actionManager->Register(std::make_unique<action::ZoomAction>(1.0f / defaults::zoomFactor));
-    programContext.actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::ClearTile));
-    programContext.actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::DeleteChunk));
-    programContext.actionManager->Register(std::make_unique<action::ZoomSelectAction>());
-    programContext.actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::TileGrid));
-    programContext.actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::ChunkGrid));
-    programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::SingleLayer));
-    programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::AllLayers));
-    programContext.actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::VisibleLayers));
-    programContext.actionManager->Register(std::make_unique<action::SelectionClearAction>());
-    programContext.actionManager->Register(std::make_unique<action::SelectionCopyAction>());
-    programContext.actionManager->Register(std::make_unique<action::SelectionPasteAction>());
-    programContext.actionManager->Register(std::make_unique<action::SelectionCutAction>());
-    programContext.actionManager->Register(std::make_unique<action::SelectionMoveAction>());    
-    programContext.actionManager->Register(std::make_unique<action::SaveAsAction>());
-    auto exportAction = programContext.actionManager->Register(std::make_unique<action::ExportFileAction>());
-    auto exportImageAction = programContext.actionManager->Register(std::make_unique<action::ExportImageAction>());
-    programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Up));
-    programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Down));
-    programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Top));
-    programContext.actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Bottom));
-    programContext.actionManager->Register(std::make_unique<action::SettingsAction>());
+    auto newDocAction = m_actionManager->Register(std::make_unique<action::NewDocumentAction>());
+    auto newMapAction = m_actionManager->Register(std::make_unique<action::NewMapDocumentAction>());
+    auto newTilesetAction = m_actionManager->Register(std::make_unique<action::NewTilesetDocumentAction>());
+    auto newPackageAction = m_actionManager->Register(std::make_unique<action::NewPackageAction>());
+    m_actionManager->Register(std::make_unique<action::OpenFileAction>());
+    m_actionManager->Register(std::make_unique<action::SaveFileAction>());
+    m_actionManager->Register(std::make_unique<action::CloseFileAction>());
+    m_actionManager->Register(std::make_unique<action::UndoAction>());
+    m_actionManager->Register(std::make_unique<action::RedoAction>());
+    m_actionManager->Register(std::make_unique<action::LayerAddAction>());
+    m_actionManager->Register(std::make_unique<action::LayerRemoveAction>());
+    m_actionManager->Register(std::make_unique<action::LayerMoveAction>(-1));
+    m_actionManager->Register(std::make_unique<action::LayerMoveAction>(1));
+    m_actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::MultiLayer));
+    m_actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::SingleLayer));
+    m_actionManager->Register(std::make_unique<action::ChangeLayerModeAction>(EditorLayerMode::SingleImage));
+    m_actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::FixedChunks));
+    m_actionManager->Register(std::make_unique<action::ChangeChunkModeAction>(EditorChunkMode::DynamicChunks));
+    m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Brush));
+    m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Rectangle));
+    m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Fill));
+    m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Select));
+    m_actionManager->Register(std::make_unique<action::ZoomResetAction>());
+    m_actionManager->Register(std::make_unique<action::ZoomAction>(defaults::zoomFactor));
+    m_actionManager->Register(std::make_unique<action::ZoomAction>(1.0f / defaults::zoomFactor));
+    m_actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::ClearTile));
+    m_actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::DeleteChunk));
+    m_actionManager->Register(std::make_unique<action::ZoomSelectAction>());
+    m_actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::TileGrid));
+    m_actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::ChunkGrid));
+    m_actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::SingleLayer));
+    m_actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::AllLayers));
+    m_actionManager->Register(std::make_unique<action::ChangeSelectionModeAction>(editor_tools::SelectionMode::VisibleLayers));
+    m_actionManager->Register(std::make_unique<action::SelectionClearAction>());
+    m_actionManager->Register(std::make_unique<action::SelectionCopyAction>());
+    m_actionManager->Register(std::make_unique<action::SelectionPasteAction>());
+    m_actionManager->Register(std::make_unique<action::SelectionCutAction>());
+    m_actionManager->Register(std::make_unique<action::SelectionMoveAction>());    
+    m_actionManager->Register(std::make_unique<action::SaveAsAction>());
+    auto exportAction = m_actionManager->Register(std::make_unique<action::ExportFileAction>());
+    auto exportImageAction = m_actionManager->Register(std::make_unique<action::ExportImageAction>());
+    m_actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Up));
+    m_actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Down));
+    m_actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Top));
+    m_actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Bottom));
+    m_actionManager->Register(std::make_unique<action::SettingsAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,
@@ -373,19 +398,210 @@ void program::RegisterActions()
         exportImageAction
     });
 
-    programContext.actionManager->Register(std::make_unique<action::FileMenuAction>());
-    programContext.actionManager->Register(std::make_unique<action::EditMenuAction>());
-    programContext.actionManager->Register(std::make_unique<action::MapMenuAction>());
-    programContext.actionManager->Register(std::make_unique<action::ViewMenuAction>());
-    programContext.actionManager->Register(std::make_unique<action::HelpMenuAction>());
+    m_actionManager->Register(std::make_unique<action::FileMenuAction>());
+    m_actionManager->Register(std::make_unique<action::EditMenuAction>());
+    m_actionManager->Register(std::make_unique<action::MapMenuAction>());
+    m_actionManager->Register(std::make_unique<action::ViewMenuAction>());
+    m_actionManager->Register(std::make_unique<action::HelpMenuAction>());
 }
 
-void program::EnableSaving(bool enable)
+void program::ProgramContext::EnableSaving(bool enable)
 {
     auto& programContext = GetProgramContext();
     std::vector<action::ActionType> saveActions = {
         action::ActionType::SaveFile,
         action::ActionType::SaveAs
     };
-    programContext.actionManager->ActionSetEnabled(saveActions, enable);
+    m_actionManager->ActionSetEnabled(saveActions, enable);
+}
+
+bool program::ProgramContext::ShortcutsEnabled() const
+{
+    for(auto &section : m_sections)
+    {
+        if(m_activeSection == section)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<sections::Section*> program::ProgramContext::GetSections() const
+{
+    return m_sections;
+}
+
+sections::Section* program::ProgramContext::GetActiveSection() const
+{
+    return m_activeSection;
+}
+
+void program::ProgramContext::SetActiveSection(sections::Section* section)
+{
+    m_activeSection = section;
+}
+
+template<>
+sections::MapSection* program::ProgramContext::GetSection<sections::MapSection>() const
+{
+    return m_mapSection.get();
+}
+
+template<>
+sections::TilesetSection* program::ProgramContext::GetSection<sections::TilesetSection>() const
+{
+    return m_tilesetSection.get();
+}
+
+template<>
+sections::ToolbarSection* program::ProgramContext::GetSection<sections::ToolbarSection>() const
+{
+    return m_toolbarSection.get();
+}
+
+template<>
+sections::MenuSection* program::ProgramContext::GetSection<sections::MenuSection>() const
+{
+    return m_menuSection.get();
+}
+
+template<>
+sections::LayersSection* program::ProgramContext::GetSection<sections::LayersSection>() const
+{
+    return m_layersSection.get();
+}
+
+template<>
+sections::PackageSection* program::ProgramContext::GetSection<sections::PackageSection>() const
+{
+    return m_packageSection.get();
+}
+
+template<>
+sections::StatusSection* program::ProgramContext::GetSection<sections::StatusSection>() const
+{
+    return m_statusSection.get();
+}
+
+template<>
+action::ActionManager* program::ProgramContext::GetManager<action::ActionManager>() const
+{
+    return m_actionManager.get();
+}
+
+template<>
+file::FileManager* program::ProgramContext::GetManager<file::FileManager>() const
+{
+    return m_fileManager.get();
+}
+
+template<>
+file::AssetManager* program::ProgramContext::GetManager<file::AssetManager>() const
+{
+    return m_assetManager.get();
+}
+
+template<>
+win32_program::ShortcutManager* program::ProgramContext::GetManager<win32_program::ShortcutManager>() const
+{
+    return m_shortcutManager.get();
+}
+
+template<>
+win32_program::SettingsManager* program::ProgramContext::GetManager<win32_program::SettingsManager>() const
+{
+    return m_settingsManager.get();
+}
+
+HWND program::ProgramContext::GetMainWindowHandle() const
+{
+    if(!m_win32Set)
+        return HWND();
+
+    return m_mainWindowHandle;
+}
+
+HINSTANCE program::ProgramContext::GetHInstance() const
+{
+    if(!m_win32Set)
+        return HINSTANCE();
+
+    return m_hInstance;
+}
+
+HIMAGELIST program::ProgramContext::GetImageList(ImageListType type) const
+{
+    return m_imageLists.at(type);
+}
+
+void program::ProgramContext::SetImageList(ImageListType type, HIMAGELIST imageList)
+{
+    m_imageLists[type] = imageList;
+}
+
+sgc::graphics::Rectangle& program::ProgramContext::GetSelectionRectangleOnTileset() const
+{
+    return *m_selectionRectangleOnTileset;
+}
+
+locale::StringLookup& program::ProgramContext::GetStringLookup() const
+{
+    return *m_stringLookup;
+}
+
+program::EditorGridMode program::ProgramContext::GetEditorGridMode() const
+{
+    return m_editorGridMode;
+}
+
+program::EditorLayerMode program::ProgramContext::GetEditorLayerMode() const
+{
+    return m_editorLayerMode;
+}
+
+program::EditorChunkMode program::ProgramContext::GetEditorChunkMode() const
+{
+    return m_editorChunkMode;
+}
+
+void program::ProgramContext::SetEditorChunkMode(program::EditorChunkMode newMode)
+{
+    m_editorChunkMode = newMode;
+}
+
+void program::ProgramContext::SetEditorLayerMode(program::EditorLayerMode newMode)
+{
+    m_editorLayerMode = newMode;
+}
+
+void program::ProgramContext::SetEditorGridMode(program::EditorGridMode newMode)
+{
+    m_editorGridMode = newMode;
+}
+
+void program::ProgramContext::SetupImageLists()
+{
+    m_imageLists[ImageListType::Toolbar] = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+    m_imageLists[ImageListType::ToolbarDisabled] = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+    m_imageLists[ImageListType::ListView] = ImageList_Create(16, 16, ILC_COLOR32, 10, 0);
+
+    auto hInstance = m_hInstance;
+    auto hBmp = win32_helpers::LoadBitmapFromResource(
+        hInstance,
+        IDB_TOOLBARICONS
+    );
+    auto hBmpDisabled = win32_helpers::LoadBitmapFromResource(
+        hInstance,
+        IDB_TOOLBARICONS_DISABLED
+    );
+    auto hBmpPackageIcons = win32_helpers::LoadBitmapFromResource(
+        hInstance,
+        // IDB_PACKAGEVIEWICONS
+        IDB_LISTVIEWICONS
+    );
+
+    ImageList_Add(m_imageLists[ImageListType::Toolbar], hBmp, NULL);
+    ImageList_Add(m_imageLists[ImageListType::ToolbarDisabled], hBmpDisabled, NULL);
+    ImageList_Add(m_imageLists[ImageListType::ListView], hBmpPackageIcons, NULL);
 }

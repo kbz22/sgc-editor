@@ -9,7 +9,7 @@
 #include "file/ifile.hpp"
 
 namespace program {
-    struct ProgramContext;
+    class ProgramContext;
 }
 
 namespace sections {

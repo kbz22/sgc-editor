@@ -2,7 +2,6 @@
 #include <commctrl.h>
 
 win32_models::EditTextBox::EditTextBox(HWND hwndParent, HINSTANCE hInstance) :
-    m_hwnd(nullptr),
     m_visible(true)
 {
     m_hwnd = CreateWindowExW(

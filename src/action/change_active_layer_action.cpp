@@ -53,7 +53,7 @@ action::ChangeActiveLayerAction::ChangeActiveLayerAction(ChangeActiveLayerDirect
 
 void action::ChangeActiveLayerAction::Execute(program::ProgramContext& context)
 {
-    auto mapDocument = context.fileManager->GetActiveDocument();
+    auto mapDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
     if(mapDocument != nullptr) 
     {
         auto layerManager = mapDocument->GetLayerManager();
@@ -89,8 +89,10 @@ void action::ChangeActiveLayerAction::Execute(program::ProgramContext& context)
             }
         }
 
-        context.mapSection->Update();
-        context.layersSection->Refresh(context);
-        context.layersSection->Update();
+        auto mapSection = context.GetSection<sections::MapSection>();
+        auto layersSection = context.GetSection<sections::LayersSection>();
+        mapSection->Update();
+        layersSection->Refresh(context);
+        layersSection->Update();
     }
 }

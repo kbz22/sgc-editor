@@ -19,7 +19,8 @@ void action::PopupMenuAction::BuildMenu(program::ProgramContext &context)
 
     for(auto &item : m_popupMenuItems)
     {
-        auto text = context.stringLookup.Get(item->GetNameStringId().value());
+        auto stringLookup = context.GetStringLookup();
+        auto text = stringLookup.Get(item->GetNameStringId().value());
 
         if(item->GetGroupId() != previousGroupId) {
             AppendMenuW(
@@ -102,16 +103,18 @@ void action::PopupMenuAction::Execute(program::ProgramContext& context)
         throw std::runtime_error("PopupMenuAction::Execute: m_menuId is not set.");
     }
 
+    auto menuSection = context.GetSection<sections::MenuSection>();
+
     RECT rc{};
 
     SendMessage(
-        context.menuSection->GetHwndToolbar(),
+        menuSection->GetHwndToolbar(),
         TB_GETRECT,
         m_menuId,
         reinterpret_cast<LPARAM>(&rc));
 
     MapWindowPoints(
-        context.menuSection->GetHwndToolbar(),
+        menuSection->GetHwndToolbar(),
         HWND_DESKTOP,
         reinterpret_cast<POINT*>(&rc),
         2);
@@ -122,7 +125,7 @@ void action::PopupMenuAction::Execute(program::ProgramContext& context)
         rc.left,
         rc.bottom,
         0,
-        context.menuSection->GetHwndToolbar(),
+        menuSection->GetHwndToolbar(),
         nullptr
     );
 

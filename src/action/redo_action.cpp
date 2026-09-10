@@ -24,10 +24,10 @@ action::RedoAction::RedoAction()
 
 void action::RedoAction::Execute(program::ProgramContext& context)
 {
-    auto selectedDocument = context.fileManager->GetActiveDocument();
+    auto selectedDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
     if(selectedDocument != nullptr) {
         selectedDocument->GetCommandManager()->Redo();
     }
 
-    context.mapSection->Update();
+    context.GetSection<sections::MapSection>()->Update();
 }

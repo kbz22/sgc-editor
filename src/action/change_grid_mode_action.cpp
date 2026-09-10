@@ -41,5 +41,5 @@ action::ChangeGridModeAction::ChangeGridModeAction(program::EditorGridMode newGr
 
 void action::ChangeGridModeAction::Execute([[maybe_unused]] program::ProgramContext& context)
 {
-    program::UpdateEditorGridMode(m_newGridMode, context);
+    context.UpdateEditorGridMode(m_newGridMode);
 }

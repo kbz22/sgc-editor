@@ -26,12 +26,16 @@ INT_PTR CALLBACK NewPackageFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
 
 void action::NewPackageAction::Execute(program::ProgramContext &programContext)
 {
-    if(programContext.packageSection != nullptr) {
-        if(programContext.mainWindowContext->hMainWindow != nullptr){
+    if(programContext.GetSection<sections::PackageSection>() != nullptr) 
+    {
+        auto hMainWindow = programContext.GetMainWindowHandle();
+        auto hInstance = programContext.GetHInstance();
+        if(hMainWindow != nullptr)
+        {
             DialogBox(
-                programContext.mainWindowContext->hInstance,            
+                hInstance,
                 MAKEINTRESOURCE(IDD_NEW_PACKAGE_DIALOG),
-                programContext.mainWindowContext->hMainWindow,
+                hMainWindow,
                 NewPackageFileDialogProc
             );
         }
@@ -65,11 +69,11 @@ INT_PTR CALLBACK NewPackageFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                         return TRUE;
                     }
 
-                    programContext.fileManager->NewPackageFile(
+                    programContext.GetManager<file::FileManager>()->NewPackageFile(
                         packageName,
                         {},
                         {},
-                        *programContext.assetManager
+                        *programContext.GetManager<file::AssetManager>()
                     );
 
                     EndDialog(hDlg, IDOK);

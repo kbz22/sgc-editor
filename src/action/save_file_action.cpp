@@ -36,7 +36,7 @@ void action::SaveFileAction::Execute(program::ProgramContext& programContext)
         { file::FileType::Package, locale::StringId::NamePackageFile }
     };
 
-    auto activeFile = programContext.fileManager->GetSelectedFile();
+    auto activeFile = programContext.GetManager<file::FileManager>()->GetSelectedFile();
     
     if (activeFile != nullptr) {
 
@@ -48,7 +48,7 @@ void action::SaveFileAction::Execute(program::ProgramContext& programContext)
 
         if(filePath.has_value() && filePath.value().empty()) 
         {
-            programContext.actionManager->Execute(
+            programContext.GetManager<action::ActionManager>()->Execute(
                 action::ActionType::SaveAs, programContext
             );
         }

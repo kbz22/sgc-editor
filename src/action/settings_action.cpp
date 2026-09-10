@@ -22,11 +22,12 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM l
 
 void action::SettingsAction::Execute(program::ProgramContext& context)
 {
-    if(context.mainWindowContext->hMainWindow != nullptr){
+    auto hMainWindow = context.GetMainWindowHandle();
+    if(hMainWindow != nullptr){
         DialogBox(
-            context.mainWindowContext->hInstance,            
+            context.GetHInstance(),            
             MAKEINTRESOURCE(IDD_SETTINGS),
-            context.mainWindowContext->hMainWindow,
+            hMainWindow,
             SettingsDialogProc
         );
     }
@@ -40,7 +41,7 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
     using namespace win32_program;
 
     program::ProgramContext& context = program::GetProgramContext();
-    auto settingsManager = context.settingsManager.get();
+    auto settingsManager = context.GetManager<win32_program::SettingsManager>();
 
     auto changePage = [&settingsManager]() {
         auto currentCategory = settingsManager->GetCurrentCategory();
@@ -67,7 +68,7 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
             settingsManager->SetCategoryWindow(
                 SettingCategory::General, 
                 CreateDialog(
-                    context.mainWindowContext->hInstance,
+                    context.GetHInstance(),
                     MAKEINTRESOURCE(IDD_SETTINGS_GENERAL),
                     hDlg,
                     GeneralSettingsDialogProc
@@ -76,7 +77,7 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
             settingsManager->SetCategoryWindow(
                 SettingCategory::Shortcuts, 
                 CreateDialog(
-                    context.mainWindowContext->hInstance,
+                    context.GetHInstance(),
                     MAKEINTRESOURCE(IDD_SETTINGS_SHORTCUTS),
                     hDlg,
                     ShortcutsSettingsDialogProc
@@ -88,7 +89,7 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
             changePage();
 
             auto list = GetDlgItem(hDlg, IDC_SETTINGS_LIST);
-            auto stringLookup = &context.stringLookup;
+            auto stringLookup = &context.GetStringLookup();
             auto addItem = [list, &settingsManager](std::wstring text, SettingCategory category)
             {
                 TVINSERTSTRUCT item{};

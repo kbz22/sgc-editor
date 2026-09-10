@@ -74,7 +74,7 @@ sgc::data::AssetId file::MapDocument::GetMapDocumentAssetId() const
 bool file::MapDocument::IsEditable() const
 {
     program::ProgramContext& programContext = program::GetProgramContext();
-    return programContext.assetManager->CheckAssetExists(m_tilesetId);
+    return programContext.GetManager<file::AssetManager>()->CheckAssetExists(m_tilesetId);
 }
 
 bool file::MapDocument::IsDirty() const

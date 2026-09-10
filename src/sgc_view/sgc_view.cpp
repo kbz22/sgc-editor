@@ -137,7 +137,7 @@ void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
     std::shared_ptr<sgc::graphics::Tileset> tileset = nullptr;
 
     try {
-        tileset = programContext.assetManager->MakeTileset(tilesetId, &m_renderContext);
+        tileset = programContext.GetManager<file::AssetManager>()->MakeTileset(tilesetId, &m_renderContext);
     }
     catch ([[maybe_unused]] const program::AssetCacheException& e) {
         // Ignore missing tileset - likely a map was loaded first
@@ -156,7 +156,7 @@ void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
 
 void sgc_view::SgcView::Refresh(program::ProgramContext& programContext)
 {
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument == nullptr) {
         m_backgroundColor = m_backgroundColorInactive;

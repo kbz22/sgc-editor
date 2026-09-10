@@ -1,7 +1,6 @@
  #pragma once
 
 #include <windows.h>
-#include "win32_program/win32_context.hpp"
 #include "win32_program/windows_controls.hpp"
 #include "sgc_view/sgc_view.hpp"
 #include <sgc/sdl/sdl.hpp>
@@ -29,7 +28,7 @@ namespace sections {
             void Redraw();
 
         public:
-            Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext& context);
+            Section(LPCWSTR name, win32_program::ControlId id, HWND parentHwnd, HINSTANCE hInstance);
             ~Section();
 
             virtual void Update() = 0;

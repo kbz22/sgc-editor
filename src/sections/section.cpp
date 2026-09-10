@@ -9,7 +9,7 @@ namespace {
 
 bool sections::Section::m_registered = false;
 
-sections::Section::Section(LPCWSTR name, win32_program::ControlId id, win32_program::MainWindowContext &context)
+sections::Section::Section(LPCWSTR name, win32_program::ControlId id, HWND parentHwnd, HINSTANCE hInstance)
 {
     const wchar_t* className = L"SectionWindow";
 
@@ -17,7 +17,7 @@ sections::Section::Section(LPCWSTR name, win32_program::ControlId id, win32_prog
         WNDCLASSEX wc{};
         wc.cbSize = sizeof(wc);
         wc.lpfnWndProc = DefaultSectionProc;
-        wc.hInstance = context.hInstance;
+        wc.hInstance = hInstance;
         wc.lpszClassName = className;
         RegisterClassEx(&wc);
 
@@ -28,9 +28,9 @@ sections::Section::Section(LPCWSTR name, win32_program::ControlId id, win32_prog
         0, className, name,
         WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPSIBLINGS,
         0,0,0,0,
-        context.hMainWindow, (HMENU)id, context.hInstance, nullptr
-    );
-    m_parentHwnd = context.hMainWindow;
+        parentHwnd, (HMENU)id, hInstance, nullptr
+    );    
+    m_parentHwnd = parentHwnd;
 }
 
 sections::Section::Section()
@@ -72,14 +72,15 @@ LRESULT CALLBACK sections::Section::StaticPaneProc(HWND hwnd, UINT msg, WPARAM w
         if(msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK || msg == WM_RBUTTONDOWN || msg == WM_RBUTTONDBLCLK)
         {
             SetFocus(hwnd);
-            programContext.activeSection = self;
+            // programContext.activeSection = self;
+            programContext.SetActiveSection(self);
             // debug::DebugLog(L"Active section set to: %p", self);
             
         }
         else if(msg == WM_KILLFOCUS)
         {
-            if(programContext.activeSection == self) {
-                programContext.activeSection = nullptr;
+            if(programContext.GetActiveSection() == self) {
+                programContext.SetActiveSection(nullptr);
                 // debug::DebugLog(L"Active section cleared.");
             }
         }

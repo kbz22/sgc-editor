@@ -12,17 +12,18 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
 {
     using namespace win32_program;
 
-    MainWindowContext &context = *programContext.mainWindowContext;
+    auto hMainWindow = programContext.GetMainWindowHandle();
+    auto hInstance = programContext.GetHInstance();
 
     auto hwndRebar = win32_helpers::CreateRebar(
-        context.hMainWindow,
-        context.hInstance,
+        hMainWindow,
+        hInstance,
         static_cast<types::ctrid_t>(ControlId::ToolbarRebar)
     );
 
     auto hwndToolbar = win32_helpers::CreateToolbar(
         hwndRebar,
-        context.hInstance,
+        hInstance,
         static_cast<types::ctrid_t>(ControlId::ToolbarToolbar)
     );
 
@@ -32,8 +33,8 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
     SendMessage(hwndToolbar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
 
     SendMessage(hwndToolbar, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS);        
-    SendMessage(hwndToolbar, TB_SETIMAGELIST, 0, (LPARAM)programContext.toolbarIcons);
-    SendMessage(hwndToolbar, TB_SETDISABLEDIMAGELIST, 0, (LPARAM)programContext.toolbarIconsDisabled);
+    SendMessage(hwndToolbar, TB_SETIMAGELIST, 0, (LPARAM)programContext.GetImageList(program::ImageListType::Toolbar));
+    SendMessage(hwndToolbar, TB_SETDISABLEDIMAGELIST, 0, (LPARAM)programContext.GetImageList(program::ImageListType::ToolbarDisabled));
 
     auto addSeperator = [](std::vector<TBBUTTON>& buttons) {
         TBBUTTON sepButton = {};
@@ -44,14 +45,14 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
         buttons.push_back(sepButton);
     }; 
     
-    auto toolbarActions = programContext.actionManager->GetToolbarActions();
+    auto toolbarActions = programContext.GetManager<action::ActionManager>()->GetToolbarActions();
 
     std::sort(toolbarActions.begin(), toolbarActions.end(), [](const action::Action* a, const action::Action* b) {
         return a->GetToolbarOrder() < b->GetToolbarOrder();
     });    
 
     std::vector<TBBUTTON> tbButtons;    
-    action::GroupId lastGroupId = toolbarActions[0]->GetGroupId();    
+    action::GroupId lastGroupId = toolbarActions[0]->GetGroupId();
 
     for (const auto& action : toolbarActions)
     {
@@ -91,8 +92,9 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
     }
 
     SendMessage(hwndToolbar, TB_ADDBUTTONS,
-            (WPARAM)tbButtons.size(),
-            (LPARAM)tbButtons.data());    
+        (WPARAM)tbButtons.size(),
+        (LPARAM)tbButtons.data()
+    );
 
     SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(g_ButtonPadding, 0));
     SendMessage(hwndToolbar, TB_SETBITMAPSIZE, 0, MAKELPARAM(g_ButtonBitmapSize, g_ButtonBitmapSize));
@@ -111,7 +113,7 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
 
     SendMessage(hwndRebar, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rb);
 
-    SetHwnd(hwndRebar, context.hMainWindow);
+    SetHwnd(hwndRebar, hMainWindow);
     m_hwndToolbar = hwndToolbar;
 
     SetupSubclass(hwndToolbar, this);
@@ -178,7 +180,8 @@ HWND sections::ToolbarSection::GetHwndToolbar() const
 
 void sections::ToolbarSection::Refresh(program::ProgramContext& programContext)
 {
-    auto toolbarActions = programContext.actionManager->GetToolbarActions();
+    
+    auto toolbarActions = programContext.GetManager<action::ActionManager>()->GetToolbarActions();
 
     for (const auto& action : toolbarActions)
     {

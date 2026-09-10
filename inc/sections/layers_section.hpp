@@ -6,7 +6,7 @@
 #include "win32_models/layer_list_control.hpp"
 
 namespace program {
-    struct ProgramContext;
+    class ProgramContext;
 }
 
 namespace sections {

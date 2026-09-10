@@ -13,7 +13,7 @@
 #include "defaults.hpp"
 
 namespace program {
-    struct ProgramContext;
+    class ProgramContext;
 }
 
 namespace sections {

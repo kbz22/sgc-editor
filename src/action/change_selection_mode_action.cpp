@@ -46,5 +46,5 @@ action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::Selec
 
 void action::ChangeSelectionModeAction::Execute(program::ProgramContext& programContext)
 {
-    program::UpdateEditorSelectionMode(m_selectionMode, programContext);
+    programContext.UpdateEditorSelectionMode(m_selectionMode);
 }

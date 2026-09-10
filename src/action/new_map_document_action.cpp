@@ -32,13 +32,17 @@ INT_PTR CALLBACK NewTilesetFileDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LP
 INT_PTR CALLBACK NewPackageFileDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void action::NewMapDocumentAction::Execute(program::ProgramContext& context)
-{ 
-    if(context.tilesetSection != nullptr) {
-        if(context.mainWindowContext->hMainWindow != nullptr){
+{     
+    if(context.GetSection<sections::TilesetSection>() != nullptr) 
+    {
+        auto hMainWindow = context.GetMainWindowHandle();
+        auto hInstance = context.GetHInstance();
+        if(hMainWindow != nullptr)
+        {
             DialogBox(
-                context.mainWindowContext->hInstance,            
+                hInstance,            
                 MAKEINTRESOURCE(IDD_NEWMAP_DIALOG),
-                context .mainWindowContext->hMainWindow,
+                hMainWindow,
                 NewMapFileDialogProc
             );
         }
@@ -49,7 +53,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
 {
     auto refreshTilesetCombobox = [](HWND hDlg) {
         auto &programContext = program::GetProgramContext();
-        auto tilesetAssetList = programContext.fileManager->GetAllTilesetDocuments();        
+        auto tilesetAssetList = programContext.GetManager<file::FileManager>()->GetAllTilesetDocuments();        
 
         auto tilesetCombo = GetDlgItem(hDlg, IDC_MAP_TILESET_COMBO);
         SendMessage(tilesetCombo, CB_RESETCONTENT, 0, 0);
@@ -71,7 +75,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
 
     auto refreshPackageCombobox = [](HWND hDlg) {
         auto &programContext = program::GetProgramContext();
-        auto packagesList = programContext.fileManager->GetAllPackages();
+        auto packagesList = programContext.GetManager<file::FileManager>()->GetAllPackages();
 
         auto packageCombo = GetDlgItem(hDlg, IDC_MAP_PACKAGE_COMBO);
         SendMessage(packageCombo, CB_RESETCONTENT, 0, 0);
@@ -106,17 +110,18 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
         case WM_COMMAND:
         {
             auto commandId = LOWORD(wParam);
+            auto &programContext = program::GetProgramContext();
+            auto hInstance = programContext.GetHInstance();
+            auto hMainWindow = programContext.GetMainWindowHandle();
 
             switch (commandId)
             {
                 case IDC_MAP_NEW_TILESET_BUTTON:
                 {
-                    auto &programContext = program::GetProgramContext();
-
                     auto result = DialogBox(
-                        programContext.mainWindowContext->hInstance,
+                        hInstance,
                         MAKEINTRESOURCE(IDD_NEWTILESET_DIALOG),
-                        programContext.mainWindowContext->hMainWindow,
+                        hMainWindow,
                         NewTilesetFileDialogProc
                     );
 
@@ -129,12 +134,10 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
 
                 case IDC_MAP_NEW_PACKAGE_BUTTON:
                 {
-                    auto &programContext = program::GetProgramContext();
-
                     auto result = DialogBox(
-                        programContext.mainWindowContext->hInstance,
+                        hInstance,
                         MAKEINTRESOURCE(IDD_NEW_PACKAGE_DIALOG),
-                        programContext.mainWindowContext->hMainWindow,
+                        hMainWindow,
                         NewPackageFileDialogProc
                     );
 
@@ -185,7 +188,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
 
                     auto tilesetId = SendMessage(tilesetCombo, CB_GETITEMDATA, selectedTilesetIndex, 0);                    
 
-                    auto &programContext = program::GetProgramContext();
+                    // auto &programContext = program::GetProgramContext();
                     if(includePackage)
                     {
                         auto packagePtr = reinterpret_cast<file::PackageFile*>(SendMessage(packageCombo, CB_GETITEMDATA, selectedPackageIndex, 0));
@@ -193,11 +196,12 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                         packagePtr->AddMapDocument(std::move(mapDocument));
                         
                         // we skip file manager here so it needs a refresh
-                        program::RefreshEditor();
+                        programContext.Refresh();
                     }
                     else 
                     {
-                        programContext.fileManager->NewMapFile(mapName, static_cast<sgc::data::AssetId>(tilesetId));
+                        auto fileManager = programContext.GetManager<file::FileManager>();
+                        fileManager->NewMapFile(mapName, static_cast<sgc::data::AssetId>(tilesetId));
                     }                    
 
                     // program::RefreshEditor();

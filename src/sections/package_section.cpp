@@ -3,7 +3,7 @@
 #include "file/itreeviewlistable.hpp"
 
 sections::PackageSection::PackageSection(program::ProgramContext& programContext) :
-    Section{L"PackageList", win32_program::ControlId::PackageView, *programContext.mainWindowContext}
+    Section{L"PackageList", win32_program::ControlId::PackageView, programContext.GetMainWindowHandle(), programContext.GetHInstance()}
 {
     RECT rect;
     GetClientRect(GetHwnd(), &rect);
@@ -23,13 +23,13 @@ sections::PackageSection::PackageSection(program::ProgramContext& programContext
         rect.bottom - rect.top,
         GetHwnd(),
         nullptr,
-        programContext.mainWindowContext->hInstance,
+        programContext.GetHInstance(),
         nullptr
     );
 
     TreeView_SetImageList(
         m_packageTreeViewHandle,
-        programContext.listViewIcons,
+        programContext.GetImageList(program::ImageListType::ListView),
         TVSIL_NORMAL
     );
 
@@ -185,7 +185,8 @@ void sections::PackageSection::SetTreeItemActive(TreeListItem &tli)
 
 void sections::PackageSection::UpdateTreeViewItems(program::ProgramContext& programContext)
 {
-    auto activeDocument = programContext.fileManager->GetActiveDocument();
+    auto fileManager = programContext.GetManager<file::FileManager>();
+    auto activeDocument = fileManager->GetActiveDocument();
 
     m_activeTreeItem = nullptr;
     
@@ -239,7 +240,8 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
     auto oldTreeListItems = std::move(m_treeListItems);
     m_treeListItems.clear();
 
-    auto allFiles = programContext.fileManager->GetOpenFiles();    
+    auto fileManager = programContext.GetManager<file::FileManager>();
+    auto allFiles = fileManager->GetOpenFiles();    
 
     for(auto file : allFiles) 
     {        

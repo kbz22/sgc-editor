@@ -95,7 +95,7 @@ void sgc_view::TilesetView::ResetTileset()
 void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
 {
     sgc_view::SgcView::Refresh(programContext);
-    auto selectedDocument = programContext.fileManager->GetActiveDocument();
+    auto selectedDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(selectedDocument == nullptr && m_tileset != nullptr) {
         ResetTileset();

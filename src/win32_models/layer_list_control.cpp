@@ -252,7 +252,7 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
 
 LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-    auto mapDocument = program::GetProgramContext().fileManager->GetActiveDocument();
+    auto mapDocument = program::GetProgramContext().GetManager<file::FileManager>()->GetActiveDocument();
     auto mouseOverHandler = [this, &hwnd](){
         switch (m_mouseOver)
             {
@@ -492,7 +492,7 @@ void win32_models::LayerListControl::Resize(int width, int height)
 
 void win32_models::LayerListControl::Refresh(program::ProgramContext& programContext)
 {    
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument == nullptr) {
         m_layers.clear();

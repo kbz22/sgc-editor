@@ -34,9 +34,10 @@ action::ZoomAction::ZoomAction(float zoomFactor)
 
 void action::ZoomAction::Execute(program::ProgramContext& context)
 {
-    context.mapSection->ExecuteZoom(
-        context.mapSection->GetScreenCenterWorldPosition(),
-        context.mapSection->GetZoom() * m_zoomFactor
+    auto mapSection = context.GetSection<sections::MapSection>();
+    mapSection->ExecuteZoom(
+        mapSection->GetScreenCenterWorldPosition(),
+        mapSection->GetZoom() * m_zoomFactor
     );
-    context.mapSection->Update();
+    mapSection->Update();
 }

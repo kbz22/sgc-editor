@@ -3,7 +3,8 @@
 
 void program::MultiLayerModeSetup(ProgramContext& context)
 {
-    auto &document = *context.fileManager->GetActiveDocument();
+    auto fileManager = context.GetManager<file::FileManager>();
+    auto &document = *fileManager->GetActiveDocument();
     auto manager = document.GetLayerManager();
     auto layerCount = manager->GetSize();
     auto activeLayerIndex = manager->GetActiveLayerIndex();
@@ -19,7 +20,7 @@ void program::MultiLayerModeSetup(ProgramContext& context)
 
 void program::SingleImageModeSetup(ProgramContext& context)
 {
-    auto &document = *context.fileManager->GetActiveDocument();
+    auto &document = *context.GetManager<file::FileManager>()->GetActiveDocument();
     auto manager = document.GetLayerManager();
     auto layerCount = manager->GetSize();
 

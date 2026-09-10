@@ -33,7 +33,7 @@ void HandleResize(HWND hwnd, LPARAM lParam)
         lParam
     );
 
-    for(auto section : programContext.sections) {
+    for(auto section : programContext.GetSections()) {
         section->HandleSectionResize();        
     }
 }
@@ -42,12 +42,12 @@ void UpdateAllSections()
 {
     auto& programContext = program::GetProgramContext();
 
-    for(auto section : programContext.sections) {
+    for(auto section : programContext.GetSections()) {
         section->Update();
     }
 }
 
-void SetupImageLists()
+/* void SetupImageLists()
 {
     auto& programContext = program::GetProgramContext();
 
@@ -73,16 +73,16 @@ void SetupImageLists()
     ImageList_Add(programContext.toolbarIcons, hBmp, NULL);
     ImageList_Add(programContext.toolbarIconsDisabled, hBmpDisabled, NULL);
     ImageList_Add(programContext.listViewIcons, hBmpPackageIcons, NULL);
-}
+} */
 
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {    
     using namespace program;
 
-    ProgramContext& programContext = GetProgramContext();    
-    
     static bool capturedMouse = false;
     static bool createRunOnce = false;
+
+    // ProgramContext& programContext = GetProgramContext();
 
     switch (msg)
     {
@@ -90,21 +90,25 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     {        
         createRunOnce = true;
 
-        SetupImageLists();
-
-        programContext.mainWindowContext->hMainWindow = hwnd;
-        
-        programContext.actionManager = std::make_unique<action::ActionManager>();
-
-        RegisterActions();        
-        
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES };    
         InitCommonControlsEx(&icc);
 
-        StartDefault();
-        RegisterDefaultShortcuts(programContext);        
-        HandleResize(hwnd, lParam);
-        RefreshEditor();
+        // SetupImageLists();
+
+        // programContext.mainWindowContext->hMainWindow = hwnd;
+        
+        // programContext.actionManager = std::make_unique<action::ActionManager>();
+
+        // RegisterActions();
+        
+        // INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES };    
+        // InitCommonControlsEx(&icc);
+
+        // StartDefault();
+        // RegisterDefaultShortcuts(programContext);
+        // HandleResize(hwnd, lParam);
+        // RefreshEditor();
+        // programContext.Refresh();
 
         break;
     }
@@ -112,8 +116,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     case WM_COMMAND:
     {
         int id = LOWORD(wParam);
+        auto &programContext = program::GetProgramContext();
 
-        programContext.actionManager->Execute(
+        programContext.GetManager<action::ActionManager>()->Execute(
             static_cast<action::ActionType>(id), programContext
         );
 
@@ -135,7 +140,10 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         {
             auto* info = reinterpret_cast<NMTTDISPINFO*>(lParam);
 
-            auto action = programContext.actionManager->Find(static_cast<action::ActionType>(info->hdr.idFrom));
+            auto &programContext = program::GetProgramContext();
+            auto action = programContext.GetManager<action::ActionManager>()->Find(
+                static_cast<action::ActionType>(info->hdr.idFrom)
+            );
 
             if(!action) {
                 break;
@@ -147,7 +155,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
                 break;
             }
             
-            auto text = programContext.stringLookup.Get(*tooltipStringId);
+            auto text = programContext.GetStringLookup().Get(*tooltipStringId);
 
             if(!text.has_value()) {
                 break;

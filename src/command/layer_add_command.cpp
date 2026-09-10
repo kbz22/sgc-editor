@@ -9,7 +9,8 @@ command::LayerAddCommand::LayerAddCommand(const LayerAddCommand& other) = defaul
 void command::LayerAddCommand::Execute()
 {
     auto &programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto fileManager = programContext.GetManager<file::FileManager>();
+    auto mapDocument = fileManager->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
@@ -22,11 +23,14 @@ void command::LayerAddCommand::Execute()
 
         mapDocument->SetDirty(true);
 
-        programContext.layersSection->Refresh(programContext);
-        programContext.layersSection->Update();
+        auto layersSection = programContext.GetSection<sections::LayersSection>();
+        auto mapSection = programContext.GetSection<sections::MapSection>();
 
-        programContext.mapSection->Refresh(programContext);
-        programContext.mapSection->Update();
+        layersSection->Refresh(programContext);
+        layersSection->Update();
+
+        mapSection->Refresh(programContext);
+        mapSection->Update();
     }
 }
 
@@ -39,7 +43,7 @@ void command::LayerAddCommand::Commit()
 void command::LayerAddCommand::Undo()
 {
     auto& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.fileManager->GetActiveDocument();
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument != nullptr) {
         auto layerManager = mapDocument->GetLayerManager();
@@ -47,10 +51,12 @@ void command::LayerAddCommand::Undo()
 
         mapDocument->SetDirty(true);
 
-        programContext.layersSection->Refresh(programContext);
-        programContext.layersSection->Update();
+        auto layersSection = programContext.GetSection<sections::LayersSection>();
+        layersSection->Refresh(programContext);
+        layersSection->Update();
 
-        programContext.mapSection->Refresh(programContext);
-        programContext.mapSection->Update();
+        auto mapSection = programContext.GetSection<sections::MapSection>();
+        mapSection->Refresh(programContext);
+        mapSection->Update();
     }
 }

@@ -17,13 +17,16 @@ void win32_program::Run()
     using namespace program;
 
     ProgramContext& programContext = GetProgramContext();
-    ShortcutManager& shortcutManager = *programContext.shortcutManager;
+    ShortcutManager& shortcutManager = *programContext.GetManager<win32_program::ShortcutManager>();
 
     MSG msg;
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         // direct capture of keyboard shortcuts for actions
-        if(msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) {
+        if(msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) 
+        {
+            if(!programContext.ShortcutsEnabled()) break;
+
             ShortcutModifier modifier = ShortcutManager::GetShortcutModifierFromKeyState();
             Shortcut shortcut{ modifier, static_cast<uint32_t>(msg.wParam) };
             action::ActionType actionId = action::ActionType::Default;
@@ -33,14 +36,16 @@ void win32_program::Run()
                 ShortcutContext::Global
             );
 
-            if(actionId == action::ActionType::Default && programContext.mapSection != nullptr)
+            auto mapSection =  programContext.GetSection<sections::MapSection>();
+
+            if(actionId == action::ActionType::Default && mapSection != nullptr)
             {
                 actionId = shortcutManager.GetActionForShortcut(
                     shortcut,
                     ShortcutContext::MapEditor
                 );
 
-                if(actionId == action::ActionType::Default && programContext.mapSection->GetPaintMode() == editor_tools::PaintMode::Select) {
+                if(actionId == action::ActionType::Default && mapSection->GetPaintMode() == editor_tools::PaintMode::Select) {
                     actionId = shortcutManager.GetActionForShortcut(
                         shortcut,
                         ShortcutContext::MapEditorSelection
@@ -49,7 +54,7 @@ void win32_program::Run()
             }        
 
             if(actionId != action::ActionType::Default) {
-                programContext.actionManager->Execute(
+                programContext.GetManager<action::ActionManager>()->Execute(
                     actionId, programContext
                 );
                 continue;
@@ -59,12 +64,6 @@ void win32_program::Run()
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-}
-
-win32_program::MainWindowContext& win32_program::GetMainWindowContext()
-{
-    static MainWindowContext context = {};
-    return context;
 }
 
 void CenterWindow(HWND hwnd)
@@ -86,9 +85,9 @@ void CenterWindow(HWND hwnd)
 
 void win32_program::Init(HINSTANCE hInstance)
 {    
-    program::ProgramContext& programContext = program::GetProgramContext();
+    /* program::ProgramContext& programContext = program::GetProgramContext();
     programContext.mainWindowContext = std::make_unique<win32_program::MainWindowContext>();
-    programContext.mainWindowContext->hInstance = hInstance;
+    programContext.mainWindowContext->hInstance = hInstance; */    
 
     WNDCLASSEX wc = {};
     wc.cbSize = sizeof(WNDCLASSEX);
@@ -115,16 +114,16 @@ void win32_program::Init(HINSTANCE hInstance)
 
     RegisterClassEx(&wc);
 
-    auto windowTitle = programContext.stringLookup.Get(locale::StringId::WindowTitle);
+    /* auto windowTitle = programContext.stringLookup.Get(locale::StringId::WindowTitle);
 
     if(windowTitle == std::nullopt) {
         throw std::runtime_error("Missing window title string.");
-    }
+    } */
 
     HWND hwnd = CreateWindowEx(
         0,
         wc.lpszClassName,
-        windowTitle->c_str(),
+        L"SGC Editor",
         WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
@@ -133,12 +132,22 @@ void win32_program::Init(HINSTANCE hInstance)
         nullptr, nullptr, hInstance, nullptr
     );
 
+    program::ProgramContext programContext(hwnd, hInstance);
+
     CenterWindow(hwnd);
+
+    auto windowTitle = programContext.GetStringLookup().Get(locale::StringId::WindowTitle);
+
+    if(windowTitle == std::nullopt) {
+        throw std::runtime_error("Missing window title string.");
+    }
+
+    SetTitle(hwnd, windowTitle->c_str());
 
     if (hwnd == nullptr)
     {
         MessageBox(nullptr, L"Failed to create main window.", L"Error", MB_OK | MB_ICONERROR);        
-    }
+    }    
 
     return;
 }

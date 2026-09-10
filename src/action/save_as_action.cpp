@@ -25,19 +25,21 @@ void SaveAndUpdate(file::IFile* activeFile, std::filesystem::path filePath, prog
 {
     activeFile->SetFilePath(filePath);
 
-    programContext.fileManager->SaveFile(
-        programContext.fileManager->GetSelectedFileIndex()
+    auto fileManager = programContext.GetManager<file::FileManager>();
+    fileManager->SaveFile(
+        fileManager->GetSelectedFileIndex()
     );
 
-    auto selectedDocument = programContext.fileManager->GetSelectedDocumentLocation();
-    auto activeDocument = programContext.fileManager->GetActiveDocumentLocation();
+    auto selectedDocument = fileManager->GetSelectedDocumentLocation();
+    auto activeDocument = fileManager->GetActiveDocumentLocation();
 
-    programContext.fileManager->SelectDocument(selectedDocument);
-    programContext.fileManager->SetActiveDocument(activeDocument);
+    fileManager->SelectDocument(selectedDocument);
+    fileManager->SetActiveDocument(activeDocument);
 
-    programContext.packageSection->Refresh(programContext);
-    programContext.packageSection->UpdateTreeViewItems(programContext);
-    programContext.packageSection->Update();
+    auto packageSection = programContext.GetSection<sections::PackageSection>();
+    packageSection->Refresh(programContext);
+    packageSection->UpdateTreeViewItems(programContext);
+    packageSection->Update();
 }
 
 void action::SaveAsAction::Execute(program::ProgramContext& programContext)
@@ -48,12 +50,13 @@ void action::SaveAsAction::Execute(program::ProgramContext& programContext)
         { file::FileType::Package, locale::StringId::NamePackageFile }
     };
 
-    auto activeFile = programContext.fileManager->GetSelectedFile();
+    auto activeFile = programContext.GetManager<file::FileManager>()->GetSelectedFile();
+    auto stringLookup = programContext.GetStringLookup();
     
     if (activeFile != nullptr) 
     {
-        auto allFilesString = programContext.stringLookup.Get(locale::StringId::NameAllFiles);
-        auto thisTypeString = programContext.stringLookup.Get(
+        auto allFilesString = stringLookup.Get(locale::StringId::NameAllFiles);
+        auto thisTypeString = stringLookup.Get(
             extensionToStringIdMap[activeFile->GetFileType()]
         );
 
@@ -68,7 +71,7 @@ void action::SaveAsAction::Execute(program::ProgramContext& programContext)
         );
 
         std::optional<std::filesystem::path> filePath = win32_helpers::ShowSaveDialog(
-            programContext.mainWindowContext->hMainWindow,
+            programContext.GetMainWindowHandle(),
             {
                 { thisTypeStr.c_str(), { activeFile->GetExtension().c_str() } },
                 { allFilesString.value().c_str(), { L"*" } }

@@ -21,10 +21,11 @@ action::OpenFileAction::OpenFileAction()
 
 void action::OpenFileAction::Execute(program::ProgramContext& programContext)
 {
-    auto allFilesString = programContext.stringLookup.Get(locale::StringId::NameAllFiles);
-    auto mapFilesString = programContext.stringLookup.Get(locale::StringId::NameMapFile);
-    auto tilesetFilesString = programContext.stringLookup.Get(locale::StringId::NameTilesetFile);
-    auto packageFilesString = programContext.stringLookup.Get(locale::StringId::NamePackageFile);
+    auto stringLookup = programContext.GetStringLookup();
+    auto allFilesString = stringLookup.Get(locale::StringId::NameAllFiles);
+    auto mapFilesString = stringLookup.Get(locale::StringId::NameMapFile);
+    auto tilesetFilesString = stringLookup.Get(locale::StringId::NameTilesetFile);
+    auto packageFilesString = stringLookup.Get(locale::StringId::NamePackageFile);
 
     std::vector<win32_helpers::FileFilter> filters = {
         { mapFilesString.value_or(L"Map Files").c_str(), { defaults::MapFileExtension.data() } },
@@ -33,13 +34,16 @@ void action::OpenFileAction::Execute(program::ProgramContext& programContext)
         { allFilesString.value_or(L"All Files").c_str(), { L"*.*" } }
     };
 
+    auto hMainWindow = programContext.GetMainWindowHandle();
     auto filePath = win32_helpers::ShowOpenDialog(
-        programContext.mainWindowContext->hMainWindow,
+        hMainWindow,
         filters
     );
 
+    auto fileManager = programContext.GetManager<file::FileManager>();
+    auto assetManager = programContext.GetManager<file::AssetManager>();
     if(filePath.has_value()) {
-        programContext.fileManager->OpenFile(filePath.value(), programContext.assetManager.get());
+        fileManager->OpenFile(filePath.value(), assetManager);
         // program::RefreshEditor();
         // refresh is now handled by the file manager's on file updated callback
     }

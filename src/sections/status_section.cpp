@@ -4,7 +4,8 @@
 
 sections::StatusSection::StatusSection(program::ProgramContext& programContext)
 {
-    auto parentHwnd = programContext.mainWindowContext->hMainWindow;
+    auto parentHwnd = programContext.GetMainWindowHandle();
+    auto hInstance = programContext.GetHInstance();
     auto hwnd = CreateWindowEx(
         0,
         STATUSCLASSNAME,
@@ -13,7 +14,7 @@ sections::StatusSection::StatusSection(program::ProgramContext& programContext)
         0, 0, 0, 0,
         parentHwnd,
         nullptr,
-        programContext.mainWindowContext->hInstance,
+        hInstance,
         nullptr
     );
 

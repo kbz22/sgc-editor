@@ -12,7 +12,7 @@
 #include "sgc_view/tileset_view.hpp"
 
 namespace program {
-    struct ProgramContext;
+    class ProgramContext;
 }
 
 namespace sections {

@@ -6,13 +6,18 @@
 win32_program::LayoutManager::LayoutManager(program::ProgramContext& programContext)
     : m_programContext(programContext)
 {
+    auto hMainWindow = programContext.GetMainWindowHandle();
+    auto hInstance = programContext.GetHInstance();
     auto makeSplitter = [&](win32_program::ControlId id)
     {
         return CreateWindowEx(
             0, L"STATIC", nullptr,
             WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
             0,0,0,0,
-            programContext.mainWindowContext->hMainWindow, (HMENU)id, programContext.mainWindowContext->hInstance, nullptr
+            hMainWindow,
+            (HMENU)id,
+            hInstance,
+            nullptr
         );
     };
 
@@ -21,13 +26,13 @@ win32_program::LayoutManager::LayoutManager(program::ProgramContext& programCont
     m_layerMapSplitter = makeSplitter(win32_program::ControlId::SplitLayerMap);
 
     RECT rc;
-    GetClientRect(programContext.mainWindowContext->hMainWindow, &rc);
+    GetClientRect(hMainWindow, &rc);
 
     m_windowWidth  = rc.right;
     m_windowHeight = rc.bottom;
 
-    auto hRebarTop = m_programContext.menuSection->GetHwnd();
-    auto hRebarBottom = m_programContext.toolbarSection->GetHwnd();
+    auto hRebarTop = m_programContext.GetSection<sections::MenuSection>()->GetHwnd();
+    auto hRebarBottom = m_programContext.GetSection<sections::ToolbarSection>()->GetHwnd();
     
     int hTop = static_cast<int>(
         SendMessage(hRebarTop, RB_GETBARHEIGHT, 0, 0)
@@ -63,8 +68,16 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
     RECT rc;
     GetClientRect(hwnd, &rc);
 
-    auto hRebarTop = m_programContext.menuSection->GetHwnd();
-    auto hRebarBottom = m_programContext.toolbarSection->GetHwnd();  
+    auto menuSection = m_programContext.GetSection<sections::MenuSection>();
+    auto toolbarSection = m_programContext.GetSection<sections::ToolbarSection>();
+    auto layersSection = m_programContext.GetSection<sections::LayersSection>();
+    auto packageSection = m_programContext.GetSection<sections::PackageSection>();
+    auto mapSection = m_programContext.GetSection<sections::MapSection>();
+    auto tilesetSection = m_programContext.GetSection<sections::TilesetSection>();
+    auto statusSection = m_programContext.GetSection<sections::StatusSection>();
+
+    auto hRebarTop = menuSection->GetHwnd();
+    auto hRebarBottom = toolbarSection->GetHwnd();  
     
     UpdateRebarLayout(hwnd, rc.right); // this is important to do before relaying the sections
 
@@ -91,11 +104,10 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
         // Fix by shrinking tileset first
         int shrink = defaults::minCollumnWidth - middle;
         tilesetWidth = std::max(defaults::minCollumnWidth, tilesetWidth - shrink);
-    }
+    }    
 
     RECT statusBarRect;
-    GetClientRect(m_programContext.statusSection->GetHwnd(), &statusBarRect);
-
+    GetClientRect(statusSection->GetHwnd(), &statusBarRect);
     m_statusBarHeight = statusBarRect.bottom - statusBarRect.top;
 
     HDWP hdwp; 
@@ -104,14 +116,14 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
 
     hdwp = defer(hdwp, hRebarTop, 0, 0, rc.right, hTop);
     hdwp = defer(hdwp, hRebarBottom, 0, hTop, rc.right, hBottom);
-    hdwp = defer(hdwp, m_programContext.layersSection->GetHwnd(), 0, m_toolbarOffset, layerWidth, layerHeight);
+    hdwp = defer(hdwp, layersSection->GetHwnd(), 0, m_toolbarOffset, layerWidth, layerHeight);
     hdwp = defer(hdwp, m_layerPackageSplitter, 0, m_toolbarOffset + layerHeight, layerWidth, m_splitH - m_statusBarHeight);
-    hdwp = defer(hdwp, m_programContext.packageSection->GetHwnd(), 0, m_toolbarOffset + layerHeight + m_splitH, layerWidth, rc.bottom - m_toolbarOffset - layerHeight - m_splitH - m_statusBarHeight);
+    hdwp = defer(hdwp, packageSection->GetHwnd(), 0, m_toolbarOffset + layerHeight + m_splitH, layerWidth, rc.bottom - m_toolbarOffset - layerHeight - m_splitH - m_statusBarHeight);
     hdwp = defer(hdwp, m_layerMapSplitter, layerWidth, m_toolbarOffset, m_splitW, rc.bottom - m_toolbarOffset - m_statusBarHeight);
-    hdwp = defer(hdwp, m_programContext.mapSection->GetHwnd(), layerWidth + m_splitW, m_toolbarOffset, rc.right - layerWidth - tilesetWidth - 2*m_splitW, rc.bottom - m_toolbarOffset - m_statusBarHeight);
+    hdwp = defer(hdwp, mapSection->GetHwnd(), layerWidth + m_splitW, m_toolbarOffset, rc.right - layerWidth - tilesetWidth - 2*m_splitW, rc.bottom - m_toolbarOffset - m_statusBarHeight);
     hdwp = defer(hdwp, m_tilesetMapSplitter, rc.right - tilesetWidth - m_splitW, m_toolbarOffset, m_splitW, rc.bottom - m_toolbarOffset - m_statusBarHeight);
-    hdwp = defer(hdwp, m_programContext.tilesetSection->GetHwnd(), rc.right - tilesetWidth, m_toolbarOffset, tilesetWidth, rc.bottom - m_toolbarOffset - m_statusBarHeight);
-    hdwp = defer(hdwp, m_programContext.statusSection->GetHwnd(), 0, rc.bottom - m_statusBarHeight, rc.right, m_statusBarHeight);
+    hdwp = defer(hdwp, tilesetSection->GetHwnd(), rc.right - tilesetWidth, m_toolbarOffset, tilesetWidth, rc.bottom - m_toolbarOffset - m_statusBarHeight);
+    hdwp = defer(hdwp, statusSection->GetHwnd(), 0, rc.bottom - m_statusBarHeight, rc.right, m_statusBarHeight);
 
     EndDeferWindowPos(hdwp);
 }
@@ -200,7 +212,7 @@ void win32_program::LayoutManager::UpdateRebarLayout([[maybe_unused]] HWND hwnd,
 
     hdwp = DeferWindowPos(
         hdwp,
-        m_programContext.menuSection->GetHwnd(),
+        m_programContext.GetSection<sections::MenuSection>()->GetHwnd(),
         nullptr,
         0, 0,
         width,
@@ -210,7 +222,7 @@ void win32_program::LayoutManager::UpdateRebarLayout([[maybe_unused]] HWND hwnd,
 
     hdwp = DeferWindowPos(
         hdwp,
-        m_programContext.toolbarSection->GetHwnd(),
+        m_programContext.GetSection<sections::ToolbarSection>()->GetHwnd(),
         nullptr,
         0, m_menuBarHeight,
         width,

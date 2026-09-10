@@ -24,8 +24,9 @@ action::SelectionClearAction::SelectionClearAction()
 
 void action::SelectionClearAction::Execute(program::ProgramContext& context)
 {
-    auto selectionMode = context.mapSection->GetSelectionMode();
-    auto mapDocument = context.fileManager->GetActiveDocument();
+    auto mapSection = context.GetSection<sections::MapSection>();
+    auto selectionMode = mapSection->GetSelectionMode();
+    auto mapDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
 
     if(mapDocument == nullptr) {
         return;
@@ -33,8 +34,8 @@ void action::SelectionClearAction::Execute(program::ProgramContext& context)
 
     auto layerManager = mapDocument->GetLayerManager();
     auto commandManager = mapDocument->GetCommandManager();
-    auto selectionRectPos = context.mapSection->GetSelectionRectanglePositionTiles();
-    auto selectionRectSize = context.mapSection->GetSelectionRectangleSizeTiles();
+    auto selectionRectPos = mapSection->GetSelectionRectanglePositionTiles();
+    auto selectionRectSize = mapSection->GetSelectionRectangleSizeTiles();
 
     command::MultilayerTileChangesType tileChanges;
 
@@ -71,7 +72,7 @@ void action::SelectionClearAction::Execute(program::ProgramContext& context)
                 iterateTiles(
                     activeLayer.get(),
                     activeLayerIndex,
-                    context.tilesetSection->GetClearTileId()
+                    context.GetSection<sections::TilesetSection>()->GetClearTileId()
                 );
 
                 commandManager->Execute(std::make_unique<command::PaintSelectionCommand>(
@@ -94,7 +95,7 @@ void action::SelectionClearAction::Execute(program::ProgramContext& context)
                     iterateTiles(
                         layer.get(),
                         layerIndex,
-                        context.tilesetSection->GetClearTileId()
+                        context.GetSection<sections::TilesetSection>()->GetClearTileId()
                     );
                 }                
             }
@@ -118,7 +119,7 @@ void action::SelectionClearAction::Execute(program::ProgramContext& context)
                     iterateTiles(
                         layer.get(),
                         layerIndex,
-                        context.tilesetSection->GetClearTileId()
+                        context.GetSection<sections::TilesetSection>()->GetClearTileId()
                     );
                 }
             }
@@ -133,5 +134,5 @@ void action::SelectionClearAction::Execute(program::ProgramContext& context)
 
     }
 
-    context.mapSection->Update();
+    mapSection->Update();
 }

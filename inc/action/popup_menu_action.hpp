@@ -6,7 +6,7 @@
 #include <windows.h>
 
 namespace program {
-    struct ProgramContext;
+    class ProgramContext;
 }
 
 namespace action {

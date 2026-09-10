@@ -1,12 +1,11 @@
 #pragma once
 
 #include "sections/section.hpp"
-#include "win32_program/win32_context.hpp"
 #include <vector>
 #include <windows.h>
 
 namespace program {
-    struct ProgramContext;
+    class ProgramContext;
 }
 
 namespace sections {

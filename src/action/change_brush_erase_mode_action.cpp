@@ -49,12 +49,12 @@ action::ChangeBrushEraseModeAction::ChangeBrushEraseModeAction(editor_tools::Era
 
 void action::ChangeBrushEraseModeAction::Execute(program::ProgramContext& context)
 {
-    auto currentEraserMode = context.mapSection->GetEraseMode();
+    auto currentEraserMode = context.GetSection<sections::MapSection>()->GetEraseMode();
 
     if(m_eraserMode == currentEraserMode) {
-        program::UpdateBrushEraseMode(editor_tools::EraserMode::None, context);
+        context.UpdateBrushEraseMode(editor_tools::EraserMode::None);
     }
     else {
-        program::UpdateBrushEraseMode(m_eraserMode, context);
+        context.UpdateBrushEraseMode(m_eraserMode);
     }
 }
