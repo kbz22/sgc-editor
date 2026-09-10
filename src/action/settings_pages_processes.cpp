@@ -24,13 +24,15 @@ INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 
 INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    auto &programContext = program::GetProgramContext();
+    auto &programContext = program::GetProgramContext();    
 
     switch (msg)
     {
         case WM_INITDIALOG:
         {
             auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
+            constexpr int c_actionColumnWidth = 130;
+            constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;
 
             ListView_SetExtendedListViewStyle(
                 listView,
@@ -44,11 +46,11 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             column.mask = LVCF_TEXT | LVCF_WIDTH;
 
             column.pszText = const_cast<LPWSTR>(L"Action");
-            column.cx = 200;
+            column.cx = c_actionColumnWidth;
             ListView_InsertColumn(listView, 0, &column);
 
             column.pszText = const_cast<LPWSTR>(L"Shortcut");
-            column.cx = 120;
+            column.cx = c_shortcutColumnWidth;
             ListView_InsertColumn(listView, 1, &column);
 
             auto &stringLookup = programContext.stringLookup;
