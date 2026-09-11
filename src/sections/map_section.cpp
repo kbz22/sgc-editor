@@ -135,8 +135,142 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
     switch (msg)
     {
-        case WM_LBUTTONDOWN:
+        case WM_POINTERUPDATE:
         {
+            const auto pointerId = GET_POINTERID_WPARAM(wparam);
+
+            POINTER_INPUT_TYPE type;
+            if (!GetPointerType(pointerId, &type))
+                break;
+
+            POINTER_INFO pointerInfo;
+            if (GetPointerInfo(pointerId, &pointerInfo))                
+            switch (type)
+            {
+                case PT_TOUCH:
+                {
+                    break;
+                }
+                    
+                case PT_PEN:
+                {
+                    ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
+                    auto pointerPosition = sgc::graphics::PixelPosition2D{
+                        pointerInfo.ptPixelLocation.x,
+                        pointerInfo.ptPixelLocation.y
+                    };
+
+                    bool shouldUpdate = false;
+                    auto result = UpdateCursorPosition(pointerPosition, programContext);
+                    shouldUpdate = result;
+                    result = UpdateSelectionMove(pointerPosition, programContext);
+                    shouldUpdate = shouldUpdate || result;
+                    result = UpdateDragDrawing(PointerType::Pen, programContext);
+                    shouldUpdate = shouldUpdate || result;
+
+                    if(shouldUpdate) {
+                        Update();
+                    }
+
+                    break;
+                }
+                    
+                case PT_MOUSE:
+                {
+                    break;
+                }
+                        
+                default:
+                {
+                    break;
+                }   
+            }
+
+            return 0;
+        }
+
+        case WM_POINTERDOWN:
+        {
+            const auto pointerId = GET_POINTERID_WPARAM(wparam);
+
+            POINTER_INPUT_TYPE type;
+            if (!GetPointerType(pointerId, &type))
+                break;
+
+            POINTER_INFO pointerInfo;
+            if (GetPointerInfo(pointerId, &pointerInfo))                
+            switch (type)
+            {
+                case PT_TOUCH:
+                {
+                    break;
+                }
+                    
+                case PT_PEN:
+                {                    
+                    if(UpdateOnCursorDown(PointerType::Pen, mapDocument, programContext)) {
+                        Update();
+                    }
+
+                    break;
+                }
+                    
+                case PT_MOUSE:
+                {
+                    break;
+                }
+                        
+                default:
+                {
+                    break;
+                }   
+            }
+
+            return 0;
+        }
+
+        case WM_POINTERUP:
+        {
+            const auto pointerId = GET_POINTERID_WPARAM(wparam);
+
+            POINTER_INPUT_TYPE type;
+            if (!GetPointerType(pointerId, &type))
+                break;
+
+            POINTER_INFO pointerInfo;
+            if (GetPointerInfo(pointerId, &pointerInfo))                
+            switch (type)
+            {
+                case PT_TOUCH:
+                {
+                    break;
+                }
+                    
+                case PT_PEN:
+                {                    
+                    if(UpdateOnCursorUp(PointerType::Pen, mapDocument, programContext)) {
+                        Update();
+                    }
+
+                    break;
+                }
+                    
+                case PT_MOUSE:
+                {
+                    break;
+                }
+                        
+                default:
+                {
+                    break;
+                }   
+            }
+
+            return 0;
+        }
+
+        case WM_LBUTTONDOWN:
+        {            
             if(IsMouseCaptured()) {
                 return 0;
             }
@@ -231,7 +365,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 }
             }            
             
-            auto mousePos = m_mapView->PixelsToTiles(
+            /* auto mousePos = m_mapView->PixelsToTiles(
             sgc::math::vec2{ 
                 GET_X_LPARAM(lparam),
                 GET_Y_LPARAM(lparam)
@@ -251,12 +385,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 },
                 sgc::tile::TileSize2D{tileWidth, tileHeight},
                 this
-            );
+            ); */            
             
-            m_isPainting = true;
-            SetCaptureHelper(hwnd);    
+            SetCaptureHelper(hwnd);
 
-            if(m_brush.NeedsRedraw()) {
+            if(UpdateOnCursorDown(PointerType::Mouse, mapDocument, programContext)) {
                 Update();
             }       
             
@@ -286,102 +419,17 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             bool shouldUpdate = false;
 
-            auto cameraPosition = m_mapView->GetCameraPositionSingles();
-
-            auto screenPosition = sgc::math::fvec2{
-                static_cast<float>(GET_X_LPARAM(lparam)),
-                static_cast<float>(GET_Y_LPARAM(lparam))
+            auto screenPosition = sgc::math::vec2{
+                GET_X_LPARAM(lparam),
+                GET_Y_LPARAM(lparam)
             };
 
-            auto view = m_mapView->GetView();
-            auto worldPosition = sgc::coordinates::ScreenToWorld(screenPosition, view);
-
-            auto tileSize = m_mapView->GetTileSize();
-            auto x_tile = static_cast<sgc::math::ival>(
-                std::floor(worldPosition.x / tileSize.x) * tileSize.x
-            );
-
-            auto y_tile = static_cast<sgc::math::ival>(
-                std::floor(worldPosition.y / tileSize.y) * tileSize.y
-            );
-
-            auto position = m_mapView->GetCursorPositionInTiles();
-            if (position.x != x_tile || position.y != y_tile) {                
-                
-                auto selection = tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
-
-                switch(m_brush.GetPaintMode())
-                {                    
-                    case editor_tools::PaintMode::Rectangle:
-                        m_mapView->SetCursorSizeInPixels({
-                            tileSize.x,
-                            tileSize.y
-                        });
-                        break;
-
-                    default:
-                        m_mapView->SetCursorSizeInPixels({
-                            selection.x,
-                            selection.y
-                        });
-                        break;
-
-                    /* case editor_tools::PaintMode::Select:
-                        // select sets the cursor size on left button up
-                        break; */
-                }                
-
-                m_mapView->SetCursorPositionInPixels({
-                    x_tile,
-                    y_tile
-                });
-
-                if(m_isMovingSelection) 
-                {
-                    auto selectionLayers = m_mapView->GetSelectionLayers();
-
-                    m_mapView->SetSelectionPositionInPixels({
-                        x_tile - m_movingSelectionOffset.x * tileSize.x,
-                        y_tile - m_movingSelectionOffset.y * tileSize.y
-                    });
-
-                    //! I think I need a better way to handle position in the lib, but this will do for now
-                    for(auto &[layerIndex, layer] : *selectionLayers) {
-                        auto selectionImage = std::dynamic_pointer_cast<sgc::graphics::TiledImage>(layer);
-                        if(selectionImage) {
-                            selectionImage->SetPositionPixels(sgc::math::vec2{
-                                x_tile - m_movingSelectionOffset.x * tileSize.x,
-                                y_tile - m_movingSelectionOffset.y * tileSize.y
-                            });
-                        }
-                    }
-                }
-                
-                shouldUpdate = true;                
-            }
-
-            auto selectionSize = tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
-            auto cursorTileSize = sgc::tile::TileSize2D{
-                static_cast<sgc::math::ival>(selectionSize.x / tileSize.x),
-                static_cast<sgc::math::ival>(selectionSize.y / tileSize.y)
-            };
-
-            auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(                
-                tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0})
-            );
-
-            auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
-
-            if(m_isPainting) {
-                m_brush.PaintExecuteChange(
-                    *mapDocument,
-                    *m_mapView->GetTileset(),
-                    cursorPositionOnMap,
-                    cursorTilePositionOnTileset,
-                    cursorTileSize,
-                    this
-                );
-            }
+            auto result = UpdateCursorPosition(screenPosition, programContext);
+            shouldUpdate = result;
+            result = UpdateSelectionMove(screenPosition, programContext);
+            shouldUpdate = shouldUpdate || result;
+            result = UpdateDragDrawing(PointerType::Mouse, programContext);
+            shouldUpdate = shouldUpdate || result;
 
             if(m_brush.NeedsRedraw() || shouldUpdate) {
                 Update();
@@ -436,12 +484,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 Update();
             }
             
-            if(m_isPainting) 
+            if(UpdateOnCursorUp(PointerType::Mouse, mapDocument, programContext))
             {
-                m_isPainting = false;
-
-                m_brush.PaintCommitChanges(*mapDocument);
-
                 ReleaseCaptureHelper();
             }
 
@@ -722,4 +766,207 @@ void sections::MapSection::RenderToImage(std::filesystem::path outputPath)
     if (m_mapView != nullptr) {
         m_mapView->RenderToImage(outputPath);
     }
+}
+
+bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext)
+{    
+    auto screenPosition = sgc::math::fvec2{
+        static_cast<float>(pointerPosition.x),
+        static_cast<float>(pointerPosition.y)
+    };
+
+    auto view = m_mapView->GetView();
+    auto worldPosition = sgc::coordinates::ScreenToWorld(screenPosition, view);
+
+    auto tileSize = m_mapView->GetTileSize();
+    auto x_tile = static_cast<sgc::math::ival>(
+        std::floor(worldPosition.x / tileSize.x) * tileSize.x
+    );
+
+    auto y_tile = static_cast<sgc::math::ival>(
+        std::floor(worldPosition.y / tileSize.y) * tileSize.y
+    );
+
+    auto position = m_mapView->GetCursorPositionInTiles();
+    if (position.x != x_tile || position.y != y_tile) {                
+        
+        auto selection = programContext.GetSection<sections::TilesetSection>()->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
+
+        switch(m_brush.GetPaintMode())
+        {                    
+            case editor_tools::PaintMode::Rectangle:
+                m_mapView->SetCursorSizeInPixels({
+                    tileSize.x,
+                    tileSize.y
+                });
+                break;
+
+            default:
+                m_mapView->SetCursorSizeInPixels({
+                    selection.x,
+                    selection.y
+                });
+                break;
+
+            /* case editor_tools::PaintMode::Select:
+                // select sets the cursor size on left button up
+                break; */
+        }                
+
+        m_mapView->SetCursorPositionInPixels({
+            x_tile,
+            y_tile
+        });        
+
+        return true;
+    }
+
+    return false;
+}
+
+bool sections::MapSection::UpdateSelectionMove(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext)
+{
+    if(m_isMovingSelection) 
+    {
+        auto selectionLayers = m_mapView->GetSelectionLayers();
+        auto screenPosition = sgc::math::fvec2{
+            static_cast<float>(pointerPosition.x),
+            static_cast<float>(pointerPosition.y)
+        };
+
+        auto view = m_mapView->GetView();
+        auto worldPosition = sgc::coordinates::ScreenToWorld(screenPosition, view);
+
+        auto tileSize = m_mapView->GetTileSize();
+        auto x_tile = static_cast<sgc::math::ival>(
+            std::floor(worldPosition.x / tileSize.x) * tileSize.x
+        );
+
+        auto y_tile = static_cast<sgc::math::ival>(
+            std::floor(worldPosition.y / tileSize.y) * tileSize.y
+        );
+
+        m_mapView->SetSelectionPositionInPixels({
+            x_tile - m_movingSelectionOffset.x * tileSize.x,
+            y_tile - m_movingSelectionOffset.y * tileSize.y
+        });
+
+        //! I think I need a better way to handle position in the lib, but this will do for now
+        for(auto &[layerIndex, layer] : *selectionLayers) {
+            auto selectionImage = std::dynamic_pointer_cast<sgc::graphics::TiledImage>(layer);
+            if(selectionImage) {
+                selectionImage->SetPositionPixels(sgc::math::vec2{
+                    x_tile - m_movingSelectionOffset.x * tileSize.x,
+                    y_tile - m_movingSelectionOffset.y * tileSize.y
+                });
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::ProgramContext& programContext)
+{
+    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
+    auto tilesetSection = programContext.GetSection<TilesetSection>();
+    auto tileSize = m_mapView->GetTileSize();
+    auto selectionSize = tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
+    auto cursorTileSize = sgc::tile::TileSize2D{
+        static_cast<sgc::math::ival>(selectionSize.x / tileSize.x),
+        static_cast<sgc::math::ival>(selectionSize.y / tileSize.y)
+    };
+
+    auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(                
+        tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0})
+    );
+
+    auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
+
+    if(m_isPainting.IsLockedBy(pointerType)) {
+        m_brush.PaintExecuteChange(
+            *mapDocument,
+            *m_mapView->GetTileset(),
+            cursorPositionOnMap,
+            cursorTilePositionOnTileset,
+            cursorTileSize,
+            this
+        );
+
+        return true;
+    }
+    return false;
+}
+
+bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
+{
+    if(m_isPainting.IsLocked()) {
+        return false;
+    }
+
+    if(!m_isPainting.Acquire(pointerType)) {
+        return false;
+    }
+
+    auto tilesetSection = programContext.GetSection<TilesetSection>();
+    auto tileset = m_mapView->GetTileset();
+    auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
+    auto tileSize = tileset->GetTileSize();
+    auto currentTilePosition = tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0});
+    auto tileWidth = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).x / tileSize.x);
+    auto tileHeight = static_cast<sgc::math::ival>(tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y}).y / tileSize.y);
+
+    m_brush.PaintExecuteChange(
+        *mapDocument,
+        *tileset,
+        cursorPositionOnMap,
+        sgc::tile::TilePosition2D{
+            static_cast<sgc::math::ival>(currentTilePosition.x / tileSize.x),
+            static_cast<sgc::math::ival>(currentTilePosition.y / tileSize.y)
+        },
+        sgc::tile::TileSize2D{tileWidth, tileHeight},
+        this
+    );
+
+    if(m_brush.NeedsRedraw()) {
+        return true;
+    }
+    
+    return false;
+}
+
+bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
+{
+    if(m_isPainting.Release(pointerType)) {
+        m_brush.PaintCommitChanges(*mapDocument);
+        return true;
+    }
+    return false;
+}
+
+bool sections::PointerLock::IsLocked() const {
+    return m_isLocked;
+}
+
+bool sections::PointerLock::IsLockedBy(PointerType pointerType) const {
+    return m_isLocked && m_pointerType == pointerType;
+}
+
+bool sections::PointerLock::Acquire(PointerType pointerType) {
+    if(m_isLocked) {
+        return false;
+    }
+
+    m_pointerType = pointerType;
+    m_isLocked = true;
+    return true;
+}
+
+bool sections::PointerLock::Release(PointerType pointerType) {
+    if(m_pointerType == pointerType) {
+        m_isLocked = false;
+        return true;
+    }
+    return false;
 }
