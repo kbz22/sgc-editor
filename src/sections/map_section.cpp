@@ -149,6 +149,14 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
+                    ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
+                    auto pointerPosition = sgc::graphics::PixelPosition2D{
+                        pointerInfo.ptPixelLocation.x,
+                        pointerInfo.ptPixelLocation.y
+                    };
+
+                    PointerUpdate(PointerType::Touch, pointerPosition, programContext);
+
                     break;
                 }
                     
@@ -160,17 +168,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         pointerInfo.ptPixelLocation.y
                     };
 
-                    bool shouldUpdate = false;
-                    auto result = UpdateCursorPosition(pointerPosition, programContext);
-                    shouldUpdate = result;
-                    result = UpdateSelectionMove(PointerType::Pen, pointerPosition, programContext);
-                    shouldUpdate = shouldUpdate || result;
-                    result = UpdateDragDrawing(PointerType::Pen, programContext);
-                    shouldUpdate = shouldUpdate || result;
-
-                    if(shouldUpdate) {
-                        Update();
-                    }
+                    PointerUpdate(PointerType::Pen, pointerPosition, programContext);
 
                     break;
                 }
@@ -203,6 +201,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
+                    if(UpdateOnCursorDown(PointerType::Touch, mapDocument, programContext)) {
+                        Update();
+                    }
+                    
                     break;
                 }
                     
@@ -243,6 +245,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
+                    if(UpdateOnCursorUp(PointerType::Touch, mapDocument, programContext)) {
+                        Update();
+                    }
+
                     break;
                 }
                     
@@ -308,12 +314,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 GET_Y_LPARAM(lparam)
             };
 
-            auto result = UpdateCursorPosition(screenPosition, programContext);
-            shouldUpdate = result;
-            result = UpdateSelectionMove(PointerType::Mouse, screenPosition, programContext);
-            shouldUpdate = shouldUpdate || result;
-            result = UpdateDragDrawing(PointerType::Mouse, programContext);
-            shouldUpdate = shouldUpdate || result;
+            PointerUpdate(PointerType::Mouse, screenPosition, programContext);
 
             if(m_brush.NeedsRedraw() || shouldUpdate) {
                 Update();
@@ -899,6 +900,21 @@ bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDo
     }
 
     return returnFlag;
+}
+
+void sections::MapSection::PointerUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext)
+{
+    bool shouldUpdate = false;
+    auto result = UpdateCursorPosition(pointerPosition, programContext);
+    shouldUpdate = result;
+    result = UpdateSelectionMove(pointerType, pointerPosition, programContext);
+    shouldUpdate = shouldUpdate || result;
+    result = UpdateDragDrawing(pointerType, programContext);
+    shouldUpdate = shouldUpdate || result;
+
+    if(shouldUpdate) {
+        Update();
+    }
 }
 
 bool sections::PointerLock::IsLocked() const {
