@@ -269,9 +269,25 @@ void program::ProgramContext::StartDefault()
 
     m_fileManager->RegisterOnMapDirtyCallback([this]([[maybe_unused]]file::MapDocument* document, [[maybe_unused]]bool dirty) 
     {
-        m_packageSection->UpdateTreeViewItems(*this);
-        m_packageSection->Update();
+        // EnableSaving(dirty);
+        auto activeDocument = m_fileManager->GetActiveDocument();
+        if(activeDocument != nullptr) 
+        {
+            if(activeDocument->IsDirty()) {
+                EnableSaving(true);
+            }
+            else {
+                EnableSaving(false);
+            }
+            
+            m_packageSection->UpdateTreeViewItems(*this);
+            m_packageSection->Update();
+            m_toolbarSection->Refresh(*this);
+            m_toolbarSection->Update();
+        }        
     });
+
+    Refresh();
 }
 
 void RedrawAllSections(program::ProgramContext& programContext)
@@ -323,11 +339,16 @@ void program::ProgramContext::Refresh()
         UpdateEditorSelectionTools();
     }
 
-    if(m_fileManager->GetOpenFiles().empty()) {
-        EnableSaving(false);
-    }
-    else {
-        EnableSaving(true);
+    auto openFiles = m_fileManager->GetOpenFiles();
+
+    EnableSaving(false);
+
+    for(auto &file : openFiles) 
+    {
+        if(file->IsDirty()) {
+            EnableSaving(true);
+            break;
+        }
     }
 
     RefreshAllSection(*this);
