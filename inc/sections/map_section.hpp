@@ -41,9 +41,10 @@ namespace sections {
             std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;            
             // bool m_isPainting = false;
             PointerLock m_isPainting;
+            PointerLock m_isMovingSelection;
             bool m_isPanning = false;
             bool m_isCaptured = false;
-            bool m_isMovingSelection = false;
+            // bool m_isMovingSelection = false;
             bool m_canMoveSelection = false;
             bool m_needsRedraw = false;
             std::mutex m_needsRedrawMutex{};
@@ -62,7 +63,7 @@ namespace sections {
             void PointerUp(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
 
             bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);            
-            bool UpdateSelectionMove(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
+            bool UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
             bool UpdateDragDrawing(PointerType pointerType, program::ProgramContext& programContext);
             bool UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
             bool UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
