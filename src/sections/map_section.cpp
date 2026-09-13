@@ -155,7 +155,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                         pointerInfo.ptPixelLocation.y
                     };
 
-                    PointerUpdate(PointerType::Touch, pointerPosition, programContext);
+                    if(PanningUpdate(PointerType::Touch, pointerPosition)) {
+                        Update();
+                    }
 
                     break;
                 }
@@ -201,9 +203,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
-                    if(UpdateOnCursorDown(PointerType::Touch, mapDocument, programContext)) {
-                        Update();
-                    }
+                    ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
+                    auto pointerPosition = sgc::graphics::PixelPosition2D{
+                        pointerInfo.ptPixelLocation.x,
+                        pointerInfo.ptPixelLocation.y
+                    };
+
+                    PanningDown(PointerType::Touch, pointerPosition);
                     
                     break;
                 }
@@ -245,10 +251,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
-                    if(UpdateOnCursorUp(PointerType::Touch, mapDocument, programContext)) {
-                        Update();
-                    }
-
+                    PanningUp(PointerType::Touch);
                     break;
                 }
                     
@@ -288,30 +291,35 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_MOUSEMOVE:
         {
-            if(m_isPanning) {
-                auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
-                auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
+            // if(m_isPanning) {
+            //     auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
+            //     auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
-                auto deltaX = m_mapView->ScaleForZoom(static_cast<float>(x - m_lastMousePosPan.x));
-                auto deltaY = m_mapView->ScaleForZoom(static_cast<float>(y - m_lastMousePosPan.y));
+            //     auto deltaX = m_mapView->ScaleForZoom(static_cast<float>(x - m_lastMousePosPan.x));
+            //     auto deltaY = m_mapView->ScaleForZoom(static_cast<float>(y - m_lastMousePosPan.y));
 
-                m_mapView->ChangeCameraPositionSingles(
-                    deltaX,
-                    deltaY
-                );
+            //     m_mapView->ChangeCameraPositionSingles(
+            //         deltaX,
+            //         deltaY
+            //     );
 
-                m_lastMousePosPan.x = x;
-                m_lastMousePosPan.y = y;
+            //     m_lastMousePosPan.x = x;
+            //     m_lastMousePosPan.y = y;
 
-                Update();
-                return 0;
-            }
+            //     Update();
+            //     return 0;
+            // }
 
             bool shouldUpdate = false;
 
+            auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
+            auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
+
+            shouldUpdate = PanningUpdate(PointerType::Mouse, {x,y});
+
             auto screenPosition = sgc::math::vec2{
-                GET_X_LPARAM(lparam),
-                GET_Y_LPARAM(lparam)
+                x,
+                y
             };
 
             PointerUpdate(PointerType::Mouse, screenPosition, programContext);
@@ -337,9 +345,15 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_MBUTTONUP:
         {
-            if (m_isPanning)
+            // if (m_isPanning)
+            // {
+            //     m_isPanning = false;
+            //     ReleaseCaptureHelper();
+            // }
+
+            if(m_isPanning.IsLockedBy(PointerType::Mouse))
             {
-                m_isPanning = false;
+                PanningUp(PointerType::Mouse);
                 ReleaseCaptureHelper();
             }
 
@@ -352,10 +366,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 break;
             }
 
-            m_isPanning = true;
-
-            m_lastMousePosPan.x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
-            m_lastMousePosPan.y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
+            sgc::graphics::PixelPosition2D position = {
+                static_cast<sgc::math::ival>(GET_X_LPARAM(lparam)),
+                static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam))
+            };
 
             SetCaptureHelper(hwnd);
 
@@ -941,4 +955,39 @@ bool sections::PointerLock::Release(PointerType pointerType) {
         return true;
     }
     return false;
+}
+
+void sections::MapSection::PanningDown(PointerType pointerType, sgc::graphics::PixelPosition2D position)
+{
+    if(m_isPanning.IsLocked())
+        return;
+
+    m_isPanning.Acquire(pointerType);
+
+    m_lastMousePosPan.x = position.x;
+    m_lastMousePosPan.y = position.y;
+}
+
+void sections::MapSection::PanningUp(PointerType pointerType)
+{    
+    m_isPanning.Release(pointerType);
+}
+
+bool sections::MapSection::PanningUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D position)
+{
+    if(!m_isPanning.IsLockedBy(pointerType))
+        return false;
+    
+    auto deltaX = m_mapView->ScaleForZoom(static_cast<float>(position.x - m_lastMousePosPan.x));
+    auto deltaY = m_mapView->ScaleForZoom(static_cast<float>(position.y - m_lastMousePosPan.y));
+
+    m_mapView->ChangeCameraPositionSingles(
+        deltaX,
+        deltaY
+    );
+
+    m_lastMousePosPan.x = position.x;
+    m_lastMousePosPan.y = position.y;
+
+    return true;
 }

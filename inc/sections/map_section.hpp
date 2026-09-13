@@ -42,7 +42,8 @@ namespace sections {
             // bool m_isPainting = false;
             PointerLock m_isPainting;
             PointerLock m_isMovingSelection;
-            bool m_isPanning = false;
+            PointerLock m_isPanning;
+            // bool m_isPanning = false;
             bool m_isCaptured = false;
             // bool m_isMovingSelection = false;
             bool m_canMoveSelection = false;
@@ -65,6 +66,10 @@ namespace sections {
             bool UpdateDragDrawing(PointerType pointerType, program::ProgramContext& programContext);
             bool UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
             bool UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
+
+            void PanningDown(PointerType pointerType, sgc::graphics::PixelPosition2D position);
+            void PanningUp(PointerType pointerType);
+            bool PanningUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D position);
 
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
