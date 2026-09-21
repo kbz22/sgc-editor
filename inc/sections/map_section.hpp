@@ -46,16 +46,13 @@ namespace sections {
     class MapSection : public Section
     {
         private:
-            std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;            
-            // bool m_isPainting = false;
+            std::unique_ptr<sgc_view::MapView> m_mapView = nullptr;
             PointerLock m_isPainting;
             PointerLock m_isMovingSelection;
             PointerLock m_isPanning;
+            PointerLock m_isCaptured;
             PointerType m_paintingPointerType = PointerType::LeftMouse;
             PointerType m_panningPointerType = PointerType::MiddleMouse;
-            // bool m_isPanning = false;
-            bool m_isCaptured = false;
-            // bool m_isMovingSelection = false;
             bool m_canMoveSelection = false;
             bool m_needsRedraw = false;
             std::mutex m_needsRedrawMutex{};
@@ -67,9 +64,7 @@ namespace sections {
             std::chrono::milliseconds m_selectionRectUpdateInterval = std::chrono::milliseconds(50);
             std::chrono::steady_clock::time_point m_lastUpdateTime = std::chrono::steady_clock::now();
 
-            editor_tools::Brush m_brush;
-
-            void PointerUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
+            editor_tools::Brush m_brush;            
 
             bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);            
             bool UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
@@ -80,6 +75,10 @@ namespace sections {
             void PanningDown(PointerType pointerType, sgc::graphics::PixelPosition2D position);
             void PanningUp(PointerType pointerType);
             bool PanningUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D position);
+
+            void PointerDown(PointerType pointerType, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext);
+            void PointerUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);            
+            void PointerUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
 
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
