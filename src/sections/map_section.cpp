@@ -282,47 +282,75 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
         {
             SetCaptureHelper(hwnd);
 
-            if(UpdateOnCursorDown(PointerType::Mouse, mapDocument, programContext)) {
-                Update();
-            }       
-            
-            return 0;
-        }
-
-        case WM_MOUSEMOVE:
-        {
-            // if(m_isPanning) {
-            //     auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
-            //     auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
-
-            //     auto deltaX = m_mapView->ScaleForZoom(static_cast<float>(x - m_lastMousePosPan.x));
-            //     auto deltaY = m_mapView->ScaleForZoom(static_cast<float>(y - m_lastMousePosPan.y));
-
-            //     m_mapView->ChangeCameraPositionSingles(
-            //         deltaX,
-            //         deltaY
-            //     );
-
-            //     m_lastMousePosPan.x = x;
-            //     m_lastMousePosPan.y = y;
-
-            //     Update();
-            //     return 0;
-            // }
-
             bool shouldUpdate = false;
-
             auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
             auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
-
-            shouldUpdate = PanningUpdate(PointerType::Mouse, {x,y});
 
             auto screenPosition = sgc::math::vec2{
                 x,
                 y
             };
 
-            PointerUpdate(PointerType::Mouse, screenPosition, programContext);
+            if(m_panningPointerType == PointerType::LeftMouse)
+            {
+                PanningDown(PointerType::LeftMouse, screenPosition);
+            }
+            else if(m_paintingPointerType == PointerType::LeftMouse)
+            {
+                shouldUpdate = UpdateOnCursorDown(PointerType::LeftMouse, mapDocument, programContext);
+                PointerUpdate(PointerType::LeftMouse, screenPosition, programContext);
+
+                if(m_brush.NeedsRedraw() || shouldUpdate) {
+                    Update();
+                }
+            }
+            
+            return 0;
+        }
+
+        case WM_MOUSEMOVE:
+        {
+            bool shouldUpdate = false;
+
+            auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
+            auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
+
+            bool noPointerUpdate = true;
+
+            if ((wparam & MK_LBUTTON))
+            {
+                if(m_panningPointerType == PointerType::LeftMouse)
+                    shouldUpdate = PanningUpdate(PointerType::LeftMouse, {x,y});
+                else if(m_paintingPointerType == PointerType::LeftMouse){
+                    PointerUpdate(PointerType::LeftMouse, {x,y}, programContext);
+                    noPointerUpdate = false;
+                }
+            }
+
+            if (wparam & MK_RBUTTON)
+            {
+                if(m_panningPointerType == PointerType::RightMouse)
+                    shouldUpdate = PanningUpdate(PointerType::RightMouse, {x,y});
+                else if(m_paintingPointerType == PointerType::RightMouse){
+                    PointerUpdate(PointerType::RightMouse, {x,y}, programContext);
+                    noPointerUpdate = false;
+                }
+            }
+
+            if (wparam & MK_MBUTTON)
+            {
+                if(m_panningPointerType == PointerType::MiddleMouse)
+                    shouldUpdate = PanningUpdate(PointerType::MiddleMouse, {x,y});
+                else if(m_paintingPointerType == PointerType::MiddleMouse){
+                    PointerUpdate(PointerType::MiddleMouse, {x,y}, programContext);
+                    noPointerUpdate = false;
+                }
+            }
+
+            if(noPointerUpdate) {
+                // PointerUpdate(PointerType::Mouse, {x,y}, programContext);
+                shouldUpdate = UpdateCursorPosition({x,y}, programContext);
+            }
 
             if(m_brush.NeedsRedraw() || shouldUpdate) {
                 Update();
@@ -333,27 +361,31 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_LBUTTONUP:
         {
-            if(m_isPainting.IsLockedBy(PointerType::Mouse))
+            if(m_isPanning.IsLockedBy(PointerType::LeftMouse))
             {
+                PanningUp(PointerType::LeftMouse);
                 ReleaseCaptureHelper();
             }
-
-            UpdateOnCursorUp(PointerType::Mouse, mapDocument, programContext);
+            if(m_isPainting.IsLockedBy(PointerType::LeftMouse))            
+            {
+                UpdateOnCursorUp(PointerType::LeftMouse, mapDocument, programContext);
+                ReleaseCaptureHelper();
+            }
 
             return 0;
         }
 
         case WM_MBUTTONUP:
         {
-            // if (m_isPanning)
-            // {
-            //     m_isPanning = false;
-            //     ReleaseCaptureHelper();
-            // }
-
-            if(m_isPanning.IsLockedBy(PointerType::Mouse))
+            if(m_isPanning.IsLockedBy(PointerType::MiddleMouse))
             {
-                PanningUp(PointerType::Mouse);
+                PanningUp(PointerType::MiddleMouse);
+                ReleaseCaptureHelper();
+            }
+
+            if(m_isPainting.IsLockedBy(PointerType::MiddleMouse))
+            {
+                UpdateOnCursorUp(PointerType::MiddleMouse, mapDocument, programContext);
                 ReleaseCaptureHelper();
             }
 
@@ -362,16 +394,28 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_MBUTTONDOWN:
         {
-            if(IsMouseCaptured()) {
-                break;
-            }
+            bool shouldUpdate = false;
+            auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
+            auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
 
-            sgc::graphics::PixelPosition2D position = {
-                static_cast<sgc::math::ival>(GET_X_LPARAM(lparam)),
-                static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam))
+            auto screenPosition = sgc::math::vec2{
+                x,
+                y
             };
 
-            SetCaptureHelper(hwnd);
+            if(m_panningPointerType == PointerType::MiddleMouse) 
+            {
+                PanningDown(PointerType::MiddleMouse, screenPosition);
+            }
+            else if(m_paintingPointerType == PointerType::MiddleMouse) 
+            {
+                shouldUpdate = UpdateOnCursorDown(PointerType::MiddleMouse, mapDocument, programContext);
+                PointerUpdate(PointerType::MiddleMouse, screenPosition, programContext);
+
+                if(m_brush.NeedsRedraw() || shouldUpdate) {
+                    Update();
+                }
+            }
 
             return 0;
         }
@@ -990,4 +1034,24 @@ bool sections::MapSection::PanningUpdate(PointerType pointerType, sgc::graphics:
     m_lastMousePosPan.y = position.y;
 
     return true;
+}
+
+void sections::MapSection::SetPaintingPointerType(PointerType pointerType)
+{
+    m_paintingPointerType = pointerType;
+}
+
+void sections::MapSection::SetPanningPointerType(PointerType pointerType)
+{
+    m_panningPointerType = pointerType;
+}
+
+sections::PointerType sections::MapSection::GetPaintingPointerType() const
+{
+    return m_paintingPointerType;
+}
+
+sections::PointerType sections::MapSection::GetPanningPointerType() const
+{
+    return m_panningPointerType;
 }

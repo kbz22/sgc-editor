@@ -15,16 +15,24 @@ namespace program {
 
 namespace sections {
 
-    enum class PointerType {
-        Mouse,
+    enum class PointerType {        
+        LeftMouse,
+        MiddleMouse,
+        RightMouse,
         Touch,
         Pen
     };
 
+    inline bool IsMouse(PointerType pointerType) {
+        return pointerType == PointerType::LeftMouse ||
+               pointerType == PointerType::MiddleMouse ||
+               pointerType == PointerType::RightMouse;
+    }
+
     class PointerLock 
     {
         private:
-            PointerType m_pointerType = PointerType::Mouse;
+            PointerType m_pointerType = PointerType::LeftMouse;
             bool m_isLocked = false;
 
         public:
@@ -43,6 +51,8 @@ namespace sections {
             PointerLock m_isPainting;
             PointerLock m_isMovingSelection;
             PointerLock m_isPanning;
+            PointerType m_paintingPointerType = PointerType::LeftMouse;
+            PointerType m_panningPointerType = PointerType::MiddleMouse;
             // bool m_isPanning = false;
             bool m_isCaptured = false;
             // bool m_isMovingSelection = false;
@@ -97,6 +107,9 @@ namespace sections {
             void SetSelectionPositionInTiles(sgc::tile::TilePosition2D position);
             void SetSelectionSizeInTiles(sgc::tile::TileSize2D size);
 
+            void SetPaintingPointerType(PointerType pointerType);
+            void SetPanningPointerType(PointerType pointerType);
+
             void RegisterOnZoomChangedCallback(std::function<void(float)> callback);
             
             editor_tools::PaintMode GetPaintMode() const;
@@ -111,6 +124,9 @@ namespace sections {
 
             sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
 
+            PointerType GetPaintingPointerType() const;
+            PointerType GetPanningPointerType() const;
+            
             bool IsSelectionActive() const;
     };
 
