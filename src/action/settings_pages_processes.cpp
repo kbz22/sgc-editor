@@ -22,17 +22,44 @@ INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
     return FALSE;
 }
 
+LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data)
+{
+    switch (msg)
+    {
+        case WM_KEYDOWN:
+        case WM_SYSKEYDOWN:
+        {
+            bool &newShortcutInput = *reinterpret_cast<bool *>(data);
+
+            if(newShortcutInput)
+                return TRUE;
+
+            break;
+        }
+    }
+    return DefSubclassProc(hwnd, msg, wparam, lparam);
+}
+
 INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    auto &programContext = program::GetProgramContext();    
+    auto &programContext = program::GetProgramContext();
+    static bool newShortcutInput = false;
 
     switch (msg)
     {
         case WM_INITDIALOG:
-        {
+        {   
             auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
             constexpr int c_actionColumnWidth = 130;
-            constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;
+            constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth; 
+            
+            newShortcutInput = false;
+            SetWindowSubclass(
+                listView,
+                ShortcutsSettingsListViewProc,
+                0,
+                reinterpret_cast<DWORD_PTR>(&newShortcutInput)
+            );
 
             ListView_SetExtendedListViewStyle(
                 listView,
@@ -145,6 +172,8 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                             1,
                             const_cast<LPWSTR>(str.c_str())
                         );
+
+                        newShortcutInput = true;
                         
                         break;
                     }

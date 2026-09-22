@@ -23,10 +23,8 @@ void win32_program::Run()
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         // direct capture of keyboard shortcuts for actions
-        if(msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) 
+        if((msg.message == WM_KEYDOWN || msg.message == WM_SYSKEYDOWN) && programContext.ShortcutsEnabled()) 
         {
-            if(!programContext.ShortcutsEnabled()) continue;
-
             ShortcutModifier modifier = ShortcutManager::GetShortcutModifierFromKeyState();
             Shortcut shortcut{ modifier, static_cast<uint32_t>(msg.wParam) };
             action::ActionType actionId = action::ActionType::Default;
@@ -84,11 +82,7 @@ void CenterWindow(HWND hwnd)
 }
 
 void win32_program::Init(HINSTANCE hInstance)
-{    
-    /* program::ProgramContext& programContext = program::GetProgramContext();
-    programContext.mainWindowContext = std::make_unique<win32_program::MainWindowContext>();
-    programContext.mainWindowContext->hInstance = hInstance; */    
-
+{
     WNDCLASSEX wc = {};
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.lpfnWndProc = WndProc;
@@ -113,12 +107,6 @@ void win32_program::Init(HINSTANCE hInstance)
     );
 
     RegisterClassEx(&wc);
-
-    /* auto windowTitle = programContext.stringLookup.Get(locale::StringId::WindowTitle);
-
-    if(windowTitle == std::nullopt) {
-        throw std::runtime_error("Missing window title string.");
-    } */
 
     HWND hwnd = CreateWindowEx(
         0,

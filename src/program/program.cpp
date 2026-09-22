@@ -439,13 +439,11 @@ void program::ProgramContext::EnableSaving(bool enable)
 
 bool program::ProgramContext::ShortcutsEnabled() const
 {
-    for(auto &section : m_sections)
+    if(std::find(m_sections.begin(), m_sections.end(), m_activeSection) != m_sections.end())
     {
-        if(m_activeSection == section)
-        {
-            return true;
-        }
+        return true;
     }
+    
     return false;
 }
 

@@ -196,16 +196,12 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
-                    // PanningDown(PointerType::Touch, pointerPosition);
                     PointerDown(PointerType::Touch, mapDocument, pointerPosition, programContext);                    
                     break;
                 }
                     
                 case PT_PEN:
-                {                    
-                    /* if(UpdateOnCursorDown(PointerType::Pen, mapDocument, programContext)) {
-                        Update();
-                    } */
+                {
                     PointerDown(PointerType::Pen, mapDocument, pointerPosition, programContext);
                     break;
                 }
@@ -239,15 +235,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 case PT_TOUCH:
                 {
                     PointerUp(PointerType::Touch, mapDocument, programContext);
-                    // PanningUp(PointerType::Touch);
                     break;
                 }
                     
                 case PT_PEN:
-                {                    
-                    // if(UpdateOnCursorUp(PointerType::Pen, mapDocument, programContext)) {
-                    //     Update();
-                    // }
+                {
                     PointerUp(PointerType::Pen, mapDocument, programContext);
                     break;
                 }
@@ -661,10 +653,6 @@ bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D p
                     selection.y
                 });
                 break;
-
-            /* case editor_tools::PaintMode::Select:
-                // select sets the cursor size on left button up
-                break; */
         }                
 
         m_mapView->SetCursorPositionInPixels({

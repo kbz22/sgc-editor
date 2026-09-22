@@ -93,23 +93,6 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES };    
         InitCommonControlsEx(&icc);
 
-        // SetupImageLists();
-
-        // programContext.mainWindowContext->hMainWindow = hwnd;
-        
-        // programContext.actionManager = std::make_unique<action::ActionManager>();
-
-        // RegisterActions();
-        
-        // INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES };    
-        // InitCommonControlsEx(&icc);
-
-        // StartDefault();
-        // RegisterDefaultShortcuts(programContext);
-        // HandleResize(hwnd, lParam);
-        // RefreshEditor();
-        // programContext.Refresh();
-
         break;
     }
 
