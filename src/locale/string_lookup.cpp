@@ -94,8 +94,8 @@ locale::StringLookup::StringLookup()
         {StringId::NameSettings, L"Settings"},
         {StringId::NameHelpAbout, L"About"},
         {StringId::NameHelpGithub, L"Github repository"},
-        {StringId::NameChangeLayerDown, L"Layer down"},
-        {StringId::NameChangeLayerUp, L"Layer up"},
+        {StringId::NameChangeLayerDown, L"Layer below"},
+        {StringId::NameChangeLayerUp, L"Layer above"},
         {StringId::NameChangeLayerTop, L"Top layer"},
         {StringId::NameChangeLayerBottom, L"Bottom layer"},
 
