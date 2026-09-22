@@ -24,6 +24,8 @@ namespace win32_program
                     std::hash<Shortcut>
                 >
             > m_shortcuts;
+            std::optional<action::ActionType> m_editedAction;
+            Shortcut m_editedShortcut;
 
         public:
             ShortcutManager(
@@ -42,7 +44,11 @@ namespace win32_program
                 ShortcutContext context
             ) const;
 
-            std::vector<Shortcut> GetShortcutsForAction(action::ActionType actionId) const;
+            std::vector<Shortcut> GetShortcutsForAction(action::ActionType actionId) const;            
+
+            std::optional<action::ActionType> GetEditedShortcutType() const;
+            void SetEditedShortcut(action::ActionType actionId, Shortcut shortcut);
+            void ResetEditedShortcut();
 
             static ShortcutModifier GetShortcutModifierFromKeyState();
             static std::optional<locale::StringId> GetStringIdForShortcutKey(uint32_t key);

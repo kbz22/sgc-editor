@@ -55,6 +55,23 @@ std::vector<win32_program::Shortcut> win32_program::ShortcutManager::GetShortcut
     return result;
 }
 
+std::optional<action::ActionType> win32_program::ShortcutManager::GetEditedShortcutType() const
+{
+    return m_editedAction;
+}
+    
+void win32_program::ShortcutManager::SetEditedShortcut(action::ActionType actionId, Shortcut shortcut)
+{
+    m_editedAction = actionId;
+    m_editedShortcut = shortcut;
+}
+ 
+void win32_program::ShortcutManager::ResetEditedShortcut()
+{
+    m_editedAction.reset();
+    m_editedShortcut = Shortcut{};
+}
+
 win32_program::ShortcutModifier win32_program::ShortcutManager::GetShortcutModifierFromKeyState()
 {
     uint32_t modifiers = static_cast<uint32_t>(ShortcutModifier::None);

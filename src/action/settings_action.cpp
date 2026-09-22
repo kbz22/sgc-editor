@@ -42,6 +42,7 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
 
     program::ProgramContext& context = program::GetProgramContext();
     auto settingsManager = context.GetManager<win32_program::SettingsManager>();
+    auto shortcutManager = context.GetManager<win32_program::ShortcutManager>();
 
     auto changePage = [&settingsManager]() {
         auto currentCategory = settingsManager->GetCurrentCategory();
@@ -60,6 +61,9 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
             }
         }
     };
+
+    if(shortcutManager->GetEditedShortcutType().has_value())
+        return TRUE;
 
     switch (msg)
     {

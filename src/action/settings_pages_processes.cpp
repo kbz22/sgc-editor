@@ -28,22 +28,24 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
     {
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
+        case WM_CHAR:
+        case WM_SYSCHAR:
         {
-            bool &newShortcutInput = *reinterpret_cast<bool *>(data);
+            auto &shortcutManager = *reinterpret_cast<win32_program::ShortcutManager *>(data);
 
-            if(newShortcutInput)
-                return TRUE;
+            if(shortcutManager.GetEditedShortcutType().has_value())
+                return 0;
 
             break;
         }
     }
+
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
 INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    auto &programContext = program::GetProgramContext();
-    static bool newShortcutInput = false;
+    auto &programContext = program::GetProgramContext();    
 
     switch (msg)
     {
@@ -51,14 +53,13 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
         {   
             auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
             constexpr int c_actionColumnWidth = 130;
-            constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth; 
+            constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;             
             
-            newShortcutInput = false;
             SetWindowSubclass(
                 listView,
                 ShortcutsSettingsListViewProc,
                 0,
-                reinterpret_cast<DWORD_PTR>(&newShortcutInput)
+                reinterpret_cast<DWORD_PTR>(programContext.GetManager<win32_program::ShortcutManager>())
             );
 
             ListView_SetExtendedListViewStyle(
@@ -141,6 +142,15 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             return TRUE;
         }
 
+        case WM_RBUTTONDOWN:
+        case WM_MBUTTONDOWN:
+        case WM_LBUTTONDOWN:
+        {
+            auto shortcutManager = programContext.GetManager<win32_program::ShortcutManager>();
+            shortcutManager->ResetEditedShortcut();
+            break;
+        }
+
         case WM_NOTIFY:
         {
             auto* notification = reinterpret_cast<NMHDR*>(lParam);
@@ -159,7 +169,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
                         LVITEM item{};
                         item.mask = LVIF_PARAM;
-                        item.iItem = info->iItem;
+                        item.iItem = info->iItem;                        
 
                         ListView_GetItem(listView, &item);
 
@@ -173,7 +183,9 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                             const_cast<LPWSTR>(str.c_str())
                         );
 
-                        newShortcutInput = true;
+                        auto shortcutManager = programContext.GetManager<win32_program::ShortcutManager>();
+                        auto shortcut = win32_program::Shortcut{};
+                        shortcutManager->SetEditedShortcut(static_cast<action::ActionType>(item.lParam), shortcut);
                         
                         break;
                     }
