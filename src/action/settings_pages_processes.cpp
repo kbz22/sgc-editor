@@ -26,16 +26,47 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
 {
     switch (msg)
     {
+        case WM_GETDLGCODE:
+        {
+            return DLGC_WANTALLKEYS;
+        }
+
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
+        {
+            auto &shortcutManager = *reinterpret_cast<win32_program::ShortcutManager *>(data);
+            auto editedShortcutType = shortcutManager.GetEditedShortcutType();
+
+            if(wparam == VK_ESCAPE)
+            {                
+                shortcutManager.ResetEditedShortcut();
+                return 0;
+            }            
+
+            if(editedShortcutType.has_value())
+            {
+                win32_program::Shortcut newShortcut;
+                newShortcut.modifier = win32_program::ShortcutManager::GetShortcutModifierFromKeyState();
+                newShortcut.key = static_cast<UINT>(wparam);
+
+                shortcutManager.SetEditedShortcut(editedShortcutType.value(), newShortcut);
+
+                return 0;
+            }                
+
+            break;
+        }
+
         case WM_CHAR:
         case WM_SYSCHAR:
         {
             auto &shortcutManager = *reinterpret_cast<win32_program::ShortcutManager *>(data);
+            auto editedShortcutType = shortcutManager.GetEditedShortcutType();
 
-            if(shortcutManager.GetEditedShortcutType().has_value())
+            if(editedShortcutType.has_value())
+            {
                 return 0;
-
+            }
             break;
         }
     }
@@ -45,7 +76,7 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
 
 INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    auto &programContext = program::GetProgramContext();    
+    auto &programContext = program::GetProgramContext();
 
     switch (msg)
     {
@@ -58,7 +89,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             SetWindowSubclass(
                 listView,
                 ShortcutsSettingsListViewProc,
-                0,
+                1,
                 reinterpret_cast<DWORD_PTR>(programContext.GetManager<win32_program::ShortcutManager>())
             );
 
@@ -162,9 +193,6 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                     case NM_DBLCLK:
                     {
                         auto* info = reinterpret_cast<NMITEMACTIVATE*>(lParam);
-
-                        int row = info->iItem;
-                        int column = info->iSubItem;
                         auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
 
                         LVITEM item{};
