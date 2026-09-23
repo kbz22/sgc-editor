@@ -18,10 +18,15 @@ std::wstring locale::KeyToString(uint32_t key)
 
 std::wstring locale::ShortcutToString(const win32_program::Shortcut& shortcut, program::ProgramContext &context)
 {
+    using namespace win32_program;
+
+    if(shortcut.key == ShortcutKey::None && shortcut.modifier == ShortcutModifier::None)
+        return L"";
+
     std::wstring result;
     auto &stringLookup = context.GetStringLookup();
 
-    auto modifierStringIds = win32_program::ShortcutManager::GetStringIdsForShortcutModifier(shortcut.modifier);
+    auto modifierStringIds = ShortcutManager::GetStringIdsForShortcutModifier(shortcut.modifier);
     for (const auto& stringId : modifierStringIds)
     {
         auto modifierString = stringLookup.Get(stringId);
@@ -32,7 +37,7 @@ std::wstring locale::ShortcutToString(const win32_program::Shortcut& shortcut, p
         result += modifierString.value() + L"+";
     }
 
-    auto keyStringId = win32_program::ShortcutManager::GetStringIdForShortcutKey(shortcut.key);
+    auto keyStringId = ShortcutManager::GetStringIdForShortcutKey(shortcut.key);
 
     if(keyStringId.has_value())
     {

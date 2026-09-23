@@ -22,6 +22,12 @@ INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
     return FALSE;
 }
 
+struct ShortcutSettingsListViewArgumentData
+{
+    program::ShortcutSettingsManager *shortcutSettingsManager;
+    program::ProgramContext *programContext;
+};
+
 LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data)
 {
     switch (msg)
@@ -34,22 +40,22 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
         {
-            auto &shortcutManager = *reinterpret_cast<win32_program::ShortcutManager *>(data);
-            auto editedShortcutType = shortcutManager.GetEditedShortcutType();
+            auto &argumentData = *reinterpret_cast<ShortcutSettingsListViewArgumentData *>(data);
+            auto &shortcutSettingsManager = *argumentData.shortcutSettingsManager;
 
             if(wparam == VK_ESCAPE)
-            {                
-                shortcutManager.ResetEditedShortcut();
+            {
+                shortcutSettingsManager.CancelEdit();
                 return 0;
             }            
 
-            if(editedShortcutType.has_value())
+            if(shortcutSettingsManager.IsEditing())
             {
                 win32_program::Shortcut newShortcut;
                 newShortcut.modifier = win32_program::ShortcutManager::GetShortcutModifierFromKeyState();
                 newShortcut.key = static_cast<UINT>(wparam);
 
-                shortcutManager.SetEditedShortcut(editedShortcutType.value(), newShortcut);
+                shortcutSettingsManager.SetEditedShortcut(newShortcut, *argumentData.programContext);
 
                 return 0;
             }                
@@ -60,13 +66,14 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
         case WM_CHAR:
         case WM_SYSCHAR:
         {
-            auto &shortcutManager = *reinterpret_cast<win32_program::ShortcutManager *>(data);
-            auto editedShortcutType = shortcutManager.GetEditedShortcutType();
+            auto &argumentData = *reinterpret_cast<ShortcutSettingsListViewArgumentData *>(data);
+            auto &shortcutSettingsManager = *argumentData.shortcutSettingsManager;
 
-            if(editedShortcutType.has_value())
+            if(shortcutSettingsManager.IsEditing())
             {
                 return 0;
             }
+
             break;
         }
     }
@@ -74,9 +81,13 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
+constexpr int gc_TimerId = 2;
+
 INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     auto &programContext = program::GetProgramContext();
+    static auto shortcutSettingsManager = program::ShortcutSettingsManager{};
+    static ShortcutSettingsListViewArgumentData argumentData{};
 
     switch (msg)
     {
@@ -84,13 +95,16 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
         {   
             auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
             constexpr int c_actionColumnWidth = 130;
-            constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;             
+            constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;           
+            
+            argumentData.shortcutSettingsManager = &shortcutSettingsManager;
+            argumentData.programContext = &programContext;
             
             SetWindowSubclass(
                 listView,
                 ShortcutsSettingsListViewProc,
                 1,
-                reinterpret_cast<DWORD_PTR>(programContext.GetManager<win32_program::ShortcutManager>())
+                reinterpret_cast<DWORD_PTR>(&argumentData)
             );
 
             ListView_SetExtendedListViewStyle(
@@ -113,7 +127,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             ListView_InsertColumn(listView, 1, &column);
 
             auto &stringLookup = programContext.GetStringLookup();
-            auto &shortcutManager = *programContext.GetManager<win32_program::ShortcutManager>();
+            auto &shortcutManager = *programContext.GetManager<win32_program::ShortcutManager>();            
             auto allActions = programContext.GetManager<action::ActionManager>()->GetActions();
 
             for(auto &action : allActions)
@@ -136,37 +150,42 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                 if(actionName.empty())
                     continue;
 
-                auto shorcuts = shortcutManager.GetShortcutsForAction(action->GetType());
+                auto shortcuts = shortcutManager.GetShortcutsForAction(action->GetType());
 
-                auto insertItem = [&action, &actionName, &listView](const std::wstring &text){
+                auto insertItem = [&action, &actionName, &listView, &programContext](win32_program::Shortcut shortcut, program::ShortcutSettingsManager &shortcutSettingsManager)
+                {
+                    program::ShortcutEntry entry{};
+                    entry.index = ListView_GetItemCount(listView);
+                    entry.shortcut = shortcut;
+                    entry.actionType = action->GetType();
+                    entry.actionNameString = actionName;
+                    entry.shortcutString = locale::ShortcutToString(shortcut, programContext);
+
+                    shortcutSettingsManager.AddShortcutEntry(entry);
+
                     LVITEM item{};
                     item.mask = LVIF_TEXT | LVIF_PARAM;
-                    item.lParam = static_cast<LPARAM>(action->GetType());
+                    item.lParam = static_cast<LPARAM>(entry.actionType);
                     item.pszText = const_cast<LPWSTR>(actionName.c_str());
-                    item.iItem = ListView_GetItemCount(listView);
+                    item.iItem = entry.index;
                     ListView_InsertItem(listView, &item);
 
                     ListView_SetItemText(
                         listView,
                         item.iItem,
                         1,
-                        const_cast<LPWSTR>(text.c_str())
+                        const_cast<LPWSTR>(entry.shortcutString.c_str())
                     );
                 };
 
-                if(shorcuts.empty())
+                if(shortcuts.empty())
                 {
-                    insertItem(L"");
+                    insertItem(win32_program::Shortcut{}, shortcutSettingsManager);
                 }
 
-                for(auto &shortcut : shorcuts)
+                for(auto &shortcut : shortcuts)
                 {
-                    auto str = locale::ShortcutToString(shortcut, programContext);
-
-                    if(str.empty())
-                        continue;
-
-                    insertItem(str);
+                    insertItem(shortcut, shortcutSettingsManager);
                 }
             }
 
@@ -177,8 +196,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
         case WM_MBUTTONDOWN:
         case WM_LBUTTONDOWN:
         {
-            auto shortcutManager = programContext.GetManager<win32_program::ShortcutManager>();
-            shortcutManager->ResetEditedShortcut();
+            shortcutSettingsManager.CancelEdit();
             break;
         }
 
@@ -211,17 +229,43 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                             const_cast<LPWSTR>(str.c_str())
                         );
 
-                        auto shortcutManager = programContext.GetManager<win32_program::ShortcutManager>();
-                        auto shortcut = win32_program::Shortcut{};
-                        shortcutManager->SetEditedShortcut(static_cast<action::ActionType>(item.lParam), shortcut);
+                        auto shortcutEntry = shortcutSettingsManager.GetShortcutEntry(item.iItem);
+                        shortcutEntry->shortcut = {};
+
+                        shortcutSettingsManager.SetEditedShortcutEntry(*shortcutEntry);
+
+                        SetTimer(hDlg, gc_TimerId, 5000, nullptr);
                         
                         break;
                     }
                 }
             }
+            break;
+        }
 
+        case WM_TIMER:
+        {
+            if (wParam == gc_TimerId)
+            {
+                KillTimer(hDlg, gc_TimerId);
+                auto shortcutManager = programContext.GetManager<win32_program::ShortcutManager>();
+                auto editedShortcutPtr = shortcutSettingsManager.GetEditedShortcut();
+                auto editedShortcut = *editedShortcutPtr; // copy!!
+
+                shortcutSettingsManager.CommitEdit(*shortcutManager);
+
+                auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
+
+                ListView_SetItemText(
+                    listView,
+                    editedShortcut.index,
+                    1,
+                    const_cast<LPWSTR>(editedShortcut.shortcutString.c_str())
+                );
+            }
             break;
         }
     }
+
     return FALSE;
 }

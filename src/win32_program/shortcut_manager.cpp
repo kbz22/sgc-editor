@@ -14,6 +14,25 @@ void win32_program::ShortcutManager::RegisterShortcut(
     m_shortcuts[context][shortcut] = actionId;
 }
 
+void win32_program::ShortcutManager::ReplaceShortcut(
+    action::ActionType actionId,
+    const Shortcut& oldShortcut,
+    const Shortcut& newShortcut
+)
+{
+    for (auto& contextPair : m_shortcuts)
+    {
+        auto& shortcutsMap = contextPair.second;
+        auto it = shortcutsMap.find(oldShortcut);
+        if (it != shortcutsMap.end() && it->second == actionId)
+        {
+            shortcutsMap.erase(it);
+            shortcutsMap[newShortcut] = actionId;
+            return;
+        }
+    }
+}
+
 action::ActionType win32_program::ShortcutManager::GetActionForShortcut(
     const Shortcut& shortcut,
     ShortcutContext context
@@ -53,23 +72,6 @@ std::vector<win32_program::Shortcut> win32_program::ShortcutManager::GetShortcut
     }
 
     return result;
-}
-
-std::optional<action::ActionType> win32_program::ShortcutManager::GetEditedShortcutType() const
-{
-    return m_editedAction;
-}
-    
-void win32_program::ShortcutManager::SetEditedShortcut(action::ActionType actionId, Shortcut shortcut)
-{
-    m_editedAction = actionId;
-    m_editedShortcut = shortcut;
-}
- 
-void win32_program::ShortcutManager::ResetEditedShortcut()
-{
-    m_editedAction.reset();
-    m_editedShortcut = Shortcut{};
 }
 
 win32_program::ShortcutModifier win32_program::ShortcutManager::GetShortcutModifierFromKeyState()
