@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <memory>
 #include <windows.h>
 
 namespace settings {    
@@ -37,16 +38,16 @@ namespace settings {
     class SettingsManager
     {
         private:
-            std::unordered_map<SettingKey, settings::ISetting*> m_settings{};
+            std::unordered_map<SettingKey, std::unique_ptr<settings::ISetting>> m_settings{};
             std::unordered_map<SettingCategory, HWND> m_categoryWindows{};
-            SettingCategory m_currentCategory = SettingCategory::General;            
+            SettingCategory m_currentCategory = SettingCategory::General;
 
         public:
             SettingsManager() = default;
             ~SettingsManager() = default;
             
             template<typename T>
-            void RegisterSetting(unsigned key, T* setting);
+            void RegisterSetting(unsigned key, std::unique_ptr<T> setting);
 
             void SetCategory(SettingCategory category);
             void SetCategoryWindow(SettingCategory category, HWND hwnd);

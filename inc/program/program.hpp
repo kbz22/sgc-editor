@@ -71,6 +71,7 @@ namespace program {
             program::EditorGridMode m_editorGridMode = program::EditorGridMode::NoGrid;
 
             void RegisterActions();
+            void RegisterDefaultSettings();
             void RegisterDefaultShortcuts();            
             void SetupImageLists();
 

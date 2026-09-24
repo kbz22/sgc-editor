@@ -1,4 +1,5 @@
 #include "settings/settings_manager.hpp"
+#include "settings/settings.hpp"
 #include <stdexcept>
 
 void settings::SettingsManager::SetCategory(SettingCategory category)
@@ -33,4 +34,19 @@ HWND settings::SettingsManager::GetCategoryWindow(SettingCategory category) cons
 HWND settings::SettingsManager::GetCurrentCategoryWindow() const
 {
     return GetCategoryWindow(m_currentCategory);
+}
+
+template<>
+void settings::SettingsManager::RegisterSetting<settings::ShortcutsSetting>(unsigned key, std::unique_ptr<settings::ShortcutsSetting> setting)
+{
+    SettingKey settingKey{SettingCategory::Shortcuts, key};
+    m_settings[settingKey] = std::move(setting);
+}
+
+template<>
+settings::ShortcutsSetting* settings::SettingsManager::GetSetting<settings::ShortcutsSetting>(unsigned key) const
+{
+    SettingKey settingKey{SettingCategory::Shortcuts, key};
+    auto it = m_settings.find(settingKey);
+    return it != m_settings.end() ? dynamic_cast<settings::ShortcutsSetting*>(it->second.get()) : nullptr;
 }

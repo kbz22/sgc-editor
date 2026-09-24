@@ -154,6 +154,7 @@ add_executable(sgc-editor WIN32
 
     src/settings/settings_manager.cpp
     src/settings/shortcut_settings_manager.cpp
+    src/settings/shortcuts_setting.cpp
 )
 
 # embed manifest in the exe

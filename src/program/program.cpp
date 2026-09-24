@@ -45,6 +45,8 @@
 #include "action/settings_action.hpp"
 #include "defaults.hpp"
 
+#include "settings/settings.hpp"
+
 #include "editor_graphics.h"
 #include "win32_helpers/load_bitmap.hpp"
 
@@ -119,6 +121,14 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::ExportFile    
 };
 
+void program::ProgramContext::RegisterDefaultSettings()
+{
+    m_settingsManager->RegisterSetting<settings::ShortcutsSetting>(
+        settings::ShortcutSettingKey,
+        std::make_unique<settings::ShortcutsSetting>(*m_shortcutManager)
+    );
+}
+
 void program::ProgramContext::StartDefault()
 {
     m_assetManager = std::make_unique<file::AssetManager>();
@@ -129,6 +139,10 @@ void program::ProgramContext::StartDefault()
     ); */
     m_settingsManager = std::make_unique<settings::SettingsManager>();
     m_stringLookup = std::make_unique<locale::StringLookup>();
+
+    //! this should later check if there are settings stored locally
+    // RegisterDefaultSettings() is a fallback
+    RegisterDefaultSettings();
 
     m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 

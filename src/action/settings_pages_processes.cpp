@@ -3,6 +3,7 @@
 #include "settings_dialog.h"
 #include "program/program.hpp"
 #include "settings/shortcut_settings_manager.hpp"
+#include "settings/settings.hpp"
 #include "locale/shortcut_to_string.hpp"
 
 INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -22,12 +23,6 @@ INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
     return FALSE;
 }
 
-struct ShortcutSettingsListViewArgumentData
-{
-    settings::ShortcutSettingsManager *shortcutSettingsManager;
-    program::ProgramContext *programContext;
-};
-
 LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data)
 {
     using namespace settings;
@@ -42,8 +37,9 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
         {
-            auto &argumentData = *reinterpret_cast<ShortcutSettingsListViewArgumentData *>(data);
-            auto &shortcutSettingsManager = *argumentData.shortcutSettingsManager;
+            auto &programContext = *reinterpret_cast<program::ProgramContext *>(data);
+            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(settings::ShortcutSettingKey);
+            auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
             if(wparam == VK_ESCAPE)
             {
@@ -57,7 +53,10 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
                 newShortcut.modifier = win32_program::ShortcutManager::GetShortcutModifierFromKeyState();
                 newShortcut.key = static_cast<UINT>(wparam);
 
-                shortcutSettingsManager.SetEditedShortcut(newShortcut, *argumentData.programContext);
+                shortcutSettingsManager.SetEditedShortcut(
+                    newShortcut, 
+                    programContext
+                );
 
                 return 0;
             }                
@@ -68,8 +67,9 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
         case WM_CHAR:
         case WM_SYSCHAR:
         {
-            auto &argumentData = *reinterpret_cast<ShortcutSettingsListViewArgumentData *>(data);
-            auto &shortcutSettingsManager = *argumentData.shortcutSettingsManager;
+            auto &programContext = *reinterpret_cast<program::ProgramContext *>(data);
+            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(settings::ShortcutSettingKey);
+            auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
             if(shortcutSettingsManager.IsEditing())
             {
@@ -90,8 +90,8 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
     using namespace settings;
 
     auto &programContext = program::GetProgramContext();
-    static auto shortcutSettingsManager = ShortcutSettingsManager{};
-    static ShortcutSettingsListViewArgumentData argumentData{};
+    auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(settings::ShortcutSettingKey);
+    auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
     switch (msg)
     {
@@ -101,14 +101,11 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             constexpr int c_actionColumnWidth = 130;
             constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;           
             
-            argumentData.shortcutSettingsManager = &shortcutSettingsManager;
-            argumentData.programContext = &programContext;
-            
             SetWindowSubclass(
                 listView,
                 ShortcutsSettingsListViewProc,
                 1,
-                reinterpret_cast<DWORD_PTR>(&argumentData)
+                reinterpret_cast<DWORD_PTR>(&programContext)
             );
 
             ListView_SetExtendedListViewStyle(
@@ -238,7 +235,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
                         shortcutSettingsManager.SetEditedShortcutEntry(*shortcutEntry);
 
-                        SetTimer(hDlg, gc_TimerId, 5000, nullptr);
+                        SetTimer(hDlg, gc_TimerId, 3500, nullptr);
                         
                         break;
                     }
@@ -252,7 +249,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             if (wParam == gc_TimerId)
             {
                 KillTimer(hDlg, gc_TimerId);
-                auto shortcutManager = programContext.GetManager<win32_program::ShortcutManager>();
+                // auto shortcutManager = programContext.GetManager<win32_program::ShortcutManager>();
                 auto editedShortcutPtr = shortcutSettingsManager.GetEditedShortcut();
                 auto editedShortcut = *editedShortcutPtr; // copy!!
 
