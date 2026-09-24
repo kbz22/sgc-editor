@@ -16,21 +16,13 @@ void win32_program::ShortcutManager::RegisterShortcut(
 
 void win32_program::ShortcutManager::ReplaceShortcut(
     action::ActionType actionId,
+    ShortcutContext context,
     const Shortcut& oldShortcut,
     const Shortcut& newShortcut
 )
 {
-    for (auto& contextPair : m_shortcuts)
-    {
-        auto& shortcutsMap = contextPair.second;
-        auto it = shortcutsMap.find(oldShortcut);
-        if (it != shortcutsMap.end() && it->second == actionId)
-        {
-            shortcutsMap.erase(it);
-            shortcutsMap[newShortcut] = actionId;
-            return;
-        }
-    }
+    m_shortcuts[context].erase(oldShortcut);
+    m_shortcuts[context][newShortcut] = actionId;
 }
 
 action::ActionType win32_program::ShortcutManager::GetActionForShortcut(

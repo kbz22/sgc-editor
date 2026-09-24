@@ -128,7 +128,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             ListView_InsertColumn(listView, 1, &column);
 
             auto &stringLookup = programContext.GetStringLookup();
-            auto &shortcutManager = *programContext.GetManager<win32_program::ShortcutManager>();            
+            auto &shortcutManager = *programContext.GetManager<win32_program::ShortcutManager>();
             auto allActions = programContext.GetManager<action::ActionManager>()->GetActions();
 
             for(auto &action : allActions)
@@ -151,7 +151,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                 if(actionName.empty())
                     continue;
 
-                auto shortcuts = shortcutManager.GetShortcutsForAction(action->GetType());
+                auto shortcuts = shortcutManager.GetShortcutsForAction(action->GetType());                
 
                 auto insertItem = [&action, &actionName, &listView, &programContext](win32_program::Shortcut shortcut, ShortcutSettingsManager &shortcutSettingsManager)
                 {
@@ -159,6 +159,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                     entry.index = ListView_GetItemCount(listView);
                     entry.shortcut = shortcut;
                     entry.actionType = action->GetType();
+                    entry.context = action->GetShortcutContext();
                     entry.actionNameString = actionName;
                     entry.shortcutString = locale::ShortcutToString(shortcut, programContext);
 

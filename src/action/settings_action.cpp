@@ -117,6 +117,7 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
             {
                 case IDOK:
                 {
+                    settingsManager->CommitChanges();
                     EndDialog(hDlg, IDOK);
                     return TRUE;
                 }
@@ -124,6 +125,12 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
                 case IDCANCEL:
                 {
                     EndDialog(hDlg, IDCANCEL);
+                    return TRUE;
+                }
+
+                case IDC_APPLY_BUTTON:
+                {
+                    settingsManager->CommitChanges();
                     return TRUE;
                 }
             }

@@ -39,6 +39,7 @@ namespace win32_program
 
             void ReplaceShortcut(
                 action::ActionType actionId,
+                ShortcutContext context,
                 const Shortcut& oldShortcut,
                 const Shortcut& newShortcut
             );

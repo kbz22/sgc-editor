@@ -47,6 +47,7 @@ void settings::ShortcutSettingsManager::CommitEdit(win32_program::ShortcutManage
 
     shortcutManager.ReplaceShortcut(
         m_editedShortcut.actionType,
+        m_editedShortcut.context,
         currentShortcut.shortcut,
         m_editedShortcut.shortcut
     );

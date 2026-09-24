@@ -36,6 +36,15 @@ HWND settings::SettingsManager::GetCurrentCategoryWindow() const
     return GetCategoryWindow(m_currentCategory);
 }
 
+void settings::SettingsManager::CommitChanges()
+{
+    for(auto &pair : m_settings){
+        if(pair.second){
+            pair.second->Commit();
+        }
+    }
+}
+
 template<>
 void settings::SettingsManager::RegisterSetting<settings::ShortcutsSetting>(unsigned key, std::unique_ptr<settings::ShortcutsSetting> setting)
 {

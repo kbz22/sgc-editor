@@ -13,9 +13,10 @@ namespace settings
 
     struct ShortcutEntry
     {
-        int index = 0;
+        int index = 0;        
         win32_program::Shortcut shortcut = win32_program::Shortcut{};
         action::ActionType actionType = action::ActionType::Default;
+        win32_program::ShortcutContext context = win32_program::ShortcutContext::Global;
         std::wstring actionNameString = L"";
         std::wstring shortcutString = L"";
     };

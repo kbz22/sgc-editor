@@ -58,6 +58,8 @@ namespace settings {
             SettingCategory GetCurrentCategory() const;
             HWND GetCategoryWindow(SettingCategory category) const;
             HWND GetCurrentCategoryWindow() const;
+
+            void CommitChanges();
     };
 
 }
