@@ -1,5 +1,6 @@
 #include "action/settings_action.hpp"
 #include "program/program.hpp"
+#include "settings/settings_manager.hpp"
 #include "settings_dialog.h"
 
 action::SettingsAction::SettingsAction()
@@ -39,9 +40,10 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
     using namespace win32_program;
+    using namespace settings;
 
     program::ProgramContext& context = program::GetProgramContext();
-    auto settingsManager = context.GetManager<win32_program::SettingsManager>();
+    auto settingsManager = context.GetManager<SettingsManager>();
 
     auto changePage = [&settingsManager]() {
         auto currentCategory = settingsManager->GetCurrentCategory();

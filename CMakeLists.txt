@@ -50,14 +50,12 @@ add_executable(sgc-editor WIN32
     src/win32_program/windows_process.cpp
     src/win32_program/layout_manager.cpp
     src/win32_program/shortcut_manager.cpp
-    src/win32_program/map_selection_serializer.cpp
-    src/win32_program/settings_manager.cpp
+    src/win32_program/map_selection_serializer.cpp    
 
     src/program/program.cpp
     src/program/layer_manager.cpp
     src/program/editor_mode.cpp
     src/program/editor_update.cpp
-    src/program/shortcut_settings_manager.cpp
 
     src/sections/section.cpp
     src/sections/tileset_section.cpp
@@ -153,6 +151,9 @@ add_executable(sgc-editor WIN32
     src/sgc_extension/asset_serializer.cpp
     src/sgc_extension/runtime_builder.cpp
     src/sgc_extension/asset_deserializer.cpp
+
+    src/settings/settings_manager.cpp
+    src/settings/shortcut_settings_manager.cpp
 )
 
 # embed manifest in the exe

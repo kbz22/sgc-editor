@@ -2,7 +2,7 @@
 #include <commctrl.h>
 #include "settings_dialog.h"
 #include "program/program.hpp"
-#include "win32_program/shortcut_manager.hpp"
+#include "settings/shortcut_settings_manager.hpp"
 #include "locale/shortcut_to_string.hpp"
 
 INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -24,12 +24,14 @@ INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 
 struct ShortcutSettingsListViewArgumentData
 {
-    program::ShortcutSettingsManager *shortcutSettingsManager;
+    settings::ShortcutSettingsManager *shortcutSettingsManager;
     program::ProgramContext *programContext;
 };
 
 LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data)
 {
+    using namespace settings;
+    
     switch (msg)
     {
         case WM_GETDLGCODE:
@@ -85,8 +87,10 @@ constexpr int gc_TimerId = 2;
 
 INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    using namespace settings;
+
     auto &programContext = program::GetProgramContext();
-    static auto shortcutSettingsManager = program::ShortcutSettingsManager{};
+    static auto shortcutSettingsManager = ShortcutSettingsManager{};
     static ShortcutSettingsListViewArgumentData argumentData{};
 
     switch (msg)
@@ -152,9 +156,9 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
                 auto shortcuts = shortcutManager.GetShortcutsForAction(action->GetType());
 
-                auto insertItem = [&action, &actionName, &listView, &programContext](win32_program::Shortcut shortcut, program::ShortcutSettingsManager &shortcutSettingsManager)
+                auto insertItem = [&action, &actionName, &listView, &programContext](win32_program::Shortcut shortcut, ShortcutSettingsManager &shortcutSettingsManager)
                 {
-                    program::ShortcutEntry entry{};
+                    ShortcutEntry entry{};
                     entry.index = ListView_GetItemCount(listView);
                     entry.shortcut = shortcut;
                     entry.actionType = action->GetType();
@@ -252,7 +256,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                 auto editedShortcutPtr = shortcutSettingsManager.GetEditedShortcut();
                 auto editedShortcut = *editedShortcutPtr; // copy!!
 
-                shortcutSettingsManager.CommitEdit(*shortcutManager);
+                // shortcutSettingsManager.CommitEdit(*shortcutManager);
 
                 auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
 

@@ -1,20 +1,13 @@
 #pragma once
 
-#include "program/isetting.hpp"
+#include "settings/isetting.hpp"
+#include "settings/settings_category.hpp"   
 
 #include <unordered_map>
 #include <vector>
 #include <windows.h>
 
-namespace win32_program {
-
-    enum class SettingCategory
-    {
-        General = 0,
-        Shortcuts,
-
-        Count
-    };
+namespace settings {    
 
     struct SettingKey
     {
@@ -30,21 +23,21 @@ namespace win32_program {
 
 namespace std {
     template <>
-    struct hash<win32_program::SettingKey>
+    struct hash<settings::SettingKey>
     {
-        std::size_t operator()(const win32_program::SettingKey& k) const
+        std::size_t operator()(const settings::SettingKey& k) const
         {
             return (static_cast<std::size_t>(k.category) << 32) ^ static_cast<std::size_t>(k.key);
         }
     };
 }
 
-namespace win32_program {
+namespace settings {
     
     class SettingsManager
     {
         private:
-            std::unordered_map<SettingKey, program::ISetting*> m_settings{};
+            std::unordered_map<SettingKey, settings::ISetting*> m_settings{};
             std::unordered_map<SettingCategory, HWND> m_categoryWindows{};
             SettingCategory m_currentCategory = SettingCategory::General;            
 

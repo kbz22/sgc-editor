@@ -18,11 +18,10 @@
 #include "action/action_manager.hpp"
 
 #include "win32_program/shortcut_manager.hpp"
-#include "win32_program/settings_manager.hpp"
+#include "settings/settings_manager.hpp"
 #include "file/map_document.hpp"
 #include "file/asset_manager.hpp"
 #include "program/editor_mode.hpp"
-#include "program/shortcut_settings_manager.hpp"
 
 #include <sgc/graphics/rectangle.hpp>
 #include <commctrl.h>
@@ -57,7 +56,7 @@ namespace program {
             std::unique_ptr<action::ActionManager> m_actionManager{};
             std::unique_ptr<file::AssetManager> m_assetManager{};
             std::unique_ptr<win32_program::ShortcutManager> m_shortcutManager{};
-            std::unique_ptr<win32_program::SettingsManager> m_settingsManager{};            
+            std::unique_ptr<settings::SettingsManager> m_settingsManager{};            
 
             static bool m_win32Set;
             static HINSTANCE m_hInstance;

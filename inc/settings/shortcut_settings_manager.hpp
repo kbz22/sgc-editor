@@ -7,7 +7,7 @@
 
 #include <unordered_map>
 
-namespace program 
+namespace settings
 {
     class ProgramContext;
 
@@ -32,7 +32,7 @@ namespace program
             ShortcutEntry* GetShortcutEntry(int index);
 
             void SetEditedShortcutEntry(const ShortcutEntry& entry);
-            void SetEditedShortcut(const win32_program::Shortcut& shortcut, ProgramContext& programContext);
+            void SetEditedShortcut(const win32_program::Shortcut& shortcut, program::ProgramContext& programContext);
             ShortcutEntry* GetEditedShortcut();
 
             void CommitEdit(win32_program::ShortcutManager& shortcutManager);

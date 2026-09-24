@@ -1,18 +1,18 @@
-#include "program/shortcut_settings_manager.hpp"
+#include "settings/shortcut_settings_manager.hpp"
 #include "program/program.hpp"
 #include "locale/shortcut_to_string.hpp"
 
-void program::ShortcutSettingsManager::AddShortcutEntry(const ShortcutEntry& entry)
+void settings::ShortcutSettingsManager::AddShortcutEntry(const ShortcutEntry& entry)
 {
     m_shortcutEntries[entry.index] = entry;
 }
 
-void program::ShortcutSettingsManager::RemoveShortcutEntry(int index)
+void settings::ShortcutSettingsManager::RemoveShortcutEntry(int index)
 {
     m_shortcutEntries.erase(index);
 }
 
-program::ShortcutEntry* program::ShortcutSettingsManager::GetShortcutEntry(int index)
+settings::ShortcutEntry* settings::ShortcutSettingsManager::GetShortcutEntry(int index)
 {
     auto it = m_shortcutEntries.find(index);
     if (it != m_shortcutEntries.end())
@@ -22,23 +22,23 @@ program::ShortcutEntry* program::ShortcutSettingsManager::GetShortcutEntry(int i
     return nullptr;
 }
 
-void program::ShortcutSettingsManager::SetEditedShortcutEntry(const ShortcutEntry& entry)
+void settings::ShortcutSettingsManager::SetEditedShortcutEntry(const ShortcutEntry& entry)
 {
     m_editedShortcut = entry;
 }
 
-void program::ShortcutSettingsManager::SetEditedShortcut(const win32_program::Shortcut& shortcut, program::ProgramContext& programContext)
+void settings::ShortcutSettingsManager::SetEditedShortcut(const win32_program::Shortcut& shortcut, program::ProgramContext& programContext)
 {
     m_editedShortcut.shortcut = shortcut;
     m_editedShortcut.shortcutString = locale::ShortcutToString(shortcut, programContext);
 }
 
-bool program::ShortcutSettingsManager::IsEditing()
+bool settings::ShortcutSettingsManager::IsEditing()
 {
     return m_editedShortcut.actionType != action::ActionType::Default;
 }
 
-void program::ShortcutSettingsManager::CommitEdit(win32_program::ShortcutManager& shortcutManager)
+void settings::ShortcutSettingsManager::CommitEdit(win32_program::ShortcutManager& shortcutManager)
 {
     if (m_editedShortcut.actionType == action::ActionType::Default)
         return;
@@ -56,12 +56,12 @@ void program::ShortcutSettingsManager::CommitEdit(win32_program::ShortcutManager
     CancelEdit();
 }
 
-void program::ShortcutSettingsManager::CancelEdit()
+void settings::ShortcutSettingsManager::CancelEdit()
 {
     m_editedShortcut = ShortcutEntry{};
 }
 
-program::ShortcutEntry* program::ShortcutSettingsManager::GetEditedShortcut()
+settings::ShortcutEntry* settings::ShortcutSettingsManager::GetEditedShortcut()
 {
     return &m_editedShortcut;
 }

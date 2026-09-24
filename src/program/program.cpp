@@ -127,7 +127,7 @@ void program::ProgramContext::StartDefault()
         m_hInstance,
         m_mainWindowHandle
     ); */
-    m_settingsManager = std::make_unique<win32_program::SettingsManager>();
+    m_settingsManager = std::make_unique<settings::SettingsManager>();
     m_stringLookup = std::make_unique<locale::StringLookup>();
 
     m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
@@ -529,7 +529,7 @@ win32_program::ShortcutManager* program::ProgramContext::GetManager<win32_progra
 }
 
 template<>
-win32_program::SettingsManager* program::ProgramContext::GetManager<win32_program::SettingsManager>() const
+settings::SettingsManager* program::ProgramContext::GetManager<settings::SettingsManager>() const
 {
     return m_settingsManager.get();
 }
