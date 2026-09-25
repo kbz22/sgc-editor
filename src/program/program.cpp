@@ -124,8 +124,16 @@ std::vector<action::ActionType> g_activeEditorButtons {
 void program::ProgramContext::RegisterDefaultSettings()
 {
     m_settingsManager->RegisterSetting<settings::ShortcutsSetting>(
-        settings::ShortcutSettingKey,
+        static_cast<unsigned>(settings::Key::ShortcutsSetting),
         std::make_unique<settings::ShortcutsSetting>(*m_shortcutManager)
+    );
+    m_settingsManager->RegisterSetting<settings::AutoRestoreFilesSetting>(
+        static_cast<unsigned>(settings::Key::AutoRestoreFilesSetting),
+        std::make_unique<settings::AutoRestoreFilesSetting>(false)
+    );
+    m_settingsManager->RegisterSetting<settings::DefaultOpenFiletypeSetting>(
+        static_cast<unsigned>(settings::Key::DefaultOpenFiletypeSetting),
+        std::make_unique<settings::DefaultOpenFiletypeSetting>(file::FileType::Map)
     );
 }
 

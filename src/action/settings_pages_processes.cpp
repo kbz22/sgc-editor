@@ -3,23 +3,83 @@
 #include "settings/shortcut_settings_manager.hpp"
 #include "settings/settings.hpp"
 #include "locale/shortcut_to_string.hpp"
+#include "win32_helpers/file_helpers.hpp"
 
 #include <windows.h>
 #include <commctrl.h>
+#include <commdlg.h>
 #include <algorithm>
 #include <cwctype>
 
 INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    auto &programContext = program::GetProgramContext();
+    auto settingManager = programContext.GetManager<settings::SettingsManager>();
+    auto defaultOpenFiletypeSetting = settingManager->GetSetting<settings::DefaultOpenFiletypeSetting>(static_cast<unsigned>(settings::Key::DefaultOpenFiletypeSetting));
+    auto autoRestoreFilesSetting = settingManager->GetSetting<settings::AutoRestoreFilesSetting>(static_cast<unsigned>(settings::Key::AutoRestoreFilesSetting));
+
     switch (msg)
     {
         case WM_INITDIALOG:
         {
+            // Combo box for selecting the default open file type
+            auto stringLookup = programContext.GetStringLookup();            
+            auto mapFilesString = stringLookup.Get(locale::StringId::NameMapFile);
+            auto tilesetFilesString = stringLookup.Get(locale::StringId::NameTilesetFile);
+            auto packageFilesString = stringLookup.Get(locale::StringId::NamePackageFile);
+
+            std::vector<win32_helpers::FileFilter> filters = {
+                { mapFilesString.value_or(L"Map Files").c_str(), { defaults::MapFileExtension.data() } },
+                { tilesetFilesString.value_or(L"Tileset Files").c_str(), { defaults::TilesetFileExtension.data() } },
+                { packageFilesString.value_or(L"Package Files").c_str(), { defaults::PackageFileExtension.data() } }                
+            };
+
+            auto defaultOpenComboBox = GetDlgItem(hDlg, IDC_SETTINGS_DEFAULT_FILE_TYPE);
+
+            for(const auto &filter : filters)
+            {
+                SendMessage(defaultOpenComboBox, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(filter.name.c_str()));
+            }
+
+            auto defaultOpenFiletype = defaultOpenFiletypeSetting->GetValue();
+            SendMessage(defaultOpenComboBox, CB_SETCURSEL, static_cast<WPARAM>(defaultOpenFiletype), 0);
+
+            // Checkbox for automatically restoring session
+            auto autoRestoreCheckbox = GetDlgItem(hDlg, IDC_SETTINGS_RESTORE_SESSION);
+            SendMessage(autoRestoreCheckbox, BM_SETCHECK, static_cast<WPARAM>(autoRestoreFilesSetting->GetValue() ? BST_CHECKED : BST_UNCHECKED), 0);
+
             return TRUE;
         }
 
         case WM_COMMAND:
         {
+            auto commandId = LOWORD(wParam);
+
+            switch(commandId)
+            {
+                case IDC_SETTINGS_DEFAULT_FILE_TYPE:
+                {
+                    if(HIWORD(wParam) == CBN_SELCHANGE)
+                    {
+                        auto defaultOpenComboBox = GetDlgItem(hDlg, IDC_SETTINGS_DEFAULT_FILE_TYPE);
+                        auto selectedIndex = static_cast<int>(SendMessage(defaultOpenComboBox, CB_GETCURSEL, 0, 0));
+                        defaultOpenFiletypeSetting->SetValue(static_cast<file::FileType>(selectedIndex));
+                    }
+                    break;
+                }
+
+                case IDC_SETTINGS_RESTORE_SESSION:
+                {
+                    if(HIWORD(wParam) == BN_CLICKED)
+                    {
+                        auto autoRestoreCheckbox = GetDlgItem(hDlg, IDC_SETTINGS_RESTORE_SESSION);
+                        auto isChecked = SendMessage(autoRestoreCheckbox, BM_GETCHECK, 0, 0) == BST_CHECKED;
+                        autoRestoreFilesSetting->SetValue(isChecked);
+                    }
+                    break;
+                }
+            }
+
             break;
         }
     }
@@ -41,7 +101,7 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
         case WM_SYSKEYDOWN:
         {
             auto &programContext = *reinterpret_cast<program::ProgramContext *>(data);
-            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(settings::ShortcutSettingKey);
+            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(static_cast<unsigned>(settings::Key::ShortcutsSetting));
             auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
             if(wparam == VK_ESCAPE)
@@ -71,7 +131,7 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
         case WM_SYSCHAR:
         {
             auto &programContext = *reinterpret_cast<program::ProgramContext *>(data);
-            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(settings::ShortcutSettingKey);
+            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(static_cast<unsigned>(settings::Key::ShortcutsSetting));
             auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
             if(shortcutSettingsManager.IsEditing())
@@ -93,7 +153,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
     using namespace settings;
 
     auto &programContext = program::GetProgramContext();
-    auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(settings::ShortcutSettingKey);
+    auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(static_cast<unsigned>(settings::Key::ShortcutsSetting));
     auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
     auto refreshShortcutList = [&programContext, &shortcutSettingsManager, hDlg](std::wstring filter = L"")

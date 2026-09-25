@@ -6,10 +6,8 @@
 
 #include <memory>
 
-namespace settings {
-
-    constexpr unsigned ShortcutSettingKey = 1;
-
+namespace settings 
+{
     class ShortcutsSetting : public ISetting    
     {
         private:

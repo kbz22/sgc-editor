@@ -59,3 +59,33 @@ settings::ShortcutsSetting* settings::SettingsManager::GetSetting<settings::Shor
     auto it = m_settings.find(settingKey);
     return it != m_settings.end() ? dynamic_cast<settings::ShortcutsSetting*>(it->second.get()) : nullptr;
 }
+
+template<>
+void settings::SettingsManager::RegisterSetting<settings::AutoRestoreFilesSetting>(unsigned key, std::unique_ptr<settings::AutoRestoreFilesSetting> setting)
+{
+    SettingKey settingKey{SettingCategory::General, key};
+    m_settings[settingKey] = std::move(setting);
+}
+
+template<>
+settings::AutoRestoreFilesSetting* settings::SettingsManager::GetSetting<settings::AutoRestoreFilesSetting>(unsigned key) const
+{
+    SettingKey settingKey{SettingCategory::General, key};
+    auto it = m_settings.find(settingKey);
+    return it != m_settings.end() ? dynamic_cast<settings::AutoRestoreFilesSetting*>(it->second.get()) : nullptr;
+}
+
+template<>
+void settings::SettingsManager::RegisterSetting<settings::DefaultOpenFiletypeSetting>(unsigned key, std::unique_ptr<settings::DefaultOpenFiletypeSetting> setting)
+{
+    SettingKey settingKey{SettingCategory::General, key};
+    m_settings[settingKey] = std::move(setting);
+}
+
+template<>
+settings::DefaultOpenFiletypeSetting* settings::SettingsManager::GetSetting<settings::DefaultOpenFiletypeSetting>(unsigned key) const
+{
+    SettingKey settingKey{SettingCategory::General, key};
+    auto it = m_settings.find(settingKey);
+    return it != m_settings.end() ? dynamic_cast<settings::DefaultOpenFiletypeSetting*>(it->second.get()) : nullptr;
+}
