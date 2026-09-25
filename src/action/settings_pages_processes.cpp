@@ -231,10 +231,11 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                             const_cast<LPWSTR>(str.c_str())
                         );
 
-                        auto shortcutEntry = shortcutSettingsManager.GetShortcutEntry(item.iItem);
-                        shortcutEntry->shortcut = {};
+                        auto shortcutEntryPtr = shortcutSettingsManager.GetShortcutEntry(item.iItem);
+                        auto shortcutEntry = *shortcutEntryPtr; // copy!!
+                        shortcutEntry.shortcut = {};
 
-                        shortcutSettingsManager.SetEditedShortcutEntry(*shortcutEntry);
+                        shortcutSettingsManager.SetEditedShortcutEntry(shortcutEntry);
 
                         SetTimer(hDlg, gc_TimerId, 3500, nullptr);
                         
