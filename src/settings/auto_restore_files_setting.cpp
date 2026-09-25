@@ -1,4 +1,5 @@
 #include "settings/auto_restore_files_setting.hpp"
+#include <sgc/data/serialization.hpp>
 
 settings::AutoRestoreFilesSetting::AutoRestoreFilesSetting(bool defaultValue) :
     m_value(defaultValue),
@@ -8,12 +9,19 @@ settings::AutoRestoreFilesSetting::AutoRestoreFilesSetting(bool defaultValue) :
 
 std::vector<uint8_t> settings::AutoRestoreFilesSetting::GetBytes() const
 {
-    return std::vector<uint8_t>{}; //! stub
+    sgc::data::BinaryWriter writer;
+
+    writer.Write(m_value);
+
+    return writer.buffer;
 }
 
 void settings::AutoRestoreFilesSetting::LoadFromBytes(const std::vector<uint8_t>& bytes)
 {
-    //! stub
+    sgc::data::BinaryReader reader(bytes.data());
+
+    m_value = reader.Read<bool>();
+    m_newValue = m_value;
 }
 
 bool settings::AutoRestoreFilesSetting::GetValue() const

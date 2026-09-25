@@ -9,7 +9,10 @@ namespace settings {
     struct SettingHeader
     {
         SettingCategory type;
+        uint32_t key;
         uint32_t size;
+
+        std::vector<uint8_t> GetBytes() const;
     };
 
     struct ISetting

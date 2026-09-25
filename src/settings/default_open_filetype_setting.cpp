@@ -1,4 +1,5 @@
 #include "settings/default_open_filetype_setting.hpp"
+#include <sgc/data/serialization.hpp>
 
 settings::DefaultOpenFiletypeSetting::DefaultOpenFiletypeSetting(file::FileType defaultFileType) :
     m_value(defaultFileType),
@@ -8,13 +9,19 @@ settings::DefaultOpenFiletypeSetting::DefaultOpenFiletypeSetting(file::FileType 
 
 std::vector<uint8_t> settings::DefaultOpenFiletypeSetting::GetBytes() const
 {
-    //! stub
-    return std::vector<uint8_t>{};
+    sgc::data::BinaryWriter writer;
+
+    writer.Write(m_value);
+
+    return writer.buffer;
 }
 
 void settings::DefaultOpenFiletypeSetting::LoadFromBytes(const std::vector<uint8_t>& bytes)
 {
-    //! also stub
+    sgc::data::BinaryReader reader(bytes.data());
+
+    m_value = reader.Read<file::FileType>();
+    m_newValue = m_value;
 }
 
 file::FileType settings::DefaultOpenFiletypeSetting::GetValue() const
