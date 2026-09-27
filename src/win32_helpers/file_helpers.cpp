@@ -1,6 +1,7 @@
 #include "win32_helpers/file_helpers.hpp"
 #include <windows.h>
 #include <commdlg.h>
+#include <shlobj.h>
 
 std::wstring BuildFilter(const std::vector<win32_helpers::FileFilter>& filters)
 {
@@ -80,4 +81,27 @@ std::optional<std::filesystem::path> win32_helpers::ShowOpenDialog(HWND owner, c
         return std::filesystem::path(file);
 
     return std::nullopt;
+}
+
+std::filesystem::path win32_helpers::GetPreferencesDirectory()
+{
+    PWSTR path = nullptr;
+
+    HRESULT hr = SHGetKnownFolderPath(
+        FOLDERID_RoamingAppData,
+        KF_FLAG_DEFAULT,
+        nullptr,
+        &path
+    );
+
+    if (FAILED(hr))
+    {
+        throw std::runtime_error("Failed to get Roaming AppData directory");
+    }
+
+    std::filesystem::path result(path);
+
+    CoTaskMemFree(path);
+
+    return result;
 }

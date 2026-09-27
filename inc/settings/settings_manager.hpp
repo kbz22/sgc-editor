@@ -1,7 +1,6 @@
 #pragma once
 
 #include "settings/isetting.hpp"
-#include "settings/settings_category.hpp"   
 
 #include <unordered_map>
 #include <vector>

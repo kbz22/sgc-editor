@@ -14,12 +14,10 @@ namespace settings
         public:
             DefaultOpenFiletypeSetting(file::FileType defaultFileType);
 
-            std::vector<uint8_t> GetBytes() const override;
-            void LoadFromBytes(const std::vector<uint8_t>& bytes) override;
-
             file::FileType GetValue() const;
             void SetValue(file::FileType newValue);
 
             void Commit() override;
+            Key GetKey() override;
     };
 }

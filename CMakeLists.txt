@@ -6,6 +6,15 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(FetchContent)
+
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.3
+)
+FetchContent_MakeAvailable(nlohmann_json)
+
 set(SGC_INCLUDE_PATH "$ENV{SGC_INCLUDE_PATH}" CACHE PATH "Path to SGC include directory")
 set(SGC_LIB_PATH "$ENV{SGC_LIB_PATH}" CACHE PATH "Path to SGC library directory")
 set(SDL_INCLUDE_PATH "$ENV{SDL_INCLUDE_PATH}" CACHE PATH "Path to SDL include directory")
@@ -31,7 +40,6 @@ endif()
 if(NOT SDL_IMAGE_LIB_PATH)
     message(FATAL_ERROR "SDL_IMAGE_LIB_PATH not specified.")
 endif()
-
 
 set(APP_MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")
 
@@ -157,7 +165,6 @@ add_executable(sgc-editor WIN32
     src/settings/shortcuts_setting.cpp
     src/settings/default_open_filetype_setting.cpp
     src/settings/auto_restore_files_setting.cpp
-    src/settings/setting_header.cpp
 )
 
 # embed manifest in the exe
@@ -186,6 +193,7 @@ target_link_libraries(sgc-editor PRIVATE
     SDL3
     SDL3_image
     sdl-game-core
+    nlohmann_json::nlohmann_json
 )
 
 target_compile_definitions(sgc-editor PRIVATE

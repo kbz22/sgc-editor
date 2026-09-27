@@ -17,16 +17,13 @@ namespace settings
         public:
             ShortcutsSetting(win32_program::ShortcutManager& shortcutManager);
 
-            // Serialization
-            std::vector<uint8_t> GetBytes() const override;
-            void LoadFromBytes(const std::vector<uint8_t>& bytes) override;
-
             // getters
             ShortcutSettingsManager& GetShortcutSettingsManager() const;
             win32_program::ShortcutManager& GetShortcutManager() const;
 
             // Update
             void Commit() override;
+            Key GetKey() override;
     };
 
 }

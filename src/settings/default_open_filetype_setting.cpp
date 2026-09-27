@@ -7,23 +7,6 @@ settings::DefaultOpenFiletypeSetting::DefaultOpenFiletypeSetting(file::FileType 
 {
 }
 
-std::vector<uint8_t> settings::DefaultOpenFiletypeSetting::GetBytes() const
-{
-    sgc::data::BinaryWriter writer;
-
-    writer.Write(m_value);
-
-    return writer.buffer;
-}
-
-void settings::DefaultOpenFiletypeSetting::LoadFromBytes(const std::vector<uint8_t>& bytes)
-{
-    sgc::data::BinaryReader reader(bytes.data());
-
-    m_value = reader.Read<file::FileType>();
-    m_newValue = m_value;
-}
-
 file::FileType settings::DefaultOpenFiletypeSetting::GetValue() const
 {
     return m_value;
@@ -37,4 +20,9 @@ void settings::DefaultOpenFiletypeSetting::SetValue(file::FileType newValue)
 void settings::DefaultOpenFiletypeSetting::Commit()
 {
     m_value = m_newValue;
+}
+
+settings::Key settings::DefaultOpenFiletypeSetting::GetKey()
+{
+    return Key::DefaultOpenFiletypeSetting;
 }

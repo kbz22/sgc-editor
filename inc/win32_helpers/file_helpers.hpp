@@ -17,4 +17,6 @@ namespace win32_helpers {
     std::optional<std::filesystem::path> ShowSaveDialog(HWND ownerHwnd, const std::vector<FileFilter>& filters);
     std::optional<std::filesystem::path> ShowOpenDialog(HWND ownerHwnd, const std::vector<FileFilter>& filters);
 
+    std::filesystem::path GetPreferencesDirectory();
+
 }

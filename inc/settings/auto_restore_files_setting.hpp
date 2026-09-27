@@ -12,13 +12,11 @@ namespace settings
 
         public:
             AutoRestoreFilesSetting(bool initialValue);
-
-            std::vector<uint8_t> GetBytes() const override;
-            void LoadFromBytes(const std::vector<uint8_t>& bytes) override;
-
+            
             bool GetValue() const;
             void SetValue(bool newValue);
 
             void Commit() override;
+            Key GetKey() override;
     };
 }

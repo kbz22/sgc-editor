@@ -5,15 +5,6 @@ settings::ShortcutsSetting::ShortcutsSetting(win32_program::ShortcutManager& sho
     m_shortcutManager{shortcutManager}
 {}
 
-std::vector<uint8_t> settings::ShortcutsSetting::GetBytes() const
-{
-    return {};
-}
-
-void settings::ShortcutsSetting::LoadFromBytes(const std::vector<uint8_t>& bytes)
-{
-}
-
 settings::ShortcutSettingsManager& settings::ShortcutsSetting::GetShortcutSettingsManager() const
 {
     return *m_shortcutSettingsManager;
@@ -27,4 +18,9 @@ win32_program::ShortcutManager& settings::ShortcutsSetting::GetShortcutManager()
 void settings::ShortcutsSetting::Commit()
 {
     m_shortcutSettingsManager->CommitEdit(m_shortcutManager);
+}
+
+settings::Key settings::ShortcutsSetting::GetKey()
+{
+    return Key::ShortcutsSetting;
 }
