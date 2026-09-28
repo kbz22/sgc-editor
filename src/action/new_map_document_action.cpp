@@ -100,8 +100,30 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
 
     switch (msg)
     {
+
         case WM_INITDIALOG:
         {
+            using namespace locale;
+            // Combo box for selecting the default open file type
+            auto &programContext = program::GetProgramContext();
+            auto stringLookup = programContext.GetStringLookup();
+            auto createStr = stringLookup.Get(StringId::DialogCreate).value_or(L"CREATE NAME"); 
+            auto cancelStr = stringLookup.Get(StringId::DialogCancel).value_or(L"CANCEL NAME");
+            auto nameStr = stringLookup.Get(StringId::NewDialogNameName).value_or(L"NAME NAME");
+            auto tilesetStr = stringLookup.Get(StringId::NewDialogTilesetName).value_or(L"TILESET NAME");
+            auto newButtonStr = stringLookup.Get(StringId::NewDialogNewName).value_or(L"NEW NAME");
+            auto packageStr = stringLookup.Get(StringId::NewDialogPackageName).value_or(L"PACKAGE NAME");
+            auto includePackStr = stringLookup.Get(StringId::NewMapDialogIncludeInPackage).value_or(L"INCLUDE TEXT");            
+
+            SetDlgItemTextW(hDlg, IDOK, createStr.c_str());
+            SetDlgItemTextW(hDlg, IDCANCEL, cancelStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_MAP_LABEL_MAP_NAME, nameStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_MAP_LABEL_TILESET, tilesetStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_MAP_NEW_TILESET_BUTTON, newButtonStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_MAP_INCLUDE_PACKAGE_CHECKBOX, includePackStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_MAP_LABEL_PACKAGE, packageStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_MAP_NEW_PACKAGE_BUTTON, newButtonStr.c_str());            
+
             refreshTilesetCombobox(hDlg);
             refreshPackageCombobox(hDlg);
             return TRUE;

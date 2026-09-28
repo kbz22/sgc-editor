@@ -132,6 +132,30 @@ namespace locale
         ShortcutNameNewPackage,
         ShortcutNameExportAsImage,
 
-        ShortcutTextSetNewShortcut,
+        SettingsGeneralStartupName,
+        SettingsGeneralAutoRestoreOpenFiles,
+        SettingsGeneralFileName,
+        SettingsGeneralDefaultOpenFileType,
+        SettingsShortcutSetNew,
+        SettingsShortcutFilter,
+        SettingsShortcutActionName,
+        SettingsShortcutShortcutName,
+
+        DialogCancel,
+        DialogOk,
+        DialogApply,
+        DialogCreate,
+
+        NewDialogNameName,
+        NewDialogTilesetName,
+        NewDialogNewName,
+        NewDialogPackageName,        
+
+        NewMapDialogIncludeInPackage,
+
+        NewTilesetDialogImageName,
+        NewTilesetDialogTileWidthName,
+        NewTilesetDialogTileHeightName,
+        NewTilesetDialogIncludeInPackage,
     };
 }

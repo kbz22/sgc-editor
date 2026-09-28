@@ -127,7 +127,31 @@ locale::StringLookup::StringLookup()
         {StringId::ShortcutNameNewPackage, L"New package"},
         {StringId::ShortcutNameExportAsImage, L"Export as image"},
 
-        {StringId::ShortcutTextSetNewShortcut, L"Press and hold the new shortcut"},
+        {StringId::SettingsGeneralStartupName, L"Startup"},
+        {StringId::SettingsGeneralAutoRestoreOpenFiles, L"Automatically restore last session"},
+        {StringId::SettingsGeneralFileName, L"File"},
+        {StringId::SettingsGeneralDefaultOpenFileType, LR"(Default "Open File" type: )"},
+        {StringId::SettingsShortcutSetNew, L"Press and hold the new shortcut"},
+        {StringId::SettingsShortcutFilter, L"Filter: "},
+        {StringId::SettingsShortcutActionName, L"Action"},
+        {StringId::SettingsShortcutShortcutName, L"Shortcut"},
+
+        {StringId::DialogOk, L"OK"},
+        {StringId::DialogCreate, L"Create"},
+        {StringId::DialogCancel, L"Cancel"},
+        {StringId::DialogApply, L"Apply"},
+
+        {StringId::NewDialogNameName, L"Name:"},
+        {StringId::NewDialogTilesetName, L"Tileset:"},
+        {StringId::NewDialogNewName, L"New..."},
+        {StringId::NewDialogPackageName, L"Package:"},
+
+        {StringId::NewMapDialogIncludeInPackage, L"Include the new map in a package file"},
+
+        {StringId::NewTilesetDialogImageName, L"Image:"},
+        {StringId::NewTilesetDialogTileWidthName, L"Tile width:"},
+        {StringId::NewTilesetDialogTileHeightName, L"Tile height:"},
+        {StringId::NewTilesetDialogIncludeInPackage, L"Include the new tileset in a package file"},
 
         {StringId::TextMissing, L"Text missing"}
     };

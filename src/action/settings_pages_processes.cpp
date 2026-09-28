@@ -24,21 +24,30 @@ INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
         {
             // Combo box for selecting the default open file type
             auto stringLookup = programContext.GetStringLookup();            
-            auto mapFilesString = stringLookup.Get(locale::StringId::NameMapFile);
-            auto tilesetFilesString = stringLookup.Get(locale::StringId::NameTilesetFile);
-            auto packageFilesString = stringLookup.Get(locale::StringId::NamePackageFile);
+            auto mapFilesString = stringLookup.Get(locale::StringId::NameMapFile).value_or(L"MAP FILE");
+            auto tilesetFilesString = stringLookup.Get(locale::StringId::NameTilesetFile).value_or(L"TILESET FILE");
+            auto packageFilesString = stringLookup.Get(locale::StringId::NamePackageFile).value_or(L"PACKAGE FILE");
+            auto startupNameString = stringLookup.Get(locale::StringId::SettingsGeneralStartupName).value_or(L"STARTUP NAME");
+            auto fileNameString = stringLookup.Get(locale::StringId::SettingsGeneralFileName).value_or(L"FILE NAME");
+            auto autorestoreString = stringLookup.Get(locale::StringId::SettingsGeneralAutoRestoreOpenFiles).value_or(L"AUTO RESTORE TEXT");
+            auto defaultOpenString = stringLookup.Get(locale::StringId::SettingsGeneralDefaultOpenFileType).value_or(L"GENERAL DEFAULT");
 
-            std::vector<win32_helpers::FileFilter> filters = {
-                { mapFilesString.value_or(L"Map Files").c_str(), { defaults::MapFileExtension.data() } },
-                { tilesetFilesString.value_or(L"Tileset Files").c_str(), { defaults::TilesetFileExtension.data() } },
-                { packageFilesString.value_or(L"Package Files").c_str(), { defaults::PackageFileExtension.data() } }                
+            SetDlgItemTextW(hDlg, IDC_SETTINGS_STARTUP_NAME, startupNameString.c_str());
+            SetDlgItemTextW(hDlg, IDC_SETTINGS_FILE_NAME, fileNameString.c_str());
+            SetDlgItemTextW(hDlg, IDC_SETTINGS_RESTORE_SESSION, autorestoreString.c_str());
+            SetDlgItemTextW(hDlg, IDC_SETTINGS_DEF_OPEN_FILE_TEXT, defaultOpenString.c_str());
+
+            std::vector<std::wstring> filters = {
+                mapFilesString,
+                tilesetFilesString,
+                packageFilesString
             };
 
             auto defaultOpenComboBox = GetDlgItem(hDlg, IDC_SETTINGS_DEFAULT_FILE_TYPE);
 
             for(const auto &filter : filters)
             {
-                SendMessage(defaultOpenComboBox, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(filter.name.c_str()));
+                SendMessage(defaultOpenComboBox, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(filter.c_str()));
             }
 
             auto defaultOpenFiletype = defaultOpenFiletypeSetting->GetValue();
@@ -244,6 +253,12 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
     {
         case WM_INITDIALOG:
         {   
+            // set up localized strings
+            auto &stringLookup = programContext.GetStringLookup();
+            auto filterLabel = stringLookup.Get(locale::StringId::SettingsShortcutFilter).value_or(L"FILTER NAME");
+
+            SetDlgItemTextW(hDlg, IDC_SHORTCUT_FILTER_NAME, filterLabel.c_str());
+
             auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
             constexpr int c_actionColumnWidth = 130;
             constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;           
@@ -261,84 +276,23 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                 LVS_EX_DOUBLEBUFFER |
                 LVS_EX_HEADERDRAGDROP
             );
-
+            
+            auto actionName = stringLookup.Get(locale::StringId::SettingsShortcutActionName).value_or(L"ACTION NAME");
+            auto shortcutName = stringLookup.Get(locale::StringId::SettingsShortcutShortcutName).value_or(L"SHROTCUT NAME");
+            
             LVCOLUMN column{};
 
             column.mask = LVCF_TEXT | LVCF_WIDTH;
 
-            column.pszText = const_cast<LPWSTR>(L"Action");
+            column.pszText = const_cast<LPWSTR>(actionName.c_str());
             column.cx = c_actionColumnWidth;
             ListView_InsertColumn(listView, 0, &column);
 
-            column.pszText = const_cast<LPWSTR>(L"Shortcut");
+            column.pszText = const_cast<LPWSTR>(shortcutName.c_str());
             column.cx = c_shortcutColumnWidth;
             ListView_InsertColumn(listView, 1, &column);
 
             refreshShortcutList();
-
-            /* auto &stringLookup = programContext.GetStringLookup();
-            auto &shortcutManager = *programContext.GetManager<win32_program::ShortcutManager>();
-            auto allActions = programContext.GetManager<action::ActionManager>()->GetActions();
-
-            for(auto &action : allActions)
-            {
-                if(action->IsPopup())
-                    continue;
-
-                auto actionStringId = action->GetNameStringId();
-                auto shortcutStringId = action->GetShortcutStringId();
-                std::wstring actionName;
-
-                if(shortcutStringId.has_value()){
-                    actionName = stringLookup.Get(shortcutStringId.value()).value_or(L"");
-                }
-                else if(actionStringId.has_value()){
-                    actionName = stringLookup.Get(actionStringId.value()).value_or(L"");
-                }
-                else continue;
-
-                if(actionName.empty())
-                    continue;
-
-                auto shortcuts = shortcutManager.GetShortcutsForAction(action->GetType());                
-
-                auto insertItem = [&action, &actionName, &listView, &programContext](win32_program::Shortcut shortcut, ShortcutSettingsManager &shortcutSettingsManager)
-                {
-                    ShortcutEntry entry{};
-                    entry.index = ListView_GetItemCount(listView);
-                    entry.shortcut = shortcut;
-                    entry.actionType = action->GetType();
-                    entry.context = action->GetShortcutContext();
-                    entry.actionNameString = actionName;
-                    entry.shortcutString = locale::ShortcutToString(shortcut, programContext);
-
-                    shortcutSettingsManager.AddShortcutEntry(entry);
-
-                    LVITEM item{};
-                    item.mask = LVIF_TEXT | LVIF_PARAM;
-                    item.lParam = static_cast<LPARAM>(entry.actionType);
-                    item.pszText = const_cast<LPWSTR>(actionName.c_str());
-                    item.iItem = entry.index;
-                    ListView_InsertItem(listView, &item);
-
-                    ListView_SetItemText(
-                        listView,
-                        item.iItem,
-                        1,
-                        const_cast<LPWSTR>(entry.shortcutString.c_str())
-                    );
-                };
-
-                if(shortcuts.empty())
-                {
-                    insertItem(win32_program::Shortcut{}, shortcutSettingsManager);
-                }
-
-                for(auto &shortcut : shortcuts)
-                {
-                    insertItem(shortcut, shortcutSettingsManager);
-                }
-            } */
 
             return TRUE;
         }
@@ -371,7 +325,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
                         ListView_GetItem(listView, &item);
 
                         auto &stringLookup = programContext.GetStringLookup();
-                        auto str = stringLookup.Get(locale::StringId::ShortcutTextSetNewShortcut).value_or(L"");
+                        auto str = stringLookup.Get(locale::StringId::SettingsShortcutSetNew).value_or(L"");
 
                         ListView_SetItemText(
                             listView,

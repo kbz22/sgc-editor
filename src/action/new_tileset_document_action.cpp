@@ -77,8 +77,33 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
     {
         case WM_INITDIALOG:
         {
+            using namespace locale;
+
+            auto &programContext = program::GetProgramContext();
+            auto stringLookup = programContext.GetStringLookup();
+            auto createStr = stringLookup.Get(StringId::DialogCreate).value_or(L"CREATE NAME"); 
+            auto cancelStr = stringLookup.Get(StringId::DialogCancel).value_or(L"CANCEL NAME");
+            auto nameStr = stringLookup.Get(StringId::NewDialogNameName).value_or(L"NAME NAME");
+            auto imageStr = stringLookup.Get(StringId::NewTilesetDialogImageName).value_or(L"IMAGE NAME");
+            auto tileWidthStr = stringLookup.Get(StringId::NewTilesetDialogTileWidthName).value_or(L"TILE WIDTH NAME");
+            auto tileHeightStr = stringLookup.Get(StringId::NewTilesetDialogTileHeightName).value_or(L"TILE HEIGHT NAME");
+            auto newButtonStr = stringLookup.Get(StringId::NewDialogNewName).value_or(L"NEW NAME");
+            auto packageStr = stringLookup.Get(StringId::NewDialogPackageName).value_or(L"PACKAGE NAME");
+            auto includePackStr = stringLookup.Get(StringId::NewTilesetDialogIncludeInPackage).value_or(L"INCLUDE TEXT");            
+
+            SetDlgItemTextW(hDlg, IDOK, createStr.c_str());
+            SetDlgItemTextW(hDlg, IDCANCEL, cancelStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_TILESET_LABEL_TILESET_NAME, nameStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_TILESET_LABEL_IMAGE_PATH, imageStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_TILESET_LABEL_TILE_WIDTH, tileWidthStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_TILESET_LABEL_TILE_HEIGHT, tileHeightStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_TILESET_INCLUDE_PACKAGE_CHECKBOX, includePackStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_TILESET_LABEL_PACKAGE, packageStr.c_str());
+            SetDlgItemTextW(hDlg, IDC_TILESET_NEW_PACKAGE_BUTTON, newButtonStr.c_str());
+
             SetDlgItemInt(hDlg, IDC_TILESET_TILE_WIDTH, defaults::tileSize, FALSE);
             SetDlgItemInt(hDlg, IDC_TILESET_TILE_HEIGHT, defaults::tileSize, FALSE);
+
             refreshPackageCombobox(hDlg);
             return TRUE;
         }

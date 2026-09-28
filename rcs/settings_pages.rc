@@ -7,21 +7,21 @@ STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
 FONT 9, "Segoe UI"
 
 BEGIN
-    GROUPBOX        "Startup", 0,
-                    5, 05, PAGE_WIDTH - 10, 40
+    GROUPBOX        "Startup", IDC_SETTINGS_STARTUP_NAME,
+                    5, 05, PAGE_WIDTH - 10, 28
 
     AUTOCHECKBOX    "Automatically restore last session's opened files",
                     IDC_SETTINGS_RESTORE_SESSION,
-                    12, 20, PAGE_WIDTH - 24, 12
+                    12, 16, PAGE_WIDTH - 24, 12
 
-    GROUPBOX        "File", 0,
-                    5, 50, PAGE_WIDTH - 10, 40
+    GROUPBOX        "File", IDC_SETTINGS_FILE_NAME,
+                    5, 36, PAGE_WIDTH - 10, 28
 
-    LTEXT           "Default Open file type:", 0,
-                    12, 65, 75, 12
+    LTEXT           "Default Open file type:", IDC_SETTINGS_DEF_OPEN_FILE_TEXT,
+                    12, 48, 75, 12
 
     COMBOBOX        IDC_SETTINGS_DEFAULT_FILE_TYPE,
-                    90, 63, PAGE_WIDTH - 102, 80,
+                    110, 46, PAGE_WIDTH - 122, 80,
                     CBS_DROPDOWNLIST | WS_TABSTOP | WS_VSCROLL
 END
 
@@ -30,7 +30,7 @@ STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
 FONT 9, "Segoe UI"
 
 BEGIN
-    LTEXT           "Filter:", 0,
+    LTEXT           "Filter:", IDC_SHORTCUT_FILTER_NAME,
                     65, 8, 75, 12
                     
     EDITTEXT        IDC_SHORTCUT_FILTER, 85, 5, PAGE_WIDTH - 90, 14,

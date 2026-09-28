@@ -1,7 +1,7 @@
 #include "new_tileset_dialog.h"
 #include <windows.h>
 
-IDD_NEWTILESET_DIALOG DIALOGEX 0, 0, 250, 156
+IDD_NEWTILESET_DIALOG DIALOGEX 0, 0, 250, 146
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Create New Tileset"
 FONT 8, "MS Shell Dlg"
