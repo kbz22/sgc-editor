@@ -186,18 +186,30 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                     auto packageCombo = GetDlgItem(hDlg, IDC_TILESET_PACKAGE_COMBO);
                     auto selectedPackageIndex = SendMessage(packageCombo, CB_GETCURSEL, 0, 0);
 
-                    if(tilesetName.empty() || imagePath.empty()) {
-                        MessageBox(hDlg, L"Please provide a name and select an image.", L"Error", MB_OK | MB_ICONERROR);
+                    auto stringLookup = program::GetProgramContext().GetStringLookup();
+                    auto errorName = stringLookup.Get(locale::StringId::ErrorName).value_or(L"ERROR NAME");
+                    auto noTilesetName = stringLookup.Get(locale::StringId::UserErrorNoTilesetName).value_or(L"NO TILESET NAME");
+                    auto noImage = stringLookup.Get(locale::StringId::UserErrorNoImage).value_or(L"NO IMAGE");
+                    auto badTile = stringLookup.Get(locale::StringId::UserErrorWrongTileSize).value_or(L"WRONG TILE SIZE MESSAGE");
+                    auto noPackage = stringLookup.Get(locale::StringId::UserErrorNoPackage).value_or(L"NO PACKAGE");
+
+                    if(tilesetName.empty()){
+                        MessageBox(hDlg, noTilesetName.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
+                        return TRUE;
+                    }
+
+                    if(imagePath.empty()) {
+                        MessageBox(hDlg, noImage.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
                     
                     if(tileWidth <= 0 || tileHeight <= 0) {
-                        MessageBox(hDlg, L"Tile width and height must be greater than zero.", L"Error", MB_OK | MB_ICONERROR);
+                        MessageBox(hDlg, badTile.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
                     
                     if (selectedPackageIndex == CB_ERR && includePackage) {
-                        MessageBox(hDlg, L"Please select a package.", L"Error", MB_OK | MB_ICONERROR);
+                        MessageBox(hDlg, noPackage.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
 

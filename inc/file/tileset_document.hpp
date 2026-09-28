@@ -6,7 +6,7 @@
 
 namespace file {
 
-    class TilesetDocument : public ITreeViewListable, public IDocument 
+    class TilesetDocument : public IDocument
     {
         private:
             std::wstring name;

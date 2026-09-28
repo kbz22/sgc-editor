@@ -157,5 +157,14 @@ namespace locale
         NewTilesetDialogTileWidthName,
         NewTilesetDialogTileHeightName,
         NewTilesetDialogIncludeInPackage,
+
+        ErrorName,
+        UserErrorNoMapName,
+        UserErrorNoTileset,
+        UserErrorNoPackage,
+        UserErrorNoPackageName,
+        UserErrorNoTilesetName,
+        UserErrorNoImage,
+        UserErrorWrongTileSize,
     };
 }

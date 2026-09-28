@@ -193,18 +193,24 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                     auto selectedPackageIndex = SendMessage(packageCombo, CB_GETCURSEL, 0, 0);
                     bool includePackage = (IsDlgButtonChecked(hDlg, IDC_MAP_INCLUDE_PACKAGE_CHECKBOX) == BST_CHECKED);
 
+                    auto stringLookup = programContext.GetStringLookup();
+                    auto errorName = stringLookup.Get(locale::StringId::ErrorName).value_or(L"ERROR NAME");
+                    auto noMapStr = stringLookup.Get(locale::StringId::UserErrorNoMapName).value_or(L"NO MAP NAME MESSAGE");
+                    auto noTilesetStr = stringLookup.Get(locale::StringId::UserErrorNoTileset).value_or(L"NO TILESET MESSAGE");
+                    auto noPackageStr = stringLookup.Get(locale::StringId::UserErrorNoPackage).value_or(L"NO PACKAGE MESSAGE");
+
                     if(mapName.empty()) {
-                        MessageBox(hDlg, L"Please provide a name for the map.", L"Error", MB_OK | MB_ICONERROR);
+                        MessageBox(hDlg, noMapStr.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
 
                     if (selectedTilesetIndex == CB_ERR) {
-                        MessageBox(hDlg, L"Please select a tileset.", L"Error", MB_OK | MB_ICONERROR);
+                        MessageBox(hDlg, noTilesetStr.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
                     
                     if (selectedPackageIndex == CB_ERR && includePackage) {
-                        MessageBox(hDlg, L"Please select a package.", L"Error", MB_OK | MB_ICONERROR);
+                        MessageBox(hDlg, noPackageStr.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
 
@@ -224,10 +230,7 @@ INT_PTR CALLBACK NewMapFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_unused
                     {
                         auto fileManager = programContext.GetManager<file::FileManager>();
                         fileManager->NewMapFile(mapName, static_cast<sgc::data::AssetId>(tilesetId));
-                    }                    
-
-                    // program::RefreshEditor();
-                    // refresh is now handled by the file manager's on file updated callback
+                    }
 
                     EndDialog(hDlg, IDOK);
                     return TRUE;

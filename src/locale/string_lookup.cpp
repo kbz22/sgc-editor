@@ -153,6 +153,15 @@ locale::StringLookup::StringLookup()
         {StringId::NewTilesetDialogTileHeightName, L"Tile height:"},
         {StringId::NewTilesetDialogIncludeInPackage, L"Include the new tileset in a package file"},
 
+        {StringId::ErrorName, L"Error"},
+        {StringId::UserErrorNoMapName, L"Please provide a name for the map."},
+        {StringId::UserErrorNoTileset, L"Please select a tileset."},
+        {StringId::UserErrorNoPackage, L"Please select a package."},
+        {StringId::UserErrorNoPackageName, L"Please provide a name for the package"},        
+        {StringId::UserErrorNoTilesetName, L"Please provide a name for the tileset"},
+        {StringId::UserErrorNoImage, L"Please select an image."},
+        {StringId::UserErrorWrongTileSize, L"Tile width and height must be greater than zero."},
+
         {StringId::TextMissing, L"Text missing"}
     };
 }

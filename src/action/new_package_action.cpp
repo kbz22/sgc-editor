@@ -75,8 +75,12 @@ INT_PTR CALLBACK NewPackageFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
                     GetDlgItemText(hDlg, IDC_PACKAGE_NAME, buffer, 1024);
                     std::wstring packageName{buffer};
 
+                    auto stringLookup = programContext.GetStringLookup();
+                    auto errorName = stringLookup.Get(locale::StringId::ErrorName).value_or(L"ERROR NAME");
+                    auto noPackageStr = stringLookup.Get(locale::StringId::UserErrorNoPackageName).value_or(L"NO PACKAGE MESSAGE");
+
                     if(packageName.empty()) {
-                        MessageBox(hDlg, L"Please provide a name and select an image.", L"Error", MB_OK | MB_ICONERROR);
+                        MessageBox(hDlg, noPackageStr.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
                         return TRUE;
                     }
 

@@ -13,7 +13,7 @@
 
 namespace file {
 
-    class MapDocument : public ITreeViewListable, public IDocument
+    class MapDocument : public IDocument
     {
         private:
             std::unique_ptr<program::LayerManager> m_layerManager{nullptr};
