@@ -65,7 +65,7 @@ std::optional<std::filesystem::path> win32_helpers::ShowSaveDialog(HWND owner, c
     return std::nullopt;
 }
 
-std::optional<std::filesystem::path> win32_helpers::ShowOpenDialog(HWND owner, const std::vector<FileFilter>& filters)
+std::optional<std::filesystem::path> win32_helpers::ShowOpenDialog(HWND owner, const std::vector<FileFilter>& filters, int filterIndex)
 {
     wchar_t file[MAX_PATH] = {};
     std::wstring filter = BuildFilter(filters);
@@ -76,6 +76,7 @@ std::optional<std::filesystem::path> win32_helpers::ShowOpenDialog(HWND owner, c
     ofn.lpstrFile = file;
     ofn.nMaxFile = MAX_PATH;    
     ofn.lpstrFilter = filter.c_str();
+    ofn.nFilterIndex = filterIndex;
 
     if (GetOpenFileNameW(&ofn))
         return std::filesystem::path(file);

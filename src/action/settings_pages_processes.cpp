@@ -15,8 +15,8 @@ INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 {
     auto &programContext = program::GetProgramContext();
     auto settingManager = programContext.GetManager<settings::SettingsManager>();
-    auto defaultOpenFiletypeSetting = settingManager->GetSetting<settings::DefaultOpenFiletypeSetting>(static_cast<unsigned>(settings::Key::DefaultOpenFiletypeSetting));
-    auto autoRestoreFilesSetting = settingManager->GetSetting<settings::AutoRestoreFilesSetting>(static_cast<unsigned>(settings::Key::AutoRestoreFilesSetting));
+    auto defaultOpenFiletypeSetting = settingManager->GetSetting<settings::DefaultOpenFiletypeSetting>();
+    auto autoRestoreFilesSetting = settingManager->GetSetting<settings::AutoRestoreFilesSetting>();
 
     switch (msg)
     {
@@ -110,7 +110,7 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
         case WM_SYSKEYDOWN:
         {
             auto &programContext = *reinterpret_cast<program::ProgramContext *>(data);
-            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(static_cast<unsigned>(settings::Key::ShortcutsSetting));
+            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>();
             auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
             if(wparam == VK_ESCAPE)
@@ -140,7 +140,7 @@ LRESULT CALLBACK ShortcutsSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wpara
         case WM_SYSCHAR:
         {
             auto &programContext = *reinterpret_cast<program::ProgramContext *>(data);
-            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(static_cast<unsigned>(settings::Key::ShortcutsSetting));
+            auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>();
             auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
             if(shortcutSettingsManager.IsEditing())
@@ -162,7 +162,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
     using namespace settings;
 
     auto &programContext = program::GetProgramContext();
-    auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>(static_cast<unsigned>(settings::Key::ShortcutsSetting));
+    auto shortcutSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::ShortcutsSetting>();
     auto &shortcutSettingsManager = shortcutSetting->GetShortcutSettingsManager();
 
     auto refreshShortcutList = [&programContext, &shortcutSettingsManager, hDlg](std::wstring filter = L"")

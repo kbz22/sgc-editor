@@ -54,7 +54,7 @@ namespace settings {
             void SetCategoryWindow(SettingCategory category, HWND hwnd);
 
             template<typename T>
-            T* GetSetting(unsigned key) const;
+            T* GetSetting() const;
             
             SettingCategory GetCurrentCategory() const;
             HWND GetCategoryWindow(SettingCategory category) const;

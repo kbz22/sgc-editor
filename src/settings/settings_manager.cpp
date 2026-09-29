@@ -75,9 +75,9 @@ void settings::SettingsManager::RegisterSetting<settings::ShortcutsSetting>(unsi
 }
 
 template<>
-settings::ShortcutsSetting* settings::SettingsManager::GetSetting<settings::ShortcutsSetting>(unsigned key) const
+settings::ShortcutsSetting* settings::SettingsManager::GetSetting<settings::ShortcutsSetting>() const
 {
-    SettingKey settingKey{SettingCategory::Shortcuts, key};
+    SettingKey settingKey{SettingCategory::Shortcuts, static_cast<unsigned>(Key::ShortcutsSetting)};
     auto it = m_settings.find(settingKey);
     return it != m_settings.end() ? dynamic_cast<settings::ShortcutsSetting*>(it->second.get()) : nullptr;
 }
@@ -90,9 +90,9 @@ void settings::SettingsManager::RegisterSetting<settings::AutoRestoreFilesSettin
 }
 
 template<>
-settings::AutoRestoreFilesSetting* settings::SettingsManager::GetSetting<settings::AutoRestoreFilesSetting>(unsigned key) const
+settings::AutoRestoreFilesSetting* settings::SettingsManager::GetSetting<settings::AutoRestoreFilesSetting>() const
 {
-    SettingKey settingKey{SettingCategory::General, key};
+    SettingKey settingKey{SettingCategory::General, static_cast<unsigned>(Key::AutoRestoreFilesSetting)};
     auto it = m_settings.find(settingKey);
     return it != m_settings.end() ? dynamic_cast<settings::AutoRestoreFilesSetting*>(it->second.get()) : nullptr;
 }
@@ -105,9 +105,9 @@ void settings::SettingsManager::RegisterSetting<settings::DefaultOpenFiletypeSet
 }
 
 template<>
-settings::DefaultOpenFiletypeSetting* settings::SettingsManager::GetSetting<settings::DefaultOpenFiletypeSetting>(unsigned key) const
+settings::DefaultOpenFiletypeSetting* settings::SettingsManager::GetSetting<settings::DefaultOpenFiletypeSetting>() const
 {
-    SettingKey settingKey{SettingCategory::General, key};
+    SettingKey settingKey{SettingCategory::General, static_cast<unsigned>(Key::DefaultOpenFiletypeSetting)};
     auto it = m_settings.find(settingKey);
     return it != m_settings.end() ? dynamic_cast<settings::DefaultOpenFiletypeSetting*>(it->second.get()) : nullptr;
 }

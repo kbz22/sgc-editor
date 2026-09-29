@@ -1,6 +1,7 @@
 #include "action/open_file_action.hpp"
 #include "win32_helpers/file_helpers.hpp"
 #include "program/program.hpp"
+#include "settings/default_open_filetype_setting.hpp"
 #include "defaults.hpp"
 
 action::OpenFileAction::OpenFileAction()
@@ -27,6 +28,8 @@ void action::OpenFileAction::Execute(program::ProgramContext& programContext)
     auto tilesetFilesString = stringLookup.Get(locale::StringId::NameTilesetFile);
     auto packageFilesString = stringLookup.Get(locale::StringId::NamePackageFile);
 
+    auto indexSetting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::DefaultOpenFiletypeSetting>();
+
     std::vector<win32_helpers::FileFilter> filters = {
         { mapFilesString.value_or(L"Map Files").c_str(), { defaults::MapFileExtension.data() } },
         { tilesetFilesString.value_or(L"Tileset Files").c_str(), { defaults::TilesetFileExtension.data() } },
@@ -37,7 +40,8 @@ void action::OpenFileAction::Execute(program::ProgramContext& programContext)
     auto hMainWindow = programContext.GetMainWindowHandle();
     auto filePath = win32_helpers::ShowOpenDialog(
         hMainWindow,
-        filters
+        filters,
+        static_cast<int>(indexSetting->GetValue()) + 1 // one indexed
     );
 
     auto fileManager = programContext.GetManager<file::FileManager>();
