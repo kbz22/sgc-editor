@@ -67,10 +67,10 @@ namespace sections {
             editor_tools::Brush m_brush;            
 
             bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);            
-            bool UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
+            bool UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition);
             bool UpdateDragDrawing(PointerType pointerType, program::ProgramContext& programContext);
             bool UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
-            bool UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
+            bool UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument);
 
             void PanningDown(PointerType pointerType, sgc::graphics::PixelPosition2D position);
             void PanningUp(PointerType pointerType);

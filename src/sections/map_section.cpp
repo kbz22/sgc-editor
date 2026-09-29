@@ -108,7 +108,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 { 
     program::ProgramContext& programContext = program::GetProgramContext();
     auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
-    auto tilesetSection = programContext.GetSection<sections::TilesetSection>();
 
     if(mapDocument == nullptr || !mapDocument->IsEditable())
     {
@@ -260,7 +259,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_MOUSEMOVE:
         {
-            bool shouldUpdate = false;
             bool noPointerUpdate = true;
 
             auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
@@ -268,12 +266,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             if ((wparam & MK_LBUTTON))
             {
-                /* if(m_panningPointerType == PointerType::LeftMouse)
-                    shouldUpdate = PanningUpdate(PointerType::LeftMouse, {x,y});
-                else if(m_paintingPointerType == PointerType::LeftMouse){
-                    PointerUpdate(PointerType::LeftMouse, {x,y}, programContext);
-                    noPointerUpdate = false;
-                } */
                PointerUpdate(PointerType::LeftMouse, {x,y}, programContext);
                noPointerUpdate = false;
             }
@@ -666,7 +658,7 @@ bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D p
     return false;
 }
 
-bool sections::MapSection::UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext)
+bool sections::MapSection::UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition)
 {
     if(m_isMovingSelection.IsLockedBy(pointerType))
     {
@@ -844,7 +836,7 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
     return false;
 }
 
-bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
+bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument)
 {
     auto returnFlag = false;
 
@@ -913,7 +905,7 @@ void sections::MapSection::PointerUpdate(PointerType pointerType, sgc::graphics:
     {
         auto result = UpdateCursorPosition(pointerPosition, programContext);
         shouldUpdate = result;
-        result = UpdateSelectionMove(pointerType, pointerPosition, programContext);
+        result = UpdateSelectionMove(pointerType, pointerPosition);
         shouldUpdate = shouldUpdate || result;
         result = UpdateDragDrawing(pointerType, programContext);
         shouldUpdate = shouldUpdate || result;
@@ -1035,6 +1027,6 @@ void sections::MapSection::PointerUp(PointerType pointerType, file::MapDocument 
 
     if(m_isPainting.IsLockedBy(pointerType))
     {
-        UpdateOnCursorUp(pointerType, mapDocument, programContext);
+        UpdateOnCursorUp(pointerType, mapDocument);
     }
 }

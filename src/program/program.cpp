@@ -141,16 +141,11 @@ void program::ProgramContext::StartDefault()
 {
     m_assetManager = std::make_unique<file::AssetManager>();
     m_fileManager = std::make_unique<file::FileManager>();
-    /* m_shortcutManager = std::make_unique<win32_program::ShortcutManager>(
-        m_hInstance,
-        m_mainWindowHandle
-    ); */
     m_settingsManager = std::make_unique<settings::SettingsManager>();
     m_stringLookup = std::make_unique<locale::StringLookup>();
-
-    //! this should later check if there are settings stored locally
-    // RegisterDefaultSettings() is a fallback
+    
     RegisterDefaultSettings();
+    m_settingsManager->LoadValuesFromPreferences();
 
     m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 
@@ -451,7 +446,6 @@ void program::ProgramContext::RegisterActions()
 
 void program::ProgramContext::EnableSaving(bool enable)
 {
-    auto& programContext = GetProgramContext();
     std::vector<action::ActionType> saveActions = {
         action::ActionType::SaveFile,
         action::ActionType::SaveAs

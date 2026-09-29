@@ -15,6 +15,8 @@ namespace settings
         Default,
         ShortcutsSetting,
         AutoRestoreFilesSetting,
-        DefaultOpenFiletypeSetting
+        DefaultOpenFiletypeSetting,
+
+        Count
     };    
 }

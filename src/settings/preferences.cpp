@@ -6,6 +6,7 @@
 void settings::Preferences::Load()
 {
     std::filesystem::path path = win32_helpers::GetPreferencesDirectory();
+    path /= m_preferencesFileName;
     std::ifstream file(path);
 
     if (!file)
@@ -38,28 +39,87 @@ void settings::Preferences::Set<settings::AutoRestoreFilesSetting>(settings::Aut
 }
 
 template<>
-settings::AutoRestoreFilesSetting settings::Preferences::Get<settings::AutoRestoreFilesSetting>()
+void settings::Preferences::Get<settings::AutoRestoreFilesSetting>(settings::AutoRestoreFilesSetting &setting)
 {
-    AutoRestoreFilesSetting setting{};
     auto settingName = m_stringLookup.Get(settings::Key::AutoRestoreFilesSetting);
 
     if (m_json.contains(settingName))
     {
         setting.SetValue(m_json.at(settingName).get<bool>());
+        setting.Commit();
     }
-
-    return setting;
 }
 
 template<>
-void settings::Preferences::Set<settings::ISetting*>(settings::ISetting* const &settingIterface)
+void settings::Preferences::Set<settings::DefaultOpenFiletypeSetting>(settings::DefaultOpenFiletypeSetting const &setting)
 {
-    switch(settingIterface->GetKey())
+    auto name = m_stringLookup.Get(settings::Key::DefaultOpenFiletypeSetting);
+    m_json[name] = setting.GetValue();
+}
+
+template<>
+void settings::Preferences::Get<settings::DefaultOpenFiletypeSetting>(settings::DefaultOpenFiletypeSetting &setting)
+{
+    auto name = m_stringLookup.Get(settings::Key::DefaultOpenFiletypeSetting);
+
+    if(m_json.contains(name))
+    {
+        setting.SetValue(m_json.at(name).get<file::FileType>());
+        setting.Commit();
+    }
+}
+
+template<>
+void settings::Preferences::Set<settings::ShortcutsSetting>(settings::ShortcutsSetting const &setting)
+{
+    // do nothing
+}
+
+template<>
+void settings::Preferences::Get<settings::ShortcutsSetting>(settings::ShortcutsSetting &setting)
+{
+    // also do nothing
+}
+
+template<>
+void settings::Preferences::Set<settings::ISetting*>(settings::ISetting* const &settingInterface)
+{
+    switch(settingInterface->GetKey())
     {
         case Key::AutoRestoreFilesSetting:
         {
-            auto autoRestorePtr = dynamic_cast<settings::AutoRestoreFilesSetting*>(settingIterface);
+            auto autoRestorePtr = dynamic_cast<settings::AutoRestoreFilesSetting*>(settingInterface);
             Set(*autoRestorePtr);
+            break;
+        }
+
+        case Key::DefaultOpenFiletypeSetting:
+        {
+            Set(*dynamic_cast<settings::DefaultOpenFiletypeSetting*>(settingInterface));
+            break;
+        }
+
+        default:
+        {
+            return;
+        }
+    }
+}
+
+void settings::Preferences::Get(settings::ISetting* settingInterface)
+{
+    switch(settingInterface->GetKey())
+    {
+        case Key::AutoRestoreFilesSetting:
+        {
+            Get(*dynamic_cast<settings::AutoRestoreFilesSetting*>(settingInterface));
+            break;
+        }
+
+        case Key::DefaultOpenFiletypeSetting:
+        {
+            Get(*dynamic_cast<settings::DefaultOpenFiletypeSetting*>(settingInterface));
+            break;
         }
 
         default:

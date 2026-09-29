@@ -2,6 +2,7 @@
 
 #include <nlohmann/json.hpp>
 #include "settings/settings_json_string_lookup.hpp"
+#include "settings/isetting.hpp"
 
 namespace settings
 {
@@ -17,9 +18,10 @@ namespace settings
             void Save();
 
             template<typename T>
-            void Set(T const& setting);
+            void Set(T const &setting);
 
             template<typename T>
-            T Get();
+            void Get(T &setting);
+            void Get(settings::ISetting* setting);
     };
 }

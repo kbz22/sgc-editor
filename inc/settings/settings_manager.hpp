@@ -61,6 +61,8 @@ namespace settings {
             HWND GetCurrentCategoryWindow() const;
 
             void CommitChanges();
+
+            bool LoadValuesFromPreferences();
     };
 
 }

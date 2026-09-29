@@ -47,6 +47,26 @@ void settings::SettingsManager::CommitChanges()
     m_preferences.Save();
 }
 
+bool settings::SettingsManager::LoadValuesFromPreferences()
+{
+    try
+    {
+        m_preferences.Load();
+        for(auto &pair : m_settings)
+        {
+            if(pair.second){
+                m_preferences.Get(pair.second.get());
+            }
+        }
+    }
+    catch(const std::exception&)
+    {
+        return false;
+    }
+    
+    return true;
+}
+
 template<>
 void settings::SettingsManager::RegisterSetting<settings::ShortcutsSetting>(unsigned key, std::unique_ptr<settings::ShortcutsSetting> setting)
 {
