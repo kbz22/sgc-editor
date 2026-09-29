@@ -2,14 +2,14 @@
 
 settings::SettingsJsonStringLookup::SettingsJsonStringLookup()
 {
-    m_strings = std::unordered_map<Key, std::wstring> {
+    m_strings = std::unordered_map<Key, std::string> {
         {Key::Default, m_valueMissing},
-        {Key::AutoRestoreFilesSetting, L"auto-restore-files"},
-        {Key::DefaultOpenFiletypeSetting, L"default-open-filetype"}
+        {Key::AutoRestoreFilesSetting, "auto-restore-files"},
+        {Key::DefaultOpenFiletypeSetting, "default-open-filetype"}
     };
 }
 
-std::wstring settings::SettingsJsonStringLookup::Get(Key key)
+std::string settings::SettingsJsonStringLookup::Get(Key key)
 {
     auto keyIt = m_strings.find(key);
     if(keyIt != m_strings.end()){

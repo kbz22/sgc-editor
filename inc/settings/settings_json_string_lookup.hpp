@@ -9,12 +9,12 @@ namespace settings
     class SettingsJsonStringLookup
     {
         private:
-            std::unordered_map<Key, std::wstring> m_strings;
-            std::wstring m_valueMissing = L"value-missing";
+            std::unordered_map<Key, std::string> m_strings;
+            std::string m_valueMissing = "value-missing";
 
         public:
             SettingsJsonStringLookup();
 
-            std::wstring Get(Key key);
+            std::string Get(Key key);
     };
 }

@@ -11,7 +11,7 @@ namespace settings
             bool m_newValue;
 
         public:
-            AutoRestoreFilesSetting(bool initialValue);
+            AutoRestoreFilesSetting(bool initialValue = false);
             
             bool GetValue() const;
             void SetValue(bool newValue);

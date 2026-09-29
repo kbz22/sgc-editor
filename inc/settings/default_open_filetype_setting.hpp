@@ -12,7 +12,7 @@ namespace settings
             file::FileType m_newValue;
 
         public:
-            DefaultOpenFiletypeSetting(file::FileType defaultFileType);
+            DefaultOpenFiletypeSetting(file::FileType defaultFileType = file::FileType::Map);
 
             file::FileType GetValue() const;
             void SetValue(file::FileType newValue);
