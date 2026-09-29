@@ -23,7 +23,7 @@ namespace settings
 
             // Update
             void Commit() override;
-            Key GetKey() override;
+            Key GetKey() const override;
     };
 
 }

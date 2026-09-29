@@ -100,9 +100,12 @@ std::filesystem::path win32_helpers::GetPreferencesDirectory()
     }
 
     std::filesystem::path result(path);
-    result /= "SGC/SGC Map Editor";
+    result /= "SGC";
+    result /= "SGC Map Editor";
 
     CoTaskMemFree(path);
+
+    std::filesystem::create_directories(result);
 
     return result;
 }

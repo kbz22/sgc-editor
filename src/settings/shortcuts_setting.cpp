@@ -20,7 +20,7 @@ void settings::ShortcutsSetting::Commit()
     m_shortcutSettingsManager->CommitEdit(m_shortcutManager);
 }
 
-settings::Key settings::ShortcutsSetting::GetKey()
+settings::Key settings::ShortcutsSetting::GetKey() const
 {
     return Key::ShortcutsSetting;
 }

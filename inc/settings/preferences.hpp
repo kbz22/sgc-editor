@@ -10,6 +10,7 @@ namespace settings
         private:
             nlohmann::json m_json{};
             SettingsJsonStringLookup m_stringLookup{};
+            std::wstring m_preferencesFileName = L"preferences.json";
 
         public:
             void Load();
@@ -17,7 +18,7 @@ namespace settings
 
             template<typename T>
             void Set(T const& setting);
-            
+
             template<typename T>
             T Get();
     };

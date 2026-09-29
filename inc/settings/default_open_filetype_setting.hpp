@@ -18,6 +18,6 @@ namespace settings
             void SetValue(file::FileType newValue);
 
             void Commit() override;
-            Key GetKey() override;
+            Key GetKey() const override;
     };
 }

@@ -17,6 +17,6 @@ namespace settings
             void SetValue(bool newValue);
 
             void Commit() override;
-            Key GetKey() override;
+            Key GetKey() const override;
     };
 }

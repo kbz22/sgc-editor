@@ -22,7 +22,7 @@ void settings::AutoRestoreFilesSetting::Commit()
     m_value = m_newValue;
 }
 
-settings::Key settings::AutoRestoreFilesSetting::GetKey()
+settings::Key settings::AutoRestoreFilesSetting::GetKey() const
 {
     return Key::AutoRestoreFilesSetting;
 }

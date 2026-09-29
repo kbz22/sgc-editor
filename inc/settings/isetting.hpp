@@ -12,7 +12,7 @@ namespace settings
 
         // Update
         virtual void Commit() = 0;
-        virtual Key GetKey() = 0;
+        virtual Key GetKey() const = 0;
     };
 
 }

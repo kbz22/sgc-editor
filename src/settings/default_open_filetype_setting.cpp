@@ -22,7 +22,7 @@ void settings::DefaultOpenFiletypeSetting::Commit()
     m_value = m_newValue;
 }
 
-settings::Key settings::DefaultOpenFiletypeSetting::GetKey()
+settings::Key settings::DefaultOpenFiletypeSetting::GetKey() const
 {
     return Key::DefaultOpenFiletypeSetting;
 }

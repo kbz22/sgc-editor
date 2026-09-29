@@ -41,8 +41,10 @@ void settings::SettingsManager::CommitChanges()
     for(auto &pair : m_settings){
         if(pair.second){
             pair.second->Commit();
+            m_preferences.Set<ISetting*>(pair.second.get());
         }
     }
+    m_preferences.Save();
 }
 
 template<>

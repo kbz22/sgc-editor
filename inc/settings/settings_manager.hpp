@@ -1,6 +1,7 @@
 #pragma once
 
 #include "settings/isetting.hpp"
+#include "settings/preferences.hpp"
 
 #include <unordered_map>
 #include <vector>
@@ -40,6 +41,7 @@ namespace settings {
             std::unordered_map<SettingKey, std::unique_ptr<settings::ISetting>> m_settings{};
             std::unordered_map<SettingCategory, HWND> m_categoryWindows{};
             SettingCategory m_currentCategory = SettingCategory::General;
+            Preferences m_preferences;
 
         public:
             SettingsManager() = default;

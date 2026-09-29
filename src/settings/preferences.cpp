@@ -19,6 +19,7 @@ void settings::Preferences::Load()
 void settings::Preferences::Save()
 {
     std::filesystem::path path = win32_helpers::GetPreferencesDirectory();
+    path /= m_preferencesFileName;
     std::ofstream file(path);
 
     if (!file)
@@ -48,4 +49,22 @@ settings::AutoRestoreFilesSetting settings::Preferences::Get<settings::AutoResto
     }
 
     return setting;
+}
+
+template<>
+void settings::Preferences::Set<settings::ISetting*>(settings::ISetting* const &settingIterface)
+{
+    switch(settingIterface->GetKey())
+    {
+        case Key::AutoRestoreFilesSetting:
+        {
+            auto autoRestorePtr = dynamic_cast<settings::AutoRestoreFilesSetting*>(settingIterface);
+            Set(*autoRestorePtr);
+        }
+
+        default:
+        {
+            return;
+        }
+    }
 }
