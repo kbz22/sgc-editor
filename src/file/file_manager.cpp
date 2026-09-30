@@ -55,6 +55,7 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
     SetActiveDocument(selectedDoc);
 
     m_onFileUpdatedCallback(nullptr);
+    UpdateSessionFile();
 
     return;
 }
@@ -78,6 +79,7 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
     m_openFiles.push_back(std::move(newFile));
 
     m_onFileUpdatedCallback(nullptr);
+    UpdateSessionFile();
 
     return;
 }
@@ -114,6 +116,7 @@ void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocumen
     m_openFiles.push_back(std::move(newFile));
 
     m_onFileUpdatedCallback(nullptr);
+    UpdateSessionFile();    
 
     return;
 }
@@ -178,14 +181,20 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
         throw program::AssetLoadException(errorMsg);
     }
 
+    UpdateSessionFile();
+
     return;
 }
 
 void file::FileManager::SaveFile(size_t index)
 {
-    if(index < m_openFiles.size()) {
+    if(index < m_openFiles.size()) 
+    {
         m_openFiles[index]->Save();
         m_onFileUpdatedCallback(nullptr);
+        // There's no real way for FileManager to know if a new file was created and saved
+        // so an update is required
+        UpdateSessionFile();        
     }
     return;
 }
@@ -207,6 +216,7 @@ void file::FileManager::CloseFile(size_t index)
         m_openFiles.erase(m_openFiles.begin() + index);
 
         m_onFileUpdatedCallback(nullptr);
+        UpdateSessionFile();
     }
 
     return;
@@ -373,4 +383,10 @@ void file::FileManager::RegisterOnFileUpdatedCallback(std::function<void(IFile*)
 void file::FileManager::RegisterOnMapDirtyCallback(std::function<void(MapDocument*, bool)> callback)
 {
     m_onMapDirtyCallback = callback;
+}
+
+void file::FileManager::UpdateSessionFile()
+{
+    m_sessionJson.RebuildFileList(m_openFiles);
+    m_sessionJson.Save();
 }

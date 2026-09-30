@@ -268,3 +268,13 @@ file::FileType file::TilesetFile::GetFileType() const
 {
     return FileType::Tileset;
 }
+
+const std::wstring& file::TilesetFile::GetName() const
+{
+    return m_tilesetDocument->GetName();
+}
+
+file::ListableType file::TilesetFile::GetListableType() const
+{
+    return m_tilesetDocument->GetListableType();
+}

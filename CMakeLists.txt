@@ -64,6 +64,7 @@ add_executable(sgc-editor WIN32
     src/program/layer_manager.cpp
     src/program/editor_mode.cpp
     src/program/editor_update.cpp
+    src/program/session.cpp
 
     src/sections/section.cpp
     src/sections/tileset_section.cpp
@@ -77,8 +78,7 @@ add_executable(sgc-editor WIN32
     src/sgc_view/sgc_view.cpp    
     src/sgc_view/tileset_view.cpp
     src/sgc_view/map_view.cpp    
-
-    # rcs/new_file_dialog.rc
+    
     rcs/new_map_dialog.rc
     rcs/new_tileset_dialog.rc
     rcs/editor_graphics.rc
@@ -166,7 +166,7 @@ add_executable(sgc-editor WIN32
     src/settings/default_open_filetype_setting.cpp
     src/settings/auto_restore_files_setting.cpp
     src/settings/preferences.cpp
-    src/settings/settings_json_string_lookup.cpp
+    src/settings/settings_json_string_lookup.cpp    
 )
 
 # embed manifest in the exe

@@ -233,13 +233,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
-                    PointerUp(PointerType::Touch, mapDocument, programContext);
+                    PointerUp(PointerType::Touch, mapDocument);
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerUp(PointerType::Pen, mapDocument, programContext);
+                    PointerUp(PointerType::Pen, mapDocument);
                     break;
                 }
                     
@@ -293,21 +293,21 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_LBUTTONUP:
         {
-            PointerUp(PointerType::LeftMouse, mapDocument, programContext);
+            PointerUp(PointerType::LeftMouse, mapDocument);
             ReleaseCaptureHelper(PointerType::LeftMouse);
             return 0;
         }
 
         case WM_MBUTTONUP:
         {
-            PointerUp(PointerType::MiddleMouse, mapDocument, programContext);
+            PointerUp(PointerType::MiddleMouse, mapDocument);
             ReleaseCaptureHelper(PointerType::MiddleMouse);
             return 0;
         }
 
         case WM_RBUTTONUP:
         {
-            PointerUp(PointerType::RightMouse, mapDocument, programContext);
+            PointerUp(PointerType::RightMouse, mapDocument);
             ReleaseCaptureHelper(PointerType::RightMouse);
             return 0;
         }
@@ -1018,7 +1018,7 @@ void sections::MapSection::PointerDown(PointerType pointerType, file::MapDocumen
     }
 }
 
-void sections::MapSection::PointerUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
+void sections::MapSection::PointerUp(PointerType pointerType, file::MapDocument *mapDocument)
 {
     if(m_isPanning.IsLockedBy(pointerType))
     {

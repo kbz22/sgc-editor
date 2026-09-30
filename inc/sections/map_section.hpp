@@ -77,7 +77,7 @@ namespace sections {
             bool PanningUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D position);
 
             void PointerDown(PointerType pointerType, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext);
-            void PointerUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);            
+            void PointerUp(PointerType pointerType, file::MapDocument *mapDocument);
             void PointerUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
 
         protected:

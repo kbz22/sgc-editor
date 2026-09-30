@@ -8,7 +8,7 @@
 
 namespace file {
 
-    class TilesetFile : public IFile
+    class TilesetFile : public IFile, public ITreeViewListable
     {
         private:
             std::filesystem::path m_filePath{};
@@ -42,6 +42,9 @@ namespace file {
             std::optional<TilesetDocument*> GetTilesetDocument(size_t index) override;
             std::vector<IDocument*> GetDocuments() override;
             std::optional<IDocument*> GetDocument(size_t index) override;
+
+            const std::wstring& GetName() const override;
+            ListableType GetListableType() const override;
 
             friend class FileManager;
     };

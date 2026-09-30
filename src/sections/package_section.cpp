@@ -271,7 +271,20 @@ void sections::PackageSection::Refresh(program::ProgramContext& programContext)
             }
             else
             {
-                addItem(file, dynamic_cast<file::ITreeViewListable*>(doc), root, index++);
+                switch(file->GetFileType())
+                {
+                    case file::FileType::Tileset:
+                    {
+                        addItem(file, dynamic_cast<file::ITreeViewListable*>(file), root, index++);
+                        break;
+                    }
+
+                    default:
+                    {
+                        addItem(file, dynamic_cast<file::ITreeViewListable*>(doc), root, index++);
+                        break;
+                    }
+                }
             }
         }
 

@@ -5,6 +5,7 @@
 #include "file/asset_manager.hpp"
 #include "file/package_file.hpp"
 #include "file/tileset_document.hpp"
+#include "program/session.hpp"
 #include <vector>
 #include <memory>
 #include <filesystem>
@@ -27,6 +28,9 @@ namespace file {
             std::function<void(DocumentLocation)> m_onActiveDocumentChangedCallback{nullptr};
             std::function<void(IFile*)> m_onFileUpdatedCallback{nullptr};
             std::function<void(MapDocument*, bool)> m_onMapDirtyCallback{nullptr};
+            program::Session m_sessionJson{};
+
+            void UpdateSessionFile();
 
         public:
             FileManager() = default;
