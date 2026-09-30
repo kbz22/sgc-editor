@@ -3,6 +3,7 @@
 #include "win32_program/windows_controls.hpp"
 #include "win32_program/layout_manager.hpp"
 #include "program/program.hpp"
+#include "program/except.hpp"
 #include "program/layer_manager.hpp"
 #include "program/editor_update.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
@@ -145,7 +146,7 @@ void program::ProgramContext::StartDefault()
     m_stringLookup = std::make_unique<locale::StringLookup>();
     
     RegisterDefaultSettings();
-    m_settingsManager->LoadValuesFromPreferences();
+    m_settingsManager->LoadValuesFromPreferences();    
 
     m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 
@@ -282,7 +283,7 @@ void program::ProgramContext::StartDefault()
         }
 
         Refresh();
-    });
+    });    
 
     m_fileManager->RegisterOnMapDirtyCallback([this]([[maybe_unused]]file::MapDocument* document, [[maybe_unused]]bool dirty) 
     {
@@ -303,6 +304,20 @@ void program::ProgramContext::StartDefault()
             m_toolbarSection->Update();
         }        
     });
+
+    if(m_settingsManager->GetSetting<settings::AutoRestoreFilesSetting>()->GetValue())
+    {
+        try
+        {
+            m_fileManager->RestoreLastSession(m_assetManager.get());
+        }
+        catch(const SessionRestoreException &e)
+        {
+            auto errorName = m_stringLookup->Get(locale::StringId::ErrorName).value_or(L"ERROR NAME");
+            auto errorMssg = m_stringLookup->Get(locale::StringId::EditorErrorFailedToRestoreSession).value_or(L"RESTORE FAILED MESSAGE");
+            MessageBox(m_mainWindowHandle, errorMssg.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
+        }
+    }
 
     Refresh();
 }

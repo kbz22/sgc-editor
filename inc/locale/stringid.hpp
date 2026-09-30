@@ -166,5 +166,7 @@ namespace locale
         UserErrorNoTilesetName,
         UserErrorNoImage,
         UserErrorWrongTileSize,
+
+        EditorErrorFailedToRestoreSession,
     };
 }

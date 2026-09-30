@@ -7,7 +7,7 @@
 
 namespace file {
 
-    class PackageDocument : public IDocument, public ITreeViewListable
+    class PackageDocument : public IDocument
     {
         private:
             PackageFile& m_packageFile;            

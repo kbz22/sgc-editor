@@ -40,3 +40,9 @@ void program::Session::RebuildFileList(std::vector<std::unique_ptr<file::IFile>>
 
     m_json[m_openedFilesString] = paths;
 }
+
+std::vector<std::filesystem::path> program::Session::GetSessionPaths()
+{
+    auto paths = m_json[m_openedFilesString].get<std::vector<std::filesystem::path>>();
+    return paths;    
+}

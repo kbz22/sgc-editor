@@ -390,3 +390,30 @@ void file::FileManager::UpdateSessionFile()
     m_sessionJson.RebuildFileList(m_openFiles);
     m_sessionJson.Save();
 }
+
+void file::FileManager::RestoreLastSession(file::AssetManager *assetManager)
+{
+    m_sessionJson.Load();
+    auto sessionFilesPaths = m_sessionJson.GetSessionPaths();
+    std::vector<std::filesystem::path> failedPaths;
+
+    for(auto &path : sessionFilesPaths)
+    {
+        try
+        {
+            OpenFile(path, assetManager);
+        }
+        catch(const std::exception&)
+        {
+            failedPaths.push_back(path);
+        }
+    }
+
+    if(!failedPaths.empty())
+    {
+        throw program::SessionRestoreException(
+            "file::FileManager failed to restore session",
+            failedPaths
+        );
+    }
+}

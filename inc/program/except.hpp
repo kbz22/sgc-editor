@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdexcept>
+#include <filesystem>
+#include <vector>
 
 namespace program
 {
@@ -38,6 +40,23 @@ namespace program
     {
         public:
             ResourceLoadException(const std::string& message) : std::runtime_error(message) {}
+    };
+
+    class SessionRestoreException : public std::runtime_error
+    {
+        private:
+            std::vector<std::filesystem::path> m_failedFiles;
+
+        public:
+            explicit SessionRestoreException(const std::string& message, std::vector<std::filesystem::path> failedFiles) :
+                std::runtime_error(message),
+                m_failedFiles(std::move(failedFiles)) {}
+
+            const std::vector<std::filesystem::path>& GetFailedFiles() const
+            {
+                return m_failedFiles;
+            }
+
     };
     
 }

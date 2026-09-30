@@ -19,6 +19,7 @@ namespace program
             void Save();
 
             void RebuildFileList(std::vector<std::unique_ptr<file::IFile>> const &files);
+            std::vector<std::filesystem::path> GetSessionPaths();
 
     };
 }

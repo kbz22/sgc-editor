@@ -157,10 +157,12 @@ locale::StringLookup::StringLookup()
         {StringId::UserErrorNoMapName, L"Please provide a name for the map."},
         {StringId::UserErrorNoTileset, L"Please select a tileset."},
         {StringId::UserErrorNoPackage, L"Please select a package."},
-        {StringId::UserErrorNoPackageName, L"Please provide a name for the package"},        
-        {StringId::UserErrorNoTilesetName, L"Please provide a name for the tileset"},
+        {StringId::UserErrorNoPackageName, L"Please provide a name for the package."},        
+        {StringId::UserErrorNoTilesetName, L"Please provide a name for the tileset."},
         {StringId::UserErrorNoImage, L"Please select an image."},
         {StringId::UserErrorWrongTileSize, L"Tile width and height must be greater than zero."},
+
+        {StringId::EditorErrorFailedToRestoreSession, L"The program failed to open some files from last session."},
 
         {StringId::TextMissing, L"Text missing"}
     };

@@ -2,8 +2,6 @@
 
 settings::SettingsJsonStringLookup::SettingsJsonStringLookup()
 {
-    using namespace program;
-
     m_settingsStrings = std::unordered_map<Key, std::string> {
         {Key::Default, m_valueMissing},
         {Key::AutoRestoreFilesSetting, "auto-restore-files"},

@@ -61,6 +61,8 @@ namespace file {
             void RegisterOnActiveDocumentChangedCallback(std::function<void(DocumentLocation)> callback);
             void RegisterOnFileUpdatedCallback(std::function<void(IFile*)> callback);
             void RegisterOnMapDirtyCallback(std::function<void(MapDocument*, bool)> callback);
+
+            void RestoreLastSession(file::AssetManager *assetManager);
     };
 
 }

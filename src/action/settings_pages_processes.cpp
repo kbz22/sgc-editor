@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <cwctype>
 
-INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_unsused]] LPARAM lParam)
 {
     auto &programContext = program::GetProgramContext();
     auto settingManager = programContext.GetManager<settings::SettingsManager>();
