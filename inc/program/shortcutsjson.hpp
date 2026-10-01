@@ -14,8 +14,6 @@ namespace win32_program
 
 namespace program 
 {
-    class ProgramContext;
-
     struct ShortcutJsonData
     {
         action::ActionType action;
@@ -33,7 +31,7 @@ namespace program
             void Load();
             void Save();
 
-            void RebuildShortcutList(std::vector<ShortcutJsonData> const &shortcutsData, program::ProgramContext &programContext);
+            void RebuildShortcutList(std::vector<ShortcutJsonData> const &shortcutsData);            
             void ReplaceShortcuts(win32_program::ShortcutManager &shortcutManager);
 
     };

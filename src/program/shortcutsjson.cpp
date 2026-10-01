@@ -33,11 +33,11 @@ void program::ShortcutsJson::Save()
     file << m_json.dump(4);
 }
 
-void program::ShortcutsJson::RebuildShortcutList(std::vector<ShortcutJsonData> const &shortcutsData, program::ProgramContext &programContext)
+void program::ShortcutsJson::RebuildShortcutList(std::vector<ShortcutJsonData> const &shortcutsData)
 {
     for(auto &data : shortcutsData)
         for(auto &shortcut : data.shortcuts)
-            m_json[m_shortcutsString][static_cast<int>(data.action)] = locale::ShortcutToString(shortcut, programContext);
+            m_json[m_shortcutsString][static_cast<int>(data.action)] = locale::ShortcutToString(shortcut, program::GetProgramContext());
 }
 
 void program::ShortcutsJson::ReplaceShortcuts(win32_program::ShortcutManager &shortcutManager)

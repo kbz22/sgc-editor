@@ -66,6 +66,37 @@ std::vector<win32_program::Shortcut> win32_program::ShortcutManager::GetShortcut
     return result;
 }
 
+void win32_program::ShortcutManager::SaveShortcuts()
+{
+    std::unordered_map<action::ActionType, std::vector<Shortcut>> groupedShortcuts;
+
+    for (const auto& contextPair : m_shortcuts)
+    {
+        for (const auto& [shortcut, actionId] : contextPair.second)
+        {
+            groupedShortcuts[actionId].push_back(shortcut);
+        }
+    }
+
+    std::vector<program::ShortcutJsonData> actionShortcuts;
+
+    for (const auto& [actionId, shortcuts] : groupedShortcuts)
+    {
+        actionShortcuts.push_back({
+            .action = actionId,
+            .shortcuts = shortcuts
+        });
+    }
+
+    m_shortcutsJson.RebuildShortcutList(actionShortcuts);
+    m_shortcutsJson.Save();
+}
+
+void win32_program::ShortcutManager::ReplaceShortcutsWithSaved()
+{
+    m_shortcutsJson.ReplaceShortcuts(*this);
+}
+
 win32_program::ShortcutModifier win32_program::ShortcutManager::GetShortcutModifierFromKeyState()
 {
     uint32_t modifiers = static_cast<uint32_t>(ShortcutModifier::None);

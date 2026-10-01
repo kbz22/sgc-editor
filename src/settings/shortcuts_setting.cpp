@@ -18,6 +18,7 @@ win32_program::ShortcutManager& settings::ShortcutsSetting::GetShortcutManager()
 void settings::ShortcutsSetting::Commit()
 {
     m_shortcutSettingsManager->CommitEdit(m_shortcutManager);
+    m_shortcutManager.SaveShortcuts();
 }
 
 settings::Key settings::ShortcutsSetting::GetKey() const
