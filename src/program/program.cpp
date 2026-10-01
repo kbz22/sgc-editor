@@ -311,7 +311,7 @@ void program::ProgramContext::StartDefault()
         {
             m_fileManager->RestoreLastSession(m_assetManager.get());
         }
-        catch(const SessionRestoreException &e)
+        catch(const SessionRestoreException&)
         {
             auto errorName = m_stringLookup->Get(locale::StringId::ErrorName).value_or(L"ERROR NAME");
             auto errorMssg = m_stringLookup->Get(locale::StringId::EditorErrorFailedToRestoreSession).value_or(L"RESTORE FAILED MESSAGE");

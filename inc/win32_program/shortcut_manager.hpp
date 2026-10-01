@@ -10,6 +10,7 @@
 #include "action/action_types.hpp"
 #include "win32_program/shortcut.hpp"
 #include "locale/stringid.hpp"
+#include "program/shortcutsjson.hpp"
 
 namespace win32_program
 {
@@ -24,6 +25,7 @@ namespace win32_program
                     std::hash<Shortcut>
                 >
             > m_shortcuts;
+            program::ShortcutsJson m_shortcutsJson;
 
         public:
             ShortcutManager(

@@ -65,6 +65,7 @@ add_executable(sgc-editor WIN32
     src/program/editor_mode.cpp
     src/program/editor_update.cpp
     src/program/session.cpp
+    src/program/shortcutsjson.cpp
 
     src/sections/section.cpp
     src/sections/tileset_section.cpp

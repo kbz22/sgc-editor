@@ -2,7 +2,7 @@
 
 namespace action {
 
-    enum class ActionType
+    enum class ActionType : int
     {
         Default = 0,
 
