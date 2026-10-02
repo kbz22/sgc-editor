@@ -6,6 +6,7 @@
 
 #include "win32_program/shortcut.hpp"
 #include "action/action_types.hpp"
+#include "action/action_manager.hpp"
 
 namespace win32_program
 {
@@ -32,7 +33,7 @@ namespace program
             void Save();
 
             void RebuildShortcutList(std::vector<ShortcutJsonData> const &shortcutsData);            
-            void ReplaceShortcuts(win32_program::ShortcutManager &shortcutManager);
+            void ReplaceShortcuts(win32_program::ShortcutManager &shortcutManager, action::ActionManager &actionManager);
 
     };
 }

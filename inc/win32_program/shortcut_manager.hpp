@@ -54,7 +54,7 @@ namespace win32_program
             std::vector<Shortcut> GetShortcutsForAction(action::ActionType actionId) const;
 
             void SaveShortcuts();
-            void ReplaceShortcutsWithSaved();
+            void ReplaceShortcutsWithSaved(action::ActionManager &actionManager);
 
             static ShortcutModifier GetShortcutModifierFromKeyState();
             static std::optional<locale::StringId> GetStringIdForShortcutKey(uint32_t key);

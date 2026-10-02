@@ -116,8 +116,7 @@ win32_program::Shortcut locale::JsonStringToShortcut(const std::string &string)
     {
         const size_t separator = string.find('+', start);
 
-        // Last component is the key.
-        if (separator == std::string_view::npos)
+        if (separator == std::string::npos)
         {
             std::string keyString = string.substr(start);
 
@@ -130,8 +129,7 @@ win32_program::Shortcut locale::JsonStringToShortcut(const std::string &string)
             };
         }
 
-        const std::string_view modifierString =
-            string.substr(start, separator - start);
+        const std::string modifierString = string.substr(start, separator - start);
 
         if (modifierString == "Ctrl")
         {

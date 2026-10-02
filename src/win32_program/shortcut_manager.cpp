@@ -92,9 +92,10 @@ void win32_program::ShortcutManager::SaveShortcuts()
     m_shortcutsJson.Save();
 }
 
-void win32_program::ShortcutManager::ReplaceShortcutsWithSaved()
+void win32_program::ShortcutManager::ReplaceShortcutsWithSaved(action::ActionManager &actionManager)
 {
-    m_shortcutsJson.ReplaceShortcuts(*this);
+    m_shortcutsJson.Load();
+    m_shortcutsJson.ReplaceShortcuts(*this, actionManager);
 }
 
 win32_program::ShortcutModifier win32_program::ShortcutManager::GetShortcutModifierFromKeyState()

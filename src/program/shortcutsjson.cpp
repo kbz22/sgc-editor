@@ -46,7 +46,24 @@ void program::ShortcutsJson::RebuildShortcutList(std::vector<ShortcutJsonData> c
     }
 }
 
-void program::ShortcutsJson::ReplaceShortcuts(win32_program::ShortcutManager &shortcutManager)
+void program::ShortcutsJson::ReplaceShortcuts(win32_program::ShortcutManager &shortcutManager, action::ActionManager &actionManager)
 {
-    // I need to think about this
+    // auto allShortcuts = m_json[m_shortcutsString].get<std::unordered_map<std::string, std::vector<std::string>>>();
+
+    for(auto &[actionName, shortcutStrings] : m_json[m_shortcutsString].items())
+    {
+        auto actionId = locale::ActionJsonStringLookup::Get(actionName);
+        auto context = actionManager.Find(actionId)->GetShortcutContext();
+
+        for(auto &shortcutString : shortcutStrings)
+        {
+            auto shortcut = locale::JsonStringToShortcut(shortcutString);
+            shortcutManager.RegisterShortcut(
+                shortcut,
+                context,
+                actionId
+            );
+        }        
+    }
+    
 }

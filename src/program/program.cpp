@@ -76,7 +76,7 @@ program::ProgramContext::ProgramContext()
 
     SetupImageLists();
     RegisterActions();
-    RegisterDefaultShortcuts();    
+    // RegisterDefaultShortcuts();    
 }
 
 program::ProgramContext& program::GetProgramContext()
@@ -304,8 +304,18 @@ void program::ProgramContext::StartDefault()
             m_packageSection->Update();
             m_toolbarSection->Refresh(*this);
             m_toolbarSection->Update();
-        }        
+        }
     });
+
+    try
+    {
+        m_shortcutManager->ReplaceShortcutsWithSaved(*m_actionManager);
+    }
+    catch(const std::runtime_error&)
+    {
+        // no shortcuts.json
+        RegisterDefaultShortcuts();
+    }
 
     if(m_settingsManager->GetSetting<settings::AutoRestoreFilesSetting>()->GetValue())
     {
