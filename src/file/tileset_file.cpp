@@ -278,3 +278,11 @@ file::ListableType file::TilesetFile::GetListableType() const
 {
     return m_tilesetDocument->GetListableType();
 }
+
+std::optional<size_t> file::TilesetFile::GetDocumentIndex(IDocument *document)
+{
+    if(document == m_tilesetDocument.get())
+        return {0};
+
+    return std::nullopt;
+}

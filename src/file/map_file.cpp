@@ -244,3 +244,11 @@ void file::MapFile::RegisterOnSetDirtyCallback(std::function<void(MapDocument*, 
         m_document->RegisterOnSetDirtyCallback(callback);
     }
 }
+
+std::optional<size_t> file::MapFile::GetDocumentIndex(IDocument *document)
+{
+    if(document == m_document.get())
+        return {0};
+
+    return std::nullopt;
+}

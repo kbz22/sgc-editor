@@ -43,6 +43,7 @@ namespace file {
             virtual std::optional<TilesetDocument*> GetTilesetDocument(size_t index) = 0;
             virtual std::vector<IDocument*> GetDocuments() = 0;
             virtual std::optional<IDocument*> GetDocument(size_t index) = 0;
+            virtual std::optional<size_t> GetDocumentIndex(IDocument *document) = 0;
     };
 
 }

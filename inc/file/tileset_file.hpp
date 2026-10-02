@@ -42,6 +42,7 @@ namespace file {
             std::optional<TilesetDocument*> GetTilesetDocument(size_t index) override;
             std::vector<IDocument*> GetDocuments() override;
             std::optional<IDocument*> GetDocument(size_t index) override;
+            std::optional<size_t> GetDocumentIndex(IDocument *document) override;
 
             const std::wstring& GetName() const override;
             ListableType GetListableType() const override;

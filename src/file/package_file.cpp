@@ -355,3 +355,17 @@ void file::PackageFile::RegisterOnSetDirtyCallback(std::function<void(MapDocumen
         mapDoc->RegisterOnSetDirtyCallback(callback);
     }
 }
+
+std::optional<size_t> file::PackageFile::GetDocumentIndex(IDocument *document)
+{    
+    auto documentCount = m_documents.size();
+    for(int i = 0; i < documentCount; i++)
+    {
+        if(m_documents[i].get() == document)
+        {
+            return {i};
+        }
+    }
+
+    return std::nullopt;
+}
