@@ -56,3 +56,51 @@ std::wstring locale::ShortcutToString(const win32_program::Shortcut& shortcut, p
 
     return result;
 }
+
+std::string locale::KeyToJsonString(uint32_t key)
+{
+    switch (key)
+    {
+        case VK_BACK:   return "Backspace";
+        case VK_TAB:    return "Tab";
+        case VK_RETURN: return "Enter";
+        case VK_ESCAPE: return "Escape";
+        case VK_SPACE:  return "Space";
+        case VK_DELETE: return "Delete";
+        case VK_INSERT: return "Insert";
+        case VK_HOME:   return "Home";
+        case VK_END:    return "End";
+        case VK_PRIOR:  return "PageUp";
+        case VK_NEXT:   return "PageDown";
+
+        default:
+            if (key >= 'A' && key <= 'Z')
+                return std::string(1, static_cast<char>(key));
+
+            if (key >= '0' && key <= '9')
+                return std::string(1, static_cast<char>(key));
+
+            return std::to_string(key);
+    }
+}
+
+std::string locale::ShortcutToJsonString(const win32_program::Shortcut& shortcut)
+{
+    using namespace win32_program;
+    
+    std::string result;
+    auto modifier = static_cast<uint32_t>(shortcut.modifier);
+
+    if (modifier & static_cast<uint32_t>(ShortcutModifier::Ctrl))
+        result += "Ctrl+";
+
+    if (modifier & static_cast<uint32_t>(ShortcutModifier::Shift))
+        result += "Shift+";
+
+    if (modifier & static_cast<uint32_t>(ShortcutModifier::Alt))
+        result += "Alt+";
+
+    result += KeyToJsonString(shortcut.key);
+
+    return result;
+}

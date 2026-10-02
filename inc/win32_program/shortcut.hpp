@@ -12,7 +12,7 @@ namespace win32_program {
         Ctrl = 0x01,
         Alt = 0x02,
         Shift = 0x04
-    };
+    };    
 
     enum ShortcutKey : uint32_t
     {
