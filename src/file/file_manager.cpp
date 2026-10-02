@@ -406,6 +406,8 @@ void file::FileManager::RestoreLastSession(file::AssetManager *assetManager)
 {
     m_sessionJson.Load();
     auto sessionFilesPaths = m_sessionJson.GetSessionPaths();
+    auto activeFilePath = m_sessionJson.GetActiveDocumentPath();
+    DocumentLocation location = {nullptr, m_sessionJson.GetActiveDocumentIndex()};
     std::vector<std::filesystem::path> failedPaths;
 
     for(auto &path : sessionFilesPaths)
@@ -413,11 +415,20 @@ void file::FileManager::RestoreLastSession(file::AssetManager *assetManager)
         try
         {
             OpenFile(path, assetManager);
+            if(location.file == nullptr && activeFilePath == path)
+            {
+                location.file = m_openFiles.back().get();
+            }
         }
         catch(const std::exception&)
         {
             failedPaths.push_back(path);
         }
+    }
+
+    if(location.file != nullptr)
+    {
+        SetActiveDocument(location);
     }
 
     if(!failedPaths.empty())
