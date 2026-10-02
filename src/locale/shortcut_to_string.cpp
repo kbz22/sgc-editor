@@ -104,3 +104,106 @@ std::string locale::ShortcutToJsonString(const win32_program::Shortcut& shortcut
 
     return result;
 }
+
+win32_program::Shortcut locale::JsonStringToShortcut(const std::string &string)
+{
+    using namespace win32_program;
+
+    ShortcutModifier modifier = ShortcutModifier::None;
+    size_t start = 0;
+
+    while (true)
+    {
+        const size_t separator = string.find('+', start);
+
+        // Last component is the key.
+        if (separator == std::string_view::npos)
+        {
+            std::string keyString = string.substr(start);
+
+            if (keyString.empty())
+                throw std::runtime_error("Invalid shortcut: missing key");
+
+            return Shortcut{
+                .modifier = modifier,
+                .key = JsonStringToKey(keyString)
+            };
+        }
+
+        const std::string_view modifierString =
+            string.substr(start, separator - start);
+
+        if (modifierString == "Ctrl")
+        {
+            modifier = modifier | ShortcutModifier::Ctrl;
+        }
+        else if (modifierString == "Alt")
+        {
+            modifier = modifier | ShortcutModifier::Alt;
+        }
+        else if (modifierString == "Shift")
+        {
+            modifier = modifier | ShortcutModifier::Shift;
+        }
+        else
+        {
+            throw std::runtime_error("Invalid shortcut modifier");
+        }
+
+        start = separator + 1;
+    }
+}
+
+uint32_t locale::JsonStringToKey(const std::string &string)
+{
+    if (string == "Backspace")
+        return VK_BACK;
+
+    if (string == "Tab")
+        return VK_TAB;
+
+    if (string == "Enter")
+        return VK_RETURN;
+
+    if (string == "Escape")
+        return VK_ESCAPE;
+
+    if (string == "Space")
+        return VK_SPACE;
+
+    if (string == "Delete")
+        return VK_DELETE;
+
+    if (string == "Insert")
+        return VK_INSERT;
+
+    if (string == "Home")
+        return VK_HOME;
+
+    if (string == "End")
+        return VK_END;
+
+    if (string == "PageUp")
+        return VK_PRIOR;
+
+    if (string == "PageDown")
+        return VK_NEXT;
+
+    // A-Z
+    if (string.size() == 1 &&
+        string[0] >= 'A' &&
+        string[0] <= 'Z')
+    {
+        return static_cast<uint32_t>(string[0]);
+    }
+
+    // 0-9
+    if (string.size() == 1 &&
+        string[0] >= '0' &&
+        string[0] <= '9')
+    {
+        return static_cast<uint32_t>(string[0]);
+    }
+
+    throw std::runtime_error("Invalid shortcut key");
+}

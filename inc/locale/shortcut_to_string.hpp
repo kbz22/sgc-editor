@@ -12,4 +12,7 @@ namespace locale
     
     std::string KeyToJsonString(uint32_t key);
     std::string ShortcutToJsonString(const win32_program::Shortcut& shortcut);
+
+    uint32_t JsonStringToKey(const std::string &string);
+    win32_program::Shortcut JsonStringToShortcut(const std::string &string);
 }
