@@ -92,6 +92,7 @@ add_executable(sgc-editor WIN32
     src/locale/string_lookup.cpp
     src/locale/shortcut_to_string.cpp
     src/locale/settings_json_string_lookup.cpp
+    src/locale/action_json_string_lookup.cpp
     
     src/command/command_manager.cpp    
     src/command/paint_command.cpp

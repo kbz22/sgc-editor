@@ -3,6 +3,7 @@
 #include "win32_program/shortcut_manager.hpp"
 #include "win32_helpers/file_helpers.hpp"
 #include "locale/shortcut_to_string.hpp"
+#include "locale/action_json_string_lookup.hpp"
 #include <fstream>
 
 void program::ShortcutsJson::Load()
@@ -36,8 +37,13 @@ void program::ShortcutsJson::Save()
 void program::ShortcutsJson::RebuildShortcutList(std::vector<ShortcutJsonData> const &shortcutsData)
 {
     for(auto &data : shortcutsData)
+    {
+        std::vector<std::string> shortcutStrings{};
         for(auto &shortcut : data.shortcuts)
-            m_json[m_shortcutsString][static_cast<int>(data.action)] = locale::ShortcutToString(shortcut, program::GetProgramContext());
+            shortcutStrings.push_back(locale::ShortcutToJsonString(shortcut));
+
+        m_json[m_shortcutsString][locale::ActionJsonStringLookup::Get(data.action)] = shortcutStrings;
+    }
 }
 
 void program::ShortcutsJson::ReplaceShortcuts(win32_program::ShortcutManager &shortcutManager)
