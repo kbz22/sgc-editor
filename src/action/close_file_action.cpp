@@ -20,12 +20,9 @@ action::CloseFileAction::CloseFileAction()
 void action::CloseFileAction::Execute(program::ProgramContext& context)
 {
     auto fileManager = context.GetManager<file::FileManager>();
-    auto currentDocument = fileManager->GetActiveDocument();
+    auto currentFile = fileManager->GetSelectedFile();
 
-    if(currentDocument != nullptr) {
+    if(currentFile != nullptr) {
         fileManager->CloseFile(fileManager->GetSelectedFileIndex());
     }
-    
-    // program::RefreshEditor();
-    // refresh is now handled by the file manager's on file updated callback
 }

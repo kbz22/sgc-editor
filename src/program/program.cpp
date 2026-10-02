@@ -256,8 +256,10 @@ void program::ProgramContext::StartDefault()
 
     m_fileManager->RegisterOnFileUpdatedCallback([this]([[maybe_unused]] file::IFile* file) 
     {
-        m_packageSection->UpdateTreeViewItems(*this);
+        // m_packageSection->UpdateTreeViewItems(*this);
         Refresh();
+        m_packageSection->UpdateTreeViewItems(*this);
+        m_packageSection->Update();
     });
 
     m_fileManager->RegisterOnActiveDocumentChangedCallback([this](file::DocumentLocation documentLocation) 

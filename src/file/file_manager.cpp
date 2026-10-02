@@ -224,8 +224,8 @@ void file::FileManager::CloseFile(size_t index)
         
         m_openFiles.erase(m_openFiles.begin() + index);
 
-        m_onFileUpdatedCallback(nullptr);
         UpdateSessionFile();
+        m_onFileUpdatedCallback(nullptr);        
     }
 
     return;
