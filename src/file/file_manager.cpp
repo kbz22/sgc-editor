@@ -166,10 +166,19 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
 
         auto mapDocuments = newFile->GetMapDocuments();
 
-        if(!mapDocuments.empty()) {
-            openedDoc.file = newFile.get();
-            openedDoc.index = 0;
-            SetActiveDocument(openedDoc);
+        if(!mapDocuments.empty()) 
+        {
+            for(auto &mapDoc : mapDocuments)
+            {
+                auto index = newFile->GetDocumentIndex(mapDoc);
+                if(index.has_value())
+                {
+                    openedDoc.file = newFile.get();
+                    openedDoc.index = index.value();
+                    SetActiveDocument(openedDoc);
+                    break;
+                }
+            }
         }
 
         m_openFiles.push_back(std::move(newFile));        
@@ -192,8 +201,8 @@ void file::FileManager::SaveFile(size_t index)
     {
         m_openFiles[index]->Save();
         m_onFileUpdatedCallback(nullptr);
-        // There's no real way for FileManager to know if a new file was created and saved
-        // so an update is required
+        // There's no real way for FileManager to know if a new file was saved for the first time
+        // after being created, so an update is required
         UpdateSessionFile();        
     }
     return;
@@ -274,7 +283,9 @@ void file::FileManager::SetActiveDocument(const DocumentLocation &document)
         }
     }
 
-    m_onActiveDocumentChangedCallback(m_activeDocument);
+    m_sessionJson.SetActiveDocument(m_activeDocument);
+    m_sessionJson.Save();
+    m_onActiveDocumentChangedCallback(m_activeDocument);    
 }
 
 file::MapDocument* file::FileManager::GetActiveDocument() const

@@ -44,5 +44,21 @@ void program::Session::RebuildFileList(std::vector<std::unique_ptr<file::IFile>>
 std::vector<std::filesystem::path> program::Session::GetSessionPaths()
 {
     auto paths = m_json[m_openedFilesString].get<std::vector<std::filesystem::path>>();
-    return paths;    
+    return paths;
+}
+
+void program::Session::SetActiveDocument(file::DocumentLocation &location)
+{    
+    m_json[m_activeDocumentFileString] = location.file->GetFilePath();
+    m_json[m_activeDocumentIndexString] = location.index;
+}
+
+size_t program::Session::GetActiveDocumentIndex()
+{
+    return m_json[m_activeDocumentIndexString].get<size_t>();
+}
+
+std::filesystem::path program::Session::GetActiveDocumentPath()
+{
+    return m_json[m_activeDocumentFileString].get<std::filesystem::path>();
 }
