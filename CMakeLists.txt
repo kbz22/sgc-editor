@@ -91,6 +91,7 @@ add_executable(sgc-editor WIN32
 
     src/locale/string_lookup.cpp
     src/locale/shortcut_to_string.cpp
+    src/locale/settings_json_string_lookup.cpp
     
     src/command/command_manager.cpp    
     src/command/paint_command.cpp
@@ -149,7 +150,6 @@ add_executable(sgc-editor WIN32
     src/file/tileset_file.cpp
     src/file/tileset_document.cpp
     src/file/package_file.cpp
-    # src/file/document_serializer.cpp
     src/file/package_document.cpp
 
     src/editor_tools/brush.cpp
@@ -166,8 +166,7 @@ add_executable(sgc-editor WIN32
     src/settings/shortcuts_setting.cpp
     src/settings/default_open_filetype_setting.cpp
     src/settings/auto_restore_files_setting.cpp
-    src/settings/preferences.cpp
-    src/settings/settings_json_string_lookup.cpp    
+    src/settings/preferences.cpp    
 )
 
 # embed manifest in the exe

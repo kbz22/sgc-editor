@@ -4,17 +4,17 @@
 #include <unordered_map>
 #include <string>
 
-namespace settings 
+namespace locale 
 {
     class SettingsJsonStringLookup
     {
         private:
-            std::unordered_map<Key, std::string> m_settingsStrings;
+            std::unordered_map<settings::Key, std::string> m_settingsStrings;
             std::string m_valueMissing = "value-missing";
 
         public:
             SettingsJsonStringLookup();
 
-            std::string Get(Key key);
+            std::string Get(settings::Key key);
     };
 }
