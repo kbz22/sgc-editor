@@ -5,20 +5,15 @@
 #include "file/asset_manager.hpp"
 #include "file/package_file.hpp"
 #include "file/tileset_document.hpp"
+#include "file/document_location.hpp"
 #include "program/session.hpp"
 #include <vector>
 #include <memory>
 #include <filesystem>
 #include <functional>
 
-namespace file {
-
-    struct DocumentLocation
-    {
-        IFile* file;
-        size_t index;
-    };
-
+namespace file 
+{
     class FileManager
     {
         private:
