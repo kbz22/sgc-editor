@@ -39,7 +39,8 @@ locale::StringLookup::StringLookup()
         {StringId::TooltipEditorSelectionPaste, L"Paste selection"},
         {StringId::TooltipEditorSelectionClear, L"Clear selection"},
         {StringId::TooltipEditorSelectionMove, L"Move selection"},
-        {StringId::TooltipSettings, L"Settings"},        
+        {StringId::TooltipSettings, L"Settings"},
+        {StringId::TooltipTilePicker, L"Tile picker"},
 
         {StringId::NameFile, L"File"},
         {StringId::NameEdit, L"Edit"},
@@ -98,6 +99,7 @@ locale::StringLookup::StringLookup()
         {StringId::NameChangeLayerUp, L"Layer above"},
         {StringId::NameChangeLayerTop, L"Top layer"},
         {StringId::NameChangeLayerBottom, L"Bottom layer"},
+        {StringId::NameTilePicker, L"Tile picker"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},
