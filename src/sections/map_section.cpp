@@ -16,9 +16,17 @@
 constexpr int gc_TimerId = 1;
 
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
-    Section{L"MapView", win32_program::ControlId::MapView, programContext.GetMainWindowHandle(), programContext.GetHInstance()},
+    Section{
+        L"MapView",
+        win32_program::ControlId::MapView,
+        programContext.GetMainWindowHandle(),
+        programContext.GetHInstance()
+    },
     m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())},
-    m_brush{programContext.GetSelectionRectangleOnTileset()}
+    m_editorToolManager{
+        *m_mapView,
+        *programContext.GetSection<sections::TilesetSection>()
+    }
 {
     AttachView(*m_mapView);
 
@@ -71,7 +79,7 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
         nullptr
     );
 
-    m_mapView->Render();
+    m_mapView->Render();    
 }
 
 void sections::MapSection::Update()
@@ -393,7 +401,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_TIMER:
         {
-            if (wparam == gc_TimerId && m_brush.GetPaintMode() == editor_tools::PaintMode::Select)
+            if (wparam == gc_TimerId && m_editorToolManager.GetPaintMode() == editor_tools::PaintMode::Select)
             {
                 m_mapView->UpdateSelectionOffset();
                 Update();                
@@ -407,19 +415,19 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
 void sections::MapSection::SetCheckTileBeforePainting(bool check)
 {
-    m_brush.SetCheckTileBeforePainting(check);
+    m_editorToolManager.SetCheckTileBeforePainting(check);
 }
 
 void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
 {
-    m_brush.SetPaintMode(paintMode);    
+    m_editorToolManager.SetPaintMode(paintMode);    
 }
 
 void sections::MapSection::SetEraseMode(editor_tools::EraserMode eraserMode)
 {
-    m_brush.SetEraserMode(eraserMode);
+    m_editorToolManager.SetEraserMode(eraserMode);
 
-    switch(m_brush.GetEraserMode())
+    switch(m_editorToolManager.GetEraserMode())
     {
         case editor_tools::EraserMode::None:
         {
@@ -445,22 +453,22 @@ void sections::MapSection::SetEraseMode(editor_tools::EraserMode eraserMode)
 
 void sections::MapSection::SetSelectionMode(editor_tools::SelectionMode selectionMode)
 {
-    m_brush.SetSelectionMode(selectionMode);
+    m_editorToolManager.SetSelectionMode(selectionMode);
 }
 
 editor_tools::PaintMode sections::MapSection::GetPaintMode() const
 {
-    return m_brush.GetPaintMode();
+    return m_editorToolManager.GetPaintMode();
 }
 
 editor_tools::EraserMode sections::MapSection::GetEraseMode() const
 {
-    return m_brush.GetEraserMode();
+    return m_editorToolManager.GetEraserMode();
 }
 
 editor_tools::SelectionMode sections::MapSection::GetSelectionMode() const
 {
-    return m_brush.GetSelectionMode();
+    return m_editorToolManager.GetSelectionMode();
 }
 
 void sections::MapSection::SetSelectionMoveMode(bool canMoveSelection)
@@ -630,7 +638,7 @@ bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D p
         
         auto selection = programContext.GetSection<sections::TilesetSection>()->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
 
-        switch(m_brush.GetPaintMode())
+        switch(m_editorToolManager.GetPaintMode())
         {                    
             case editor_tools::PaintMode::Rectangle:
                 m_mapView->SetCursorSizeInPixels({
@@ -719,14 +727,15 @@ bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::P
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
     if(m_isPainting.IsLockedBy(pointerType)) {
-        m_brush.PaintExecuteChange(
+        /* m_editorToolManager.PaintExecuteChange(
             *mapDocument,
             *m_mapView->GetTileset(),
             cursorPositionOnMap,
             cursorTilePositionOnTileset,
             cursorTileSize,
             this
-        );
+        ); */
+        m_editorToolManager.Execute(*mapDocument, cursorPositionOnMap);
 
         return true;
     }
@@ -739,7 +748,7 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
     auto tileset = m_mapView->GetTileset();
     auto tileSize = tileset->GetTileSize();
 
-    if(m_brush.GetPaintMode() == editor_tools::PaintMode::Select && m_canMoveSelection && !m_isMovingSelection.IsLocked())
+    if(m_editorToolManager.GetPaintMode() == editor_tools::PaintMode::Select && m_canMoveSelection && !m_isMovingSelection.IsLocked())
     {                
         auto selectionPos = m_mapView->GetSelectionPositionInTiles();
         auto selectionSize = m_mapView->GetSelectionSizeInTiles();
@@ -829,7 +838,7 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
         m_isPainting.Acquire(pointerType);
     }
 
-    if(m_brush.NeedsRedraw()) {
+    if(m_editorToolManager.NeedsRedraw()) {
         return true;
     }
     
@@ -886,7 +895,8 @@ bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDo
 
     if(m_isPainting.Release(pointerType)) 
     {
-        m_brush.PaintCommitChanges(*mapDocument);
+        // m_editorToolManager.PaintCommitChanges(*mapDocument);
+        m_editorToolManager.Commit(*mapDocument);
         returnFlag = true;
     }
 
@@ -1012,7 +1022,7 @@ void sections::MapSection::PointerDown(PointerType pointerType, file::MapDocumen
         bool shouldUpdate = UpdateOnCursorDown(pointerType, mapDocument, programContext);
         PointerUpdate(pointerType, position, programContext);
 
-        if(m_brush.NeedsRedraw() || shouldUpdate) {
+        if(m_editorToolManager.NeedsRedraw() || shouldUpdate) {
             Update();
         }
     }
