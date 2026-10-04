@@ -57,6 +57,7 @@ namespace editor_tools {
             IEditorTool *m_activeTool{nullptr};
             PaintBrush m_paintBrush;
             RectangularBrush m_rectangularBrush;
+            FillTool m_fillTool;
 
             void SetActiveTool();
 

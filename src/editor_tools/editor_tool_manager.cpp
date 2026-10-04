@@ -13,6 +13,11 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
         mapView,
         tilesetSection,
         m_allowChunkCreation,
+    },
+    m_fillTool{
+        mapView,
+        tilesetSection,
+        m_allowChunkCreation,
     }
 {
     SetActiveTool();
@@ -103,6 +108,12 @@ void editor_tools::EditorToolManager::SetActiveTool()
         case PaintMode::Rectangle:
         {
             m_activeTool = &m_rectangularBrush;
+            return;
+        }
+
+        case PaintMode::Fill:
+        {
+            m_activeTool = &m_fillTool;
             return;
         }
 
