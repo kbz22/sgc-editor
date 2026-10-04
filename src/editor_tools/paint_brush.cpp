@@ -2,11 +2,7 @@
 #include "editor_tools/helpers.hpp"
 
 editor_tools::PaintBrush::PaintBrush(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation) :
-    m_paintCommand{nullptr},
-    m_cursorOrigin{nullptr},
-    m_mapView{mapView},
-    m_tilesetSection{tilesetSection},
-    m_allowChunkCreation{allowChunkCreation}
+    Brush{mapView, tilesetSection, allowChunkCreation}
 {}
 
 void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
@@ -105,16 +101,4 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
         m_paintCommand->ExecuteTileChange(tileChanges);
         return;
     }
-}
-
-void editor_tools::PaintBrush::Commit(file::MapDocument& mapDocument)
-{
-    auto commandManager = mapDocument.GetCommandManager();
-
-    if(m_paintCommand != nullptr) {
-        commandManager->Commit(std::move(m_paintCommand));
-    }
-
-    m_paintCommand.reset();
-    m_cursorOrigin.reset();
 }
