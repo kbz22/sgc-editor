@@ -8,6 +8,11 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
         mapView,
         tilesetSection,
         m_allowChunkCreation,
+    },
+    m_rectangularBrush{
+        mapView,
+        tilesetSection,
+        m_allowChunkCreation,
     }
 {
     SetActiveTool();
@@ -36,16 +41,19 @@ bool editor_tools::EditorToolManager::NeedsRedraw() const
 void editor_tools::EditorToolManager::SetPaintMode(PaintMode paintMode)
 {
     m_paintMode = paintMode;
+    SetActiveTool();
 }
 
 void editor_tools::EditorToolManager::SetEraserMode(EraserMode eraserMode)
 {
     m_eraserMode = eraserMode;
+    SetActiveTool();
 }
 
 void editor_tools::EditorToolManager::SetSelectionMode(SelectionMode selectionMode)
 {
     m_selectionMode = selectionMode;
+    SetActiveTool();
 }
 
 void editor_tools::EditorToolManager::SetCheckTileBeforePainting(bool check)
@@ -89,6 +97,12 @@ void editor_tools::EditorToolManager::SetActiveTool()
         case PaintMode::Brush:
         {
             m_activeTool = &m_paintBrush;
+            return;
+        }
+
+        case PaintMode::Rectangle:
+        {
+            m_activeTool = &m_rectangularBrush;
             return;
         }
 

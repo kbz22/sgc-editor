@@ -7,7 +7,7 @@
 #include "sections/tileset_section.hpp"
 #include "command/paint_command.hpp"
 #include "editor_tools/ieditor_tool.hpp"
-#include "editor_tools/paint_brush.hpp"
+#include "editor_tools/editor_tools.hpp"
 #include <sgc/graphics/rectangle.hpp>
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/tile/tile.hpp>
@@ -56,6 +56,7 @@ namespace editor_tools {
 
             IEditorTool *m_activeTool{nullptr};
             PaintBrush m_paintBrush;
+            RectangularBrush m_rectangularBrush;
 
             void SetActiveTool();
 
