@@ -34,13 +34,13 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
     auto tileSize = m_mapView.GetTileSize();
     auto positionOnTileset = positionOnTilesetOp.value();
 
+    positionOnTileset.x /= tileSize.x;
+    positionOnTileset.y /= tileSize.y;
+
     auto endPosition = sgc::tile::TilePosition2D{
         cursorPosition.x + cursorSize.x - 1,
         cursorPosition.y + cursorSize.y - 1
-    };
-
-    positionOnTileset.x /= tileSize.x;
-    positionOnTileset.y /= tileSize.y;
+    };   
 
     for(auto x = cursorPosition.x; x <= endPosition.x; ++x){
         for(auto y = cursorPosition.y; y <= endPosition.y; ++y)
