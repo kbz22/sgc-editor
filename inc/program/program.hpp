@@ -49,8 +49,6 @@ namespace program {
 
             std::vector<sections::Section*> m_sections;
             sections::Section* m_activeSection = nullptr;
-
-            std::unique_ptr<sgc::graphics::Rectangle> m_selectionRectangleOnTileset;
         
             std::unique_ptr<file::FileManager> m_fileManager{};
             std::unique_ptr<action::ActionManager> m_actionManager{};
@@ -106,8 +104,6 @@ namespace program {
             
             HIMAGELIST GetImageList(ImageListType type) const;
             void SetImageList(ImageListType type, HIMAGELIST imageList);
-
-            sgc::graphics::Rectangle& GetSelectionRectangleOnTileset() const;
 
             program::EditorGridMode GetEditorGridMode() const;
             program::EditorLayerMode GetEditorLayerMode() const;
