@@ -1,6 +1,6 @@
 #include "action/layer_remove_action.hpp"
 #include "program/program.hpp"
-#include "program/editor_update.hpp"
+
 #include "command/layer_remove_command.hpp"
 
 action::LayerRemoveAction::LayerRemoveAction()

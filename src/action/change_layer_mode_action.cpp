@@ -1,6 +1,5 @@
 #include "action/change_layer_mode_action.hpp"
 #include "program/program.hpp"
-#include "program/editor_update.hpp"
 
 action::ChangeLayerModeAction::ChangeLayerModeAction(program::EditorLayerMode layerMode) :
     m_layerMode(layerMode)

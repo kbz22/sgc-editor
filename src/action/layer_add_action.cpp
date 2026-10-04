@@ -1,6 +1,6 @@
 #include "action/layer_add_action.hpp"
 #include "program/program.hpp"
-#include "program/editor_update.hpp"
+
 #include "command/layer_add_command.hpp"
 
 action::LayerAddAction::LayerAddAction()

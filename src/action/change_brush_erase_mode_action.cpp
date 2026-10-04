@@ -1,6 +1,6 @@
 #include "action/change_brush_erase_mode_action.hpp"
 #include "program/program.hpp"
-#include "program/editor_update.hpp"
+
 #include <stdexcept>
 
 action::ChangeBrushEraseModeAction::ChangeBrushEraseModeAction(editor_tools::EraserMode eraserMode) :

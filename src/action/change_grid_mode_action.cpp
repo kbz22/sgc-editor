@@ -1,6 +1,6 @@
 #include "action/change_grid_mode_action.hpp"
 #include "program/program.hpp"
-#include "program/editor_update.hpp"
+
 #include <stdexcept>
 
 action::ChangeGridModeAction::ChangeGridModeAction(program::EditorGridMode newGridMode) :

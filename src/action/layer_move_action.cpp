@@ -1,6 +1,6 @@
 #include "action/layer_move_action.hpp"
 #include "program/program.hpp"
-#include "program/editor_update.hpp"
+
 #include "command/layer_move_command.hpp"
 
 action::LayerMoveAction::LayerMoveAction(int moveCount) :

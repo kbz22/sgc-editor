@@ -5,7 +5,7 @@
 #include "program/program.hpp"
 #include "program/except.hpp"
 #include "program/layer_manager.hpp"
-#include "program/editor_update.hpp"
+
 #include <sgc/data/chunkedtilestorage.hpp>
 
 #include "action/new_document_action.hpp"
@@ -154,14 +154,14 @@ void program::ProgramContext::StartDefault()
     m_sections.push_back(m_menuSection.get());
     m_menuSection->Refresh(*this);
 
+    m_tilesetSection = std::make_unique<sections::TilesetSection>(*this);
+    m_sections.push_back(m_tilesetSection.get());    
+
     m_mapSection = std::make_unique<sections::MapSection>(*this);
     m_sections.push_back(m_mapSection.get());    
 
     m_toolbarSection = std::make_unique<sections::ToolbarSection>(*this);
-    m_sections.push_back(m_toolbarSection.get());
-
-    m_tilesetSection = std::make_unique<sections::TilesetSection>(*this);
-    m_sections.push_back(m_tilesetSection.get());    
+    m_sections.push_back(m_toolbarSection.get());    
 
     m_layersSection = std::make_unique<sections::LayersSection>(*this);
     m_sections.push_back(m_layersSection.get());
@@ -232,12 +232,6 @@ void program::ProgramContext::StartDefault()
         {
             return;
         }
-        
-        // I'm making this the Package's responsibility
-        /* if(file->IsContainer())
-        {
-            location.index -= 1;
-        } */
 
         fileManager->SetActiveDocument(location);
 
@@ -601,11 +595,6 @@ HIMAGELIST program::ProgramContext::GetImageList(ImageListType type) const
 void program::ProgramContext::SetImageList(ImageListType type, HIMAGELIST imageList)
 {
     m_imageLists[type] = imageList;
-}
-
-sgc::graphics::Rectangle& program::ProgramContext::GetSelectionRectangleOnTileset() const
-{
-    return *m_selectionRectangleOnTileset;
 }
 
 locale::StringLookup& program::ProgramContext::GetStringLookup() const

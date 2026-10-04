@@ -1,6 +1,6 @@
 #include "action/change_selection_mode_action.hpp"
 #include "program/program.hpp"
-#include "program/editor_update.hpp"
+
 
 action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::SelectionMode selectionMode) :
     m_selectionMode{selectionMode}
