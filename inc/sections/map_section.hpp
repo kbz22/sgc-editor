@@ -3,7 +3,7 @@
 #include "sections/section.hpp"
 #include "sgc_view/map_view.hpp"
 #include "command/paint_command.hpp"
-#include "editor_tools/brush.hpp"
+#include "editor_tools/editor_tool_manager.hpp"
 #include <sgc/data/statictilestorage.hpp>
 #include <functional>
 #include <mutex>
@@ -64,7 +64,8 @@ namespace sections {
             std::chrono::milliseconds m_selectionRectUpdateInterval = std::chrono::milliseconds(50);
             std::chrono::steady_clock::time_point m_lastUpdateTime = std::chrono::steady_clock::now();
 
-            editor_tools::Brush m_brush;            
+            // editor_tools::Brush m_brush;
+            editor_tools::EditorToolManager m_editorToolManager;
 
             bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);            
             bool UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "action/action.hpp"
-#include "editor_tools/brush.hpp"
+#include "editor_tools/editor_tool_manager.hpp"
 
 namespace action {
 
