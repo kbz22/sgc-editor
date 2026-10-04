@@ -33,7 +33,8 @@ namespace action {
         Zoom,
         GridMode,
         SelectionTools,
-        SelectionToolsMode
+        SelectionToolsMode,
+        ExtraEditTools,
     };
 
     struct ActionDescription

@@ -41,6 +41,8 @@ namespace action {
         SelectAllLayersMode,
         SelectVisibleLayersMode,
 
+        TilePickerTool,
+
         MenuMap = 3001,
         AddLayer,
         RemoveLayer,
