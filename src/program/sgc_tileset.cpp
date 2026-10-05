@@ -70,6 +70,23 @@ bool program::SgcTileset::IsSpecial(sgc::tile::TileId tileId) const
     return tileId >= m_tileset->TileIdCount();
 }
 
+bool program::SgcTileset::IsSpecial(sgc::tile::TilePosition2D positionOnTileset) const
+{
+    auto sizeInTiles = m_tileset->GetSizeInTiles();
+    auto extraRows = static_cast<sgc::math::ival>(m_paddedTiles.size()) / sizeInTiles.x + 1;
+
+    if(positionOnTileset.y == extraRows - 1 && positionOnTileset.x < static_cast<sgc::math::ival>(m_paddedTiles.size() % sizeInTiles.x))
+    {
+        return true;
+    }
+    else if(positionOnTileset.y < extraRows - 1)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 bool program::SgcTileset::IsValid(sgc::tile::TileId tileId) const
 {
     auto count = m_tileset->TileIdCount() + static_cast<sgc::tile::TileId>(m_paddedTiles.size());
@@ -114,4 +131,12 @@ sgc::graphics::PixelCount program::SgcTileset::GetVerticalOffsetInPixels() const
 {
     auto extraRows = static_cast<sgc::math::ival>(m_paddedTiles.size()) / m_tileset->GetSizeInTiles().x + 1;
     return extraRows * m_tileset->GetTileSize().y;
+}
+
+sgc::tile::TileSize2D program::SgcTileset::GetSizeInTiles() const
+{
+    auto sizeInTiles = m_tileset->GetSizeInTiles();
+    auto extraRows = static_cast<sgc::math::ival>(m_paddedTiles.size()) / sizeInTiles.x + 1;
+
+    return {sizeInTiles.x, sizeInTiles.y + extraRows};
 }
