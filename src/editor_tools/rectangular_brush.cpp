@@ -49,7 +49,7 @@ void editor_tools::RectangularBrush::Execute(file::MapDocument& mapDocument, sgc
         for(auto y = m_cursorOrigin->y; y <= endPosition.y; ++y)
         {
             auto tileId = GetTileId(
-                *m_mapView.GetTileset(),
+                m_mapView.GetSgcTileset(),
                 positionOnTileset,
                 cursorSize,
                 { x, y },

@@ -1,7 +1,8 @@
 #include "editor_tools/helpers.hpp"
 
 std::optional<sgc::tile::TileId> editor_tools::GetTileId(
-    sgc::graphics::Tileset& tileset,
+    // sgc::graphics::Tileset& tileset,
+    program::SgcTileset &tileset,
     sgc::tile::TilePosition2D cursorPositionOnTileset,
     sgc::tile::TileSize2D selectionSizeInTiles,
     sgc::tile::TilePosition2D cursorPositionOnMap,
@@ -18,8 +19,12 @@ std::optional<sgc::tile::TileId> editor_tools::GetTileId(
         selectionSizeInTiles.y
     );
 
-    return tileset.ToTileId(
+    /* return tileset.ToTileId(
         cursorPositionOnTileset.x + deltaX,
         cursorPositionOnTileset.y + deltaY
-    );
+    ); */
+    return tileset.GetTileId({
+        cursorPositionOnTileset.x + deltaX,
+        cursorPositionOnTileset.y + deltaY
+    });
 }

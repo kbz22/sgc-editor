@@ -82,7 +82,7 @@ void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::
         stack.push({pos.x, pos.y - 1});
     }
 
-    auto tileset = m_mapView.GetTileset();
+    auto tileset = m_mapView.GetSgcTileset();
     auto cursorPositionOnTileset = positionOnTilesetOp.value();
     auto tileSize = m_mapView.GetTileSize();
     auto cursorSize = m_mapView.GetCursorSizeInTiles();
@@ -93,7 +93,7 @@ void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::
     for(auto pos : region)
     {
         auto newTileId = GetTileId(
-            *tileset,
+            tileset,
             cursorPositionOnTileset,
             cursorSize,
             pos,

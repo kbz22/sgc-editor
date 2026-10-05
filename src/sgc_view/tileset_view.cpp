@@ -56,12 +56,12 @@ void sgc_view::TilesetView::SetTileset(sgc::data::AssetId tilesetId)
 {
     SgcView::SetTileset(tilesetId);
 
-    if(m_tileset == nullptr) {
+    if(!m_sgcTileset.IsSet()) {
         return;
     }
 
-    const math::vec2 gridSize = m_tileset->GetSizeInTiles();
-
+    auto tileset = m_sgcTileset.GetTileset();
+    const math::vec2 gridSize = tileset->GetSizeInTiles();
     auto tileStorage = std::make_shared<data::StaticTileStorage>(math::vec2{gridSize.x, gridSize.y});
 
     for (sgc::tile::TileId i = 0; i < gridSize.y * gridSize.x; ++i) {  
@@ -74,16 +74,22 @@ void sgc_view::TilesetView::SetTileset(sgc::data::AssetId tilesetId)
     }
 
     m_layer = std::make_shared<graphics::TiledLayer>(
-        m_tileset,
+        tileset,
         tileStorage
     );
 
-    m_drawableImage = std::make_shared<graphics::TiledImage>(m_layer);
+    auto tiledImage = std::make_shared<graphics::TiledImage>(m_layer);    
+    tiledImage->SetPositionPixels(sgc::graphics::PixelPosition2D{
+        0,
+        m_sgcTileset.GetVerticalOffsetInPixels()
+    });
+    m_drawableImage = tiledImage;
 }
 
 void sgc_view::TilesetView::ResetTileset()
 {
-    m_tileset.reset();
+    // m_tileset.reset();
+    m_sgcTileset.Reset();
     m_layer.reset();
     m_drawableImage.reset();
 
@@ -97,21 +103,21 @@ void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
     sgc_view::SgcView::Refresh(programContext);
     auto selectedDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
-    if(selectedDocument == nullptr && m_tileset != nullptr) {
+    if(selectedDocument == nullptr && m_sgcTileset.IsSet()) {
         ResetTileset();
         return;
     }
 
-    if(selectedDocument != nullptr && m_tileset == nullptr) {
+    if(selectedDocument != nullptr && !m_sgcTileset.IsSet()) {
         auto tilesetId = selectedDocument->GetTilesetAssetId();
         SetTileset(tilesetId);
     }
 
-    if(m_tileset == nullptr) {
+    if(!m_sgcTileset.IsSet()) {
         return;
     }
 
-    auto tileSize = m_tileset->GetTileSize();
+    auto tileSize = GetTileSize();
 
     if(m_cursorTile == nullptr) {
         SetCursorTile({

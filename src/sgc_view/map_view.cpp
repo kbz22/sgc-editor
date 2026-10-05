@@ -88,7 +88,7 @@ void sgc_view::MapView::UpdateGridPosition(sgc::graphics::Viewport cameraViewpor
 {
     using sgc::math::ival;
 
-    auto tileSize = m_tileset->GetTileSize();
+    auto tileSize = GetTileSize();
     auto chunkOffsetX = static_cast<ival>(cameraViewport.x) % static_cast<ival>(tileSize.x * sgc::data::TileChunk::Size) + sgc::data::TileChunk::Size * tileSize.x;
     auto chunkOffsetY = static_cast<ival>(cameraViewport.y) % static_cast<ival>(tileSize.y * sgc::data::TileChunk::Size) + sgc::data::TileChunk::Size * tileSize.y;
 
@@ -149,13 +149,17 @@ void sgc_view::MapView::ResetCursorTile()
 
 void sgc_view::MapView::SetTileset(sgc::data::AssetId tilesetId)
 {
-    SgcView::SetTileset(tilesetId);    
+    SgcView::SetTileset(tilesetId);
 
-    if(m_tileset == nullptr) {
+    /* if(m_tileset == nullptr) {
+        return;
+    } */
+    if(!m_sgcTileset.IsSet())
+    {
         return;
     }
     
-    auto tileSize = m_tileset->GetTileSize();
+    auto tileSize = GetTileSize();
 
     SetCursorTile({
         static_cast<sgc::math::ival>(tileSize.x),
@@ -165,7 +169,8 @@ void sgc_view::MapView::SetTileset(sgc::data::AssetId tilesetId)
 
 void sgc_view::MapView::ResetTileset()
 {
-    m_tileset.reset();
+    // m_tileset.reset();
+    m_sgcTileset.Reset();
     m_drawableImage.reset();
     m_tileWidth = 0;
     m_tileHeight = 0;
@@ -230,17 +235,18 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
 
     auto selectedDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
-    if(selectedDocument == nullptr && m_tileset != nullptr) {
+    // if(selectedDocument == nullptr && m_tileset != nullptr) {
+    if(selectedDocument == nullptr && m_sgcTileset.IsSet()) {
         ResetTileset();
         return;
     }
 
-    if(selectedDocument != nullptr && m_tileset == nullptr) {
+    if(selectedDocument != nullptr && !m_sgcTileset.IsSet()) {
         auto tilesetId = selectedDocument->GetTilesetAssetId();
         SetTileset(tilesetId);
     }
 
-    if(m_tileset == nullptr) {
+    if(!m_sgcTileset.IsSet()) {
         return;
     }
 
@@ -262,7 +268,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
         layers.clear();
 
         auto tiledLayer = std::make_shared<graphics::TiledLayer>(
-            m_tileset,
+            m_sgcTileset.GetTileset(),
             layer.storage
         );
 
@@ -279,7 +285,7 @@ void sgc_view::MapView::Refresh(program::ProgramContext& programContext)
         }
 
         auto tiledLayer = std::make_shared<graphics::TiledLayer>(
-            m_tileset,
+            m_sgcTileset.GetTileset(),
             layer->storage
         );
 

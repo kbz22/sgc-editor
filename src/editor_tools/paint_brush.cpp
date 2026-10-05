@@ -46,7 +46,8 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
         for(auto y = cursorPosition.y; y <= endPosition.y; ++y)
         {
             auto tileId = GetTileId(
-                *m_mapView.GetTileset(),
+                // *m_mapView.GetTileset(),
+                m_mapView.GetSgcTileset(),
                 positionOnTileset,
                 cursorSize,
                 { x, y },
