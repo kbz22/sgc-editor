@@ -86,19 +86,16 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             int x = GET_X_LPARAM(lparam);
             int y = GET_Y_LPARAM(lparam);
 
-            // auto tileset = m_tilesetView->GetTileset();
             auto tileset = m_tilesetView->m_sgcTileset.GetTileset();
-            auto bounds = tileset->GetImageSize();
-
-            if(x < 0 || y < 0 || x >= bounds.x || y >= bounds.y) {
-                break;
-            }
-
             sgc::math::vec2 tileSize = tileset->GetTileSize();
             sgc::math::vec2 tilePosition = {
                 static_cast<sgc::math::ival>(x / tileSize.x),
                 static_cast<sgc::math::ival>(y / tileSize.y)
             };
+
+            if(!m_tilesetView->m_sgcTileset.IsValid(tilePosition)){
+                break;
+            }
 
             m_selectionTileStart = tilePosition;
             m_selectionTileSize = { 1, 1 };

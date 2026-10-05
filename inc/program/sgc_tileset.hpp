@@ -32,10 +32,9 @@ namespace program
             bool IsValid(sgc::tile::TileId tileId) const;
             bool IsValid(sgc::tile::TilePosition2D positionOnTileset) const;
             bool IsSpecial(sgc::tile::TileId tileId) const;
-            std::wstring GetSpecialTileName(sgc::tile::TileId tileId) const;
 
-            sgc::graphics::PixelCount GetVerticalOffsetInPixels() const;
-            
-            size_t GetSpecialTileCount() const;
+            std::wstring GetSpecialTileName(sgc::tile::TileId tileId) const;
+            sgc::graphics::PixelCount GetVerticalOffsetInPixels() const;            
+            size_t GetSpecialTileCount() const;            
     };
 }

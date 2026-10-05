@@ -52,14 +52,15 @@ std::optional<sgc::tile::TileId> program::SgcTileset::GetTileId(sgc::tile::TileP
         positionOnTileset.y -= extraRows;
     }
 
-    if(positionOnTileset.x >= sizeInTiles.x || positionOnTileset.y >= (sizeInTiles.y+extraRows) || positionOnTileset.x < 0 || positionOnTileset.y < 0){
+    if(!IsValid(positionOnTileset)){
         return std::nullopt;
     }
 
     auto tileId = m_tileset->ToTileId(positionOnTileset);
 
-    if(!IsValid(tileId))
+    if(!IsValid(tileId)){
         return std::nullopt;
+    }
 
     return {tileId};
 }
@@ -81,7 +82,17 @@ bool program::SgcTileset::IsValid(sgc::tile::TilePosition2D positionOnTileset) c
     auto sizeInTiles = m_tileset->GetSizeInTiles();
     auto extraRows = static_cast<sgc::math::ival>(m_paddedTiles.size()) / sizeInTiles.x + 1;
 
-    return !(positionOnTileset.x >= sizeInTiles.x || positionOnTileset.y >= (sizeInTiles.y+extraRows) || positionOnTileset.x < 0 || positionOnTileset.y < 0);
+    if(positionOnTileset.x >= sizeInTiles.x || positionOnTileset.y >= (sizeInTiles.y+extraRows) || positionOnTileset.x < 0 || positionOnTileset.y < 0)
+    {
+        return false;
+    }
+
+    if(positionOnTileset.y == extraRows - 1 && positionOnTileset.x >= static_cast<sgc::math::ival>(m_paddedTiles.size() % sizeInTiles.x))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 std::wstring program::SgcTileset::GetSpecialTileName(sgc::tile::TileId tileId) const
