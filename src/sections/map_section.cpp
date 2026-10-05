@@ -49,12 +49,19 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
         else
         {
             auto currentLayer = layers[mapDocument->GetLayerManager()->GetActiveLayerIndex()];
+            auto &sgcTileset =  m_mapView->m_sgcTileset;
             auto tileId = currentLayer.storage->GetTileAt({x,y});
 
             statusSection->SetStatusCursorPosition({x,y});
-            if(tileId == m_mapView->m_tileset->TileIdCount()) {
+            /* if(tileId == m_mapView->m_tileset->TileIdCount()) {
                 statusSection->SetStatusTileId(L"Empty");
             } else {
+                statusSection->SetStatusTileId(tileId);
+            } */
+            if(tileId.has_value() && sgcTileset.IsSpecial(tileId.value())){
+                statusSection->SetStatusTileId(sgcTileset.GetSpecialTileName(tileId.value()));
+            }
+            else{
                 statusSection->SetStatusTileId(tileId);
             }
         }
@@ -745,8 +752,9 @@ bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::P
 bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
 {
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
-    auto tileset = m_mapView->GetTileset();
-    auto tileSize = tileset->GetTileSize();
+    // auto tileset = m_mapView->GetTileset();
+    // auto tileSize = tileset->GetTileSize();
+    auto tileSize = m_mapView->GetTileSize();
 
     if(m_editorToolManager.GetPaintMode() == editor_tools::PaintMode::Select && m_canMoveSelection && !m_isMovingSelection.IsLocked())
     {                
@@ -788,7 +796,7 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
                 
                 auto selectionImage = std::make_shared<sgc::graphics::TiledImage>(
                     std::make_shared<sgc::graphics::TiledLayer>(
-                        m_mapView->GetTileset(),
+                        m_mapView->m_sgcTileset.GetTileset(),
                         selectionStorage
                     )
                 );
@@ -855,7 +863,8 @@ bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDo
         auto selectionPos = m_mapView->GetSelectionPositionInTiles();
         auto selectionSize = m_mapView->GetSelectionSizeInTiles();
         auto layerManager = mapDocument->GetLayerManager();
-        auto layers = layerManager->GetLayers();                
+        auto layers = layerManager->GetLayers();
+        auto clearTileId = m_mapView->GetClearTileId();
         command::MultilayerTileChangesType tileChanges;
 
         for(auto &[storageIndex, storage] : m_selectionMovedStorage)
@@ -875,7 +884,7 @@ bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDo
                         storageIndex,
                         tilePos,
                         currentTileId,
-                        movedTileId.value_or(currentTileId.value_or(m_mapView->GetTileset()->TileIdCount()))
+                        movedTileId.value_or(currentTileId.value_or(clearTileId))
                     };
                 }
             }

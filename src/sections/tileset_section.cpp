@@ -19,14 +19,21 @@ void sections::TilesetSection::UpdateStatusBar(sgc::math::vec2 position, std::op
 
     if(mapDocument != nullptr && mapDocument->IsEditable())
     {
-        auto mapSection = programContext.GetSection<sections::MapSection>();
+        auto mapSection = programContext.GetSection<sections::MapSection>();        
         if(mapSection->GetPaintMode() != editor_tools::PaintMode::Select)
         {        
             auto statusSection = programContext.GetSection<sections::StatusSection>();
+            auto &sgcTileset = m_tilesetView->m_sgcTileset;
 
             statusSection->SetStatusCursorPosition(position);
-            statusSection->SetStatusTileId(tileId);
             statusSection->SetStatusSelectionSize(size);
+
+            if(tileId.has_value() && sgcTileset.IsSpecial(tileId.value())){
+                statusSection->SetStatusTileId(sgcTileset.GetSpecialTileName(tileId.value()));
+            }
+            else{
+                statusSection->SetStatusTileId(tileId);
+            }            
         }
     }
 }
@@ -79,7 +86,8 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             int x = GET_X_LPARAM(lparam);
             int y = GET_Y_LPARAM(lparam);
 
-            auto tileset = m_tilesetView->GetTileset();
+            // auto tileset = m_tilesetView->GetTileset();
+            auto tileset = m_tilesetView->m_sgcTileset.GetTileset();
             auto bounds = tileset->GetImageSize();
 
             if(x < 0 || y < 0 || x >= bounds.x || y >= bounds.y) {
@@ -121,7 +129,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             x = std::max(x, 0); // in case a negative slips in
             y = std::max(y, 0);
 
-            auto tileset = m_tilesetView->GetTileset();
+            auto tileset = m_tilesetView->m_sgcTileset.GetTileset();
             auto tileSize = tileset->GetTileSize();
             
             sgc::math::vec2 currentTile = {
@@ -136,7 +144,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
                 imageSize.y / tileSize.y
             };            
 
-            if(currentTile.x >= tileCount.x || currentTile.y >= tileCount.y)
+            /* if(currentTile.x >= tileCount.x || currentTile.y >= tileCount.y)
             {
                 UpdateStatusBar(currentTile, std::nullopt, m_selectionTileSize);
             }
@@ -144,7 +152,13 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             {
                 auto tileId = tileset->ToTileId(currentTile.x, currentTile.y);
                 UpdateStatusBar(currentTile, tileId, m_selectionTileSize);
-            }
+            } */
+
+            UpdateStatusBar(
+                currentTile,
+                m_tilesetView->m_sgcTileset.GetTileId(sgc::tile::TilePosition2D{currentTile.x, currentTile.y}),
+                m_selectionTileSize
+            );
 
             currentTile.x = std::min(currentTile.x, tileCount.x - 1);
             currentTile.y = std::min(currentTile.y, tileCount.y - 1);
@@ -252,9 +266,11 @@ std::optional<sgc::graphics::PixelSize2D> sections::TilesetSection::GetCursorSiz
 
 sgc::tile::TileId sections::TilesetSection::GetClearTileId() const
 {
-    if(m_tilesetView != nullptr) {
-        return m_tilesetView->m_tileset->TileIdCount();
+    /* if(m_tilesetView != nullptr) {
+        // return m_tilesetView->m_tileset->TileIdCount();
+        return m_tilesetView->m_sgcTileset.GetTileset().TileIdCount();
     }
 
-    return 0;
+    return 0; */
+    return m_tilesetView->GetClearTileId();
 }
