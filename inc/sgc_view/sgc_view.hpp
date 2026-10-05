@@ -2,7 +2,7 @@
 
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/graphics/tiledimage.hpp>
-#include <sgc/data/asset.hpp>   
+#include <sgc/data/asset.hpp>
 
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
@@ -11,6 +11,7 @@
 #include <filesystem>
 
 #include "defaults.hpp"
+#include "program/sgc_tileset.hpp"
 
 namespace program {
     class ProgramContext;
@@ -37,7 +38,8 @@ namespace sgc_view
         protected:
             int m_tileWidth;
             int m_tileHeight;
-            std::shared_ptr<graphics::Tileset> m_tileset = nullptr;
+            // std::shared_ptr<graphics::Tileset> m_tileset = nullptr;
+            program::SgcTileset m_sgcTileset;
             sgc::data::AssetId m_tilesetId;
             std::shared_ptr<graphics::IDrawable> m_drawableImage = nullptr;
             graphics::RenderContext m_renderContext{};
@@ -59,13 +61,16 @@ namespace sgc_view
 
             graphics::RenderContext& GetRenderContext();
 
-            std::shared_ptr<graphics::Tileset> GetTileset() const;
+            // std::shared_ptr<graphics::Tileset> GetTileset() const;
             sgc::graphics::PixelSize2D GetTileSize() const;
             SDL_Window* GetSdlWindow() const;
             
             sgc::math::uvec2 PixelsToTiles(sgc::math::uvec2 value) const;
             sgc::math::vec2 PixelsToTiles(sgc::math::vec2 value) const;
             sgc::math::fvec2 PixelsToTiles(sgc::math::fvec2 value) const;
+
+            sgc::tile::TileId GetClearTileId() const;
+            program::SgcTileset& GetSgcTileset();
 
             void Clear();
     };

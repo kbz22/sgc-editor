@@ -115,10 +115,11 @@ sgc::graphics::PixelSize2D sgc_view::SgcView::GetTileSize() const
     };
 }
 
-std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::GetTileset() const
+/* std::shared_ptr<sgc::graphics::Tileset> sgc_view::SgcView::GetTileset() const
 {
     return m_tileset;
 }
+*/
 
 SDL_Window* sgc_view::SgcView::GetSdlWindow() const
 {
@@ -132,7 +133,7 @@ sgc::graphics::RenderContext& sgc_view::SgcView::GetRenderContext()
 
 void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
 {
-    auto &programContext = program::GetProgramContext();
+    /* auto &programContext = program::GetProgramContext();
 
     std::shared_ptr<sgc::graphics::Tileset> tileset = nullptr;
 
@@ -147,9 +148,15 @@ void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
 
     if(tileset == nullptr) return;
     
-    m_tileset = tileset;
+    m_tileset = tileset; */
+
+    auto &programContext = program::GetProgramContext();
+    auto assetManager = programContext.GetManager<file::AssetManager>();
+        
+    m_sgcTileset.Set(tilesetId, *assetManager, m_renderContext);
     m_tilesetId = tilesetId;
-    auto tileSize = tileset->GetTileSize();
+    // auto tileSize = tileset->GetTileSize();
+    auto tileSize = m_sgcTileset.GetTileset()->GetTileSize();
     m_tileWidth = static_cast<int>(tileSize.x);
     m_tileHeight = static_cast<int>(tileSize.y);
 }
@@ -171,4 +178,14 @@ void sgc_view::SgcView::Refresh(program::ProgramContext& programContext)
     if(currentTilesetId != m_tilesetId) {
         SetTileset(currentTilesetId);
     }
+}
+
+sgc::tile::TileId sgc_view::SgcView::GetClearTileId() const
+{
+    return m_sgcTileset.GetTileset()->TileIdCount();
+}
+
+program::SgcTileset& sgc_view::SgcView::GetSgcTileset()
+{
+    return m_sgcTileset;
 }
