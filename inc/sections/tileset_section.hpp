@@ -27,7 +27,7 @@ namespace sections {
             sgc::math::vec2 m_selectionTileStart = { 0, 0 };
             sgc::math::vec2 m_selectionTileSize = { 0, 0 };
 
-            void UpdateStatusBar(sgc::math::vec2 position, sgc::tile::TileId tileId, sgc::math::vec2 size);
+            void UpdateStatusBar(sgc::math::vec2 position, std::optional<sgc::tile::TileId> tileId, sgc::math::vec2 size);
         
         public:
             TilesetSection(program::ProgramContext& programContext);

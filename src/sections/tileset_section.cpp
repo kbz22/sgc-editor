@@ -11,7 +11,7 @@ sections::TilesetSection::TilesetSection(program::ProgramContext& programContext
     AttachView(*m_tilesetView);    
 }
 
-void sections::TilesetSection::UpdateStatusBar(sgc::math::vec2 position, sgc::tile::TileId tileId, sgc::math::vec2 size)
+void sections::TilesetSection::UpdateStatusBar(sgc::math::vec2 position, std::optional<sgc::tile::TileId> tileId, sgc::math::vec2 size)
 {
     auto &programContext = program::GetProgramContext();
     auto fileManager = programContext.GetManager<file::FileManager>(); 
@@ -134,7 +134,17 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             sgc::math::vec2 tileCount = {
                 imageSize.x / tileSize.x,
                 imageSize.y / tileSize.y
-            };
+            };            
+
+            if(currentTile.x >= tileCount.x || currentTile.y >= tileCount.y)
+            {
+                UpdateStatusBar(currentTile, std::nullopt, m_selectionTileSize);
+            }
+            else
+            {
+                auto tileId = tileset->ToTileId(currentTile.x, currentTile.y);
+                UpdateStatusBar(currentTile, tileId, m_selectionTileSize);
+            }
 
             currentTile.x = std::min(currentTile.x, tileCount.x - 1);
             currentTile.y = std::min(currentTile.y, tileCount.y - 1);
@@ -147,11 +157,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             sgc::math::vec2 maxTile = {
                 std::max(m_selectionTileStart.x, currentTile.x),
                 std::max(m_selectionTileStart.y, currentTile.y)
-            };
-
-            auto tileId = tileset->ToTileId(currentTile.x, currentTile.y);
-
-            UpdateStatusBar(currentTile, tileId, m_selectionTileSize);
+            };            
 
             if (!m_selectionActive) {
                 break;
