@@ -3,8 +3,8 @@
 #include <unordered_set>
 #include <stack>
 
-editor_tools::FillTool::FillTool(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation) :
-    Brush{mapView, tilesetSection, allowChunkCreation}
+editor_tools::FillTool::FillTool(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation, bool &needsRedraw) :
+    Brush{mapView, tilesetSection, allowChunkCreation, needsRedraw}
 {}
 
 void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
@@ -90,6 +90,11 @@ void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::
     cursorPositionOnTileset.x /= tileSize.x;
     cursorPositionOnTileset.y /= tileSize.y;
 
+    if(!region.empty())
+    {
+        m_needsRedraw = true;
+    }
+
     for(auto pos : region)
     {
         auto newTileId = GetTileId(
@@ -106,6 +111,6 @@ void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::
             newTileId
         };
 
-        m_paintCommand->ExecuteTileChange(change);
+        m_paintCommand->ExecuteTileChange(change);        
     }
 }

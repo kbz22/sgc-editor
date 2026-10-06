@@ -1,8 +1,8 @@
 #include "editor_tools/rectangular_brush.hpp"
 #include "editor_tools/helpers.hpp"
 
-editor_tools::RectangularBrush::RectangularBrush(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation) :
-    Brush{mapView, tilesetSection, allowChunkCreation}
+editor_tools::RectangularBrush::RectangularBrush(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation, bool &needsRedraw) :
+    Brush{mapView, tilesetSection, allowChunkCreation, needsRedraw}
 {}
 
 void editor_tools::RectangularBrush::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
@@ -102,6 +102,7 @@ void editor_tools::RectangularBrush::Execute(file::MapDocument& mapDocument, sgc
     
     if(!tileChanges.empty()) {
         m_paintCommand->ExecuteTileChange(tileChanges);
+        m_needsRedraw = true;
         return;
     }
 }
