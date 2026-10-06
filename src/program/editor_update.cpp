@@ -75,23 +75,6 @@ void program::ProgramContext::UpdateBrushMode(editor_tools::PaintMode newMode)
     m_menuSection->Refresh(*this);
 }
 
-void program::ProgramContext::UpdateBrushEraseMode(editor_tools::EraserMode newMode)
-{
-    m_mapSection->SetEraseMode(newMode);
-
-    m_actionManager->ActionSetChecked(
-        action::ActionType::EraseModeClearTile,
-        newMode == editor_tools::EraserMode::ClearTile
-    );
-    m_actionManager->ActionSetChecked(
-        action::ActionType::EraseModeDeleteChunk,
-        newMode == editor_tools::EraserMode::DeleteChunk
-    );
-
-    m_toolbarSection->Refresh(*this);
-    m_menuSection->Refresh(*this);
-}
-
 void program::ProgramContext::UpdateEditorGridMode(program::EditorGridMode newMode)
 {
     m_editorGridMode = static_cast<program::EditorGridMode>(

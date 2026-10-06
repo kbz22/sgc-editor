@@ -29,7 +29,6 @@
 #include "action/change_brush_mode_action.hpp"
 #include "action/zoom_action.hpp"
 #include "action/zoom_reset_action.hpp"
-#include "action/change_brush_erase_mode_action.hpp"
 #include "action/zoom_select_action.hpp"
 #include "action/change_grid_mode_action.hpp"
 #include "action/change_selection_mode_action.hpp"
@@ -428,8 +427,6 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::ZoomResetAction>());
     m_actionManager->Register(std::make_unique<action::ZoomAction>(defaults::zoomFactor));
     m_actionManager->Register(std::make_unique<action::ZoomAction>(1.0f / defaults::zoomFactor));
-    // m_actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::ClearTile));
-    // m_actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::DeleteChunk));
     m_actionManager->Register(std::make_unique<action::ZoomSelectAction>());
     m_actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::TileGrid));
     m_actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::ChunkGrid));

@@ -83,7 +83,6 @@ namespace program {
             void UpdateEditorLayerMode(program::EditorLayerMode newMode);
             void UpdateEditorChunkMode(program::EditorChunkMode newMode);
             void UpdateBrushMode(editor_tools::PaintMode newMode);
-            void UpdateBrushEraseMode(editor_tools::EraserMode newMode);
             void UpdateEditorGridMode(program::EditorGridMode newMode);
             void UpdateEditorSelectionMode(editor_tools::SelectionMode newMode);
             void UpdateEditorSelectionTools();

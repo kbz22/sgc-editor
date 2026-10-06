@@ -127,8 +127,7 @@ add_executable(sgc-editor WIN32
     src/action/change_brush_mode_action.cpp
     src/action/widget_action.cpp
     src/action/zoom_action.cpp
-    src/action/zoom_reset_action.cpp
-    src/action/change_brush_erase_mode_action.cpp
+    src/action/zoom_reset_action.cpp    
     src/action/zoom_select_action.cpp
     src/action/change_grid_mode_action.cpp
     src/action/change_selection_mode_action.cpp
