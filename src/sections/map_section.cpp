@@ -248,13 +248,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
-                    PointerUp(PointerType::Touch, mapDocument);
+                    PointerUp(PointerType::Touch, mapDocument, programContext);
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerUp(PointerType::Pen, mapDocument);
+                    PointerUp(PointerType::Pen, mapDocument, programContext);
                     break;
                 }
                     
@@ -308,21 +308,21 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_LBUTTONUP:
         {
-            PointerUp(PointerType::LeftMouse, mapDocument);
+            PointerUp(PointerType::LeftMouse, mapDocument, programContext);
             ReleaseCaptureHelper(PointerType::LeftMouse);
             return 0;
         }
 
         case WM_MBUTTONUP:
         {
-            PointerUp(PointerType::MiddleMouse, mapDocument);
+            PointerUp(PointerType::MiddleMouse, mapDocument, programContext);
             ReleaseCaptureHelper(PointerType::MiddleMouse);
             return 0;
         }
 
         case WM_RBUTTONUP:
         {
-            PointerUp(PointerType::RightMouse, mapDocument);
+            PointerUp(PointerType::RightMouse, mapDocument, programContext);
             ReleaseCaptureHelper(PointerType::RightMouse);
             return 0;
         }
@@ -820,7 +820,7 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
     return false;
 }
 
-bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument)
+bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
 {
     auto returnFlag = false;
 
@@ -871,10 +871,11 @@ bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDo
 
     if(m_isPainting.Release(pointerType)) 
     {
-        // m_editorToolManager.PaintCommitChanges(*mapDocument);
         m_editorToolManager.Commit(*mapDocument);
         returnFlag = true;
     }
+    
+    programContext.UpdateCanUndoRedo();
 
     return returnFlag;
 }
@@ -1004,7 +1005,7 @@ void sections::MapSection::PointerDown(PointerType pointerType, file::MapDocumen
     }
 }
 
-void sections::MapSection::PointerUp(PointerType pointerType, file::MapDocument *mapDocument)
+void sections::MapSection::PointerUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
 {
     if(m_isPanning.IsLockedBy(pointerType))
     {
@@ -1013,6 +1014,6 @@ void sections::MapSection::PointerUp(PointerType pointerType, file::MapDocument 
 
     if(m_isPainting.IsLockedBy(pointerType))
     {
-        UpdateOnCursorUp(pointerType, mapDocument);
+        UpdateOnCursorUp(pointerType, mapDocument, programContext);
     }
 }

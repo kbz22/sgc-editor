@@ -292,7 +292,7 @@ void program::ProgramContext::StartDefault()
             else {
                 EnableSaving(false);
             }
-            
+
             m_packageSection->UpdateTreeViewItems(*this);
             m_packageSection->Update();
             m_toolbarSection->Refresh(*this);
@@ -374,6 +374,7 @@ void program::ProgramContext::Refresh()
         UpdateBrushMode(m_mapSection->GetPaintMode());
         UpdateEditorSelectionMode(m_mapSection->GetSelectionMode());
         UpdateEditorSelectionTools();
+        UpdateCanUndoRedo();
     }
 
     auto openFiles = m_fileManager->GetOpenFiles();
@@ -655,4 +656,18 @@ void program::ProgramContext::SetupImageLists()
     ImageList_Add(m_imageLists[ImageListType::Toolbar], hBmp, NULL);
     ImageList_Add(m_imageLists[ImageListType::ToolbarDisabled], hBmpDisabled, NULL);
     ImageList_Add(m_imageLists[ImageListType::ListView], hBmpPackageIcons, NULL);
+}
+
+void program::ProgramContext::UpdateCanUndoRedo()
+{
+    auto selectedDocument = m_fileManager->GetActiveDocument();
+    if(selectedDocument != nullptr) 
+    {
+        auto commandManager = selectedDocument->GetCommandManager();
+        m_actionManager->ActionSetEnabled({action::ActionType::Undo}, commandManager->CanUndo());
+        m_actionManager->ActionSetEnabled({action::ActionType::Redo}, commandManager->CanRedo());
+
+        m_toolbarSection->Refresh(*this);
+        m_toolbarSection->Update();
+    }
 }

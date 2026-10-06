@@ -86,6 +86,7 @@ namespace program {
             void UpdateEditorGridMode(program::EditorGridMode newMode);
             void UpdateEditorSelectionMode(editor_tools::SelectionMode newMode);
             void UpdateEditorSelectionTools();
+            void UpdateCanUndoRedo();
 
             void EnableSaving(bool enable);
             

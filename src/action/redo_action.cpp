@@ -25,9 +25,14 @@ action::RedoAction::RedoAction()
 void action::RedoAction::Execute(program::ProgramContext& context)
 {
     auto selectedDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
-    if(selectedDocument != nullptr) {
-        selectedDocument->GetCommandManager()->Redo();
-    }
+    if(selectedDocument != nullptr)
+    {
+        auto commandManager = selectedDocument->GetCommandManager();
+        commandManager->Redo();
 
-    context.GetSection<sections::MapSection>()->Update();
+        auto mapSection = context.GetSection<sections::MapSection>();
+        mapSection->Refresh(context);
+        mapSection->Update();
+        context.UpdateCanUndoRedo();
+    }
 }

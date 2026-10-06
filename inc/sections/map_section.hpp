@@ -71,14 +71,14 @@ namespace sections {
             bool UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition);
             bool UpdateDragDrawing(PointerType pointerType, program::ProgramContext& programContext);
             bool UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
-            bool UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument);
+            bool UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
 
             void PanningDown(PointerType pointerType, sgc::graphics::PixelPosition2D position);
             void PanningUp(PointerType pointerType);
             bool PanningUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D position);
 
             void PointerDown(PointerType pointerType, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext);
-            void PointerUp(PointerType pointerType, file::MapDocument *mapDocument);
+            void PointerUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
             void PointerUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
 
         protected:

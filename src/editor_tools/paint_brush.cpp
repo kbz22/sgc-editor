@@ -1,5 +1,6 @@
 #include "editor_tools/paint_brush.hpp"
 #include "editor_tools/helpers.hpp"
+#include "command/create_chunk_command.hpp"
 
 editor_tools::PaintBrush::PaintBrush(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation, bool &needsRedraw) :
     Brush{mapView, tilesetSection, allowChunkCreation, needsRedraw}
@@ -13,11 +14,16 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
         return;
     }
 
-    if(m_paintCommand == nullptr){
+    if(m_paintCommand == nullptr)
+    {
         m_paintCommand = std::make_unique<command::PaintCommand>(
             &mapDocument,
             mapDocument.GetLayerManager()->GetActiveLayerIndex()
         );
+
+        m_bulkCommand.reset();
+        m_bulkCommand = std::make_unique<command::BulkCommand>();
+
         m_cursorOrigin = std::make_unique<sgc::tile::TilePosition2D>(
             cursorPosition.x,
             cursorPosition.y
@@ -61,31 +67,12 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
                 if(!checkTile.has_value()){
                     auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
                     auto chunkCoord = chunkStorage->GetChunkCoordAt({ x, y });
+                    auto createChunkCommand = std::make_unique<command::CreateChunkCommand>(chunkCoord);
 
-                    chunkStorage->SetChunkAt(
-                        chunkCoord,
-                        m_tilesetSection.GetClearTileId()
-                    );
-
-                    for(int __x = 0; __x < sgc::data::TileChunk::Size; ++__x){
-                        for(int __y = 0; __y < sgc::data::TileChunk::Size; ++__y){
-                            auto localX = chunkCoord.x * sgc::data::TileChunk::Size + __x;
-                            auto localY = chunkCoord.y * sgc::data::TileChunk::Size + __y;
-
-                            if(tileChanges.contains({ localX, localY })) {
-                                continue;
-                            }
-
-                            command::TileChange change{
-                                { localX, localY },
-                                checkTile,
-                                m_tilesetSection.GetClearTileId()
-                            };
-                            
-                            tileChanges[{ localX, localY }] = change;
-                        }
-                    }
-                }            
+                    createChunkCommand->Execute();
+                    checkTile = currentLayer->GetTileAt({ x, y });
+                    m_bulkCommand->AddCommand(std::move(createChunkCommand));                    
+                }
 
                 command::TileChange change{
                     { x, y },
