@@ -68,6 +68,8 @@ void program::ProgramContext::UpdateBrushMode(editor_tools::PaintMode newMode)
     m_actionManager->ActionSetChecked(action::ActionType::PaintModeRectangle, newMode == editor_tools::PaintMode::Rectangle);
     m_actionManager->ActionSetChecked(action::ActionType::PaintModeFill, newMode == editor_tools::PaintMode::Fill);
     m_actionManager->ActionSetChecked(action::ActionType::PaintModeSelect, newMode == editor_tools::PaintMode::Select);
+    m_actionManager->ActionSetChecked(action::ActionType::ChunkRemoverTool, newMode == editor_tools::PaintMode::ChunkRemover);
+    m_actionManager->ActionSetChecked(action::ActionType::TilePickerTool, newMode == editor_tools::PaintMode::TilePicker);
 
     m_toolbarSection->Refresh(*this);
     m_menuSection->Refresh(*this);
