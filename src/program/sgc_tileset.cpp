@@ -141,7 +141,7 @@ sgc::tile::TileSize2D program::SgcTileset::GetSizeInTiles() const
     return {sizeInTiles.x, sizeInTiles.y + extraRows};
 }
 
-sgc::tile::TileSize2D program::SgcTileset::GetTileSize() const
+sgc::graphics::PixelSize2D program::SgcTileset::GetTileSize() const
 {
     return m_tileset->GetTileSize();
 }
