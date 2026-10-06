@@ -423,11 +423,13 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Rectangle));
     m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Fill));
     m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Select));
+    m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::ChunkRemover));
+    m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::TilePicker));
     m_actionManager->Register(std::make_unique<action::ZoomResetAction>());
     m_actionManager->Register(std::make_unique<action::ZoomAction>(defaults::zoomFactor));
     m_actionManager->Register(std::make_unique<action::ZoomAction>(1.0f / defaults::zoomFactor));
-    m_actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::ClearTile));
-    m_actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::DeleteChunk));
+    // m_actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::ClearTile));
+    // m_actionManager->Register(std::make_unique<action::ChangeBrushEraseModeAction>(editor_tools::EraserMode::DeleteChunk));
     m_actionManager->Register(std::make_unique<action::ZoomSelectAction>());
     m_actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::TileGrid));
     m_actionManager->Register(std::make_unique<action::ChangeGridModeAction>(EditorGridMode::ChunkGrid));

@@ -18,10 +18,10 @@ action::ChangeBrushEraseModeAction::ChangeBrushEraseModeAction(editor_tools::Era
             m_actionDescription.imageIndex = 30;
             m_actionDescription.toolbarOrder = 1900;
             m_actionDescription.menuOrder = 850;
-            m_actionDescription.shortcuts = {
+            /* m_actionDescription.shortcuts = {
                 { win32_program::ShortcutModifier::None, win32_program::ShortcutKey::Delete },
                 { win32_program::ShortcutModifier::None, 'D' }
-            };
+            }; */
             break;
 
         case editor_tools::EraserMode::DeleteChunk:
@@ -31,10 +31,10 @@ action::ChangeBrushEraseModeAction::ChangeBrushEraseModeAction(editor_tools::Era
             m_actionDescription.imageIndex = 31;
             m_actionDescription.toolbarOrder = 1910;
             m_actionDescription.menuOrder = 860;
-            m_actionDescription.shortcuts = {
+            /* m_actionDescription.shortcuts = {
                 { win32_program::ShortcutModifier::Ctrl, 'D' },
                 { win32_program::ShortcutModifier::Shift, win32_program::ShortcutKey::Delete }
-            };
+            }; */
             break;        
     }
 

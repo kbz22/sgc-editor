@@ -26,7 +26,8 @@ namespace editor_tools {
         Rectangle,
         Fill,
         Select,
-        TilePicker
+        ChunkRemover,
+        TilePicker,
     };
 
     enum class EraserMode

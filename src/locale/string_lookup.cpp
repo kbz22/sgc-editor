@@ -28,7 +28,7 @@ locale::StringLookup::StringLookup()
         {StringId::TooltipEditorPaintModeEraser, L"Eraser"},
         {StringId::TooltipEditorResetZoom, L"Set zoom to 100%"},
         {StringId::TooltipEditorEraseModeClearTile, L"Set a tile to empty"},
-        {StringId::TooltipEditorEraseModeDeleteChunk, L"Delete a chunk"},
+        {StringId::TooltipEditorEraseModeDeleteChunk, L"Chunk remover tool"},
         {StringId::TooltipEditorChunkLineGrid, L"Show chunk grid"},
         {StringId::TooltipEditorTileLineGrid, L"Show tile grid"},
         {StringId::TooltipEditorSelectModeSingleLayer, L"Active layer selection"},
@@ -40,7 +40,7 @@ locale::StringLookup::StringLookup()
         {StringId::TooltipEditorSelectionClear, L"Clear selection"},
         {StringId::TooltipEditorSelectionMove, L"Move selection"},
         {StringId::TooltipSettings, L"Settings"},
-        {StringId::TooltipTilePicker, L"Tile picker"},
+        {StringId::TooltipTilePicker, L"Tile picker tool"},
 
         {StringId::NameFile, L"File"},
         {StringId::NameEdit, L"Edit"},

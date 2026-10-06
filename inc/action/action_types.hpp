@@ -33,15 +33,15 @@ namespace action {
         PaintModeRectangle,
         PaintModeFill,
         PaintModeSelect,
+        TilePickerTool,
+        ChunkRemoverTool,
         
         EraseModeClearTile,
         EraseModeDeleteChunk,
 
         SelectSingleLayerMode,
         SelectAllLayersMode,
-        SelectVisibleLayersMode,
-
-        TilePickerTool,
+        SelectVisibleLayersMode,        
 
         MenuMap = 3001,
         AddLayer,
