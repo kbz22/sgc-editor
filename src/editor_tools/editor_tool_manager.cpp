@@ -8,16 +8,22 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
         mapView,
         tilesetSection,
         m_allowChunkCreation,
+        m_needsRedraw,
     },
     m_rectangularBrush{
         mapView,
         tilesetSection,
         m_allowChunkCreation,
+        m_needsRedraw,
     },
     m_fillTool{
         mapView,
         tilesetSection,
         m_allowChunkCreation,
+        m_needsRedraw,
+    },
+    m_chunkRemover{
+        m_needsRedraw
     }
 {
     SetActiveTool();
@@ -26,11 +32,6 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
 editor_tools::PaintMode editor_tools::EditorToolManager::GetPaintMode() const
 {
     return m_paintMode;
-}
-
-editor_tools::EraserMode editor_tools::EditorToolManager::GetEraserMode() const
-{
-    return m_eraserMode;
 }
 
 editor_tools::SelectionMode editor_tools::EditorToolManager::GetSelectionMode() const
@@ -46,12 +47,6 @@ bool editor_tools::EditorToolManager::NeedsRedraw() const
 void editor_tools::EditorToolManager::SetPaintMode(PaintMode paintMode)
 {
     m_paintMode = paintMode;
-    SetActiveTool();
-}
-
-void editor_tools::EditorToolManager::SetEraserMode(EraserMode eraserMode)
-{
-    m_eraserMode = eraserMode;
     SetActiveTool();
 }
 
@@ -80,7 +75,6 @@ void editor_tools::EditorToolManager::Execute(file::MapDocument& mapDocument, sg
     }
 
     m_activeTool->Execute(mapDocument, cursorPosition);
-    m_needsRedraw = true;
 }
 
 void editor_tools::EditorToolManager::Commit(file::MapDocument &mapDocument)
@@ -114,6 +108,12 @@ void editor_tools::EditorToolManager::SetActiveTool()
         case PaintMode::Fill:
         {
             m_activeTool = &m_fillTool;
+            return;
+        }
+
+        case PaintMode::ChunkRemover:
+        {
+            m_activeTool = &m_chunkRemover;
             return;
         }
 

@@ -30,13 +30,6 @@ namespace editor_tools {
         TilePicker,
     };
 
-    enum class EraserMode
-    {
-        None,
-        ClearTile,
-        DeleteChunk
-    };
-
     enum class SelectionMode
     {
         SingleLayer,
@@ -47,8 +40,7 @@ namespace editor_tools {
     class EditorToolManager
     {
         private:
-            PaintMode m_paintMode{PaintMode::Brush};
-            EraserMode m_eraserMode{EraserMode::None};
+            PaintMode m_paintMode{PaintMode::Brush};            
             SelectionMode m_selectionMode{SelectionMode::SingleLayer};            
             bool m_allowChunkCreation = false;
             sgc::tile::TileId m_clearTile = 0;
@@ -59,6 +51,7 @@ namespace editor_tools {
             PaintBrush m_paintBrush;
             RectangularBrush m_rectangularBrush;
             FillTool m_fillTool;
+            ChunkRemoverTool m_chunkRemover;
 
             void SetActiveTool();
 
@@ -67,12 +60,10 @@ namespace editor_tools {
             ~EditorToolManager() = default;
 
             PaintMode GetPaintMode() const;
-            EraserMode GetEraserMode() const;
             SelectionMode GetSelectionMode() const;
             bool NeedsRedraw() const;
 
-            void SetPaintMode(PaintMode paintMode);
-            void SetEraserMode(EraserMode eraserMode);
+            void SetPaintMode(PaintMode paintMode);            
             void SetSelectionMode(SelectionMode selectionMode);
             void SetCheckTileBeforePainting(bool check);          
 
