@@ -20,10 +20,6 @@ void command::LayerMoveCommand::Execute()
             //! no need to note the out of range error
         }
 
-        auto mapSection = programContext.GetSection<sections::MapSection>();
-        mapSection->Refresh(programContext);
-        mapSection->Update();
-
         auto layersSection = programContext.GetSection<sections::LayersSection>();
         layersSection->SetSelectedLayer(layerManager->GetActiveLayerIndex());
         layersSection->Refresh(programContext);

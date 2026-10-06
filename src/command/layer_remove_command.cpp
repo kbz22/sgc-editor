@@ -26,10 +26,6 @@ void command::LayerRemoveCommand::Execute()
 
         mapDocument->SetDirty(true);
 
-        auto mapSection = programContext.GetSection<sections::MapSection>();
-        mapSection->Refresh(programContext);
-        mapSection->Update();
-
         auto layersSection = programContext.GetSection<sections::LayersSection>();
         layersSection->Refresh(programContext);
         layersSection->Update();

@@ -25,10 +25,6 @@ void command::CreateChunkCommand::Execute()
         storage->SetChunkAt(m_chunkPosition, tilesetSection->GetClearTileId());
 
         mapDocument->SetDirty(true);
-
-        auto mapSection = programContext.GetSection<sections::MapSection>();
-        mapSection->Refresh(programContext);
-        mapSection->Update();
     }
 }
 
@@ -53,9 +49,5 @@ void command::CreateChunkCommand::Undo()
         storage->RemoveChunkAt(m_chunkPosition);
 
         mapDocument->SetDirty(true);
-
-        auto mapSection = programContext.GetSection<sections::MapSection>();
-        mapSection->Refresh(programContext);
-        mapSection->Update();
     }
 }

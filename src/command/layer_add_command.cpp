@@ -24,13 +24,8 @@ void command::LayerAddCommand::Execute()
         mapDocument->SetDirty(true);
 
         auto layersSection = programContext.GetSection<sections::LayersSection>();
-        auto mapSection = programContext.GetSection<sections::MapSection>();
-
         layersSection->Refresh(programContext);
         layersSection->Update();
-
-        mapSection->Refresh(programContext);
-        mapSection->Update();
     }
 }
 

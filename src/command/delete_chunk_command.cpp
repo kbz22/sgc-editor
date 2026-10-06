@@ -51,10 +51,6 @@ void command::DeleteChunkCommand::Undo()
             storage->SetChunkAt(m_chunkPosition, m_deletedChunk.value());
 
             mapDocument->SetDirty(true);
-
-            auto mapSection = programContext.GetSection<sections::MapSection>();
-            mapSection->Refresh(programContext);
-            mapSection->Update();
         }
     }
 }
