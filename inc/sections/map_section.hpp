@@ -100,7 +100,6 @@ namespace sections {
             
             void SetCheckTileBeforePainting(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
-            void SetEraseMode(editor_tools::EraserMode eraserMode);
             void SetSelectionMode(editor_tools::SelectionMode selectionMode);
             void SetSelectionMoveMode(bool canMoveSelection);
 
@@ -113,7 +112,6 @@ namespace sections {
             void RegisterOnZoomChangedCallback(std::function<void(float)> callback);
             
             editor_tools::PaintMode GetPaintMode() const;
-            editor_tools::EraserMode GetEraseMode() const;
             editor_tools::SelectionMode GetSelectionMode() const;            
             float GetZoom() const;
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;

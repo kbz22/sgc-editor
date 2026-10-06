@@ -430,34 +430,6 @@ void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
     m_editorToolManager.SetPaintMode(paintMode);    
 }
 
-void sections::MapSection::SetEraseMode(editor_tools::EraserMode eraserMode)
-{
-    m_editorToolManager.SetEraserMode(eraserMode);
-
-    switch(m_editorToolManager.GetEraserMode())
-    {
-        case editor_tools::EraserMode::None:
-        {
-            m_mapView->SetCursorMode(sgc_view::CursorTileMode::Default);
-            break;
-        }
-
-        case editor_tools::EraserMode::DeleteChunk:
-        {
-            m_mapView->SetCursorMode(sgc_view::CursorTileMode::RemoveChunk);
-            break;
-        }
-
-        case editor_tools::EraserMode::ClearTile:
-        {
-            m_mapView->SetCursorMode(sgc_view::CursorTileMode::RemoveTile);
-            break;
-        }
-    }
-
-    Update();
-}
-
 void sections::MapSection::SetSelectionMode(editor_tools::SelectionMode selectionMode)
 {
     m_editorToolManager.SetSelectionMode(selectionMode);
@@ -466,11 +438,6 @@ void sections::MapSection::SetSelectionMode(editor_tools::SelectionMode selectio
 editor_tools::PaintMode sections::MapSection::GetPaintMode() const
 {
     return m_editorToolManager.GetPaintMode();
-}
-
-editor_tools::EraserMode sections::MapSection::GetEraseMode() const
-{
-    return m_editorToolManager.GetEraserMode();
 }
 
 editor_tools::SelectionMode sections::MapSection::GetSelectionMode() const
