@@ -140,3 +140,29 @@ sgc::tile::TileSize2D program::SgcTileset::GetSizeInTiles() const
 
     return {sizeInTiles.x, sizeInTiles.y + extraRows};
 }
+
+sgc::tile::TileSize2D program::SgcTileset::GetTileSize() const
+{
+    return m_tileset->GetTileSize();
+}
+
+sgc::tile::TilePosition2D program::SgcTileset::GetTilePosition(sgc::tile::TileId tileId) const
+{
+    auto sizeInTiles = m_tileset->GetSizeInTiles();
+    auto extraRows = static_cast<sgc::math::ival>(m_paddedTiles.size()) / sizeInTiles.x + 1;
+    auto tileCount = m_tileset->TileIdCount();    
+    sgc::tile::TilePosition2D tilePosition;    
+
+    if(tileId >= tileCount)
+    {
+        tileId %= tileCount;
+        tilePosition = m_tileset->ToTilePosition(tileId);
+    }
+    else
+    {
+        tilePosition = m_tileset->ToTilePosition(tileId);
+        tilePosition.y += extraRows;
+    }
+
+    return tilePosition;
+}

@@ -38,5 +38,7 @@ namespace program
             sgc::graphics::PixelCount GetVerticalOffsetInPixels() const;            
             size_t GetSpecialTileCount() const;
             sgc::tile::TileSize2D GetSizeInTiles() const;
+            sgc::tile::TileSize2D GetTileSize() const;
+            sgc::tile::TilePosition2D GetTilePosition(sgc::tile::TileId tileId) const;
     };
 }
