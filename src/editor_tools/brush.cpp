@@ -14,9 +14,15 @@ void editor_tools::Brush::Commit(file::MapDocument& mapDocument)
 {
     auto commandManager = mapDocument.GetCommandManager();
 
-    if(m_paintCommand != nullptr) {
-        commandManager->Commit(std::move(m_paintCommand));
+    if(m_bulkCommand != nullptr && !m_bulkCommand->Empty() && m_paintCommand != nullptr) 
+    {
+        m_bulkCommand->AddCommand(std::move(m_paintCommand));
+        commandManager->Commit(std::move(m_bulkCommand));
     }
+    else if(m_paintCommand != nullptr) 
+    {
+        commandManager->Commit(std::move(m_paintCommand));
+    }    
 
     m_paintCommand.reset();
     m_cursorOrigin.reset();

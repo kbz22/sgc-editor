@@ -2,6 +2,7 @@
 
 #include "editor_tools/ieditor_tool.hpp"
 #include "command/paint_command.hpp"
+#include "command/bulk_command.hpp"
 #include "sgc_view/map_view.hpp"
 #include "sections/tileset_section.hpp"
 #include <memory>
@@ -13,6 +14,7 @@ namespace editor_tools
     {
         protected:
             std::unique_ptr<command::PaintCommand> m_paintCommand;
+            std::unique_ptr<command::BulkCommand> m_bulkCommand;
             std::unique_ptr<sgc::tile::TilePosition2D> m_cursorOrigin;
 
             sections::TilesetSection &m_tilesetSection;       
