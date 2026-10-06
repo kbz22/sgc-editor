@@ -15,7 +15,7 @@ namespace program {
 
 namespace sections {
 
-    enum class PointerType {        
+    enum class PointerType {
         LeftMouse,
         MiddleMouse,
         RightMouse,

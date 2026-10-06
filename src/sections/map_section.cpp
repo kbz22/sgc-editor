@@ -925,7 +925,7 @@ bool sections::PointerLock::Acquire(PointerType pointerType) {
 }
 
 bool sections::PointerLock::Release(PointerType pointerType) {
-    if(m_pointerType == pointerType) {
+    if(IsLockedBy(pointerType)) {
         m_isLocked = false;
         return true;
     }
