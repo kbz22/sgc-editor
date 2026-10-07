@@ -24,6 +24,9 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
     },
     m_chunkRemover{
         m_needsRedraw
+    },
+    m_tilePickerTool{
+        tilesetSection
     }
 {
     SetActiveTool();
@@ -114,6 +117,12 @@ void editor_tools::EditorToolManager::SetActiveTool()
         case PaintMode::ChunkRemover:
         {
             m_activeTool = &m_chunkRemover;
+            return;
+        }
+
+        case PaintMode::TilePicker:
+        {
+            m_activeTool = &m_tilePickerTool;
             return;
         }
 

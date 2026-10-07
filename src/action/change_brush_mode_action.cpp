@@ -111,7 +111,24 @@ void action::ChangeBrushModeAction::Execute([[maybe_unused]] program::ProgramCon
         mapSection->ResetSelection();
     }
 
+    switch(m_brushMode) 
+    {
+        case editor_tools::PaintMode::ChunkRemover:
+        case editor_tools::PaintMode::TilePicker:
+        {
+            auto tilesetSection = context.GetSection<sections::TilesetSection>();
+            tilesetSection->ResetCursorSize();
+            tilesetSection->Update();
+            break;
+        }
+
+        default:
+        {
+            break;
+        }
+    }
+
     context.UpdateBrushMode(m_brushMode);
     context.UpdateEditorSelectionMode(currentSelectionMode);
-    context.UpdateEditorSelectionTools();
+    context.UpdateEditorSelectionTools();    
 }

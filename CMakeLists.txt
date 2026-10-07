@@ -164,6 +164,7 @@ add_executable(sgc-editor WIN32
     src/editor_tools/fill_tool.cpp
     # src/editor_tools/paint_modes.cpp
     src/editor_tools/chunk_remover_tool.cpp
+    src/editor_tools/tile_picker_tool.cpp
 
     src/sgc_extension/marching_ants_rectangle.cpp
     src/sgc_extension/asset_builder.cpp

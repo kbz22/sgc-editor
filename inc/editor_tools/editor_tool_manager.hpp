@@ -52,6 +52,7 @@ namespace editor_tools {
             RectangularBrush m_rectangularBrush;
             FillTool m_fillTool;
             ChunkRemoverTool m_chunkRemover;
+            TilePickerTool m_tilePickerTool;
 
             void SetActiveTool();
 
