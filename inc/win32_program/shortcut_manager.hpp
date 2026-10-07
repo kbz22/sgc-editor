@@ -59,5 +59,7 @@ namespace win32_program
             static ShortcutModifier GetShortcutModifierFromKeyState();
             static std::optional<locale::StringId> GetStringIdForShortcutKey(uint32_t key);
             static std::vector<locale::StringId> GetStringIdsForShortcutModifier(ShortcutModifier modifier);
+
+            Shortcut GenerateShortcut(uint32_t key) const;
     };
 }

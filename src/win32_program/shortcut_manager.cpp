@@ -153,3 +153,19 @@ std::optional<locale::StringId> win32_program::ShortcutManager::GetStringIdForSh
         default: return std::nullopt;
     }
 }
+
+win32_program::Shortcut win32_program::ShortcutManager::GenerateShortcut(uint32_t key) const
+{
+    auto modifiers = ShortcutModifier::None;
+
+    if(GetKeyState(VK_CONTROL) & 0x8000 && key != VK_CONTROL)
+        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Ctrl));
+
+    if(GetKeyState(VK_SHIFT) & 0x8000 && key != VK_SHIFT)
+        modifiers = static_cast<ShortcutModifier>(static_cast<uint32_t>(modifiers) | static_cast<uint32_t>(ShortcutModifier::Shift));
+
+    if(GetKeyState(VK_MENU) & 0x8000 && key != VK_MENU)
+        modifiers = ShortcutModifier::Alt;
+
+    return Shortcut{ modifiers, key };
+}
