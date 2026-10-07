@@ -427,7 +427,26 @@ void sections::MapSection::SetCheckTileBeforePainting(bool check)
 
 void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
 {
-    m_editorToolManager.SetPaintMode(paintMode);    
+    m_editorToolManager.SetPaintMode(paintMode);
+
+    auto cursor = m_mapView->m_cursorTile.get();
+
+    if(cursor != nullptr) switch(paintMode)
+    {
+        case editor_tools::PaintMode::ChunkRemover:
+        {
+            cursor->SetColor({ 255, 64, 64, 0 });            
+            break;
+        }
+
+        default:
+        {
+            cursor->SetColor({ 255, 255, 255, 0 });
+            break;
+        }
+    }
+
+    Update();
 }
 
 void sections::MapSection::SetSelectionMode(editor_tools::SelectionMode selectionMode)
