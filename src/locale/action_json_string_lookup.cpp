@@ -46,6 +46,8 @@ std::unordered_map<action::ActionType, std::string> locale::ActionJsonStringLook
     {action::ActionType::ChangeActiveLayerDown, "active-layer-down"},
     {action::ActionType::ChangeActiveLayerTop, "active-layer-top"},
     {action::ActionType::ChangeActiveLayerBottom, "active-layer-bottom"},
+    {action::ActionType::TilePickerTool, "tile-picker-tool"},
+    {action::ActionType::ChunkRemoverTool, "chunk-remover-tool"},
 };
 
 std::string locale::ActionJsonStringLookup::Get(action::ActionType actionId)
