@@ -36,8 +36,8 @@ namespace sections {
             void HandleSectionResize() override;
             void Refresh(program::ProgramContext& programContext) override;
 
-            void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
-            void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
+            void ResetCursorSize();
+            void SetCursorTileId(sgc::tile::TileId tileId);
 
             std::optional<sgc::graphics::PixelPosition2D> GetCursorPositionInPixels() const;
             std::optional<sgc::graphics::PixelSize2D> GetCursorSizeInPixels() const;

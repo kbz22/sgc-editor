@@ -173,10 +173,22 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
                 static_cast<sgc::math::ival>(minTile.y * tileSize.y)
             });
 
-            m_tilesetView->SetCursorSizeInPixels({
-                static_cast<sgc::math::ival>(m_selectionTileSize.x * tileSize.x),
-                static_cast<sgc::math::ival>(m_selectionTileSize.y * tileSize.y)
-            });
+            auto toolType = programContext.GetSection<sections::MapSection>()->GetPaintMode();
+
+            if(toolType == editor_tools::PaintMode::TilePicker || toolType == editor_tools::PaintMode::Select)
+            {
+                m_tilesetView->SetCursorSizeInPixels({
+                    static_cast<sgc::math::ival>(tileSize.x),
+                    static_cast<sgc::math::ival>(tileSize.y)
+                });
+            }
+            else
+            {
+                m_tilesetView->SetCursorSizeInPixels({
+                    static_cast<sgc::math::ival>(m_selectionTileSize.x * tileSize.x),
+                    static_cast<sgc::math::ival>(m_selectionTileSize.y * tileSize.y)
+                });
+            }
 
             Update();    
             
@@ -218,17 +230,28 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-void sections::TilesetSection::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position)
+void sections::TilesetSection::ResetCursorSize()
 {
-    if(m_tilesetView != nullptr) {
-        m_tilesetView->SetCursorPositionInPixels(position);
+    if(m_tilesetView != nullptr) 
+    {
+        auto tileSize = m_tilesetView->m_sgcTileset.GetTileSize();
+        m_tilesetView->SetCursorSizeInPixels(tileSize);
     }
 }
 
-void sections::TilesetSection::SetCursorSizeInPixels(sgc::graphics::PixelSize2D size)
+void sections::TilesetSection::SetCursorTileId(sgc::tile::TileId tileId)
 {
-    if(m_tilesetView != nullptr) {
-        m_tilesetView->SetCursorSizeInPixels(size);
+    if(m_tilesetView != nullptr) 
+    {
+        auto sgcTileset = m_tilesetView->m_sgcTileset;
+        auto tilePosition = sgcTileset.GetTilePosition(tileId);
+        auto tileSize = sgcTileset.GetTileSize();
+
+        ResetCursorSize();
+        m_tilesetView->SetCursorPositionInPixels({
+            static_cast<sgc::math::ival>(tilePosition.x * tileSize.x),
+            static_cast<sgc::math::ival>(tilePosition.y * tileSize.y)
+        });
     }
 }
 
@@ -252,11 +275,5 @@ std::optional<sgc::graphics::PixelSize2D> sections::TilesetSection::GetCursorSiz
 
 sgc::tile::TileId sections::TilesetSection::GetClearTileId() const
 {
-    /* if(m_tilesetView != nullptr) {
-        // return m_tilesetView->m_tileset->TileIdCount();
-        return m_tilesetView->m_sgcTileset.GetTileset().TileIdCount();
-    }
-
-    return 0; */
     return m_tilesetView->GetClearTileId();
 }
