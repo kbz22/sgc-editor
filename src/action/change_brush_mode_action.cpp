@@ -72,7 +72,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.toolbarOrder = 1504;
             m_actionDescription.menuOrder = 804;
             m_actionDescription.shortcuts = {
-                {win32_program::ShortcutModifier::Ctrl, win32_program::ShortcutKey::None}
+                {win32_program::ShortcutModifier::None, 'P'}
             };
             break;
         }
