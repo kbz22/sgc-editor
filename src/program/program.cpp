@@ -145,6 +145,7 @@ void program::ProgramContext::StartDefault()
     m_fileManager = std::make_unique<file::FileManager>();
     m_settingsManager = std::make_unique<settings::SettingsManager>();
     m_stringLookup = std::make_unique<locale::StringLookup>();
+    m_dpiManager = std::make_unique<win32_program::DpiManager>(m_mainWindowHandle);
     
     RegisterDefaultSettings();
     m_settingsManager->LoadValuesFromPreferences();    
@@ -571,6 +572,12 @@ template<>
 settings::SettingsManager* program::ProgramContext::GetManager<settings::SettingsManager>() const
 {
     return m_settingsManager.get();
+}
+
+template<>
+win32_program::DpiManager* program::ProgramContext::GetManager<win32_program::DpiManager>() const
+{
+    return m_dpiManager.get();
 }
 
 HWND program::ProgramContext::GetMainWindowHandle() const

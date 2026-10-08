@@ -18,6 +18,7 @@
 #include "action/action_manager.hpp"
 
 #include "win32_program/shortcut_manager.hpp"
+#include "win32_program/dpi_manager.hpp"
 #include "settings/settings_manager.hpp"
 #include "file/map_document.hpp"
 #include "file/asset_manager.hpp"
@@ -54,7 +55,8 @@ namespace program {
             std::unique_ptr<action::ActionManager> m_actionManager{};
             std::unique_ptr<file::AssetManager> m_assetManager{};
             std::unique_ptr<win32_program::ShortcutManager> m_shortcutManager{};
-            std::unique_ptr<settings::SettingsManager> m_settingsManager{};            
+            std::unique_ptr<settings::SettingsManager> m_settingsManager{};
+            std::unique_ptr<win32_program::DpiManager> m_dpiManager{};
 
             static bool m_win32Set;
             static HINSTANCE m_hInstance;
