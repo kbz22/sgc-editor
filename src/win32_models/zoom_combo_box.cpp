@@ -17,7 +17,7 @@ win32_models::ZoomComboBox::ZoomComboBox(HWND parent, HINSTANCE hInstance, int i
         CBS_AUTOHSCROLL,
         0, 0, m_width, 200,
         parent,
-        reinterpret_cast<HMENU>(id),
+        reinterpret_cast<HMENU>(static_cast<UINT_PTR>(id)),
         hInstance,
         nullptr
     );
@@ -104,7 +104,7 @@ LRESULT win32_models::ZoomComboBox::HandleMessage(HWND hwnd, UINT msg, WPARAM wp
             {
                 case CBN_SELCHANGE:
                 {
-                    int selectedIndex = SendMessage(hwnd, CB_GETCURSEL, 0, 0);
+                    int selectedIndex = static_cast<int>(SendMessage(hwnd, CB_GETCURSEL, 0, 0));
                     if (selectedIndex >= 0 && selectedIndex < static_cast<int>(ZoomLevelPresetsCount))
                     {
                         SetZoomLevel(m_zoomLevelPresets[selectedIndex]);
