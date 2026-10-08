@@ -49,5 +49,5 @@ BEGIN
 
     CONTROL         "", IDC_SHORTCUT_LIST, WC_LISTVIEW,
                     WS_TABSTOP | WS_BORDER | LVS_REPORT | LVS_SINGLESEL,
-                    5, 17, PAGE_WIDTH - PAGE_OFFSET_X, PAGE_HEIGHT - 17
+                    5, 17, PAGE_WIDTH - PAGE_OFFSET_X - 1, PAGE_HEIGHT - 18
 END
