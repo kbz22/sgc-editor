@@ -28,11 +28,7 @@ namespace sections {
 
             void Refresh(program::ProgramContext& programContext) override;
 
-            HWND GetHwndToolbar() const;
-
-            constexpr static int g_ButtonPadding = 12;
-            constexpr static int g_ButtonSize = 32;
-            constexpr static int g_ButtonBitmapSize = 24;
+            HWND GetHwndToolbar() const;            
     };
 
 }

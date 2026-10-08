@@ -96,9 +96,14 @@ sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext
         (LPARAM)tbButtons.data()
     );
 
-    SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(g_ButtonPadding, 0));
-    SendMessage(hwndToolbar, TB_SETBITMAPSIZE, 0, MAKELPARAM(g_ButtonBitmapSize, g_ButtonBitmapSize));
-    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(g_ButtonSize, g_ButtonSize));
+    auto dpiManager = programContext.GetManager<win32_program::DpiManager>();
+    int buttonPadding = dpiManager->Scale(12);
+    int buttonSize = dpiManager->Scale(32);
+    int buttonBitmapSize = dpiManager->Scale(24);
+
+    SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(buttonPadding, 0));
+    SendMessage(hwndToolbar, TB_SETBITMAPSIZE, 0, MAKELPARAM(buttonBitmapSize, buttonBitmapSize));
+    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(buttonSize, buttonSize));
     SendMessage(hwndToolbar, TB_AUTOSIZE, 0, 0);
 
     SIZE sz = {};
