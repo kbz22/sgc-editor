@@ -1,85 +1,32 @@
 #include "win32_helpers/load_bitmap.hpp"
 #include "program/except.hpp"
+#include <wrl/client.h>
 
-HBITMAP win32_helpers::LoadPngWIC(std::filesystem::path const& path)
+void win32_helpers::ComInitialize()
 {
-    IWICImagingFactory* factory = nullptr;
-    IWICBitmapDecoder* decoder = nullptr;
-    IWICBitmapFrameDecode* frame = nullptr;
-    IWICFormatConverter* converter = nullptr;
-    HBITMAP hBmp = nullptr;
+    auto result = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
-    // Initialize COM (if not already done)
-    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-
-    // Create WIC factory
-    CoCreateInstance(
-        CLSID_WICImagingFactory,
-        nullptr,
-        CLSCTX_INPROC_SERVER,
-        IID_PPV_ARGS(&factory)
-    );
-
-    // Decode PNG
-    factory->CreateDecoderFromFilename(
-        path.c_str(),
-        nullptr,
-        GENERIC_READ,
-        WICDecodeMetadataCacheOnLoad,
-        &decoder
-    );
-
-    decoder->GetFrame(0, &frame);
-
-    // Convert to 32bpp premultiplied BGRA (perfect for Win32)
-    factory->CreateFormatConverter(&converter);
-    converter->Initialize(
-        frame,
-        GUID_WICPixelFormat32bppPBGRA,
-        WICBitmapDitherTypeNone,
-        nullptr,
-        0.0,
-        WICBitmapPaletteTypeCustom
-    );
-
-    // Create HBITMAP
-    UINT width, height;
-    frame->GetSize(&width, &height);
-
-    BITMAPINFO bmi = {};
-    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth = width;
-    bmi.bmiHeader.biHeight = -((int)height); // top-down bitmap
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = 32;
-    bmi.bmiHeader.biCompression = BI_RGB;
-
-    void* bits = nullptr;
-    HDC hdc = GetDC(nullptr);
-    hBmp = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
-    ReleaseDC(nullptr, hdc);
-
-    converter->CopyPixels(nullptr, width * 4, width * height * 4, (BYTE*)bits);
-
-    // Cleanup
-    converter->Release();
-    frame->Release();
-    decoder->Release();
-    factory->Release();
-
-    return hBmp;
+    if(FAILED(result))
+    {
+        throw std::runtime_error("COM initialization for WIC failed.");
+    }
 }
 
-HBITMAP win32_helpers::LoadPngWIC(std::span<const std::byte> data)
+void win32_helpers::ComUninitialize()
 {
-    IWICImagingFactory* factory = nullptr;
-    IWICStream* stream = nullptr;
-    IWICBitmapDecoder* decoder = nullptr;
-    IWICBitmapFrameDecode* frame = nullptr;
-    IWICFormatConverter* converter = nullptr;
-    HBITMAP hBmp = nullptr;
+    CoUninitialize();
+}
 
-    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+HBITMAP win32_helpers::LoadPngWIC(std::span<const std::byte> data, double scale)
+{
+    using Microsoft::WRL::ComPtr;
+
+    ComPtr<IWICImagingFactory> factory;
+    ComPtr<IWICStream> stream;
+    ComPtr<IWICBitmapDecoder> decoder;
+    ComPtr<IWICBitmapFrameDecode> frame;
+    ComPtr<IWICFormatConverter> converter;
+    HBITMAP hBmp;    
 
     CoCreateInstance(
         CLSID_WICImagingFactory,
@@ -98,7 +45,7 @@ HBITMAP win32_helpers::LoadPngWIC(std::span<const std::byte> data)
     );
 
     factory->CreateDecoderFromStream(
-        stream,
+        stream.Get(),
         nullptr,
         WICDecodeMetadataCacheOnLoad,
         &decoder
@@ -106,10 +53,27 @@ HBITMAP win32_helpers::LoadPngWIC(std::span<const std::byte> data)
 
     decoder->GetFrame(0, &frame);
 
+    UINT width, height;    
+    frame->GetSize(&width, &height);  
+
+    ComPtr<IWICBitmapSource> source = frame;
+    ComPtr<IWICBitmapScaler> scaler;
+
+    width *= scale;
+    height *= scale;
+
+    factory->CreateBitmapScaler(&scaler);
+    scaler->Initialize(
+        source.Get(),
+        width,
+        height,
+        WICBitmapInterpolationModeHighQualityCubic
+    );
+
     factory->CreateFormatConverter(&converter);
 
     converter->Initialize(
-        frame,
+        frame.Get(),
         GUID_WICPixelFormat32bppPBGRA,
         WICBitmapDitherTypeNone,
         nullptr,
@@ -117,8 +81,7 @@ HBITMAP win32_helpers::LoadPngWIC(std::span<const std::byte> data)
         WICBitmapPaletteTypeCustom
     );
 
-    UINT width, height;
-    frame->GetSize(&width, &height);
+      
 
     BITMAPINFO bmi{};
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -148,16 +111,10 @@ HBITMAP win32_helpers::LoadPngWIC(std::span<const std::byte> data)
         (BYTE*)bits
     );
 
-    if (converter) converter->Release();
-    if (frame) frame->Release();
-    if (decoder) decoder->Release();
-    if (stream) stream->Release();
-    if (factory) factory->Release();
-
     return hBmp;
 }
 
-HBITMAP win32_helpers::LoadBitmapFromResource(HINSTANCE hInstance, int resourceId)
+HBITMAP win32_helpers::LoadBitmapFromResource(HINSTANCE hInstance, int resourceId, double scale)
 {
     HRSRC resource = FindResource(
         hInstance,
@@ -189,7 +146,7 @@ HBITMAP win32_helpers::LoadBitmapFromResource(HINSTANCE hInstance, int resourceI
         return nullptr;
     }
 
-    DWORD size = SizeofResource(
+    DWORD dataSize = SizeofResource(
         hInstance,
         resource
     );
@@ -197,7 +154,8 @@ HBITMAP win32_helpers::LoadBitmapFromResource(HINSTANCE hInstance, int resourceI
     return LoadPngWIC(
         std::span<const std::byte>(
             data,
-            size
-        )
+            dataSize
+        ),
+        scale
     );
 }
