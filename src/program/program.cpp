@@ -72,6 +72,7 @@ program::ProgramContext::ProgramContext()
         m_mainWindowHandle
     );
     m_stringLookup = std::make_unique<locale::StringLookup>();
+    m_dpiManager = std::make_unique<win32_program::DpiManager>(m_mainWindowHandle);
 
     SetupImageLists();
     RegisterActions();
@@ -144,8 +145,8 @@ void program::ProgramContext::StartDefault()
     m_assetManager = std::make_unique<file::AssetManager>();
     m_fileManager = std::make_unique<file::FileManager>();
     m_settingsManager = std::make_unique<settings::SettingsManager>();
-    m_stringLookup = std::make_unique<locale::StringLookup>();
-    m_dpiManager = std::make_unique<win32_program::DpiManager>(m_mainWindowHandle);
+    // m_stringLookup = std::make_unique<locale::StringLookup>();
+    // m_dpiManager = std::make_unique<win32_program::DpiManager>(m_mainWindowHandle);
     
     RegisterDefaultSettings();
     m_settingsManager->LoadValuesFromPreferences();    
