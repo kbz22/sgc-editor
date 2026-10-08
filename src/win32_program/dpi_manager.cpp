@@ -15,6 +15,11 @@ UINT win32_program::DpiManager::GetDpi() const
     return m_dpi;
 }
 
+double win32_program::DpiManager::GetScale() const
+{
+    return static_cast<double>(m_dpi) / static_cast<double>(USER_DEFAULT_SCREEN_DPI);
+}
+
 int win32_program::DpiManager::Scale(int value) const
 {
     return MulDiv(value, m_dpi, USER_DEFAULT_SCREEN_DPI); 

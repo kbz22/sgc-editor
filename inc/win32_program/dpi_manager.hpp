@@ -15,6 +15,7 @@ namespace win32_program
             void SetDpi(UINT dpi);
 
             UINT GetDpi() const;
+            double GetScale() const;
 
             int Scale(int value) const;
     };
