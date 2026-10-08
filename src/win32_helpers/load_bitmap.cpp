@@ -59,29 +59,28 @@ HBITMAP win32_helpers::LoadPngWIC(std::span<const std::byte> data, double scale)
     ComPtr<IWICBitmapSource> source = frame;
     ComPtr<IWICBitmapScaler> scaler;
 
-    width *= scale;
-    height *= scale;
+    width = static_cast<UINT>(static_cast<double>(width)*scale);
+    height = static_cast<UINT>(static_cast<double>(height)*scale);
 
+    //! the icons look awful scaled tbqhwyf maybe it would be best to pad them with empty space?
     factory->CreateBitmapScaler(&scaler);
     scaler->Initialize(
         source.Get(),
         width,
-        height,
-        WICBitmapInterpolationModeHighQualityCubic
+        height,        
+        WICBitmapInterpolationModeCubic
     );
 
     factory->CreateFormatConverter(&converter);
 
     converter->Initialize(
-        frame.Get(),
+        scaler.Get(),
         GUID_WICPixelFormat32bppPBGRA,
         WICBitmapDitherTypeNone,
         nullptr,
         0.0,
         WICBitmapPaletteTypeCustom
-    );
-
-      
+    );      
 
     BITMAPINFO bmi{};
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
