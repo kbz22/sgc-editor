@@ -93,7 +93,9 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
         reinterpret_cast<LPARAM>(tbButtons.data())
     );
     
-    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(34, 0));
+    auto dpiManager = programContext.GetManager<win32_program::DpiManager>();
+
+    SendMessage(hwndToolbar, TB_SETBUTTONSIZE, 0, MAKELPARAM(dpiManager->Scale(34), 0));
     SendMessage(hwndToolbar, TB_SETPADDING, 0, MAKELPARAM(3, 0));
     SendMessage(hwndToolbar, TB_AUTOSIZE, 0, 0);
 
