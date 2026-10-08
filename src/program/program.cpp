@@ -118,7 +118,9 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::SelectionCut,
     action::ActionType::SelectionMove,
     action::ActionType::ExportAsImage,
-    action::ActionType::ExportFile    
+    action::ActionType::ExportFile,
+    action::ActionType::TilePickerTool,
+    action::ActionType::ChunkRemoverTool, 
 };
 
 void program::ProgramContext::RegisterDefaultSettings()
