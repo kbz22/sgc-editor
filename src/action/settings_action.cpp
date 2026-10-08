@@ -36,6 +36,7 @@ void action::SettingsAction::Execute(program::ProgramContext& context)
 
 INT_PTR CALLBACK GeneralSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
 INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
@@ -77,6 +78,15 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
                 )
             );
             settingsManager->SetCategoryWindow(
+                SettingCategory::MouseAndTouch,
+                CreateDialog(
+                    context.GetHInstance(),
+                    MAKEINTRESOURCE(IDD_SETTINGS_MOUSEANDTOUCH),
+                    hDlg,
+                    MouseAndTouchSettingsDialogProc
+                )
+            );
+            settingsManager->SetCategoryWindow(
                 SettingCategory::Shortcuts, 
                 CreateDialog(
                     context.GetHInstance(),
@@ -104,7 +114,8 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
             };
 
             addItem(stringLookup->Get(locale::StringId::SettingsNameGeneral).value_or(L"1"), SettingCategory::General);
-            addItem(stringLookup->Get(locale::StringId::SettingsNameShortcuts).value_or(L"2"), SettingCategory::Shortcuts);
+            addItem(stringLookup->Get(locale::StringId::SettingsNameMouseAndTouch).value_or(L"2"), SettingCategory::MouseAndTouch);
+            addItem(stringLookup->Get(locale::StringId::SettingsNameShortcuts).value_or(L"3"), SettingCategory::Shortcuts);
 
             return TRUE;
         }

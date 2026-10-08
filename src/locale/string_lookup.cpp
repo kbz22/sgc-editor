@@ -105,10 +105,7 @@ locale::StringLookup::StringLookup()
         {StringId::NameMapFile, L"Map file"},
         {StringId::NameImageFile, L"Image file"},
         {StringId::NameAllFiles, L"All files"},
-        {StringId::NamePackageFile, L"Package file"},
-
-        {StringId::SettingsNameGeneral, L"General"},
-        {StringId::SettingsNameShortcuts, L"Shortcuts"},
+        {StringId::NamePackageFile, L"Package file"},        
 
         {StringId::ShortcutNameCtrl, L"Ctrl"},
         {StringId::ShortcutNameAlt, L"Alt"},
@@ -129,6 +126,10 @@ locale::StringLookup::StringLookup()
         {StringId::ShortcutNameNewPackage, L"New package"},
         {StringId::ShortcutNameExportAsImage, L"Export as image"},
 
+        {StringId::SettingsNameGeneral, L"General"},
+        {StringId::SettingsNameShortcuts, L"Shortcuts"},
+        {StringId::SettingsNameMouseAndTouch, L"Mouse and touch"},
+
         {StringId::SettingsGeneralStartupName, L"Startup"},
         {StringId::SettingsGeneralAutoRestoreOpenFiles, L"Automatically restore last session"},
         {StringId::SettingsGeneralFileName, L"File"},
@@ -137,6 +138,7 @@ locale::StringLookup::StringLookup()
         {StringId::SettingsShortcutFilter, L"Filter: "},
         {StringId::SettingsShortcutActionName, L"Action"},
         {StringId::SettingsShortcutShortcutName, L"Shortcut"},
+        {StringId::SettingsMouseAndTouchExplanation, L"You can assign painting or panning behaviour to different pointer sources."},
 
         {StringId::DialogOk, L"OK"},
         {StringId::DialogCreate, L"Create"},

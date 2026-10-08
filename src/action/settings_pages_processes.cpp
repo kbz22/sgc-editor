@@ -391,3 +391,38 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
     return FALSE;
 }
+
+INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
+{
+    auto &programContext = program::GetProgramContext();
+    auto settingManager = programContext.GetManager<settings::SettingsManager>();
+
+    switch (msg)
+    {
+        case WM_INITDIALOG:
+        {            
+            auto stringLookup = programContext.GetStringLookup();            
+            auto descriptionString = stringLookup.Get(locale::StringId::SettingsMouseAndTouchExplanation).value_or(L"MOUSE AND TOUCH EXPLAIN");
+
+            SetDlgItemTextW(hDlg, IDC_MOUSEANDTOUCH_DESC, descriptionString.c_str());
+
+            return TRUE;
+        }
+
+        case WM_COMMAND:
+        {
+            auto commandId = LOWORD(wParam);
+
+            switch(commandId)
+            {
+                default:
+                {
+                    break;
+                }
+            }
+
+            break;
+        }
+    }
+    return FALSE;
+}

@@ -51,3 +51,15 @@ BEGIN
                     WS_TABSTOP | WS_BORDER | LVS_REPORT | LVS_SINGLESEL,
                     5, 17, PAGE_WIDTH - PAGE_OFFSET_X - 1, PAGE_HEIGHT - 18
 END
+
+IDD_SETTINGS_MOUSEANDTOUCH DIALOGEX SETTINGS_LIST_WIDTH + PAGE_OFFSET_X, PAGE_OFFSET_Y, PAGE_WIDTH, PAGE_HEIGHT
+STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
+FONT 9, "Segoe UI"
+
+BEGIN
+    LTEXT           "Mouse and touch", IDC_MOUSEANDTOUCH_DESC,
+                    5,
+                    3,
+                    PAGE_WIDTH,
+                    12
+END

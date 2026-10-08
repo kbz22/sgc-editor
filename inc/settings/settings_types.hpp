@@ -5,6 +5,7 @@ namespace settings
     enum class SettingCategory
     {
         General = 0,
+        MouseAndTouch,
         Shortcuts,
 
         Count

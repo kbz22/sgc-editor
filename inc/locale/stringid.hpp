@@ -110,10 +110,7 @@ namespace locale
         NamePackageFile,
         NameMapFile,
         NameAllFiles,
-        NameImageFile,
-
-        SettingsNameGeneral,
-        SettingsNameShortcuts,
+        NameImageFile,        
 
         ShortcutNameCtrl,
         ShortcutNameAlt,
@@ -134,6 +131,10 @@ namespace locale
         ShortcutNameNewPackage,
         ShortcutNameExportAsImage,
 
+        SettingsNameGeneral,
+        SettingsNameShortcuts,
+        SettingsNameMouseAndTouch,
+
         SettingsGeneralStartupName,
         SettingsGeneralAutoRestoreOpenFiles,
         SettingsGeneralFileName,
@@ -142,6 +143,7 @@ namespace locale
         SettingsShortcutFilter,
         SettingsShortcutActionName,
         SettingsShortcutShortcutName,
+        SettingsMouseAndTouchExplanation,
 
         DialogCancel,
         DialogOk,

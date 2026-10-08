@@ -1,8 +1,9 @@
 #pragma once
 
-#define IDD_SETTINGS            24000
-#define IDD_SETTINGS_GENERAL    24001
-#define IDD_SETTINGS_SHORTCUTS  24002
+#define IDD_SETTINGS                24000
+#define IDD_SETTINGS_GENERAL        24001
+#define IDD_SETTINGS_SHORTCUTS      24002
+#define IDD_SETTINGS_MOUSEANDTOUCH  24003
 
 #define IDC_SETTINGS_LIST       24101
 #define IDC_APPLY_BUTTON        24102
@@ -24,6 +25,9 @@
 #define IDC_SETTINGS_DEF_OPEN_FILE_TEXT 24206
 
 // shorcuts
-#define IDC_SHORTCUT_FILTER         24304
-#define IDC_SHORTCUT_LIST           24305
-#define IDC_SHORTCUT_FILTER_NAME    24306
+#define IDC_SHORTCUT_FILTER         24301
+#define IDC_SHORTCUT_LIST           24302
+#define IDC_SHORTCUT_FILTER_NAME    24303
+
+// mouse and touch
+#define IDC_MOUSEANDTOUCH_DESC      24401
