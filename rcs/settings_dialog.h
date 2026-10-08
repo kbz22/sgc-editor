@@ -8,9 +8,13 @@
 #define IDC_APPLY_BUTTON        24102
 #define IDC_SETTING_PAGE        24103
 
-#define PAGE_WIDTH 225
-#define PAGE_HEIGHT 195
+#define PAGE_WIDTH 265
+#define PAGE_HEIGHT 205
 #define SETTINGS_LIST_WIDTH 80
+#define BUTTONS_HEIGHT 27
+#define PAGE_OFFSET_X 10
+#define PAGE_OFFSET_Y 5
+#define BUTTONS_OFFSET_Y 4
 
 // general
 #define IDC_SETTINGS_RESTORE_SESSION    24201

@@ -1,7 +1,7 @@
 #include "settings_dialog.h"
 #include <windows.h>
 
-IDD_SETTINGS DIALOGEX 0, 0, 320, 222
+IDD_SETTINGS DIALOGEX 0, 0, PAGE_WIDTH + SETTINGS_LIST_WIDTH + PAGE_OFFSET_X, PAGE_HEIGHT + BUTTONS_HEIGHT
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Settings"
 FONT 9, "Segoe UI"
@@ -12,7 +12,19 @@ BEGIN
                 TVS_SHOWSELALWAYS,
                 5, 5, SETTINGS_LIST_WIDTH, PAGE_HEIGHT
 
-    DEFPUSHBUTTON   "OK", IDOK, 150, 203, 50, 14
-    PUSHBUTTON      "Cancel", IDCANCEL, 205, 203, 50, 14
-    PUSHBUTTON      "Apply", IDC_APPLY_BUTTON, 260, 203, 50, 14
+    DEFPUSHBUTTON   "OK", IDOK,
+                    PAGE_WIDTH + SETTINGS_LIST_WIDTH + PAGE_OFFSET_X - 165,
+                    PAGE_HEIGHT + BUTTONS_OFFSET_Y + PAGE_OFFSET_Y,
+                    50,
+                    14
+    PUSHBUTTON      "Cancel", IDCANCEL,
+                    PAGE_WIDTH + SETTINGS_LIST_WIDTH + PAGE_OFFSET_X - 110,
+                    PAGE_HEIGHT + BUTTONS_OFFSET_Y + PAGE_OFFSET_Y,
+                    50,
+                    14
+    PUSHBUTTON      "Apply", IDC_APPLY_BUTTON,
+                    PAGE_WIDTH + SETTINGS_LIST_WIDTH + PAGE_OFFSET_X - 55,
+                    PAGE_HEIGHT + BUTTONS_OFFSET_Y + PAGE_OFFSET_Y,
+                    50,
+                    14
 END

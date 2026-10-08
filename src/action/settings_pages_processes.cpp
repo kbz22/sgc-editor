@@ -260,7 +260,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             SetDlgItemTextW(hDlg, IDC_SHORTCUT_FILTER_NAME, filterLabel.c_str());
 
             auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
-            constexpr int c_actionColumnWidth = 130;
+            constexpr int c_actionColumnWidth = PAGE_WIDTH / 3;
             constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;           
             
             SetWindowSubclass(
