@@ -259,9 +259,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
             SetDlgItemTextW(hDlg, IDC_SHORTCUT_FILTER_NAME, filterLabel.c_str());
 
-            auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);
-            constexpr int c_actionColumnWidth = PAGE_WIDTH / 3;
-            constexpr int c_shortcutColumnWidth = 2 * c_actionColumnWidth;           
+            auto listView = GetDlgItem(hDlg, IDC_SHORTCUT_LIST);            
             
             SetWindowSubclass(
                 listView,
@@ -279,17 +277,24 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
             
             auto actionName = stringLookup.Get(locale::StringId::SettingsShortcutActionName).value_or(L"ACTION NAME");
             auto shortcutName = stringLookup.Get(locale::StringId::SettingsShortcutShortcutName).value_or(L"SHROTCUT NAME");
+
+            RECT rect;
+            GetWindowRect(listView, &rect);
+
+            int controlWidth = rect.right - rect.left;
+            int actionColumnWidth = controlWidth / 3;
+            int shortcutColumnWidth = 2 * actionColumnWidth + 1;
             
             LVCOLUMN column{};
 
             column.mask = LVCF_TEXT | LVCF_WIDTH;
 
             column.pszText = const_cast<LPWSTR>(actionName.c_str());
-            column.cx = c_actionColumnWidth;
+            column.cx = actionColumnWidth;
             ListView_InsertColumn(listView, 0, &column);
 
             column.pszText = const_cast<LPWSTR>(shortcutName.c_str());
-            column.cx = c_shortcutColumnWidth;
+            column.cx = shortcutColumnWidth;
             ListView_InsertColumn(listView, 1, &column);
 
             refreshShortcutList();
