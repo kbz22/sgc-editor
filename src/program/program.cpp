@@ -644,24 +644,32 @@ void program::ProgramContext::SetEditorGridMode(program::EditorGridMode newMode)
 
 void program::ProgramContext::SetupImageLists()
 {
-    m_imageLists[ImageListType::Toolbar] = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
-    m_imageLists[ImageListType::ToolbarDisabled] = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
+    auto toolbarIconsSize = m_dpiManager->Scale(24);
+    auto listViewIconSize = m_dpiManager->Scale(16);
+    m_imageLists[ImageListType::Toolbar] = ImageList_Create(toolbarIconsSize, toolbarIconsSize, ILC_COLOR32, 10, 0);
+    m_imageLists[ImageListType::ToolbarDisabled] = ImageList_Create(toolbarIconsSize, toolbarIconsSize, ILC_COLOR32, 10, 0);
     m_imageLists[ImageListType::ListView] = ImageList_Create(16, 16, ILC_COLOR32, 10, 0);
+
+    win32_helpers::ComInitialize();
 
     auto hInstance = m_hInstance;
     auto hBmp = win32_helpers::LoadBitmapFromResource(
         hInstance,
-        IDB_TOOLBARICONS
+        IDB_TOOLBARICONS,
+        m_dpiManager->GetScale()
     );
     auto hBmpDisabled = win32_helpers::LoadBitmapFromResource(
         hInstance,
-        IDB_TOOLBARICONS_DISABLED
+        IDB_TOOLBARICONS_DISABLED,
+        m_dpiManager->GetScale()
     );
     auto hBmpPackageIcons = win32_helpers::LoadBitmapFromResource(
-        hInstance,
-        // IDB_PACKAGEVIEWICONS
-        IDB_LISTVIEWICONS
+        hInstance,        
+        IDB_LISTVIEWICONS,
+        m_dpiManager->GetScale()
     );
+
+    win32_helpers::ComUninitialize();
 
     ImageList_Add(m_imageLists[ImageListType::Toolbar], hBmp, NULL);
     ImageList_Add(m_imageLists[ImageListType::ToolbarDisabled], hBmpDisabled, NULL);
