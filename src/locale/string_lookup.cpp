@@ -134,11 +134,22 @@ locale::StringLookup::StringLookup()
         {StringId::SettingsGeneralAutoRestoreOpenFiles, L"Automatically restore last session"},
         {StringId::SettingsGeneralFileName, L"File"},
         {StringId::SettingsGeneralDefaultOpenFileType, LR"(Default "Open File" type: )"},
+
         {StringId::SettingsShortcutSetNew, L"Press and hold the new shortcut"},
         {StringId::SettingsShortcutFilter, L"Filter: "},
         {StringId::SettingsShortcutActionName, L"Action"},
         {StringId::SettingsShortcutShortcutName, L"Shortcut"},
+
         {StringId::SettingsMouseAndTouchExplanation, L"You can assign painting or panning behaviour to different pointer sources."},
+        {StringId::SettingsMouseAndTouchPointerName, L"Pointer"},
+        {StringId::SettingsMouseAndTouchBehaviourName, L"Behaviour"},
+        {StringId::SettingsMouseAndTouchPointerMouseLeft, L"Left mouse button"},
+        {StringId::SettingsMouseAndTouchPointerMouseMiddle, L"Middle mouse button"},
+        {StringId::SettingsMouseAndTouchPointerMouseRight, L"Right mouse button"},
+        {StringId::SettingsMouseAndTouchPointerPen, L"Pen"},
+        {StringId::SettingsMouseAndTouchPointerTouch, L"Touch"},
+        {StringId::SettingsMouseAndTouchBehaviourPainting, L"Painting tiles"},
+        {StringId::SettingsMouseAndTouchBehaviourPanning, L"Panning the map"},
 
         {StringId::DialogOk, L"OK"},
         {StringId::DialogCreate, L"Create"},

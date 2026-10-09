@@ -5,7 +5,8 @@ locale::SettingsJsonStringLookup::SettingsJsonStringLookup()
     m_settingsStrings = std::unordered_map<settings::Key, std::string> {
         {settings::Key::Default, m_valueMissing},
         {settings::Key::AutoRestoreFilesSetting, "auto-restore-files"},
-        {settings::Key::DefaultOpenFiletypeSetting, "default-open-filetype"}
+        {settings::Key::DefaultOpenFiletypeSetting, "default-open-filetype"},
+        {settings::Key::PointerBehaviourSetting, "pointer-behaviour"}
     };
 }
 
