@@ -283,7 +283,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
             int controlWidth = rect.right - rect.left;
             int actionColumnWidth = controlWidth / 3;
-            int shortcutColumnWidth = 2 * actionColumnWidth + 1;
+            int shortcutColumnWidth = 2 * actionColumnWidth - 20; // adjusted for the vertical scrollbar
             
             LVCOLUMN column{};
 
@@ -394,17 +394,114 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
 INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
+    using namespace sections;
     auto &programContext = program::GetProgramContext();
-    auto settingManager = programContext.GetManager<settings::SettingsManager>();
+    auto setting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::PointerBehaviourSetting>();
+
+    auto refreshPointerList = [&programContext, &setting, hDlg]()
+    {
+        using namespace locale;
+
+        HWND listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_LISTVIEW);
+        ListView_DeleteAllItems(listView);
+
+        auto &stringLookup = programContext.GetStringLookup();
+
+        std::unordered_map<PointerType, std::wstring> pointerTypeNames{
+            {PointerType::LeftMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseLeft).value_or(L"LM NAME")},
+            {PointerType::MiddleMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseMiddle).value_or(L"MM NAME")},
+            {PointerType::RightMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseRight).value_or(L"RM NAME")},
+            {PointerType::Pen, stringLookup.Get(StringId::SettingsMouseAndTouchPointerPen).value_or(L"P NAME")},
+            {PointerType::Touch, stringLookup.Get(StringId::SettingsMouseAndTouchPointerTouch).value_or(L"T NAME")},
+        };
+
+        std::unordered_map<PointerBehaviour, std::wstring> pointerBehaviourNames{
+            {PointerBehaviour::Panning, stringLookup.Get(StringId::SettingsMouseAndTouchBehaviourPanning).value_or(L"BEHAVIOUR PANNING")},
+            {PointerBehaviour::Painting, stringLookup.Get(StringId::SettingsMouseAndTouchBehaviourPainting).value_or(L"BEHAVIOUR PAINTING")},
+            {PointerBehaviour::None, L""},
+        };
+
+        auto insertItem = [&listView, &pointerTypeNames, &pointerBehaviourNames](PointerType type, PointerBehaviour behaviour)
+        {
+            auto pointerName = pointerTypeNames[type];
+            auto behaviourName = pointerBehaviourNames[behaviour];
+            LVITEM item{};
+            item.mask = LVIF_TEXT | LVIF_PARAM;
+            item.lParam = static_cast<LPARAM>(type);
+            item.pszText = const_cast<LPWSTR>(pointerName.c_str());
+            item.iItem = static_cast<int>(type);
+            ListView_InsertItem(listView, &item);
+
+            ListView_SetItemText(
+                listView,
+                item.iItem,
+                1,
+                const_cast<LPWSTR>(behaviourName.c_str())
+            );
+        };
+
+        auto currentBehaviour = setting->GetBehaviours();
+        for(int i = static_cast<int>(PointerType::LeftMouse); i < static_cast<int>(PointerType::Count); i++)
+        {
+            auto type = static_cast<PointerType>(i);
+            auto behaviour = PointerBehaviour::None;
+
+            if(currentBehaviour.contains(type)){
+                behaviour = currentBehaviour[type];
+            }
+
+            insertItem(type, behaviour);
+        }
+    };
 
     switch (msg)
     {
         case WM_INITDIALOG:
-        {            
-            auto stringLookup = programContext.GetStringLookup();            
+        {
+            auto &stringLookup = programContext.GetStringLookup();            
             auto descriptionString = stringLookup.Get(locale::StringId::SettingsMouseAndTouchExplanation).value_or(L"MOUSE AND TOUCH EXPLAIN");
 
             SetDlgItemTextW(hDlg, IDC_MOUSEANDTOUCH_DESC, descriptionString.c_str());
+
+            auto listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_LISTVIEW);            
+            
+            SetWindowSubclass(
+                listView,
+                ShortcutsSettingsListViewProc,
+                1,
+                reinterpret_cast<DWORD_PTR>(&programContext)
+            );
+
+            ListView_SetExtendedListViewStyle(
+                listView,
+                LVS_EX_FULLROWSELECT |
+                LVS_EX_DOUBLEBUFFER |
+                LVS_EX_HEADERDRAGDROP
+            );
+            
+            auto pointerName = stringLookup.Get(locale::StringId::SettingsMouseAndTouchPointerName).value_or(L"POINTER NAME");
+            auto behaviourName = stringLookup.Get(locale::StringId::SettingsMouseAndTouchBehaviourName).value_or(L"BEHAVIOUR NAME");
+
+            RECT rect;
+            GetWindowRect(listView, &rect);
+
+            int controlWidth = rect.right - rect.left;
+            int pointerColumnWidth = controlWidth / 2;
+            int behaviourColumnWidth = controlWidth / 2 - 5;
+            
+            LVCOLUMN column{};
+
+            column.mask = LVCF_TEXT | LVCF_WIDTH;
+
+            column.pszText = const_cast<LPWSTR>(pointerName.c_str());
+            column.cx = pointerColumnWidth;
+            ListView_InsertColumn(listView, 0, &column);
+
+            column.pszText = const_cast<LPWSTR>(behaviourName.c_str());
+            column.cx = behaviourColumnWidth;
+            ListView_InsertColumn(listView, 1, &column);
+
+            refreshPointerList();
 
             return TRUE;
         }
@@ -420,9 +517,9 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
                     break;
                 }
             }
-
             break;
         }
     }
+
     return FALSE;
 }

@@ -62,4 +62,8 @@ BEGIN
                     3,
                     PAGE_WIDTH,
                     12
+
+    CONTROL         "", IDC_MOUSEANDTOUCH_LISTVIEW, WC_LISTVIEW,
+                    WS_TABSTOP | WS_BORDER | LVS_REPORT | LVS_SINGLESEL,
+                    5, 17, PAGE_WIDTH - PAGE_OFFSET_X - 1, 70
 END

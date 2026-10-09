@@ -31,3 +31,4 @@
 
 // mouse and touch
 #define IDC_MOUSEANDTOUCH_DESC      24401
+#define IDC_MOUSEANDTOUCH_LISTVIEW  24402
