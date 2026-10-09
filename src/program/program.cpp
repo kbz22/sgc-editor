@@ -138,6 +138,10 @@ void program::ProgramContext::RegisterDefaultSettings()
         static_cast<unsigned>(settings::Key::DefaultOpenFiletypeSetting),
         std::make_unique<settings::DefaultOpenFiletypeSetting>(file::FileType::Map)
     );
+    m_settingsManager->RegisterSetting<settings::PointerBehaviourSetting>(
+        static_cast<unsigned>(settings::Key::PointerBehaviourSetting),
+        std::make_unique<settings::PointerBehaviourSetting>(*m_mapSection)
+    );
 }
 
 void program::ProgramContext::StartDefault()
@@ -147,9 +151,6 @@ void program::ProgramContext::StartDefault()
     m_settingsManager = std::make_unique<settings::SettingsManager>();
     // m_stringLookup = std::make_unique<locale::StringLookup>();
     // m_dpiManager = std::make_unique<win32_program::DpiManager>(m_mainWindowHandle);
-    
-    RegisterDefaultSettings();
-    m_settingsManager->LoadValuesFromPreferences();    
 
     m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 
@@ -313,6 +314,9 @@ void program::ProgramContext::StartDefault()
         // no shortcuts.json
         RegisterDefaultShortcuts();
     }
+
+    RegisterDefaultSettings();
+    m_settingsManager->LoadValuesFromPreferences();
 
     if(m_settingsManager->GetSetting<settings::AutoRestoreFilesSetting>()->GetValue())
     {
@@ -648,7 +652,7 @@ void program::ProgramContext::SetupImageLists()
     auto listViewIconSize = m_dpiManager->Scale(16);
     m_imageLists[ImageListType::Toolbar] = ImageList_Create(toolbarIconsSize, toolbarIconsSize, ILC_COLOR32, 10, 0);
     m_imageLists[ImageListType::ToolbarDisabled] = ImageList_Create(toolbarIconsSize, toolbarIconsSize, ILC_COLOR32, 10, 0);
-    m_imageLists[ImageListType::ListView] = ImageList_Create(16, 16, ILC_COLOR32, 10, 0);
+    m_imageLists[ImageListType::ListView] = ImageList_Create(listViewIconSize, listViewIconSize, ILC_COLOR32, 10, 0);
 
     win32_helpers::ComInitialize();
 

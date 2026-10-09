@@ -178,7 +178,8 @@ add_executable(sgc-editor WIN32
     src/settings/shortcuts_setting.cpp
     src/settings/default_open_filetype_setting.cpp
     src/settings/auto_restore_files_setting.cpp
-    src/settings/preferences.cpp    
+    src/settings/preferences.cpp
+    src/settings/pointer_behaviour_setting.cpp
 )
 
 # embed manifest in the exe
