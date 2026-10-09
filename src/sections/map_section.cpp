@@ -53,11 +53,6 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
             auto tileId = currentLayer.storage->GetTileAt({x,y});
 
             statusSection->SetStatusCursorPosition({x,y});
-            /* if(tileId == m_mapView->m_tileset->TileIdCount()) {
-                statusSection->SetStatusTileId(L"Empty");
-            } else {
-                statusSection->SetStatusTileId(tileId);
-            } */
             if(tileId.has_value() && sgcTileset.IsSpecial(tileId.value())){
                 statusSection->SetStatusTileId(sgcTileset.GetSpecialTileName(tileId.value()));
             }
@@ -720,14 +715,6 @@ bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::P
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
     if(m_isPainting.IsLockedBy(pointerType)) {
-        /* m_editorToolManager.PaintExecuteChange(
-            *mapDocument,
-            *m_mapView->GetTileset(),
-            cursorPositionOnMap,
-            cursorTilePositionOnTileset,
-            cursorTileSize,
-            this
-        ); */
         m_editorToolManager.Execute(*mapDocument, cursorPositionOnMap);
 
         return true;
@@ -738,8 +725,6 @@ bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::P
 bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
 {
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
-    // auto tileset = m_mapView->GetTileset();
-    // auto tileSize = tileset->GetTileSize();
     auto tileSize = m_mapView->GetTileSize();
 
     if(m_editorToolManager.GetPaintMode() == editor_tools::PaintMode::Select && m_canMoveSelection && !m_isMovingSelection.IsLocked())
@@ -903,11 +888,11 @@ void sections::MapSection::PointerUpdate(PointerType pointerType, sgc::graphics:
 {    
     bool shouldUpdate = false;
 
-    if(m_panningPointerType == pointerType)
+    if(IsPointerPanning(pointerType))
     {
         shouldUpdate = PanningUpdate(pointerType, pointerPosition);
-    }
-    else if(m_paintingPointerType == pointerType)
+    }    
+    else if(IsPointerPainting(pointerType))
     {
         auto result = UpdateCursorPosition(pointerPosition, programContext);
         shouldUpdate = result;
@@ -987,33 +972,25 @@ bool sections::MapSection::PanningUpdate(PointerType pointerType, sgc::graphics:
     return true;
 }
 
-void sections::MapSection::SetPaintingPointerType(PointerType pointerType)
+void sections::MapSection::SetPointerBehaviour(PointerType pointerType, PointerBehaviour behaviour)
 {
-    m_paintingPointerType = pointerType;
-}
-
-void sections::MapSection::SetPanningPointerType(PointerType pointerType)
-{
-    m_panningPointerType = pointerType;
-}
-
-sections::PointerType sections::MapSection::GetPaintingPointerType() const
-{
-    return m_paintingPointerType;
-}
-
-sections::PointerType sections::MapSection::GetPanningPointerType() const
-{
-    return m_panningPointerType;
+    if(behaviour == PointerBehaviour::None)
+    {
+        m_pointerBehaviour.erase(pointerType);
+    }
+    else
+    {
+        m_pointerBehaviour[pointerType] = behaviour;
+    }
 }
 
 void sections::MapSection::PointerDown(PointerType pointerType, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext)
 {
-    if(m_panningPointerType == pointerType) 
+    if(IsPointerPanning(pointerType))
     {
         PanningDown(pointerType, position);
     }
-    else if(m_paintingPointerType == pointerType) 
+    else if(IsPointerPainting(pointerType))
     {
         bool shouldUpdate = UpdateOnCursorDown(pointerType, mapDocument, programContext);
         PointerUpdate(pointerType, position, programContext);
@@ -1035,4 +1012,14 @@ void sections::MapSection::PointerUp(PointerType pointerType, file::MapDocument 
     {
         UpdateOnCursorUp(pointerType, mapDocument, programContext);
     }
+}
+
+bool sections::MapSection::IsPointerPainting(PointerType pointerType)
+{
+    return m_pointerBehaviour.contains(pointerType) && m_pointerBehaviour[pointerType] == PointerBehaviour::Painting;
+}
+
+bool sections::MapSection::IsPointerPanning(PointerType pointerType)
+{
+    return m_pointerBehaviour.contains(pointerType) && m_pointerBehaviour[pointerType] == PointerBehaviour::Panning;
 }

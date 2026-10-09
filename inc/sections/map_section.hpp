@@ -23,6 +23,13 @@ namespace sections {
         Pen
     };
 
+    enum class PointerBehaviour
+    {
+        None,
+        Panning,
+        Painting
+    };
+
     inline bool IsMouse(PointerType pointerType) {
         return pointerType == PointerType::LeftMouse ||
                pointerType == PointerType::MiddleMouse ||
@@ -51,8 +58,10 @@ namespace sections {
             PointerLock m_isMovingSelection;
             PointerLock m_isPanning;
             PointerLock m_isCaptured;
-            PointerType m_paintingPointerType = PointerType::LeftMouse;
-            PointerType m_panningPointerType = PointerType::MiddleMouse;
+            std::unordered_map<PointerType, PointerBehaviour> m_pointerBehaviour = {
+                {PointerType::LeftMouse, PointerBehaviour::Painting},
+                {PointerType::MiddleMouse, PointerBehaviour::Panning}
+            };
             bool m_canMoveSelection = false;
             bool m_needsRedraw = false;
             std::mutex m_needsRedrawMutex{};
@@ -63,8 +72,7 @@ namespace sections {
             std::chrono::milliseconds m_timeBetweenUpdates = std::chrono::milliseconds(8);
             std::chrono::milliseconds m_selectionRectUpdateInterval = std::chrono::milliseconds(50);
             std::chrono::steady_clock::time_point m_lastUpdateTime = std::chrono::steady_clock::now();
-
-            // editor_tools::Brush m_brush;
+            
             editor_tools::EditorToolManager m_editorToolManager;
 
             bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);            
@@ -81,6 +89,9 @@ namespace sections {
             void PointerUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
             void PointerUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
 
+            inline bool IsPointerPanning(PointerType pointerType);
+            inline bool IsPointerPainting(PointerType pointerType);
+
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
 
@@ -88,7 +99,7 @@ namespace sections {
             MapSection(program::ProgramContext& programContext);
             
             void Update() override;
-            void HandleSectionResize() override;            
+            void HandleSectionResize() override;
 
             void Refresh(program::ProgramContext& programContext) override;
 
@@ -96,7 +107,7 @@ namespace sections {
 
             void ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomValue);
 
-            void ResetSelection();            
+            void ResetSelection();
             
             void SetCheckTileBeforePainting(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
@@ -106,13 +117,12 @@ namespace sections {
             void SetSelectionPositionInTiles(sgc::tile::TilePosition2D position);
             void SetSelectionSizeInTiles(sgc::tile::TileSize2D size);
 
-            void SetPaintingPointerType(PointerType pointerType);
-            void SetPanningPointerType(PointerType pointerType);
+            void SetPointerBehaviour(PointerType pointerType, PointerBehaviour behaviour);
 
             void RegisterOnZoomChangedCallback(std::function<void(float)> callback);
             
             editor_tools::PaintMode GetPaintMode() const;
-            editor_tools::SelectionMode GetSelectionMode() const;            
+            editor_tools::SelectionMode GetSelectionMode() const;
             float GetZoom() const;
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;
             bool GetSelectionMoveMode() const;
@@ -121,9 +131,6 @@ namespace sections {
             sgc::tile::TileSize2D GetSelectionRectangleSizeTiles() const;
 
             sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
-
-            PointerType GetPaintingPointerType() const;
-            PointerType GetPanningPointerType() const;
             
             bool IsSelectionActive() const;
     };
