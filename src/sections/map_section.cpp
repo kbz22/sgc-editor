@@ -149,13 +149,15 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 break;
 
             POINTER_INFO pointerInfo;
+            if (!GetPointerInfo(pointerId, &pointerInfo))
+                break;
+            
             ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
             auto pointerPosition = sgc::graphics::PixelPosition2D{
                 pointerInfo.ptPixelLocation.x,
                 pointerInfo.ptPixelLocation.y
             };
-
-            if (GetPointerInfo(pointerId, &pointerInfo))                
+            
             switch (type)
             {
                 case PT_TOUCH:
@@ -193,14 +195,15 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 break;
 
             POINTER_INFO pointerInfo;
+            if (!GetPointerInfo(pointerId, &pointerInfo))
+                break;
 
             ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
             auto pointerPosition = sgc::graphics::PixelPosition2D{
                 pointerInfo.ptPixelLocation.x,
                 pointerInfo.ptPixelLocation.y
             };
-
-            if (GetPointerInfo(pointerId, &pointerInfo))
+            
             switch (type)
             {
                 case PT_TOUCH:
