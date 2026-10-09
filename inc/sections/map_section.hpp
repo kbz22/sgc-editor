@@ -20,7 +20,9 @@ namespace sections {
         MiddleMouse,
         RightMouse,
         Touch,
-        Pen
+        Pen,
+
+        Count
     };
 
     enum class PointerBehaviour
@@ -58,10 +60,7 @@ namespace sections {
             PointerLock m_isMovingSelection;
             PointerLock m_isPanning;
             PointerLock m_isCaptured;
-            std::unordered_map<PointerType, PointerBehaviour> m_pointerBehaviour = {
-                {PointerType::LeftMouse, PointerBehaviour::Painting},
-                {PointerType::MiddleMouse, PointerBehaviour::Panning}
-            };
+            std::unordered_map<PointerType, PointerBehaviour> m_pointerBehaviour;
             bool m_canMoveSelection = false;
             bool m_needsRedraw = false;
             std::mutex m_needsRedrawMutex{};
