@@ -111,3 +111,18 @@ settings::DefaultOpenFiletypeSetting* settings::SettingsManager::GetSetting<sett
     auto it = m_settings.find(settingKey);
     return it != m_settings.end() ? dynamic_cast<settings::DefaultOpenFiletypeSetting*>(it->second.get()) : nullptr;
 }
+
+template<>
+void settings::SettingsManager::RegisterSetting<settings::PointerBehaviourSetting>(unsigned key, std::unique_ptr<settings::PointerBehaviourSetting> setting)
+{
+    SettingKey settingKey{SettingCategory::MouseAndTouch, key};
+    m_settings[settingKey] = std::move(setting);
+}
+
+template<>
+settings::PointerBehaviourSetting* settings::SettingsManager::GetSetting<settings::PointerBehaviourSetting>() const
+{
+    SettingKey settingKey{SettingCategory::MouseAndTouch, static_cast<unsigned>(Key::PointerBehaviourSetting)};
+    auto it = m_settings.find(settingKey);
+    return it != m_settings.end() ? dynamic_cast<settings::PointerBehaviourSetting*>(it->second.get()) : nullptr;
+}

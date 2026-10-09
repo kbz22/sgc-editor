@@ -17,6 +17,7 @@ namespace settings
         ShortcutsSetting,
         AutoRestoreFilesSetting,
         DefaultOpenFiletypeSetting,
+        PointerBehaviourSetting,
 
         Count
     };    

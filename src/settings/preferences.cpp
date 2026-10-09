@@ -70,6 +70,25 @@ void settings::Preferences::Get<settings::DefaultOpenFiletypeSetting>(settings::
 }
 
 template<>
+void settings::Preferences::Set<settings::PointerBehaviourSetting>(settings::PointerBehaviourSetting const &setting)
+{
+    auto name = m_stringLookup.Get(settings::Key::PointerBehaviourSetting);
+    m_json[name] = setting.GetBehaviours();
+}
+
+template<>
+void settings::Preferences::Get<settings::PointerBehaviourSetting>(settings::PointerBehaviourSetting &setting)
+{
+    auto name = m_stringLookup.Get(settings::Key::PointerBehaviourSetting);
+
+    if(m_json.contains(name))
+    {
+        setting.SetBehaviours(m_json.at(name).get<settings::PointerBehaviourMap>());
+        setting.Commit();
+    }
+}
+
+template<>
 void settings::Preferences::Set<settings::ShortcutsSetting>(settings::ShortcutsSetting const &setting)
 {
     // do nothing
@@ -99,6 +118,12 @@ void settings::Preferences::Set<settings::ISetting*>(settings::ISetting* const &
             break;
         }
 
+        case Key::PointerBehaviourSetting:
+        {
+            Set(*dynamic_cast<settings::PointerBehaviourSetting*>(settingInterface));
+            break;
+        }
+
         default:
         {
             return;
@@ -119,6 +144,12 @@ void settings::Preferences::Get(settings::ISetting* settingInterface)
         case Key::DefaultOpenFiletypeSetting:
         {
             Get(*dynamic_cast<settings::DefaultOpenFiletypeSetting*>(settingInterface));
+            break;
+        }
+
+        case Key::PointerBehaviourSetting:
+        {
+            Get(*dynamic_cast<settings::PointerBehaviourSetting*>(settingInterface));
             break;
         }
 
