@@ -18,6 +18,7 @@ action::OpenFileAction::OpenFileAction()
     m_actionDescription.menuId = MenuId::File;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipFileOpen;
     m_actionDescription.nameStringId = locale::StringId::NameOpenFile;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::Global;
 }
 
 void action::OpenFileAction::Execute(program::ProgramContext& programContext)

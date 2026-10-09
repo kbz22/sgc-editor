@@ -24,6 +24,7 @@ action::SaveFileAction::SaveFileAction()
     m_actionDescription.shortcuts = {
         {win32_program::ShortcutModifier::Ctrl, 'S'}
     };
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::Global;
 }
 
 void SaveAndUpdate(file::IFile* activeFile, std::filesystem::path filePath, program::ProgramContext& programContext);

@@ -15,6 +15,7 @@ action::CloseFileAction::CloseFileAction()
     m_actionDescription.menuId = MenuId::File;
     m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameCloseFile;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::Global;
 }
 
 void action::CloseFileAction::Execute(program::ProgramContext& context)

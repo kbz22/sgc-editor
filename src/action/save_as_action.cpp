@@ -18,7 +18,8 @@ action::SaveAsAction::SaveAsAction()
     m_actionDescription.groupId = GroupId::File;
     m_actionDescription.menuId = MenuId::File;
     m_actionDescription.tooltipStringId = std::nullopt;
-    m_actionDescription.nameStringId = locale::StringId::NameSaveAs;    
+    m_actionDescription.nameStringId = locale::StringId::NameSaveAs;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::Global;
 }
 
 void SaveAndUpdate(file::IFile* activeFile, std::filesystem::path filePath, program::ProgramContext& programContext)

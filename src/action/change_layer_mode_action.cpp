@@ -39,7 +39,7 @@ action::ChangeLayerModeAction::ChangeLayerModeAction(program::EditorLayerMode la
     
     m_actionDescription.checkGroupItem = true;
     m_actionDescription.groupId = GroupId::EditorLayerMode;
-    m_actionDescription.menuId = MenuId::View;
+    m_actionDescription.menuId = MenuId::View;    
 }
 
 void action::ChangeLayerModeAction::Execute(program::ProgramContext& context)

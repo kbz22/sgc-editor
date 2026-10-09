@@ -17,6 +17,7 @@ action::SettingsAction::SettingsAction()
     m_actionDescription.menuId = MenuId::File;
     m_actionDescription.tooltipStringId = locale::StringId::TooltipSettings;
     m_actionDescription.nameStringId = locale::StringId::NameSettings;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::Global;
 }
 
 INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);

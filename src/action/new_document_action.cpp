@@ -19,5 +19,5 @@ action::NewDocumentAction::NewDocumentAction()
     m_actionDescription.groupId = GroupId::File;
     m_actionDescription.menuId = MenuId::File;
     m_actionDescription.tooltipStringId = std::nullopt;
-    m_actionDescription.nameStringId = locale::StringId::NameNewFile;
+    m_actionDescription.nameStringId = locale::StringId::NameNewFile;    
 }

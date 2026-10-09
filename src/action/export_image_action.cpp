@@ -18,6 +18,7 @@ action::ExportImageAction::ExportImageAction()
     m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameExportAsImage;
     m_actionDescription.shortcutStringId = locale::StringId::ShortcutNameExportAsImage;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::Global;
 }
 
 void action::ExportImageAction::Execute(program::ProgramContext& context)

@@ -17,4 +17,5 @@ action::ExportFileAction::ExportFileAction()
     m_actionDescription.menuId = MenuId::File;
     m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameExportFile;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::Global;
 }
