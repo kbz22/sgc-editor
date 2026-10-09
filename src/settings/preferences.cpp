@@ -1,6 +1,7 @@
 #include "settings/preferences.hpp"
 #include "win32_helpers/file_helpers.hpp"
 #include "settings/settings.hpp"
+#include "program/except.hpp"
 #include <fstream>
 
 void settings::Preferences::Load()
@@ -73,29 +74,58 @@ template<>
 void settings::Preferences::Set<settings::PointerBehaviourSetting>(settings::PointerBehaviourSetting const &setting)
 {
     auto name = m_stringLookup.Get(settings::Key::PointerBehaviourSetting);
-    m_json[name] = setting.GetBehaviours();
+    std::unordered_map<std::string, std::string> pointerBehavioursStrings;
+    auto pointerBehaviours = setting.GetBehaviours();
+
+    for(auto &[type, behaviour] : pointerBehaviours)
+    {
+        auto typeName = m_stringLookup.Get(type);
+        auto behaviourName = m_stringLookup.Get(behaviour);
+        pointerBehavioursStrings[typeName] = behaviourName;
+    }
+    
+    m_json[name] = pointerBehavioursStrings;
 }
 
 template<>
 void settings::Preferences::Get<settings::PointerBehaviourSetting>(settings::PointerBehaviourSetting &setting)
 {
+    using namespace sections;
+
     auto name = m_stringLookup.Get(settings::Key::PointerBehaviourSetting);
 
     if(m_json.contains(name))
     {
-        setting.SetBehaviours(m_json.at(name).get<settings::PointerBehaviourMap>());
+        auto behaviourStrings = m_json.at(name).get<std::unordered_map<std::string, std::string>>();
+        PointerBehaviourMap pointerMap{};
+
+        for(auto &[typeString, behaviourString] : behaviourStrings)
+        {
+            try 
+            {
+                auto type = m_stringLookup.Resolve<PointerType>(typeString);
+                auto behaviour = m_stringLookup.Resolve<PointerBehaviour>(behaviourString);
+                pointerMap[type] = behaviour;
+            }
+            catch(const program::JsonStringMissing&)
+            {
+                continue;
+            }
+        }
+        
+        setting.SetBehaviours(pointerMap);
         setting.Commit();
     }
 }
 
 template<>
-void settings::Preferences::Set<settings::ShortcutsSetting>(settings::ShortcutsSetting const &setting)
+void settings::Preferences::Set<settings::ShortcutsSetting>([[maybe_unused]] settings::ShortcutsSetting const &setting)
 {
     // do nothing
 }
 
 template<>
-void settings::Preferences::Get<settings::ShortcutsSetting>(settings::ShortcutsSetting &setting)
+void settings::Preferences::Get<settings::ShortcutsSetting>([[maybe_unused]] settings::ShortcutsSetting &setting)
 {
     // also do nothing
 }

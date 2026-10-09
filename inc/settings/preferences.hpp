@@ -1,7 +1,7 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
-#include "locale/settings_json_string_lookup.hpp"
+#include "locale/json_string_lookup.hpp"
 #include "settings/isetting.hpp"
 
 namespace settings
@@ -10,7 +10,7 @@ namespace settings
     {
         private:
             nlohmann::json m_json{};
-            locale::SettingsJsonStringLookup m_stringLookup{};
+            locale::JsonStringLookup m_stringLookup{};
             std::wstring m_preferencesFileName = L"preferences.json";
 
         public:

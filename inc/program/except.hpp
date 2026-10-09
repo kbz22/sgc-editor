@@ -58,5 +58,11 @@ namespace program
             }
 
     };
+
+    class JsonStringMissing : public std::runtime_error
+    {
+        public:
+        JsonStringMissing(const std::string& message) : std::runtime_error(message) {}
+    };
     
 }
