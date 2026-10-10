@@ -24,6 +24,7 @@ namespace settings
 
             void SetBehaviour(sections::PointerType pointerType, sections::PointerBehaviour behaviour);
             void SetBehaviours(PointerBehaviourMap map);
+            sections::PointerBehaviour GetBehaviour(sections::PointerType type);
             PointerBehaviourMap GetBehaviours() const;
 
             void Commit() override;

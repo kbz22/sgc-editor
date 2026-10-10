@@ -32,6 +32,16 @@ settings::Key settings::PointerBehaviourSetting::GetKey() const
     return settings::Key::PointerBehaviourSetting;
 }
 
+sections::PointerBehaviour settings::PointerBehaviourSetting::GetBehaviour(sections::PointerType type)
+{
+    if(!m_behaviour.contains(type))
+    {
+        return sections::PointerBehaviour::None;
+    }
+    
+    return m_behaviour[type];
+}
+
 settings::PointerBehaviourMap settings::PointerBehaviourSetting::GetBehaviours() const
 {
     return m_behaviour;
