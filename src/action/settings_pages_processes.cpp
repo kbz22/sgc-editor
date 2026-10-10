@@ -392,6 +392,66 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
     return FALSE;
 }
 
+void SettingsMouseAndTouchRefreshPointerList(HWND hDlg)
+{
+    using namespace locale;
+    using namespace sections;
+
+    auto &programContext = program::GetProgramContext();
+    auto setting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::PointerBehaviourSetting>();
+
+    HWND listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
+    ListView_DeleteAllItems(listView);
+
+    auto &stringLookup = programContext.GetStringLookup();
+
+    std::unordered_map<PointerType, std::wstring> pointerTypeNames{
+        {PointerType::LeftMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseLeft).value_or(L"LM NAME")},
+        {PointerType::MiddleMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseMiddle).value_or(L"MM NAME")},
+        {PointerType::RightMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseRight).value_or(L"RM NAME")},
+        {PointerType::Pen, stringLookup.Get(StringId::SettingsMouseAndTouchPointerPen).value_or(L"P NAME")},
+        {PointerType::Touch, stringLookup.Get(StringId::SettingsMouseAndTouchPointerTouch).value_or(L"T NAME")},
+    };
+
+    std::unordered_map<PointerBehaviour, std::wstring> pointerBehaviourNames{
+        {PointerBehaviour::Panning, stringLookup.Get(StringId::SettingsMouseAndTouchBehaviourPanning).value_or(L"BEHAVIOUR PANNING")},
+        {PointerBehaviour::Painting, stringLookup.Get(StringId::SettingsMouseAndTouchBehaviourPainting).value_or(L"BEHAVIOUR PAINTING")},
+        {PointerBehaviour::None, L""},
+    };
+
+    auto insertItem = [&listView, &pointerTypeNames, &pointerBehaviourNames](PointerType type, PointerBehaviour behaviour)
+    {
+        auto pointerName = pointerTypeNames[type];
+        auto behaviourName = pointerBehaviourNames[behaviour];
+        LVITEM item{};
+        item.mask = LVIF_TEXT | LVIF_PARAM;
+        item.lParam = static_cast<LPARAM>(type);
+        item.pszText = const_cast<LPWSTR>(pointerName.c_str());
+        item.iItem = static_cast<int>(type);
+        ListView_InsertItem(listView, &item);
+
+        ListView_SetItemText(
+            listView,
+            item.iItem,
+            1,
+            const_cast<LPWSTR>(behaviourName.c_str())
+        );
+    };
+
+    auto currentBehaviour = setting->GetBehaviours();
+    for(int i = static_cast<int>(PointerType::LeftMouse); i < static_cast<int>(PointerType::Count); i++)
+    {
+        auto type = static_cast<PointerType>(i);
+        auto behaviour = PointerBehaviour::None;
+
+        if(currentBehaviour.contains(type)){
+            behaviour = currentBehaviour[type];
+        }
+
+        insertItem(type, behaviour);
+    }
+};
+
 LRESULT CALLBACK MouseAndTouchSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data)
 {
     using namespace settings;
@@ -400,6 +460,36 @@ LRESULT CALLBACK MouseAndTouchSettingsListViewProc(HWND hwnd, UINT msg, WPARAM w
     {
         case WM_KEYDOWN:
         {
+            switch(wparam)
+            {
+                case VK_ESCAPE:
+                {
+                    auto comboBox = GetDlgItem(GetParent(hwnd), IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX);
+                    ShowWindow(comboBox, SW_HIDE);
+                    break;
+                }
+
+                case VK_DELETE:
+                {
+                    auto &programContext = program::GetProgramContext();
+                    auto setting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::PointerBehaviourSetting>();
+                    auto parentHwnd = GetParent(hwnd);
+
+                    auto comboBox = GetDlgItem(parentHwnd, IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX);
+                    auto listView = GetDlgItem(parentHwnd, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
+                    auto listSelectedIndex = static_cast<int>(ListView_GetNextItem(listView, -1, LVNI_SELECTED));
+
+                    setting->SetBehaviour(
+                        static_cast<sections::PointerType>(listSelectedIndex),
+                        sections::PointerBehaviour::None
+                    );
+
+                    SettingsMouseAndTouchRefreshPointerList(parentHwnd);
+
+                    ShowWindow(comboBox, SW_HIDE);
+                    break;
+                }
+            }
             break;
         }
 
@@ -418,63 +508,7 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
 {
     using namespace sections;
     auto &programContext = program::GetProgramContext();
-    auto setting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::PointerBehaviourSetting>();
-
-    auto refreshPointerList = [&programContext, &setting, hDlg]()
-    {
-        using namespace locale;
-
-        HWND listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
-        ListView_DeleteAllItems(listView);
-
-        auto &stringLookup = programContext.GetStringLookup();
-
-        std::unordered_map<PointerType, std::wstring> pointerTypeNames{
-            {PointerType::LeftMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseLeft).value_or(L"LM NAME")},
-            {PointerType::MiddleMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseMiddle).value_or(L"MM NAME")},
-            {PointerType::RightMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseRight).value_or(L"RM NAME")},
-            {PointerType::Pen, stringLookup.Get(StringId::SettingsMouseAndTouchPointerPen).value_or(L"P NAME")},
-            {PointerType::Touch, stringLookup.Get(StringId::SettingsMouseAndTouchPointerTouch).value_or(L"T NAME")},
-        };
-
-        std::unordered_map<PointerBehaviour, std::wstring> pointerBehaviourNames{
-            {PointerBehaviour::Panning, stringLookup.Get(StringId::SettingsMouseAndTouchBehaviourPanning).value_or(L"BEHAVIOUR PANNING")},
-            {PointerBehaviour::Painting, stringLookup.Get(StringId::SettingsMouseAndTouchBehaviourPainting).value_or(L"BEHAVIOUR PAINTING")},
-            {PointerBehaviour::None, L""},
-        };
-
-        auto insertItem = [&listView, &pointerTypeNames, &pointerBehaviourNames](PointerType type, PointerBehaviour behaviour)
-        {
-            auto pointerName = pointerTypeNames[type];
-            auto behaviourName = pointerBehaviourNames[behaviour];
-            LVITEM item{};
-            item.mask = LVIF_TEXT | LVIF_PARAM;
-            item.lParam = static_cast<LPARAM>(type);
-            item.pszText = const_cast<LPWSTR>(pointerName.c_str());
-            item.iItem = static_cast<int>(type);
-            ListView_InsertItem(listView, &item);
-
-            ListView_SetItemText(
-                listView,
-                item.iItem,
-                1,
-                const_cast<LPWSTR>(behaviourName.c_str())
-            );
-        };
-
-        auto currentBehaviour = setting->GetBehaviours();
-        for(int i = static_cast<int>(PointerType::LeftMouse); i < static_cast<int>(PointerType::Count); i++)
-        {
-            auto type = static_cast<PointerType>(i);
-            auto behaviour = PointerBehaviour::None;
-
-            if(currentBehaviour.contains(type)){
-                behaviour = currentBehaviour[type];
-            }
-
-            insertItem(type, behaviour);
-        }
-    };
+    auto setting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::PointerBehaviourSetting>();    
 
     switch (msg)
     {
@@ -492,7 +526,7 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
                 listView,
                 MouseAndTouchSettingsListViewProc,
                 1,
-                reinterpret_cast<DWORD_PTR>(&programContext)
+                0
             );
 
             // hacky solution thanks to ChatGPT
@@ -544,7 +578,7 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
             column.cx = behaviourColumnWidth;
             ListView_InsertColumn(listView, 1, &column);
 
-            refreshPointerList();
+            SettingsMouseAndTouchRefreshPointerList(hDlg);
 
             auto panningName = stringLookup.Get(locale::StringId::SettingsMouseAndTouchBehaviourPanning).value_or(L"PANNING NAME");
             auto paintingName = stringLookup.Get(locale::StringId::SettingsMouseAndTouchBehaviourPainting).value_or(L"PAINTING NAME");
@@ -637,7 +671,9 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
                             static_cast<PointerBehaviour>(comboSelectedIndex)
                         );
 
-                        refreshPointerList();
+                        SettingsMouseAndTouchRefreshPointerList(hDlg);
+
+                        ShowWindow(comboBox, SW_HIDE);
                     }
                     break;
                 }

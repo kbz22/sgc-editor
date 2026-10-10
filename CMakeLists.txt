@@ -92,8 +92,7 @@ add_executable(sgc-editor WIN32
     src/debug.cpp
 
     src/locale/string_lookup.cpp
-    src/locale/shortcut_to_string.cpp
-    # src/locale/settings_json_string_lookup.cpp
+    src/locale/shortcut_to_string.cpp    
     src/locale/action_json_string_lookup.cpp
     src/locale/json_string_lookup.cpp
     
@@ -163,8 +162,7 @@ add_executable(sgc-editor WIN32
     src/editor_tools/helpers.cpp
     src/editor_tools/brush.cpp
     src/editor_tools/rectangular_brush.cpp
-    src/editor_tools/fill_tool.cpp
-    # src/editor_tools/paint_modes.cpp
+    src/editor_tools/fill_tool.cpp    
     src/editor_tools/chunk_remover_tool.cpp
     src/editor_tools/tile_picker_tool.cpp
 
