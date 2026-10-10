@@ -63,7 +63,11 @@ BEGIN
                     PAGE_WIDTH,
                     12
 
-    CONTROL         "", IDC_MOUSEANDTOUCH_LISTVIEW, WC_LISTVIEW,
+    CONTROL         "", IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW, WC_LISTVIEW,
                     WS_TABSTOP | WS_BORDER | LVS_REPORT | LVS_SINGLESEL,
-                    5, 17, PAGE_WIDTH - PAGE_OFFSET_X - 1, 70
+                    5, 17, PAGE_WIDTH - PAGE_OFFSET_X - 1, 80
+
+    COMBOBOX        IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX,
+                    5, 17, 80, 23,
+                    CBS_DROPDOWNLIST | WS_TABSTOP | WS_VSCROLL
 END

@@ -392,6 +392,28 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
     return FALSE;
 }
 
+LRESULT CALLBACK MouseAndTouchSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data)
+{
+    using namespace settings;
+    
+    switch (msg)
+    {
+        case WM_KEYDOWN:
+        {
+            break;
+        }
+
+        case WM_LBUTTONDOWN:
+        {
+            auto comboBox = GetDlgItem(GetParent(hwnd), IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX);
+            ShowWindow(comboBox, SW_HIDE);
+            break;
+        }
+    }
+
+    return DefSubclassProc(hwnd, msg, wparam, lparam);
+}
+
 INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
     using namespace sections;
@@ -402,7 +424,7 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
     {
         using namespace locale;
 
-        HWND listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_LISTVIEW);
+        HWND listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
         ListView_DeleteAllItems(listView);
 
         auto &stringLookup = programContext.GetStringLookup();
@@ -463,14 +485,36 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
 
             SetDlgItemTextW(hDlg, IDC_MOUSEANDTOUCH_DESC, descriptionString.c_str());
 
-            auto listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_LISTVIEW);            
-            
+            auto listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
+            auto comboBox = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX);
+
             SetWindowSubclass(
                 listView,
-                ShortcutsSettingsListViewProc,
+                MouseAndTouchSettingsListViewProc,
                 1,
                 reinterpret_cast<DWORD_PTR>(&programContext)
             );
+
+            // hacky solution thanks to ChatGPT
+            RECT rect{};
+            GetWindowRect(comboBox, &rect);
+            int rowHeight = rect.bottom - rect.top - 1;
+
+            HIMAGELIST rowHeightImageList = ImageList_Create(
+                1,
+                rowHeight,
+                ILC_COLOR32,
+                1,
+                1
+            );
+
+            ListView_SetImageList(
+                listView,
+                rowHeightImageList,
+                LVSIL_SMALL
+            );
+
+            ShowWindow(comboBox, SW_HIDE);
 
             ListView_SetExtendedListViewStyle(
                 listView,
@@ -481,8 +525,7 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
             
             auto pointerName = stringLookup.Get(locale::StringId::SettingsMouseAndTouchPointerName).value_or(L"POINTER NAME");
             auto behaviourName = stringLookup.Get(locale::StringId::SettingsMouseAndTouchBehaviourName).value_or(L"BEHAVIOUR NAME");
-
-            RECT rect;
+            
             GetWindowRect(listView, &rect);
 
             int controlWidth = rect.right - rect.left;
@@ -503,7 +546,72 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
 
             refreshPointerList();
 
+            auto panningName = stringLookup.Get(locale::StringId::SettingsMouseAndTouchBehaviourPanning).value_or(L"PANNING NAME");
+            auto paintingName = stringLookup.Get(locale::StringId::SettingsMouseAndTouchBehaviourPainting).value_or(L"PAINTING NAME");
+
+            SendMessage(comboBox, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(panningName.c_str()));
+            SendMessage(comboBox, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(paintingName.c_str()));
+
             return TRUE;
+        }
+
+        case WM_NOTIFY:
+        {
+            auto* notification = reinterpret_cast<NMHDR*>(lParam);
+
+            if (notification->idFrom == IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW)
+            {
+                switch (notification->code)
+                {
+                    case NM_DBLCLK:
+                    {
+                        auto* info = reinterpret_cast<NMITEMACTIVATE*>(lParam);
+                        auto listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
+
+                        if(info->iSubItem != 1)
+                            break;
+
+                        RECT subItemRect{};
+                        ListView_GetSubItemRect(
+                            listView,
+                            info->iItem,
+                            info->iSubItem,
+                            LVIR_BOUNDS,
+                            &subItemRect
+                        );
+
+                        POINT topLeft{ subItemRect.left, subItemRect.top };
+                        POINT bottomRight{ subItemRect.right, subItemRect.bottom };
+
+                        MapWindowPoints(listView, hDlg, &topLeft, 1);
+                        MapWindowPoints(listView, hDlg, &bottomRight, 1);
+
+                        LVITEM item{};
+                        item.mask = LVIF_PARAM;
+                        item.iItem = info->iItem;
+                        ListView_GetItem(listView, &item);
+
+                        auto comboBox = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX);
+                        auto behaviour = setting->GetBehaviour(static_cast<sections::PointerType>(item.lParam));
+                        SendMessage(comboBox, CB_SETCURSEL, static_cast<WPARAM>(behaviour), 0);
+
+                        SetWindowPos(
+                            comboBox,
+                            HWND_TOP,
+                            topLeft.x,
+                            topLeft.y,
+                            bottomRight.x - topLeft.x,
+                            bottomRight.y - topLeft.y,
+                            SWP_NOACTIVATE
+                        );
+
+                        ShowWindow(comboBox, SW_SHOW);
+
+                        break;
+                    }
+                }
+            }            
+            break;
         }
 
         case WM_COMMAND:
@@ -512,11 +620,40 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
 
             switch(commandId)
             {
+                case IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX:
+                {
+                    if(HIWORD(wParam) == CBN_SELCHANGE)
+                    {
+                        using namespace sections;
+
+                        auto comboBox = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX);
+                        auto listView = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
+
+                        auto comboSelectedIndex = static_cast<int>(SendMessage(comboBox, CB_GETCURSEL, 0, 0));
+                        auto listSelectedIndex = static_cast<int>(ListView_GetNextItem(listView, -1, LVNI_SELECTED));
+                        
+                        setting->SetBehaviour(
+                            static_cast<PointerType>(listSelectedIndex),
+                            static_cast<PointerBehaviour>(comboSelectedIndex)
+                        );
+
+                        refreshPointerList();
+                    }
+                    break;
+                }
+
                 default:
                 {
                     break;
                 }
             }
+            break;
+        }
+
+        case WM_LBUTTONDOWN:
+        {
+            auto comboBox = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX);
+            ShowWindow(comboBox, SW_HIDE);
             break;
         }
     }

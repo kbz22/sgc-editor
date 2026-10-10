@@ -27,7 +27,7 @@ namespace sections {
 
     enum class PointerBehaviour
     {
-        None,
+        None = -1,
         Panning,
         Painting
     };
