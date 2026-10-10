@@ -16,6 +16,7 @@ namespace editor_tools
             std::unique_ptr<command::PaintCommand> m_paintCommand;
             std::unique_ptr<command::BulkCommand> m_bulkCommand;
             std::unique_ptr<sgc::tile::TilePosition2D> m_cursorOrigin;
+            std::unique_ptr<sgc::tile::TilePosition2D> m_lastPosition;
 
             sections::TilesetSection &m_tilesetSection;       
             sgc_view::MapView &m_mapView;
