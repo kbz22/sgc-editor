@@ -27,6 +27,12 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
     },
     m_tilePickerTool{
         tilesetSection
+    },
+    m_selectionTool{
+        mapView,
+        tilesetSection,
+        m_allowChunkCreation,
+        m_needsRedraw
     }
 {
     SetActiveTool();
@@ -124,6 +130,12 @@ void editor_tools::EditorToolManager::SetActiveTool()
         {
             m_activeTool = &m_tilePickerTool;
             return;
+        }
+
+        case PaintMode::Select:
+        {
+            m_activeTool = &m_selectionTool;
+            break;
         }
 
         default:

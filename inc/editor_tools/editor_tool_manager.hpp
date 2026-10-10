@@ -8,6 +8,7 @@
 #include "command/paint_command.hpp"
 #include "editor_tools/ieditor_tool.hpp"
 #include "editor_tools/editor_tools.hpp"
+#include "editor_tools/paint_modes.hpp"
 #include <sgc/graphics/rectangle.hpp>
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/tile/tile.hpp>
@@ -18,24 +19,7 @@ namespace sections {
     class MapSection;    
 }
 
-namespace editor_tools {
-
-    enum class PaintMode
-    {
-        Brush,
-        Rectangle,
-        Fill,
-        Select,
-        ChunkRemover,
-        TilePicker,
-    };
-
-    enum class SelectionMode
-    {
-        SingleLayer,
-        AllLayers,
-        VisibleLayers
-    };
+namespace editor_tools {    
 
     class EditorToolManager
     {
@@ -53,6 +37,7 @@ namespace editor_tools {
             FillTool m_fillTool;
             ChunkRemoverTool m_chunkRemover;
             TilePickerTool m_tilePickerTool;
+            SelectionTool m_selectionTool;
 
             void SetActiveTool();
 
