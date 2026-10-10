@@ -148,6 +148,7 @@ void action::SelectionPasteAction::Execute(program::ProgramContext &context)
 
     }
 
+    context.UpdateCanUndoRedo();
     mapSection->Update();
 
     return;

@@ -134,5 +134,6 @@ void action::SelectionClearAction::Execute(program::ProgramContext& context)
 
     }
 
+    context.UpdateCanUndoRedo();
     mapSection->Update();
 }
