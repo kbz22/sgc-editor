@@ -3,7 +3,7 @@
 #include "sections/map_section.hpp"
 #include <sgc/data/chunkedtilestorage.hpp>
 
-editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection) :
+editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, sections::MapSection &mapSection, sections::TilesetSection &tilesetSection) :
     m_paintBrush{
         mapView,
         tilesetSection,
@@ -33,6 +33,11 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
         tilesetSection,
         m_allowChunkCreation,
         m_needsRedraw
+    },
+    m_selectionMoveTool{
+        mapView,
+        mapSection,
+        m_selectionMode
     }
 {
     SetActiveTool();
@@ -135,6 +140,12 @@ void editor_tools::EditorToolManager::SetActiveTool()
         case PaintMode::Select:
         {
             m_activeTool = &m_selectionTool;
+            break;
+        }
+
+        case PaintMode::MoveSelection:
+        {
+            m_activeTool = &m_selectionMoveTool;
             break;
         }
 

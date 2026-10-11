@@ -6,3 +6,4 @@
 #include "editor_tools/chunk_remover_tool.hpp"
 #include "editor_tools/tile_picker_tool.hpp"
 #include "editor_tools/selection_tool.hpp"
+#include "editor_tools/selection_move_tool.hpp"

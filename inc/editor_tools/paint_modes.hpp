@@ -10,6 +10,7 @@ namespace editor_tools
         Select,
         ChunkRemover,
         TilePicker,
+        MoveSelection,
     };
 
     enum class SelectionMode

@@ -4,6 +4,7 @@
 #include "sgc_view/map_view.hpp"
 #include "command/paint_command.hpp"
 #include "editor_tools/editor_tool_manager.hpp"
+#include "program/selection_moved_storage.hpp"
 #include <sgc/data/statictilestorage.hpp>
 #include <functional>
 #include <mutex>
@@ -50,7 +51,7 @@ namespace sections {
 
             bool Acquire(PointerType pointerType);
             bool Release(PointerType pointerType);
-    };
+    };    
 
     class MapSection : public Section
     {
@@ -67,7 +68,7 @@ namespace sections {
             sgc::math::vec2 m_lastMousePosPan = { 0, 0 };
             sgc::math::vec2 m_movingSelectionOffset = { 0, 0 };
             std::function<void(float)> m_onZoomChangedCallback = nullptr;
-            std::map<size_t, std::shared_ptr<sgc::data::StaticTileStorage>> m_selectionMovedStorage;
+            // std::map<size_t, std::shared_ptr<sgc::data::StaticTileStorage>> m_program::SelectionMovedStorage;
             std::chrono::milliseconds m_timeBetweenUpdates = std::chrono::milliseconds(8);
             std::chrono::milliseconds m_selectionRectUpdateInterval = std::chrono::milliseconds(50);
             std::chrono::steady_clock::time_point m_lastUpdateTime = std::chrono::steady_clock::now();
@@ -75,7 +76,7 @@ namespace sections {
             editor_tools::EditorToolManager m_editorToolManager;
 
             bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);            
-            bool UpdateSelectionMove(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition);
+            bool UpdateSelectionMove(PointerType pointerType, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D pointerPosition);
             bool UpdateDragDrawing(PointerType pointerType, program::ProgramContext& programContext);
             bool UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
             bool UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
@@ -118,6 +119,9 @@ namespace sections {
 
             void SetPointerBehaviour(PointerType pointerType, PointerBehaviour behaviour);
 
+            void SetSelectionMovedImage(program::SelectionMovedStorage &storageLayers);
+            void UpdateSelectionMovedPosition(sgc::tile::TilePosition2D positionOnMap);
+
             void RegisterOnZoomChangedCallback(std::function<void(float)> callback);
             
             editor_tools::PaintMode GetPaintMode() const;
@@ -131,7 +135,7 @@ namespace sections {
 
             sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
             
-            bool IsSelectionActive() const;
+            bool IsSelectionActive() const;            
     };
 
 }

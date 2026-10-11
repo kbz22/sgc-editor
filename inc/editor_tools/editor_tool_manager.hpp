@@ -16,16 +16,16 @@
 #include <vector>
 
 namespace sections {
-    class MapSection;    
+    class MapSection;
 }
 
-namespace editor_tools {    
+namespace editor_tools {
 
     class EditorToolManager
     {
         private:
-            PaintMode m_paintMode{PaintMode::Brush};            
-            SelectionMode m_selectionMode{SelectionMode::SingleLayer};            
+            PaintMode m_paintMode{PaintMode::Brush};
+            SelectionMode m_selectionMode{SelectionMode::SingleLayer};
             bool m_allowChunkCreation = false;
             sgc::tile::TileId m_clearTile = 0;
             bool m_needsRedraw = false;
@@ -38,20 +38,21 @@ namespace editor_tools {
             ChunkRemoverTool m_chunkRemover;
             TilePickerTool m_tilePickerTool;
             SelectionTool m_selectionTool;
+            SelectionMoveTool m_selectionMoveTool;
 
             void SetActiveTool();
 
         public:
-            EditorToolManager(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection);
+            EditorToolManager(sgc_view::MapView &mapView, sections::MapSection &mapSection, sections::TilesetSection &tilesetSection);
             ~EditorToolManager() = default;
 
             PaintMode GetPaintMode() const;
             SelectionMode GetSelectionMode() const;
             bool NeedsRedraw() const;
 
-            void SetPaintMode(PaintMode paintMode);            
+            void SetPaintMode(PaintMode paintMode);
             void SetSelectionMode(SelectionMode selectionMode);
-            void SetCheckTileBeforePainting(bool check);          
+            void SetCheckTileBeforePainting(bool check);
 
             void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition);
             void Commit(file::MapDocument& mapDocument);
