@@ -9,7 +9,7 @@ editor_tools::SelectionMoveTool::SelectionMoveTool(sgc_view::MapView &mapView, s
 {}
 
 void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
-{
+{    
     auto selectionPosition = m_mapView.GetSelectionPositionInTiles();
     auto selectionSize = m_mapView.GetSelectionSizeInTiles();
 
@@ -22,7 +22,7 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
             cursorPosition.x - selectionPosition.x,
             cursorPosition.y - selectionPosition.y
         );
-    }        
+    }
 
     auto iterateTiles = [&selectionPosition, &selectionSize, this](program::LayerItem &layerItem, size_t renderingIndex, size_t storageIndex)
     {
@@ -83,7 +83,19 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
         m_mapSection.SetSelectionMovedImage(*m_selectionMovedStorage);
     }
 
-    m_mapSection.UpdateSelectionMovedPosition(selectionPosition - *m_movingSelectionOffset);    
+    auto newPosition = cursorPosition - *m_movingSelectionOffset;    
+
+    if(m_lastPosition == nullptr)
+    {
+        m_lastPosition = std::make_unique<sgc::tile::TilePosition2D>();
+        *m_lastPosition = newPosition;
+        m_mapSection.UpdateSelectionMovedPosition(newPosition);
+    }
+    else if(newPosition != *m_lastPosition)
+    {
+        *m_lastPosition = newPosition;
+        m_mapSection.UpdateSelectionMovedPosition(newPosition);
+    }
 }
 
 void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocument& mapDocument)
@@ -96,34 +108,38 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocumen
     auto clearTileId = m_mapView.GetClearTileId();
     command::MultilayerTileChangesType tileChanges;
 
-    for(auto &[storageIndex, storageLayer] : *m_selectionMovedStorage)
+    if(m_selectionMovedStorage != nullptr)
     {
-        for(sgc::math::ival y = 0; y < selectionSize.y; ++y) {
-            for(sgc::math::ival x = 0; x < selectionSize.x; ++x)
-            {
-                auto tilePos = sgc::tile::TilePosition2D{
-                    selectionPos.x + x,
-                    selectionPos.y + y
-                };
+        for(auto &[storageIndex, storageLayer] : *m_selectionMovedStorage)
+        {
+            for(sgc::math::ival y = 0; y < selectionSize.y; ++y) {
+                for(sgc::math::ival x = 0; x < selectionSize.x; ++x)
+                {
+                    auto tilePos = sgc::tile::TilePosition2D{
+                        selectionPos.x + x,
+                        selectionPos.y + y
+                    };
 
-                auto movedTileId = storageLayer.storage->GetTileAt({x, y});
-                auto currentTileId = layers[storageIndex].storage->GetTileAt(tilePos);
-                
-                tileChanges[storageIndex][tilePos] = {
-                    storageIndex,
-                    tilePos,
-                    currentTileId,
-                    movedTileId.value_or(currentTileId.value_or(clearTileId))
-                };
+                    auto movedTileId = storageLayer.storage->GetTileAt({x, y});
+                    auto currentTileId = layers[storageIndex].storage->GetTileAt(tilePos);
+                    
+                    tileChanges[storageIndex][tilePos] = {
+                        storageIndex,
+                        tilePos,
+                        currentTileId,
+                        movedTileId.value_or(currentTileId.value_or(clearTileId))
+                    };
+                }
             }
         }
-    }
 
-    mapDocument.GetCommandManager()->Execute(std::make_unique<command::PaintSelectionCommand>(
-        mapDocument,
-        tileChanges
-    ));
+        mapDocument.GetCommandManager()->Execute(std::make_unique<command::PaintSelectionCommand>(
+                mapDocument,
+                tileChanges
+        ));
+    }    
 
     selectionLayers->Clear();
     m_selectionMovedStorage.reset();
+    m_lastPosition.reset();
 }

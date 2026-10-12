@@ -20,6 +20,7 @@ namespace editor_tools
             sections::MapSection &m_mapSection;
             SelectionMode &m_selectionMode;
             std::unique_ptr<sgc::tile::TilePosition2D> m_movingSelectionOffset;
+            std::unique_ptr<sgc::tile::TilePosition2D> m_lastPosition;
             std::unique_ptr<program::SelectionMovedStorage> m_selectionMovedStorage;
 
         public:
