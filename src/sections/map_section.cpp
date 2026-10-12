@@ -673,11 +673,11 @@ bool sections::MapSection::UpdateSelectionMove(PointerType pointerType, file::Ma
 
         auto tileSize = m_mapView->GetTileSize();
         auto x_tile = static_cast<sgc::math::ival>(
-            std::floor(worldPosition.x / tileSize.x) * tileSize.x
+            std::floor(worldPosition.x / tileSize.x)
         );
 
         auto y_tile = static_cast<sgc::math::ival>(
-            std::floor(worldPosition.y / tileSize.y) * tileSize.y
+            std::floor(worldPosition.y / tileSize.y)
         );
 
         m_editorToolManager.Execute(*mapDocument, {x_tile, y_tile});

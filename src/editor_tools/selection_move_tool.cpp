@@ -10,8 +10,8 @@ editor_tools::SelectionMoveTool::SelectionMoveTool(sgc_view::MapView &mapView, s
 
 void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
 {
-    auto selectionPosition = m_mapView.GetSelectionSizeInTiles();
-    auto selectionSize = m_mapView.GetSelectionPositionInTiles();
+    auto selectionPosition = m_mapView.GetSelectionPositionInTiles();
+    auto selectionSize = m_mapView.GetSelectionSizeInTiles();
 
     if(selectionSize.x == 0 || selectionSize.y == 0)
         return;
