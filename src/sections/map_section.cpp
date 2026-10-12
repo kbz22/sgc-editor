@@ -662,7 +662,6 @@ bool sections::MapSection::UpdateSelectionMove(PointerType pointerType, file::Ma
 {
     if(m_isMovingSelection.IsLockedBy(pointerType))
     {
-        auto selectionLayers = m_mapView->GetSelectionLayers();
         auto screenPosition = sgc::math::fvec2{
             static_cast<float>(pointerPosition.x),
             static_cast<float>(pointerPosition.y)
@@ -681,9 +680,9 @@ bool sections::MapSection::UpdateSelectionMove(PointerType pointerType, file::Ma
         );
 
         m_editorToolManager.Execute(*mapDocument, {x_tile, y_tile});
-
         return true;
     }
+    
     return false;
 }
 
@@ -730,12 +729,13 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
             //! should I pass this action to the SelectionMoveTool too?
             // it could also clear it on its own by just iterating, so probably not
             programContext.GetManager<action::ActionManager>()->Find(action::ActionType::SelectionClear)->Execute(programContext);
-            return true;
         }
         else
         {
-            m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);
+            m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);            
         }
+
+        return true;
     }
 
     if(!m_isPainting.IsLocked()) {
