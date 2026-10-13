@@ -2,10 +2,11 @@
 #include "command/paint_selection_command.hpp"
 #include "sections/map_section.hpp"
 
-editor_tools::SelectionMoveTool::SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode) :
+editor_tools::SelectionMoveTool::SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId) :
     m_mapView{mapView},
     m_mapSection{mapSection},
-    m_selectionMode{selectionMode}
+    m_selectionMode{selectionMode},
+    m_clearTileId{clearTileId}
 {}
 
 void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
@@ -36,7 +37,7 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
                 };
 
                 auto tileId = layerItem.storage->GetTileAt(tilePos);
-                selectionStorage->SetTileAt({x, y}, tileId);
+                selectionStorage->SetTileAt({x, y}, tileId);                
             }
         }
 
@@ -83,19 +84,8 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
         m_mapSection.SetSelectionMovedImage(*m_selectionMovedStorage);
     }
 
-    auto newPosition = cursorPosition + *m_movingSelectionOffset;    
-
-    if(m_lastPosition == nullptr)
-    {
-        m_lastPosition = std::make_unique<sgc::tile::TilePosition2D>();
-        *m_lastPosition = newPosition;
-        m_mapSection.UpdateSelectionMovedPosition(newPosition);
-    }
-    else if(newPosition != *m_lastPosition)
-    {
-        *m_lastPosition = newPosition;
-        m_mapSection.UpdateSelectionMovedPosition(newPosition);
-    }
+    auto newPosition = cursorPosition + *m_movingSelectionOffset;
+    m_mapSection.UpdateSelectionMovedPosition(newPosition);
 }
 
 void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocument& mapDocument)
@@ -141,5 +131,5 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocumen
 
     selectionLayers->Clear();
     m_selectionMovedStorage.reset();
-    m_lastPosition.reset();
+    m_movingSelectionOffset.reset();
 }

@@ -30,6 +30,7 @@ namespace editor_tools {
             sgc::tile::TileId m_clearTile = 0;
             bool m_needsRedraw = false;
             std::unique_ptr<sgc::tile::TilePosition2D> m_lastPosition{nullptr};
+            sections::TilesetSection &m_tilesetSection;
 
             IEditorTool *m_activeTool{nullptr};
             PaintBrush m_paintBrush;

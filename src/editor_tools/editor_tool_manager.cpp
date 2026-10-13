@@ -4,6 +4,9 @@
 #include <sgc/data/chunkedtilestorage.hpp>
 
 editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, sections::MapSection &mapSection, sections::TilesetSection &tilesetSection) :
+    m_tilesetSection{
+        tilesetSection
+    },
     m_paintBrush{
         mapView,
         tilesetSection,
@@ -37,7 +40,8 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
     m_selectionMoveTool{
         mapView,
         mapSection,
-        m_selectionMode
+        m_selectionMode,
+        m_clearTile
     }
 {
     SetActiveTool();
@@ -88,6 +92,7 @@ void editor_tools::EditorToolManager::Execute(file::MapDocument& mapDocument, sg
         return;
     }
 
+    m_clearTile = m_tilesetSection.GetClearTileId();
     m_activeTool->Execute(mapDocument, cursorPosition);
 }
 

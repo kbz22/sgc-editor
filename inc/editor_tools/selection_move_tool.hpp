@@ -19,12 +19,12 @@ namespace editor_tools
             sgc_view::MapView &m_mapView;
             sections::MapSection &m_mapSection;
             SelectionMode &m_selectionMode;
-            std::unique_ptr<sgc::tile::TilePosition2D> m_movingSelectionOffset;
-            std::unique_ptr<sgc::tile::TilePosition2D> m_lastPosition;
+            sgc::tile::TileId &m_clearTileId;
+            std::unique_ptr<sgc::tile::TilePosition2D> m_movingSelectionOffset;            
             std::unique_ptr<program::SelectionMovedStorage> m_selectionMovedStorage;
 
         public:
-            SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode);
+            SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId);
 
             void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition);
             void Commit(file::MapDocument& mapDocument);
