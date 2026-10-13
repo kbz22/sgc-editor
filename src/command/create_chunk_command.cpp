@@ -1,31 +1,28 @@
 #include "command/create_chunk_command.hpp"
 #include "program/program.hpp"
 
-command::CreateChunkCommand::CreateChunkCommand(sgc::tile::TilePosition2D chunkPosition) :
-    m_chunkPosition(chunkPosition)
+command::CreateChunkCommand::CreateChunkCommand(sgc::tile::TilePosition2D chunkPosition, size_t layerIndex, file::MapDocument &mapDocument, sgc::tile::TileId clearTileId) :
+    m_chunkPosition{chunkPosition},
+    m_layerIndex{layerIndex},
+    m_mapDocument{mapDocument},
+    m_clearTileId{clearTileId}
 {}
 
 command::CreateChunkCommand::CreateChunkCommand(const CreateChunkCommand& other) = default;
 
 void command::CreateChunkCommand::Execute()
 {
-    auto& programContext = program::GetProgramContext();
-    auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
+    auto layerManager = m_mapDocument.GetLayerManager();
+    m_layerIndex = layerManager->GetActiveLayerIndex();
+    auto currentLayer = layerManager->GetLayers()[m_layerIndex];        
+    
+    auto storage = dynamic_cast<sgc::data::ChunkedTileStorage*>(
+        currentLayer.storage.get()
+    );
 
-    if(mapDocument != nullptr) {
-        auto layerManager = mapDocument->GetLayerManager();
-        m_layerIndex = layerManager->GetActiveLayerIndex();
-        auto currentLayer = layerManager->GetLayers()[m_layerIndex];
-        auto tilesetSection = programContext.GetSection<sections::TilesetSection>();
-        
-        auto storage = dynamic_cast<sgc::data::ChunkedTileStorage*>(
-            currentLayer.storage.get()
-        );
+    storage->SetChunkAt(m_chunkPosition, m_clearTileId);
 
-        storage->SetChunkAt(m_chunkPosition, tilesetSection->GetClearTileId());
-
-        mapDocument->SetDirty(true);
-    }
+    m_mapDocument.SetDirty(true);
 }
 
 void command::CreateChunkCommand::Commit()
