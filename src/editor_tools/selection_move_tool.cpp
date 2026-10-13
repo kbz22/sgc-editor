@@ -19,8 +19,8 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
     if(m_movingSelectionOffset == nullptr)
     {
         m_movingSelectionOffset = std::make_unique<sgc::tile::TilePosition2D>(
-            cursorPosition.x - selectionPosition.x,
-            cursorPosition.y - selectionPosition.y
+            selectionPosition.x - cursorPosition.x,
+            selectionPosition.y - cursorPosition.y
         );
     }
 
@@ -83,7 +83,7 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
         m_mapSection.SetSelectionMovedImage(*m_selectionMovedStorage);
     }
 
-    auto newPosition = cursorPosition - *m_movingSelectionOffset;    
+    auto newPosition = cursorPosition + *m_movingSelectionOffset;    
 
     if(m_lastPosition == nullptr)
     {
