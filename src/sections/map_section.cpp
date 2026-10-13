@@ -718,8 +718,8 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
 
     if(m_canMoveSelection && !m_isMovingSelection.IsLocked())
     {
-        auto selectionPos = m_mapView->GetSelectionSizeInTiles();
-        auto selectionSize = m_mapView->GetSelectionPositionInTiles();
+        auto selectionPos = m_mapView->GetSelectionPositionInTiles();
+        auto selectionSize = m_mapView->GetSelectionSizeInTiles();
 
         if(cursorPositionOnMap.x >= selectionPos.x && cursorPositionOnMap.x <= selectionPos.x + selectionSize.x &&
             cursorPositionOnMap.y >= selectionPos.y && cursorPositionOnMap.y <= selectionPos.y + selectionSize.y)
@@ -756,6 +756,7 @@ bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDo
     if(m_isMovingSelection.Release(pointerType)) 
     {
         m_editorToolManager.Commit(*mapDocument);
+        m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);
         Update();
         returnFlag = true;
     }
