@@ -2,8 +2,9 @@
 #include "editor_tools/helpers.hpp"
 #include "command/create_chunk_command.hpp"
 
-editor_tools::PaintBrush::PaintBrush(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation, bool &needsRedraw) :
-    Brush{mapView, tilesetSection, allowChunkCreation, needsRedraw}
+editor_tools::PaintBrush::PaintBrush(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation, bool &needsRedraw, sgc::tile::TileId &clearTileId) :
+    Brush{mapView, tilesetSection, allowChunkCreation, needsRedraw},
+    m_clearTileId{clearTileId}
 {}
 
 void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
@@ -52,7 +53,6 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
         for(auto y = cursorPosition.y; y <= endPosition.y; ++y)
         {
             auto tileId = GetTileId(
-                // *m_mapView.GetTileset(),
                 m_mapView.GetSgcTileset(),
                 positionOnTileset,
                 cursorSize,
@@ -67,7 +67,12 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
                 if(!checkTile.has_value()){
                     auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
                     auto chunkCoord = chunkStorage->GetChunkCoordAt({ x, y });
-                    auto createChunkCommand = std::make_unique<command::CreateChunkCommand>(chunkCoord);
+                    auto createChunkCommand = std::make_unique<command::CreateChunkCommand>(
+                        chunkCoord,
+                        mapDocument.GetLayerManager()->GetActiveLayerIndex(),
+                        mapDocument,
+                        m_clearTileId
+                    );
 
                     createChunkCommand->Execute();
                     checkTile = currentLayer->GetTileAt({ x, y });
