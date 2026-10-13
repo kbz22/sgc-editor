@@ -725,10 +725,12 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
             cursorPositionOnMap.y >= selectionPos.y && cursorPositionOnMap.y <= selectionPos.y + selectionSize.y)
         {                    
             m_isMovingSelection.Acquire(pointerType);
+            m_isPainting.Acquire(pointerType);
             m_editorToolManager.SetPaintMode(editor_tools::PaintMode::MoveSelection);
             //! should I pass this action to the SelectionMoveTool too?
             // it could also clear it on its own by just iterating, so probably not
-            programContext.GetManager<action::ActionManager>()->Find(action::ActionType::SelectionClear)->Execute(programContext);
+            // programContext.GetManager<action::ActionManager>()->Find(action::ActionType::SelectionClear)->Execute(programContext);
+            // I CANNOT CLEAR IT BEFORE I COPY THE TILES OBVIOUSLY IT DIDNT TAKE ME TWO DAYS TO FIGURE OUT
         }
         else
         {
@@ -751,19 +753,17 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
 
 bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
 {
-    auto returnFlag = false;
-
-    if(m_isMovingSelection.Release(pointerType)) 
-    {
-        m_editorToolManager.Commit(*mapDocument);
-        m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);
-        Update();
-        returnFlag = true;
-    }
+    auto returnFlag = false;    
 
     if(m_isPainting.Release(pointerType)) 
     {
         m_editorToolManager.Commit(*mapDocument);
+        returnFlag = true;
+    }
+
+    if(m_isMovingSelection.Release(pointerType)) 
+    {        
+        m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);        
         returnFlag = true;
     }
     
