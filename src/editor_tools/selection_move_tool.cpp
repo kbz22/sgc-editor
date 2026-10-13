@@ -1,5 +1,6 @@
 #include "editor_tools/selection_move_tool.hpp"
 #include "command/paint_selection_command.hpp"
+#include "command/create_chunk_command.hpp"
 #include "sections/map_section.hpp"
 
 editor_tools::SelectionMoveTool::SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId) :
@@ -25,7 +26,9 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
         );
     }
 
-    auto iterateTiles = [&selectionPosition, &selectionSize, this](program::LayerItem &layerItem, size_t renderingIndex, size_t storageIndex)
+    command::MultilayerTileChangesType tileChanges;
+
+    auto iterateTiles = [&selectionPosition, &selectionSize, this, &tileChanges](program::LayerItem &layerItem, size_t renderingIndex, size_t storageIndex)
     {
         auto selectionStorage = std::make_shared<sgc::data::StaticTileStorage>(selectionSize);
         for(sgc::math::ival y = 0; y < selectionSize.y; ++y) {
@@ -37,7 +40,20 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
                 };
 
                 auto tileId = layerItem.storage->GetTileAt(tilePos);
-                selectionStorage->SetTileAt({x, y}, tileId);                
+
+                // the tile id will be std::nullopt if there is no chunk
+                // we still set the storage to clear - otherwise it will be zero initialized or worse
+                // we skip the tile change, since there's no need for changing non existing tiles
+                selectionStorage->SetTileAt({x, y}, tileId.value_or(m_clearTileId));
+
+                if(tileId.has_value()){
+                    tileChanges[storageIndex][tilePos] = {
+                        storageIndex,
+                        tilePos,
+                        tileId.value_or(m_clearTileId),
+                        m_clearTileId
+                    };
+                }
             }
         }
 
@@ -82,6 +98,14 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
         }
 
         m_mapSection.SetSelectionMovedImage(*m_selectionMovedStorage);
+        m_clearSelectionCommand = std::make_unique<command::PaintSelectionCommand>(
+            mapDocument,
+            tileChanges
+        );
+        m_clearSelectionCommand->Execute();
+
+        m_bulkCommand = std::make_unique<command::BulkCommand>();
+        m_bulkCommand->AddCommand(std::move(m_clearSelectionCommand));
     }
 
     auto newPosition = cursorPosition + *m_movingSelectionOffset;
@@ -112,24 +136,49 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocumen
 
                     auto movedTileId = storageLayer.storage->GetTileAt({x, y});
                     auto currentTileId = layers[storageIndex].storage->GetTileAt(tilePos);
-                    
+
+                    if(!currentTileId.has_value())
+                    {
+                        auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(storageLayer.storage.get());
+                        auto chunkCoord = chunkStorage->GetChunkCoordAt(tilePos);
+                        auto createChunkCommand = std::make_unique<command::CreateChunkCommand>(
+                            chunkCoord,
+                            storageIndex,
+                            mapDocument,
+                            m_clearTileId
+                        );
+
+                        createChunkCommand->Execute();
+                        m_bulkCommand->AddCommand(std::move(createChunkCommand));
+                    }
+
                     tileChanges[storageIndex][tilePos] = {
                         storageIndex,
                         tilePos,
-                        currentTileId,
+                        currentTileId.value_or(currentTileId.value_or(clearTileId)),
                         movedTileId.value_or(currentTileId.value_or(clearTileId))
                     };
                 }
             }
         }
 
-        mapDocument.GetCommandManager()->Execute(std::make_unique<command::PaintSelectionCommand>(
+        if(!tileChanges.empty())
+        {
+            m_placeSelectionCommand = std::make_unique<command::PaintSelectionCommand>(
                 mapDocument,
                 tileChanges
-        ));
+            );
+            m_placeSelectionCommand->Execute();
+
+            m_bulkCommand->AddCommand(std::move(m_placeSelectionCommand));
+            mapDocument.GetCommandManager()->Commit(std::move(m_bulkCommand));
+        }
     }    
 
     selectionLayers->Clear();
     m_selectionMovedStorage.reset();
     m_movingSelectionOffset.reset();
+    m_clearSelectionCommand.reset();
+    m_placeSelectionCommand.reset();
+    m_bulkCommand.reset();
 }

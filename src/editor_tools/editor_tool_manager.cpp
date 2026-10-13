@@ -12,6 +12,7 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
         tilesetSection,
         m_allowChunkCreation,
         m_needsRedraw,
+        m_clearTile
     },
     m_rectangularBrush{
         mapView,

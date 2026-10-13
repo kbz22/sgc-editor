@@ -4,6 +4,8 @@
 #include "editor_tools/paint_modes.hpp"
 #include "sgc_view/map_view.hpp"
 #include "program/selection_moved_storage.hpp"
+#include "command/paint_selection_command.hpp"
+#include "command/bulk_command.hpp"
 #include <memory>
 
 namespace sections
@@ -22,6 +24,9 @@ namespace editor_tools
             sgc::tile::TileId &m_clearTileId;
             std::unique_ptr<sgc::tile::TilePosition2D> m_movingSelectionOffset;            
             std::unique_ptr<program::SelectionMovedStorage> m_selectionMovedStorage;
+            std::unique_ptr<command::PaintSelectionCommand> m_clearSelectionCommand;
+            std::unique_ptr<command::PaintSelectionCommand> m_placeSelectionCommand;
+            std::unique_ptr<command::BulkCommand> m_bulkCommand;
 
         public:
             SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId);
