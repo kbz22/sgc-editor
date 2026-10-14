@@ -53,7 +53,7 @@ namespace editor_tools {
 
             void SetPaintMode(PaintMode paintMode);
             void SetSelectionMode(SelectionMode selectionMode);
-            void SetCheckTileBeforePainting(bool check);
+            void SetAllowChunkCreation(bool check);
 
             void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition);
             void Commit(file::MapDocument& mapDocument);

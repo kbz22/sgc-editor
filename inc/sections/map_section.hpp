@@ -109,7 +109,7 @@ namespace sections {
 
             void ResetSelection();
             
-            void SetCheckTileBeforePainting(bool check);
+            void SetAllowChunkCreation(bool check);
             void SetPaintMode(editor_tools::PaintMode paintMode);
             void SetSelectionMode(editor_tools::SelectionMode selectionMode);
             void SetSelectionMoveMode(bool canMoveSelection);

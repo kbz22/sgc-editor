@@ -3,11 +3,12 @@
 #include "command/create_chunk_command.hpp"
 #include "sections/map_section.hpp"
 
-editor_tools::SelectionMoveTool::SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId) :
+editor_tools::SelectionMoveTool::SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId, bool &allowChunkCreation) :
     m_mapView{mapView},
     m_mapSection{mapSection},
     m_selectionMode{selectionMode},
-    m_clearTileId{clearTileId}
+    m_clearTileId{clearTileId},
+    m_allowChunkCreation{allowChunkCreation}
 {}
 
 void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
@@ -137,27 +138,39 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocumen
                     auto movedTileId = storageLayer.storage->GetTileAt({x, y});
                     auto currentTileId = layers[storageIndex].storage->GetTileAt(tilePos);
 
-                    if(!currentTileId.has_value())
+                    if(m_allowChunkCreation)
                     {
-                        auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(storageLayer.storage.get());
-                        auto chunkCoord = chunkStorage->GetChunkCoordAt(tilePos);
-                        auto createChunkCommand = std::make_unique<command::CreateChunkCommand>(
-                            chunkCoord,
-                            storageIndex,
-                            mapDocument,
-                            m_clearTileId
-                        );
+                        if(!currentTileId.has_value())
+                        {
+                            auto chunkCoord = sgc::data::ChunkedTileStorage::GetChunkCoordAt(tilePos);
+                            auto createChunkCommand = std::make_unique<command::CreateChunkCommand>(
+                                chunkCoord,
+                                storageIndex,
+                                mapDocument,
+                                m_clearTileId
+                            );
 
-                        createChunkCommand->Execute();
-                        m_bulkCommand->AddCommand(std::move(createChunkCommand));
+                            createChunkCommand->Execute();
+                            m_bulkCommand->AddCommand(std::move(createChunkCommand));
+                        }
+
+                        tileChanges[storageIndex][tilePos] = {
+                            storageIndex,
+                            tilePos,
+                            currentTileId.value_or(clearTileId),
+                            movedTileId
+                        };
+                    }
+                    else
+                    {
+                        tileChanges[storageIndex][tilePos] = {
+                            storageIndex,
+                            tilePos,
+                            currentTileId,
+                            currentTileId.has_value() ? movedTileId.value_or(currentTileId.value_or(clearTileId)) : currentTileId
+                        };
                     }
 
-                    tileChanges[storageIndex][tilePos] = {
-                        storageIndex,
-                        tilePos,
-                        currentTileId.value_or(currentTileId.value_or(clearTileId)),
-                        movedTileId.value_or(currentTileId.value_or(clearTileId))
-                    };
                 }
             }
         }

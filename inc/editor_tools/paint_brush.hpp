@@ -12,7 +12,6 @@ namespace editor_tools
         public:
             PaintBrush(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation, bool &needsRedraw, sgc::tile::TileId &clearTileId);
 
-            void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition) override;
-            // void Commit(file::MapDocument& mapDocument) override;
+            void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition) override;            
     };
 }

@@ -58,7 +58,7 @@ void editor_tools::RectangularBrush::Execute(file::MapDocument& mapDocument, sgc
             
             auto checkTile = currentLayer->GetTileAt({ x, y });
 
-            if( !m_allowChunkCreation || checkTile.has_value()) {
+            if( m_allowChunkCreation || checkTile.has_value()) {
 
                 if(!checkTile.has_value()){
                     auto chunkStorage = dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);

@@ -419,9 +419,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-void sections::MapSection::SetCheckTileBeforePainting(bool check)
+void sections::MapSection::SetAllowChunkCreation(bool check)
 {
-    m_editorToolManager.SetCheckTileBeforePainting(check);
+    m_editorToolManager.SetAllowChunkCreation(check);
 }
 
 void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)

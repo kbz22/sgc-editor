@@ -42,7 +42,8 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
         mapView,
         mapSection,
         m_selectionMode,
-        m_clearTile
+        m_clearTile,
+        m_allowChunkCreation
     }
 {
     SetActiveTool();
@@ -75,7 +76,7 @@ void editor_tools::EditorToolManager::SetSelectionMode(SelectionMode selectionMo
     SetActiveTool();
 }
 
-void editor_tools::EditorToolManager::SetCheckTileBeforePainting(bool check)
+void editor_tools::EditorToolManager::SetAllowChunkCreation(bool check)
 {
     m_allowChunkCreation = check;
 }

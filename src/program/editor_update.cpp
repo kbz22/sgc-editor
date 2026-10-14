@@ -54,7 +54,7 @@ void program::ProgramContext::UpdateEditorChunkMode(program::EditorChunkMode new
     m_actionManager->ActionSetChecked(action::ActionType::ChunkModeFixedSize, newMode == program::EditorChunkMode::FixedChunks);
     m_actionManager->ActionSetChecked(action::ActionType::ChunkModeFree, newMode == program::EditorChunkMode::DynamicChunks);
 
-    m_mapSection->SetCheckTileBeforePainting(newMode == program::EditorChunkMode::FixedChunks);
+    m_mapSection->SetAllowChunkCreation(newMode == program::EditorChunkMode::DynamicChunks);
 
     m_toolbarSection->Refresh(*this);
     m_menuSection->Refresh(*this);

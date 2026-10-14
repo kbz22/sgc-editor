@@ -22,6 +22,7 @@ namespace editor_tools
             sections::MapSection &m_mapSection;
             SelectionMode &m_selectionMode;
             sgc::tile::TileId &m_clearTileId;
+            bool &m_allowChunkCreation;
             std::unique_ptr<sgc::tile::TilePosition2D> m_movingSelectionOffset;            
             std::unique_ptr<program::SelectionMovedStorage> m_selectionMovedStorage;
             std::unique_ptr<command::PaintSelectionCommand> m_clearSelectionCommand;
@@ -29,7 +30,7 @@ namespace editor_tools
             std::unique_ptr<command::BulkCommand> m_bulkCommand;
 
         public:
-            SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId);
+            SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId, bool &allowChunkCreation);
 
             void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition);
             void Commit(file::MapDocument& mapDocument);
