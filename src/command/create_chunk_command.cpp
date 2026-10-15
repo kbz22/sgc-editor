@@ -12,12 +12,11 @@ command::CreateChunkCommand::CreateChunkCommand(const CreateChunkCommand& other)
 
 void command::CreateChunkCommand::Execute()
 {
-    auto layerManager = m_mapDocument.GetLayerManager();
-    m_layerIndex = layerManager->GetActiveLayerIndex();
-    auto currentLayer = layerManager->GetLayers()[m_layerIndex];        
+    auto layerManager = m_mapDocument.GetLayerManager();    
+    auto layer = layerManager->GetLayers()[m_layerIndex];        
     
     auto storage = dynamic_cast<sgc::data::ChunkedTileStorage*>(
-        currentLayer.storage.get()
+        layer.storage.get()
     );
 
     storage->SetChunkAt(m_chunkPosition, m_clearTileId);
