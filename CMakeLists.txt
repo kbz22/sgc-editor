@@ -105,6 +105,7 @@ add_executable(sgc-editor WIN32
     src/command/paint_selection_command.cpp
     src/command/create_chunk_command.cpp
     src/command/bulk_command.cpp
+    src/command/move_selection_command.cpp
     
     src/action/action.cpp
     src/action/action_manager.cpp

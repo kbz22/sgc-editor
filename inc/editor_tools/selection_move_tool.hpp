@@ -23,7 +23,7 @@ namespace editor_tools
             SelectionMode &m_selectionMode;
             sgc::tile::TileId &m_clearTileId;
             bool &m_allowChunkCreation;
-            std::unique_ptr<sgc::tile::TilePosition2D> m_movingSelectionOffset;            
+            std::unique_ptr<sgc::tile::TilePosition2D> m_movingSelectionOffset;
             std::unique_ptr<program::SelectionMovedStorage> m_selectionMovedStorage;
             std::unique_ptr<command::PaintSelectionCommand> m_clearSelectionCommand;
             std::unique_ptr<command::PaintSelectionCommand> m_placeSelectionCommand;
