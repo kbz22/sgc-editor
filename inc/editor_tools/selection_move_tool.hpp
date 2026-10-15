@@ -5,6 +5,7 @@
 #include "sgc_view/map_view.hpp"
 #include "program/selection_moved_storage.hpp"
 #include "command/paint_selection_command.hpp"
+#include "command/move_selection_command.hpp"
 #include "command/bulk_command.hpp"
 #include <memory>
 
@@ -23,10 +24,13 @@ namespace editor_tools
             SelectionMode &m_selectionMode;
             sgc::tile::TileId &m_clearTileId;
             bool &m_allowChunkCreation;
+            std::unique_ptr<sgc::tile::TilePosition2D> m_selectionOrigin;
+            std::unique_ptr<sgc::tile::TilePosition2D> m_selectionEndpoint;
             std::unique_ptr<sgc::tile::TilePosition2D> m_movingSelectionOffset;
             std::unique_ptr<program::SelectionMovedStorage> m_selectionMovedStorage;
             std::unique_ptr<command::PaintSelectionCommand> m_clearSelectionCommand;
             std::unique_ptr<command::PaintSelectionCommand> m_placeSelectionCommand;
+            std::unique_ptr<command::MoveSelectionCommand> m_moveSelectionCommand;
             std::unique_ptr<command::BulkCommand> m_bulkCommand;
 
         public:

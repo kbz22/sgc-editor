@@ -24,8 +24,20 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
         m_movingSelectionOffset = std::make_unique<sgc::tile::TilePosition2D>(
             selectionPosition.x - cursorPosition.x,
             selectionPosition.y - cursorPosition.y
-        );
+        );        
     }
+
+    if(m_selectionOrigin == nullptr)
+    {
+        m_selectionOrigin = std::make_unique<sgc::tile::TilePosition2D>(
+            selectionPosition.x,
+            selectionPosition.y
+        );
+        m_selectionEndpoint = std::make_unique<sgc::tile::TilePosition2D>(
+            selectionPosition.x,
+            selectionPosition.y
+        );
+    }    
 
     command::MultilayerTileChangesType tileChanges;
 
@@ -110,6 +122,7 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
     }
 
     auto newPosition = cursorPosition + *m_movingSelectionOffset;
+    *m_selectionEndpoint = newPosition;
     m_mapSection.UpdateSelectionMovedPosition(newPosition);
 }
 
@@ -183,7 +196,15 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocumen
             );
             m_placeSelectionCommand->Execute();
 
+            m_moveSelectionCommand = std::make_unique<command::MoveSelectionCommand>(
+                m_mapView,
+                *m_selectionOrigin,
+                *m_selectionEndpoint,
+                m_mapView.GetSelectionSizeInTiles()
+            );
+
             m_bulkCommand->AddCommand(std::move(m_placeSelectionCommand));
+            m_bulkCommand->AddCommand(std::move(m_moveSelectionCommand));
             mapDocument.GetCommandManager()->Commit(std::move(m_bulkCommand));
         }
     }    
@@ -191,6 +212,8 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocumen
     selectionLayers->Clear();
     m_selectionMovedStorage.reset();
     m_movingSelectionOffset.reset();
+    m_selectionOrigin.reset();
+    m_selectionEndpoint.reset();
     m_clearSelectionCommand.reset();
     m_placeSelectionCommand.reset();
     m_bulkCommand.reset();
