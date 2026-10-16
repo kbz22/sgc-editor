@@ -37,7 +37,15 @@ void action::SaveFileAction::Execute(program::ProgramContext& programContext)
         { file::FileType::Package, locale::StringId::NamePackageFile }
     };
 
-    auto activeFile = programContext.GetManager<file::FileManager>()->GetSelectedFile();
+    auto fileManager = programContext.GetManager<file::FileManager>();
+    auto activeFile = fileManager->GetSelectedFile();
+
+    if(activeFile == nullptr)
+    {        
+        auto documentLocation = fileManager->GetActiveDocumentLocation();
+        fileManager->SelectDocument(documentLocation);
+        activeFile = documentLocation.file;
+    }
     
     if (activeFile != nullptr) {
 
