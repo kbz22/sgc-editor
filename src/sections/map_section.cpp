@@ -724,8 +724,7 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
         if(cursorPositionOnMap.x >= selectionPos.x && cursorPositionOnMap.x <= selectionPos.x + selectionSize.x &&
             cursorPositionOnMap.y >= selectionPos.y && cursorPositionOnMap.y <= selectionPos.y + selectionSize.y)
         {                    
-            m_isMovingSelection.Acquire(pointerType);
-            m_isPainting.Acquire(pointerType);
+            m_isMovingSelection.Acquire(pointerType);            
             m_editorToolManager.SetPaintMode(editor_tools::PaintMode::MoveSelection);
             //! should I pass this action to the SelectionMoveTool too?
             // it could also clear it on its own by just iterating, so probably not
@@ -736,6 +735,8 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::Map
         {
             m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);            
         }
+
+        m_isPainting.Acquire(pointerType);
 
         return true;
     }
