@@ -4,21 +4,11 @@ editor_tools::SelectionTool::SelectionTool(sgc_view::MapView &mapView, sections:
     Brush{mapView, tilesetSection, allowChunkCreation, needsRedraw}
 {}
 
-void editor_tools::SelectionTool::Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
+void editor_tools::SelectionTool::Execute([[maybe_unused]] file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition)
 {
     if(m_cursorOrigin == nullptr)
     {
-        m_cursorOrigin = std::make_unique<sgc::tile::TilePosition2D>(cursorPosition);
-        m_lastPosition = std::make_unique<sgc::tile::TilePosition2D>(cursorPosition);
-    }
-    else if(*m_lastPosition == cursorPosition)
-    {
-        m_needsRedraw = false;
-        return;
-    }
-    else
-    {
-        *m_lastPosition = cursorPosition;
+        m_cursorOrigin = std::make_unique<sgc::tile::TilePosition2D>(cursorPosition);        
     }
 
     auto tileSize = m_mapView.GetTileSize();
