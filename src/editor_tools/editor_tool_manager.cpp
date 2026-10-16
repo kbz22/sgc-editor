@@ -94,6 +94,7 @@ void editor_tools::EditorToolManager::Execute(file::MapDocument& mapDocument, sg
         return;
     }
 
+    *m_lastPosition = cursorPosition;
     m_clearTile = m_tilesetSection.GetClearTileId();
     m_activeTool->Execute(mapDocument, cursorPosition);
 }

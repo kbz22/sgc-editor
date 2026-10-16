@@ -37,7 +37,7 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Execute(file::MapDocume
             selectionPosition.x,
             selectionPosition.y
         );
-    }    
+    }
 
     command::MultilayerTileChangesType tileChanges;
 
