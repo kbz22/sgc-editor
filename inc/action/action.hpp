@@ -31,6 +31,7 @@ namespace action {
             bool IsChecked() const;
             bool IsCheckGroupItem() const;
             bool IsToolbarItem() const;
+            virtual bool IsShortcutable() const;
             virtual bool IsPopup() const;
             virtual bool IsWidget() const;
 

@@ -101,3 +101,8 @@ std::optional<std::vector<action::Action*>> action::Action::GetPopupMenuItems() 
 {
     return std::nullopt;
 }
+
+bool action::Action::IsShortcutable() const
+{
+    return true;
+}
