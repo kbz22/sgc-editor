@@ -92,6 +92,11 @@ bool action::PopupMenuAction::IsPopup() const
     return true;
 }
 
+bool action::PopupMenuAction::IsShortcutable() const
+{
+    return false;
+}
+
 HMENU action::PopupMenuAction::GetHMenu() const
 {
     return m_hMenu;

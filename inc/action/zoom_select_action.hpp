@@ -17,6 +17,8 @@ namespace action {
 
             void Execute(program::ProgramContext& context) override;
 
+            bool IsShortcutable() const override;
+
             void BuildWidget(HWND parent, program::ProgramContext& context) override;
             int GetControlWidth() const override;
             HWND GetHWND() const override;

@@ -177,7 +177,10 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
         for(auto &action : allActions)
         {
-            if(action->IsPopup())
+            /* if(action->IsPopup())
+                continue; */
+
+            if(!action->IsShortcutable())
                 continue;
 
             auto actionStringId = action->GetNameStringId();

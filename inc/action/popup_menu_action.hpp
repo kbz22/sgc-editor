@@ -25,6 +25,7 @@ namespace action {
 
             void Execute(program::ProgramContext &context) override;
             bool IsPopup() const override;
+            bool IsShortcutable() const override;
             std::optional<std::vector<Action*>> GetPopupMenuItems() const override;
 
             void SetItems(std::vector<Action*> items);

@@ -62,3 +62,8 @@ void action::ZoomSelectAction::Execute(program::ProgramContext& context)
     );
     mapSection->Update();
 }
+
+bool action::ZoomSelectAction::IsShortcutable() const
+{
+    return false;
+}
