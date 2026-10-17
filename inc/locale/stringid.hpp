@@ -83,6 +83,7 @@ namespace locale
         NameEditorTileLineGrid,
         NameZoomIn,
         NameZoomOut,
+        NameZoomReset,
         NameEditorSelectionModeSingleLayer,
         NameEditorSelectionModeAllLayers,
         NameEditorSelectionModeVisibleLayers,

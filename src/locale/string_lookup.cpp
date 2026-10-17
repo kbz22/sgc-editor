@@ -100,6 +100,7 @@ locale::StringLookup::StringLookup()
         {StringId::NameChangeLayerTop, L"Top layer"},
         {StringId::NameChangeLayerBottom, L"Bottom layer"},
         {StringId::NameTilePicker, L"Tile picker"},
+        {StringId::NameZoomReset, L"Reset zoom"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},

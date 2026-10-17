@@ -14,7 +14,7 @@ action::ZoomResetAction::ZoomResetAction()
     m_actionDescription.groupId = GroupId::Zoom;
     m_actionDescription.menuId = MenuId::None;    
     m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorResetZoom;
-    m_actionDescription.nameStringId = locale::StringId::TextMissing;
+    m_actionDescription.nameStringId = locale::StringId::NameZoomReset;
 }
 
 void action::ZoomResetAction::Execute(program::ProgramContext& context)
