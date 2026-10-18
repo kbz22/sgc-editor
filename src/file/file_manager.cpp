@@ -336,7 +336,7 @@ file::MapDocument* file::FileManager::GetActiveDocument() const
                 return mapDoc;
             }
         }
-        catch([[maybe_unused]]const std::bad_cast& e)
+        catch(const std::bad_cast&)
         {
             return nullptr;
         }
