@@ -87,6 +87,7 @@ program::ProgramContext& program::GetProgramContext()
 
 std::vector<action::ActionType> g_activeEditorButtons {    
     action::ActionType::CloseFile,
+    action::ActionType::SaveAs, // save as is enabled when a file is opened
     action::ActionType::Undo,
     action::ActionType::Redo,
     action::ActionType::AddLayer,
@@ -477,7 +478,8 @@ void program::ProgramContext::EnableSaving(bool enable)
 {
     std::vector<action::ActionType> saveActions = {
         action::ActionType::SaveFile,
-        action::ActionType::SaveAs
+        // save as should always be enabled, not sure why I'm disabling it
+        // action::ActionType::SaveAs 
     };
     m_actionManager->ActionSetEnabled(saveActions, enable);
 }
