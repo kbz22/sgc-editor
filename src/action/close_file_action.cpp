@@ -23,6 +23,13 @@ void action::CloseFileAction::Execute(program::ProgramContext& context)
     auto fileManager = context.GetManager<file::FileManager>();
     auto currentFile = fileManager->GetSelectedFile();
 
+    if(currentFile == nullptr)
+    {        
+        auto documentLocation = fileManager->GetActiveDocumentLocation();
+        fileManager->SelectDocument(documentLocation);
+        currentFile = documentLocation.file;
+    }
+
     if(currentFile != nullptr) {
         fileManager->CloseFile(fileManager->GetSelectedFileIndex());
     }
