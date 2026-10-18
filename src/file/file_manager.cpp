@@ -433,6 +433,11 @@ void file::FileManager::RestoreLastSession(file::AssetManager *assetManager)
 
     if(!failedPaths.empty())
     {
+        // if some files couldn't be loaded rebuilding the file list will update the json and skip them
+        // then on reboot it won't try to load them again every time
+        m_sessionJson.RebuildFileList(m_openFiles);
+        m_sessionJson.Save();
+
         throw program::SessionRestoreException(
             "file::FileManager failed to restore session",
             failedPaths
