@@ -54,7 +54,7 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
     m_openFiles.push_back(std::move(newFile));
     SetActiveDocument(selectedDoc);
 
-    m_onFileUpdatedCallback(nullptr);
+    m_onFileUpdatedCallback(m_openFiles.back().get());
     UpdateSessionFile();
 
     return;
@@ -78,7 +78,7 @@ void file::FileManager::NewTilesetFile(std::wstring name, std::filesystem::path 
 
     m_openFiles.push_back(std::move(newFile));
 
-    m_onFileUpdatedCallback(nullptr);
+    m_onFileUpdatedCallback(m_openFiles.back().get());
     UpdateSessionFile();
 
     return;
@@ -115,7 +115,7 @@ void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocumen
 
     m_openFiles.push_back(std::move(newFile));
 
-    m_onFileUpdatedCallback(nullptr);
+    m_onFileUpdatedCallback(m_openFiles.back().get());
     UpdateSessionFile();    
 
     return;
@@ -200,7 +200,7 @@ void file::FileManager::SaveFile(size_t index)
     if(index < m_openFiles.size()) 
     {
         m_openFiles[index]->Save();
-        m_onFileUpdatedCallback(nullptr);
+        m_onFileUpdatedCallback(m_openFiles[index].get());
         // There's no real way for FileManager to know if a new file was saved for the first time
         // after being created, so an update is required
         UpdateSessionFile();        
@@ -210,19 +210,33 @@ void file::FileManager::SaveFile(size_t index)
 
 void file::FileManager::CloseFile(size_t index)
 {
-    if(!m_openFiles.empty() && index < m_openFiles.size()) {
-        
-        if(m_selectedDocument.file == m_openFiles[index].get()) {
-            m_selectedDocument.file = nullptr;
-            m_selectedDocument.index = 0;
-        }
-
+    if(!m_openFiles.empty() && index < m_openFiles.size()) 
+    {
         if(m_activeDocument.file == m_openFiles[index].get()) {
             m_activeDocument.file = nullptr;
             m_activeDocument.index = 0;
         }
         
         m_openFiles.erase(m_openFiles.begin() + index);
+
+        if(m_openFiles.empty())
+        {
+            m_selectedDocument.file = nullptr;
+            m_selectedDocument.index = 0;
+        }
+        else
+        {
+            if(index < m_openFiles.size())
+            {
+                m_selectedDocument.file = m_openFiles[index].get();
+                m_selectedDocument.index = 0;
+            }
+            else
+            {
+                m_selectedDocument.file = m_openFiles.back().get();
+                m_selectedDocument.index = 0;
+            }
+        }
 
         UpdateSessionFile();
         m_onFileUpdatedCallback(nullptr);        

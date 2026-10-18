@@ -91,6 +91,7 @@ namespace program {
             void UpdateCanUndoRedo();
 
             void EnableSaving(bool enable);
+            void EnableFileActions(bool enable);
             
             bool ShortcutsEnabled() const;
 

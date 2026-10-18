@@ -85,9 +85,12 @@ program::ProgramContext& program::GetProgramContext()
     return context;
 }
 
-std::vector<action::ActionType> g_activeEditorButtons {    
+std::vector<action::ActionType> g_activeFileActions {
     action::ActionType::CloseFile,
-    action::ActionType::SaveAs, // save as is enabled when a file is opened
+    action::ActionType::SaveAs    
+};
+
+std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::Undo,
     action::ActionType::Redo,
     action::ActionType::AddLayer,
@@ -122,7 +125,7 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::ExportAsImage,
     action::ActionType::ExportFile,
     action::ActionType::TilePickerTool,
-    action::ActionType::ChunkRemoverTool, 
+    action::ActionType::ChunkRemoverTool,
 };
 
 void program::ProgramContext::RegisterDefaultSettings()
@@ -255,8 +258,8 @@ void program::ProgramContext::StartDefault()
 
     m_fileManager->RegisterOnFileUpdatedCallback([this]([[maybe_unused]] file::IFile* file) 
     {
-        // m_packageSection->UpdateTreeViewItems(*this);
         Refresh();
+
         m_packageSection->UpdateTreeViewItems(*this);
         m_packageSection->Update();
     });
@@ -284,7 +287,7 @@ void program::ProgramContext::StartDefault()
         }
 
         Refresh();
-    });    
+    });
 
     m_fileManager->RegisterOnMapDirtyCallback([this]([[maybe_unused]]file::MapDocument* document, [[maybe_unused]]bool dirty) 
     {
@@ -388,6 +391,7 @@ void program::ProgramContext::Refresh()
 
     auto openFiles = m_fileManager->GetOpenFiles();
 
+    EnableFileActions(!openFiles.empty());
     EnableSaving(false);
 
     for(auto &file : openFiles) 
@@ -474,14 +478,14 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::HelpMenuAction>());
 }
 
+void program::ProgramContext::EnableFileActions(bool enable)
+{
+    m_actionManager->ActionSetEnabled(g_activeFileActions, enable);
+}
+
 void program::ProgramContext::EnableSaving(bool enable)
 {
-    std::vector<action::ActionType> saveActions = {
-        action::ActionType::SaveFile,
-        // save as should always be enabled, not sure why I'm disabling it
-        // action::ActionType::SaveAs 
-    };
-    m_actionManager->ActionSetEnabled(saveActions, enable);
+    m_actionManager->ActionSetEnabled(action::ActionType::SaveFile, enable);
 }
 
 bool program::ProgramContext::ShortcutsEnabled() const
