@@ -90,8 +90,8 @@ namespace program {
             void UpdateEditorSelectionMode(editor_tools::SelectionMode newMode);
             void UpdateEditorSelectionTools();
             void UpdateCanUndoRedo();
-
-            void EnableSaving(bool enable);
+            void UpdateSaving();
+            
             void EnableFileActions(bool enable);            
             
             bool ShortcutsEnabled() const;
@@ -122,6 +122,4 @@ namespace program {
     };
 
     ProgramContext& GetProgramContext();
-    
-
 }

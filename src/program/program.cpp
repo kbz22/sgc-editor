@@ -52,8 +52,7 @@ program::ProgramContext& program::GetProgramContext()
 
 std::vector<action::ActionType> g_activeFileActions {
     action::ActionType::CloseFile,
-    action::ActionType::SaveAs,
-    action::ActionType::SaveAll
+    action::ActionType::SaveAs,    
 };
 
 std::vector<action::ActionType> g_activeEditorButtons {
@@ -255,23 +254,8 @@ void program::ProgramContext::Initialize()
 
     m_fileManager->RegisterOnMapDirtyCallback([this]([[maybe_unused]]file::MapDocument* document, [[maybe_unused]]bool dirty) 
     {
-        // EnableSaving(dirty);
-        auto activeDocument = m_fileManager->GetActiveDocument();
-        if(activeDocument != nullptr) 
-        {
-            if(activeDocument->IsDirty()) {
-                EnableSaving(true);
-            }
-            else {
-                EnableSaving(false);
-            }
-
-            m_packageSection->UpdateTreeViewItems(*this);
-            m_packageSection->Update();
-            m_toolbarSection->Refresh(*this);
-            m_toolbarSection->Update();
-        }
-    });    
+        UpdateSaving();
+    });
 }
 
 void program::ProgramContext::Begin()
@@ -357,15 +341,7 @@ void program::ProgramContext::Refresh()
     auto openFiles = m_fileManager->GetOpenFiles();
 
     EnableFileActions(!openFiles.empty());
-    EnableSaving(false);
-
-    for(auto &file : openFiles) 
-    {
-        if(file->IsDirty()) {
-            EnableSaving(true);
-            break;
-        }
-    }
+    UpdateSaving();
 
     RefreshAllSection(*this);
     RedrawAllSections(*this);
@@ -449,9 +425,31 @@ void program::ProgramContext::EnableFileActions(bool enable)
     m_actionManager->ActionSetEnabled(g_activeFileActions, enable);
 }
 
-void program::ProgramContext::EnableSaving(bool enable)
+void program::ProgramContext::UpdateSaving()
 {
-    m_actionManager->ActionSetEnabled(action::ActionType::SaveFile, enable);
+    auto selectedFile = m_fileManager->GetSelectedFile();
+    auto allFiles = m_fileManager->GetOpenFiles();
+
+    if(selectedFile != nullptr) 
+    {
+        if(selectedFile->IsDirty()) {
+            m_actionManager->ActionSetEnabled(action::ActionType::SaveFile, true);
+        }
+        else {
+            m_actionManager->ActionSetEnabled(action::ActionType::SaveFile, false);
+        }
+    }
+
+    for(auto &file : allFiles)
+    {
+        if(file->IsDirty())
+        {
+            m_actionManager->ActionSetEnabled(action::ActionType::SaveAll, true);
+            return;
+        }
+    }
+
+    m_actionManager->ActionSetEnabled(action::ActionType::SaveAll, false);
 }
 
 bool program::ProgramContext::ShortcutsEnabled() const

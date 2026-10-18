@@ -146,8 +146,8 @@ add_executable(sgc-editor WIN32
     src/action/new_package_action.cpp
     src/action/change_active_layer_action.cpp
     src/action/settings_action.cpp
-    src/action/settings_pages_processes.cpp
-    src/action/tile_picker_tool_action.cpp
+    src/action/settings_pages_processes.cpp    
+    src/action/save_all_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp

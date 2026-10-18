@@ -14,6 +14,7 @@ namespace action {
         OpenFile,
         SaveFile,
         SaveAs,
+        SaveAll,
         ExportFile,
         ExportAsImage,
         ExportAsPackage,

@@ -101,6 +101,7 @@ namespace locale
         NameHelpAbout,
         NameHelpGithub,
         NameTilePicker,
+        NameSaveAll,
 
         NameChangeLayerUp,
         NameChangeLayerDown,
