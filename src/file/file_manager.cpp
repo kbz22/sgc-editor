@@ -212,17 +212,24 @@ void file::FileManager::CloseFile(size_t index)
 {
     if(!m_openFiles.empty() && index < m_openFiles.size()) 
     {
-        if(m_activeDocument.file == m_openFiles[index].get()) {
-            m_activeDocument.file = nullptr;
-            m_activeDocument.index = 0;
+        bool isActive = false;
+
+        if(m_activeDocument.file == m_openFiles[index].get()){
+            isActive = true;
         }
-        
+
         m_openFiles.erase(m_openFiles.begin() + index);
 
         if(m_openFiles.empty())
         {
             m_selectedDocument.file = nullptr;
             m_selectedDocument.index = 0;
+
+            if(isActive)
+            {
+                m_activeDocument.file = nullptr;
+                m_activeDocument.index = 0;
+            }
         }
         else
         {
@@ -230,12 +237,26 @@ void file::FileManager::CloseFile(size_t index)
             {
                 m_selectedDocument.file = m_openFiles[index].get();
                 m_selectedDocument.index = 0;
-            }
+            }            
             else
             {
                 m_selectedDocument.file = m_openFiles.back().get();
                 m_selectedDocument.index = 0;
+            }            
+
+            if(isActive)
+            {
+                auto mapDocs = m_selectedDocument.file->GetMapDocuments();
+                auto index = m_selectedDocument.file->GetDocumentIndex(mapDocs[0]);
+
+                if(index.has_value())
+                {
+                    m_selectedDocument.index = index.value();
+                    m_activeDocument.file = m_selectedDocument.file;
+                    m_activeDocument.index = index.value();
+                }
             }
+            
         }
 
         UpdateSessionFile();
