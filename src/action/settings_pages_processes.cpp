@@ -455,7 +455,7 @@ void SettingsMouseAndTouchRefreshPointerList(HWND hDlg)
     }
 };
 
-LRESULT CALLBACK MouseAndTouchSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data)
+LRESULT CALLBACK MouseAndTouchSettingsListViewProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]] UINT_PTR id, [[maybe_unused]] DWORD_PTR data)
 {
     using namespace settings;
     
