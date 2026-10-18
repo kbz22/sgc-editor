@@ -160,6 +160,7 @@ add_executable(sgc-editor WIN32
     src/action/settings_pages_processes.cpp    
     src/action/save_all_action.cpp
     src/action/help_about_action.cpp
+    src/action/help_repository_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp

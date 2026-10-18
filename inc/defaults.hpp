@@ -14,6 +14,6 @@ namespace defaults
     //File extensions
     const std::wstring_view MapFileExtension = L".sgcmap";
     const std::wstring_view PackageFileExtension = L".sgcp";
-    const std::wstring_view TilesetFileExtension = L".sgctileset";
+    const std::wstring_view TilesetFileExtension = L".sgctileset";   
     
 }

@@ -403,6 +403,7 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::SettingsAction>());
     m_actionManager->Register(std::make_unique<action::SaveAllAction>());
     m_actionManager->Register(std::make_unique<action::HelpAboutAction>());
+    m_actionManager->Register(std::make_unique<action::HelpRepositoryAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

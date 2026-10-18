@@ -19,8 +19,7 @@ action::HelpAboutAction::HelpAboutAction()
     m_actionDescription.menuId = MenuId::Help;
     m_actionDescription.tooltipStringId = std::nullopt;
     m_actionDescription.nameStringId = locale::StringId::NameHelpAbout;
-    m_actionDescription.shortcutStringId = locale::StringId::ShortcutNameNewPackage;
-    m_actionDescription.shortcutContext = win32_program::ShortcutContext::Global;
+    m_actionDescription.shortcutStringId = std::nullopt;    
 }
 
 bool action::HelpAboutAction::IsShortcutable() const

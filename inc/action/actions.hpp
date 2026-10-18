@@ -37,3 +37,4 @@
 #include "action/settings_action.hpp"
 #include "action/save_all_action.hpp"
 #include "action/help_about_action.hpp"
+#include "action/help_repository_action.hpp"
