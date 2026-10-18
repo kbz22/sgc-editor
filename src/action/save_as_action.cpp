@@ -79,12 +79,26 @@ void action::SaveAsAction::Execute(program::ProgramContext& programContext)
             activeFile->GetExtension()
         );
 
+        auto fileName = activeFile->GetFileName();        
+
+        if(fileName.empty())
+        {
+            auto docs = activeFile->GetDocuments();
+            for(auto &doc : docs)
+            {
+                fileName = doc->GetName();
+                if(!fileName.empty()) 
+                    break;
+            }
+        }
+
         std::optional<std::filesystem::path> filePath = win32_helpers::ShowSaveDialog(
             programContext.GetMainWindowHandle(),
             {
                 { thisTypeStr.c_str(), { activeFile->GetExtension().c_str() } },
                 { allFilesString.value().c_str(), { L"*" } }
-            }
+            },
+            fileName
         );
 
         if(filePath.has_value())

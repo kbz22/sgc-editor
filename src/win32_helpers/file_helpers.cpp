@@ -45,9 +45,13 @@ std::wstring BuildFilter(const std::vector<win32_helpers::FileFilter>& filters)
     return result;
 }
 
-std::optional<std::filesystem::path> win32_helpers::ShowSaveDialog(HWND owner, const std::vector<FileFilter>& filters)
+std::optional<std::filesystem::path> win32_helpers::ShowSaveDialog(HWND owner, const std::vector<FileFilter>& filters, const std::wstring &defaultFilename)
 {
     wchar_t file[MAX_PATH] = {};
+
+    if (!defaultFilename.empty())
+        wcscpy_s(file, MAX_PATH, defaultFilename.data());
+
     std::wstring filter = BuildFilter(filters);
 
     OPENFILENAMEW ofn{};
