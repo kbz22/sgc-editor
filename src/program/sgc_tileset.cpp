@@ -43,6 +43,10 @@ std::optional<sgc::tile::TileId> program::SgcTileset::GetTileId(sgc::tile::TileP
     auto sizeInTiles = m_tileset->GetSizeInTiles();
     auto extraRows = static_cast<sgc::math::ival>(m_paddedTiles.size()) / sizeInTiles.x + 1;
 
+    if(!IsValid(positionOnTileset)){
+        return std::nullopt;
+    }
+
     if(positionOnTileset.y < extraRows)
     {
         positionOnTileset.y += sizeInTiles.y;
@@ -50,11 +54,7 @@ std::optional<sgc::tile::TileId> program::SgcTileset::GetTileId(sgc::tile::TileP
     else
     {
         positionOnTileset.y -= extraRows;
-    }
-
-    if(!IsValid(positionOnTileset)){
-        return std::nullopt;
-    }
+    }    
 
     auto tileId = m_tileset->ToTileId(positionOnTileset);
 
