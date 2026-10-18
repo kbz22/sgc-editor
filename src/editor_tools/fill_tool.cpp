@@ -33,25 +33,21 @@ void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::
     if(!positionOnTilesetOp.has_value())
         return; 
 
-    if(m_allowChunkCreation && !targetTileId.has_value()) 
+    if(targetTileId == std::nullopt) 
     {
-        return;
-    }
-    else 
-    {
-        if(targetTileId == std::nullopt) 
-        {
-            targetTileId = clearTileId;
+        if(!m_allowChunkCreation)
+            return;
 
-            auto& chunkedStorage = *dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
-            chunkedStorage.SetChunkAt(
-                chunkedStorage.GetChunkCoordAt(cursorPosition),
-                clearTileId
-            );
-        }
+        targetTileId = clearTileId;
 
-        currentLayer->SetTileAt(cursorPosition, targetTileId);
+        auto& chunkedStorage = *dynamic_cast<sgc::data::ChunkedTileStorage*>(currentLayer);
+        chunkedStorage.SetChunkAt(
+            chunkedStorage.GetChunkCoordAt(cursorPosition),
+            clearTileId
+        );
     }
+
+    currentLayer->SetTileAt(cursorPosition, targetTileId);
 
     std::vector<sgc::tile::TilePosition2D> region;
     std::unordered_set<sgc::tile::TilePosition2D> visited;
