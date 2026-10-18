@@ -27,20 +27,7 @@ void SaveAndUpdate(file::IFile* activeFile, std::filesystem::path filePath, prog
     activeFile->SetFilePath(filePath);
 
     auto fileManager = programContext.GetManager<file::FileManager>();
-    fileManager->SaveFile(
-        fileManager->GetSelectedFileIndex()
-    );
-
-    auto selectedDocument = fileManager->GetSelectedDocumentLocation();
-    auto activeDocument = fileManager->GetActiveDocumentLocation();
-
-    fileManager->SelectDocument(selectedDocument);
-    fileManager->SetActiveDocument(activeDocument);
-
-    auto packageSection = programContext.GetSection<sections::PackageSection>();
-    packageSection->Refresh(programContext);
-    packageSection->UpdateTreeViewItems(programContext);
-    packageSection->Update();
+    fileManager->SaveFile(fileManager->GetFileIndex(activeFile));
 }
 
 std::optional<std::filesystem::path> GetFilePathFromDialog(file::IFile* activeFile, const locale::StringLookup &stringLookup, HWND windowHwnd)
