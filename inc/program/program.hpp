@@ -79,9 +79,10 @@ namespace program {
             ProgramContext();
             ProgramContext(HWND hMainWindow, HINSTANCE hInstance);
 
-            void StartDefault();
-
+            void Initialize();
+            void Begin();
             void Refresh();
+            
             void UpdateEditorLayerMode(program::EditorLayerMode newMode);
             void UpdateEditorChunkMode(program::EditorChunkMode newMode);
             void UpdateBrushMode(editor_tools::PaintMode newMode);
@@ -91,7 +92,7 @@ namespace program {
             void UpdateCanUndoRedo();
 
             void EnableSaving(bool enable);
-            void EnableFileActions(bool enable);
+            void EnableFileActions(bool enable);            
             
             bool ShortcutsEnabled() const;
 

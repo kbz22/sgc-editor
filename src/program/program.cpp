@@ -8,41 +8,7 @@
 
 #include <sgc/data/chunkedtilestorage.hpp>
 
-#include "action/new_document_action.hpp"
-#include "action/new_map_document_action.hpp"
-#include "action/new_tileset_document_action.hpp"
-#include "action/undo_action.hpp"
-#include "action/redo_action.hpp"
-#include "action/layer_add_action.hpp"
-#include "action/layer_remove_action.hpp"
-#include "action/layer_move_action.hpp"
-#include "action/change_layer_mode_action.hpp"
-#include "action/change_chunk_mode_action.hpp"
-#include "action/file_menu_action.hpp"
-#include "action/edit_menu_action.hpp"
-#include "action/map_menu_action.hpp"
-#include "action/view_menu_action.hpp"
-#include "action/help_menu_action.hpp"
-#include "action/close_file_action.hpp"
-#include "action/save_file_action.hpp"
-#include "action/open_file_action.hpp"
-#include "action/change_brush_mode_action.hpp"
-#include "action/zoom_action.hpp"
-#include "action/zoom_reset_action.hpp"
-#include "action/zoom_select_action.hpp"
-#include "action/change_grid_mode_action.hpp"
-#include "action/change_selection_mode_action.hpp"
-#include "action/selection_clear_action.hpp"
-#include "action/selection_copy_action.hpp"
-#include "action/selection_paste_action.hpp"
-#include "action/selection_cut_action.hpp"
-#include "action/selection_move_action.hpp"
-#include "action/save_as_action.hpp"
-#include "action/export_file_action.hpp"
-#include "action/export_image_action.hpp"
-#include "action/new_package_action.hpp"
-#include "action/change_active_layer_action.hpp"
-#include "action/settings_action.hpp"
+#include "action/actions.hpp"
 #include "defaults.hpp"
 
 #include "settings/settings.hpp"
@@ -75,8 +41,7 @@ program::ProgramContext::ProgramContext()
     m_dpiManager = std::make_unique<win32_program::DpiManager>(m_mainWindowHandle);
 
     SetupImageLists();
-    RegisterActions();
-    // RegisterDefaultShortcuts();    
+    RegisterActions();    
 }
 
 program::ProgramContext& program::GetProgramContext()
@@ -87,7 +52,8 @@ program::ProgramContext& program::GetProgramContext()
 
 std::vector<action::ActionType> g_activeFileActions {
     action::ActionType::CloseFile,
-    action::ActionType::SaveAs    
+    action::ActionType::SaveAs,
+    action::ActionType::SaveAll
 };
 
 std::vector<action::ActionType> g_activeEditorButtons {
@@ -148,13 +114,11 @@ void program::ProgramContext::RegisterDefaultSettings()
     );
 }
 
-void program::ProgramContext::StartDefault()
+void program::ProgramContext::Initialize()
 {
     m_assetManager = std::make_unique<file::AssetManager>();
     m_fileManager = std::make_unique<file::FileManager>();
     m_settingsManager = std::make_unique<settings::SettingsManager>();
-    // m_stringLookup = std::make_unique<locale::StringLookup>();
-    // m_dpiManager = std::make_unique<win32_program::DpiManager>(m_mainWindowHandle);
 
     m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 
@@ -307,8 +271,11 @@ void program::ProgramContext::StartDefault()
             m_toolbarSection->Refresh(*this);
             m_toolbarSection->Update();
         }
-    });
+    });    
+}
 
+void program::ProgramContext::Begin()
+{
     try
     {
         m_shortcutManager->ReplaceShortcutsWithSaved(*m_actionManager);
@@ -335,8 +302,6 @@ void program::ProgramContext::StartDefault()
             MessageBox(m_mainWindowHandle, errorMssg.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
         }
     }
-
-    Refresh();
 }
 
 void RedrawAllSections(program::ProgramContext& programContext)
@@ -460,6 +425,7 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Top));
     m_actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Bottom));
     m_actionManager->Register(std::make_unique<action::SettingsAction>());
+    m_actionManager->Register(std::make_unique<action::SaveAllAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,
