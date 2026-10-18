@@ -43,14 +43,54 @@ void SaveAndUpdate(file::IFile* activeFile, std::filesystem::path filePath, prog
     packageSection->Update();
 }
 
-void action::SaveAsAction::Execute(program::ProgramContext& programContext)
-{       
+std::optional<std::filesystem::path> GetFilePathFromDialog(file::IFile* activeFile, const locale::StringLookup &stringLookup, HWND windowHwnd)
+{
     static std::unordered_map<file::FileType, locale::StringId> extensionToStringIdMap = {
         { file::FileType::Map, locale::StringId::NameMapFile },
         { file::FileType::Tileset, locale::StringId::NameTilesetFile },
         { file::FileType::Package, locale::StringId::NamePackageFile }
     };
 
+    auto allFilesString = stringLookup.Get(locale::StringId::NameAllFiles);
+    auto thisTypeString = stringLookup.Get(
+        extensionToStringIdMap[activeFile->GetFileType()]
+    );
+
+    if(!thisTypeString.has_value() || !allFilesString.has_value()) {
+        throw program::StringNotFoundException("Missing string for file type or all files");
+    }
+
+    std::wstring thisTypeStr = std::format(
+        L"{} ({})",
+        thisTypeString.value(),
+        activeFile->GetExtension()
+    );
+
+    auto fileName = activeFile->GetFileName();        
+
+    if(fileName.empty())
+    {
+        auto docs = activeFile->GetDocuments();
+        for(auto &doc : docs)
+        {
+            fileName = doc->GetName();
+            if(!fileName.empty()) 
+                break;
+        }
+    }
+
+    return win32_helpers::ShowSaveDialog(
+        windowHwnd,
+        {
+            { thisTypeStr.c_str(), { activeFile->GetExtension().c_str() } },
+            { allFilesString.value().c_str(), { L"*" } }
+        },
+        fileName
+    );
+}
+
+void action::SaveAsAction::Execute(program::ProgramContext& programContext)
+{
     auto fileManager = programContext.GetManager<file::FileManager>();
     auto activeFile = fileManager->GetSelectedFile();
     auto stringLookup = programContext.GetStringLookup();
@@ -64,42 +104,7 @@ void action::SaveAsAction::Execute(program::ProgramContext& programContext)
     
     if (activeFile != nullptr) 
     {
-        auto allFilesString = stringLookup.Get(locale::StringId::NameAllFiles);
-        auto thisTypeString = stringLookup.Get(
-            extensionToStringIdMap[activeFile->GetFileType()]
-        );
-
-        if(!thisTypeString.has_value() || !allFilesString.has_value()) {
-            throw program::StringNotFoundException("Missing string for file type or all files");
-        }
-
-        std::wstring thisTypeStr = std::format(
-            L"{} ({})",
-            thisTypeString.value(),
-            activeFile->GetExtension()
-        );
-
-        auto fileName = activeFile->GetFileName();        
-
-        if(fileName.empty())
-        {
-            auto docs = activeFile->GetDocuments();
-            for(auto &doc : docs)
-            {
-                fileName = doc->GetName();
-                if(!fileName.empty()) 
-                    break;
-            }
-        }
-
-        std::optional<std::filesystem::path> filePath = win32_helpers::ShowSaveDialog(
-            programContext.GetMainWindowHandle(),
-            {
-                { thisTypeStr.c_str(), { activeFile->GetExtension().c_str() } },
-                { allFilesString.value().c_str(), { L"*" } }
-            },
-            fileName
-        );
+        auto filePath = GetFilePathFromDialog(activeFile, stringLookup, programContext.GetMainWindowHandle());
 
         if(filePath.has_value())
         {

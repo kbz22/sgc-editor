@@ -28,6 +28,7 @@ action::SaveFileAction::SaveFileAction()
 }
 
 void SaveAndUpdate(file::IFile* activeFile, std::filesystem::path filePath, program::ProgramContext& programContext);
+std::optional<std::filesystem::path> GetFilePathFromDialog(file::IFile* activeFile, const locale::StringLookup &stringLookup, HWND windowHwnd);
 
 void action::SaveFileAction::Execute(program::ProgramContext& programContext)
 {       
@@ -55,13 +56,16 @@ void action::SaveFileAction::Execute(program::ProgramContext& programContext)
         
         std::optional<std::filesystem::path> filePath = activeFile->GetFilePath();
 
-        if(filePath.has_value() && filePath.value().empty()) 
+        if(filePath.value().empty()) 
         {
-            programContext.GetManager<action::ActionManager>()->Execute(
-                action::ActionType::SaveAs, programContext
+            filePath = GetFilePathFromDialog(
+                activeFile,
+                programContext.GetStringLookup(),
+                programContext.GetMainWindowHandle()
             );
         }
-        else if(filePath.has_value())
+        
+        if(filePath.has_value())
         {
             SaveAndUpdate(activeFile, filePath.value(), programContext);
         }
