@@ -118,6 +118,9 @@ INT_PTR CALLBACK SettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_
             addItem(stringLookup->Get(locale::StringId::SettingsNameMouseAndTouch).value_or(L"2"), SettingCategory::MouseAndTouch);
             addItem(stringLookup->Get(locale::StringId::SettingsNameShortcuts).value_or(L"3"), SettingCategory::Shortcuts);
 
+            auto title = context.GetStringLookup().Get(locale::StringId::DialogTitleSettings).value_or(L"DIALOG TITLE");
+            SetWindowTextW(hDlg, title.c_str());
+
             return TRUE;
         }
 

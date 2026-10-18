@@ -181,9 +181,15 @@ namespace locale
         UserErrorNoTilesetName,
         UserErrorNoImage,
         UserErrorWrongTileSize,
-        
-        AboutAppDescription,        
 
         EditorErrorFailedToRestoreSession,
+
+        AboutAppDescription,
+
+        DialogTitleNewMap,
+        DialogTitleNewTileset,
+        DialogTitleNewPackage,
+        DialogTitleAbout,
+        DialogTitleSettings,
     };
 }

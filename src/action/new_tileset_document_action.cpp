@@ -82,7 +82,7 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
 
             auto &programContext = program::GetProgramContext();
             auto stringLookup = programContext.GetStringLookup();
-            auto createStr = stringLookup.Get(StringId::DialogCreate).value_or(L"CREATE NAME"); 
+            auto createStr = stringLookup.Get(StringId::DialogCreate).value_or(L"CREATE NAME");
             auto cancelStr = stringLookup.Get(StringId::DialogCancel).value_or(L"CANCEL NAME");
             auto nameStr = stringLookup.Get(StringId::NewDialogNameName).value_or(L"NAME NAME");
             auto imageStr = stringLookup.Get(StringId::NewTilesetDialogImageName).value_or(L"IMAGE NAME");
@@ -90,7 +90,8 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
             auto tileHeightStr = stringLookup.Get(StringId::NewTilesetDialogTileHeightName).value_or(L"TILE HEIGHT NAME");
             auto newButtonStr = stringLookup.Get(StringId::NewDialogNewName).value_or(L"NEW NAME");
             auto packageStr = stringLookup.Get(StringId::NewDialogPackageName).value_or(L"PACKAGE NAME");
-            auto includePackStr = stringLookup.Get(StringId::NewTilesetDialogIncludeInPackage).value_or(L"INCLUDE TEXT");            
+            auto includePackStr = stringLookup.Get(StringId::NewTilesetDialogIncludeInPackage).value_or(L"INCLUDE TEXT");
+            auto title = stringLookup.Get(StringId::DialogTitleNewTileset).value_or(L"DIALOG TITLE");
 
             SetDlgItemTextW(hDlg, IDOK, createStr.c_str());
             SetDlgItemTextW(hDlg, IDCANCEL, cancelStr.c_str());
@@ -101,6 +102,8 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
             SetDlgItemTextW(hDlg, IDC_TILESET_INCLUDE_PACKAGE_CHECKBOX, includePackStr.c_str());
             SetDlgItemTextW(hDlg, IDC_TILESET_LABEL_PACKAGE, packageStr.c_str());
             SetDlgItemTextW(hDlg, IDC_TILESET_NEW_PACKAGE_BUTTON, newButtonStr.c_str());
+
+            SetWindowTextW(hDlg, title.c_str());
 
             SetDlgItemInt(hDlg, IDC_TILESET_TILE_WIDTH, defaults::tileSize, FALSE);
             SetDlgItemInt(hDlg, IDC_TILESET_TILE_HEIGHT, defaults::tileSize, FALSE);

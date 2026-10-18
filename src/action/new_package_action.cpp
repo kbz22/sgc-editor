@@ -57,10 +57,13 @@ INT_PTR CALLBACK NewPackageFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
             auto createStr = stringLookup.Get(StringId::DialogCreate).value_or(L"CREATE NAME"); 
             auto cancelStr = stringLookup.Get(StringId::DialogCancel).value_or(L"CANCEL NAME");
             auto nameStr = stringLookup.Get(StringId::NewDialogNameName).value_or(L"NAME NAME");
+            auto title = stringLookup.Get(StringId::DialogTitleNewPackage).value_or(L"DIALOG TITLE");
 
             SetDlgItemTextW(hDlg, IDOK, createStr.c_str());
             SetDlgItemTextW(hDlg, IDCANCEL, cancelStr.c_str());
             SetDlgItemTextW(hDlg, IDC_PACKAGE_LABEL_NAME, nameStr.c_str());
+
+            SetWindowTextW(hDlg, title.c_str());
 
             return TRUE;
         }

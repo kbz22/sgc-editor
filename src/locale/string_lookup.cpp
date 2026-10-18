@@ -183,6 +183,12 @@ locale::StringLookup::StringLookup()
 
         {StringId::EditorErrorFailedToRestoreSession, L"The program failed to open some files from last session."},
 
+        {StringId::DialogTitleNewMap, L"New map"},
+        {StringId::DialogTitleNewTileset, L"New tileset"},
+        {StringId::DialogTitleNewPackage, L"New package"},
+        {StringId::DialogTitleAbout, L"About"},
+        {StringId::DialogTitleSettings, L"Settings"},
+
         {StringId::TextMissing, L"Text missing"}
     };
 }

@@ -55,8 +55,9 @@ INT_PTR CALLBACK HelpAboutDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM 
         {
             auto &stringLookup = programContext.GetStringLookup();
 
+            auto title = stringLookup.Get(locale::StringId::DialogTitleAbout).value_or(L"DIALOG TITLE");
             auto description = stringLookup.Get(locale::StringId::AboutAppDescription).value_or(L"DESCRIPTION");
-            auto appName = stringLookup.Get(locale::StringId::ApplicationName).value_or(L"APP NAME");
+            auto appName = stringLookup.Get(locale::StringId::ApplicationName).value_or(L"APP NAME");            
             auto versionString = std::wstring{SGC_EDITOR_VERSION_WSTRING};
 
             auto nameAndVersionString = std::format(L"{} v.{}",
@@ -66,6 +67,8 @@ INT_PTR CALLBACK HelpAboutDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM 
 
             SetDlgItemTextW(hDlg, IDC_HELP_ABOUT_APP_NAME_VERSION, nameAndVersionString.c_str());
             SetDlgItemTextW(hDlg, IDC_HELP_ABOUT_APP_DESCRIPTION, description.c_str());
+
+            SetWindowTextW(hDlg, title.c_str());
 
             HBITMAP bitmap = static_cast<HBITMAP>(
             LoadImageW(
