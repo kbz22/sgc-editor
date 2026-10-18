@@ -247,13 +247,13 @@ void file::FileManager::CloseFile(size_t index)
             if(isActive)
             {
                 auto mapDocs = m_selectedDocument.file->GetMapDocuments();
-                auto index = m_selectedDocument.file->GetDocumentIndex(mapDocs[0]);
+                auto indexOpt = m_selectedDocument.file->GetDocumentIndex(mapDocs[0]);
 
-                if(index.has_value())
+                if(indexOpt.has_value())
                 {
-                    m_selectedDocument.index = index.value();
+                    m_selectedDocument.index = indexOpt.value();
                     m_activeDocument.file = m_selectedDocument.file;
-                    m_activeDocument.index = index.value();
+                    m_activeDocument.index = indexOpt.value();
                 }
             }
             
