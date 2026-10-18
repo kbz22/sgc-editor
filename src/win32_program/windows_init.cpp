@@ -123,7 +123,7 @@ void win32_program::Init(HINSTANCE hInstance)
 
     CenterWindow(hwnd);
 
-    auto windowTitle = programContext.GetStringLookup().Get(locale::StringId::WindowTitle);
+    auto windowTitle = programContext.GetStringLookup().Get(locale::StringId::ApplicationName);
 
     if(windowTitle == std::nullopt) {
         throw std::runtime_error("Missing window title string.");

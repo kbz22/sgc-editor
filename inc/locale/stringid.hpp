@@ -6,7 +6,7 @@ namespace locale
     {
         TextMissing,
 
-        WindowTitle,
+        ApplicationName,
 
         DefaultProjectName,
 
@@ -181,6 +181,8 @@ namespace locale
         UserErrorNoTilesetName,
         UserErrorNoImage,
         UserErrorWrongTileSize,
+        
+        AboutAppDescription,        
 
         EditorErrorFailedToRestoreSession,
     };

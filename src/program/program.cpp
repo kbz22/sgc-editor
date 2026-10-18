@@ -229,7 +229,7 @@ void program::ProgramContext::Initialize()
 
     m_fileManager->RegisterOnActiveDocumentChangedCallback([this](file::DocumentLocation documentLocation) 
     {
-        static const auto defaultWindowTitle = m_stringLookup->Get(locale::StringId::WindowTitle);        
+        static const auto defaultWindowTitle = m_stringLookup->Get(locale::StringId::ApplicationName);
 
         if(documentLocation.file == nullptr) 
         {
@@ -402,6 +402,7 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::ChangeActiveLayerAction>(action::ChangeActiveLayerDirection::Bottom));
     m_actionManager->Register(std::make_unique<action::SettingsAction>());
     m_actionManager->Register(std::make_unique<action::SaveAllAction>());
+    m_actionManager->Register(std::make_unique<action::HelpAboutAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,

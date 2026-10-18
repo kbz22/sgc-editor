@@ -5,7 +5,7 @@ locale::StringLookup::StringLookup()
 {
     m_strings =
     {
-        {StringId::WindowTitle, L"SGC Map Editor"},
+        {StringId::ApplicationName, L"SGC Map Editor"},
 
         {StringId::TooltipNewMapDocument,  L"New map"},
         {StringId::TooltipFileOpen, L"Open file"},
@@ -169,6 +169,8 @@ locale::StringLookup::StringLookup()
         {StringId::NewTilesetDialogTileWidthName, L"Tile width:"},
         {StringId::NewTilesetDialogTileHeightName, L"Tile height:"},
         {StringId::NewTilesetDialogIncludeInPackage, L"Include the new tileset in a package file"},
+        
+        {StringId::AboutAppDescription, LR"(A simple 2D map editor for Windows developed using the Win32 API and SDL3. The editor is designed for creating and editing tile-based maps.)"},
 
         {StringId::ErrorName, L"Error"},
         {StringId::UserErrorNoMapName, L"Please provide a name for the map."},
