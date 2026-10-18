@@ -133,32 +133,16 @@ sgc::graphics::RenderContext& sgc_view::SgcView::GetRenderContext()
 
 void sgc_view::SgcView::SetTileset(sgc::data::AssetId tilesetId)
 {
-    /* auto &programContext = program::GetProgramContext();
-
-    std::shared_ptr<sgc::graphics::Tileset> tileset = nullptr;
-
-    try {
-        tileset = programContext.GetManager<file::AssetManager>()->MakeTileset(tilesetId, &m_renderContext);
-    }
-    catch ([[maybe_unused]] const program::AssetCacheException& e) {
-        // Ignore missing tileset - likely a map was loaded first
-        // wait for refresh when the tileset is available        
-        return;
-    }    
-
-    if(tileset == nullptr) return;
-    
-    m_tileset = tileset; */
-
     auto &programContext = program::GetProgramContext();
     auto assetManager = programContext.GetManager<file::AssetManager>();
         
-    m_sgcTileset.Set(tilesetId, *assetManager, m_renderContext);
-    m_tilesetId = tilesetId;
-    // auto tileSize = tileset->GetTileSize();
-    auto tileSize = m_sgcTileset.GetTileset()->GetTileSize();
-    m_tileWidth = static_cast<int>(tileSize.x);
-    m_tileHeight = static_cast<int>(tileSize.y);
+    if(m_sgcTileset.Set(tilesetId, *assetManager, m_renderContext))
+    {
+        m_tilesetId = tilesetId;        
+        auto tileSize = m_sgcTileset.GetTileset()->GetTileSize();
+        m_tileWidth = static_cast<int>(tileSize.x);
+        m_tileHeight = static_cast<int>(tileSize.y);
+    }
 }
 
 void sgc_view::SgcView::Refresh(program::ProgramContext& programContext)
