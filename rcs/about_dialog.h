@@ -1,0 +1,7 @@
+#pragma once
+
+#define IDD_HELP_ABOUT 25000
+
+#define IDC_HELP_ABOUT_APP_NAME_VERSION  25001
+#define IDC_HELP_ABOUT_APP_DESCRIPTION   25002
+#define IDC_HELP_ABOUT_LOGO              25003

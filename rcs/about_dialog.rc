@@ -1,0 +1,20 @@
+#include "about_dialog.h"
+#include <windows.h>
+
+IDD_HELP_ABOUT DIALOGEX 0, 0, 160, 180
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 9, "Segoe UI"
+BEGIN
+    CONTROL "", IDC_HELP_ABOUT_LOGO, "Static",
+        SS_BITMAP | SS_CENTERIMAGE,
+        -1, -1, 160, 96
+
+    LTEXT "[app name and version here]",
+          IDC_HELP_ABOUT_APP_NAME_VERSION, 10, 104, 140, 20,
+          SS_CENTER
+
+    LTEXT "[app description here]",
+          IDC_HELP_ABOUT_APP_DESCRIPTION, 10, 126, 140, 40,
+          SS_LEFT
+END

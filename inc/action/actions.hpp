@@ -36,3 +36,4 @@
 #include "action/change_active_layer_action.hpp"
 #include "action/settings_action.hpp"
 #include "action/save_all_action.hpp"
+#include "action/help_about_action.hpp"

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(sgc_editor LANGUAGES CXX)
+project(
+    sgc_editor
+    VERSION 0.0.1
+    LANGUAGES CXX
+)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -40,6 +44,12 @@ endif()
 if(NOT SDL_IMAGE_LIB_PATH)
     message(FATAL_ERROR "SDL_IMAGE_LIB_PATH not specified.")
 endif()
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.hpp.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/generated/version.hpp"
+    @ONLY
+)
 
 set(APP_MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/app.manifest")
 
@@ -88,6 +98,7 @@ add_executable(sgc-editor WIN32
     rcs/new_package_dialog.rc
     rcs/settings_dialog.rc
     rcs/settings_pages.rc
+    rcs/about_dialog.rc
 
     src/debug.cpp
 
@@ -148,6 +159,7 @@ add_executable(sgc-editor WIN32
     src/action/settings_action.cpp
     src/action/settings_pages_processes.cpp    
     src/action/save_all_action.cpp
+    src/action/help_about_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
@@ -193,6 +205,7 @@ set_source_files_properties(${APP_MANIFEST} PROPERTIES
 target_include_directories(sgc-editor PRIVATE
     ${CMAKE_SOURCE_DIR}/inc
     ${CMAKE_SOURCE_DIR}/rcs
+    ${CMAKE_SOURCE_DIR}/generated
     ${SDL_INCLUDE_PATH}
     ${SGC_INCLUDE_PATH}
 )
