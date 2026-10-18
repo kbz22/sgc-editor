@@ -209,13 +209,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
-                    PointerDown(PointerType::Touch, mapDocument, pointerPosition, programContext);                    
+                    PointerDown(PointerType::Touch, pointerPosition, programContext);                    
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerDown(PointerType::Pen, mapDocument, pointerPosition, programContext);
+                    PointerDown(PointerType::Pen, pointerPosition, programContext);
                     break;
                 }
                     
@@ -336,7 +336,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 y
             };
 
-            PointerDown(PointerType::LeftMouse, mapDocument, screenPosition, programContext);
+            PointerDown(PointerType::LeftMouse, screenPosition, programContext);
             SetCaptureHelper(hwnd, PointerType::LeftMouse);
             return 0;
         }
@@ -351,7 +351,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 y
             };
 
-            PointerDown(PointerType::MiddleMouse, mapDocument, screenPosition, programContext);
+            PointerDown(PointerType::MiddleMouse, screenPosition, programContext);
             SetCaptureHelper(hwnd, PointerType::MiddleMouse);
             return 0;
         }
@@ -366,7 +366,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 y
             };
 
-            PointerDown(PointerType::RightMouse, mapDocument, screenPosition, programContext);
+            PointerDown(PointerType::RightMouse, screenPosition, programContext);
             SetCaptureHelper(hwnd, PointerType::RightMouse);
             return 0;
         }
@@ -711,7 +711,8 @@ bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::P
     return false;
 }
 
-bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
+// bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
+bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType)
 {
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
     auto tileSize = m_mapView->GetTileSize();
@@ -873,7 +874,7 @@ void sections::MapSection::SetPointerBehaviour(PointerType pointerType, PointerB
     }
 }
 
-void sections::MapSection::PointerDown(PointerType pointerType, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext)
+void sections::MapSection::PointerDown(PointerType pointerType, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext)
 {
     if(IsPointerPanning(pointerType))
     {
@@ -881,7 +882,7 @@ void sections::MapSection::PointerDown(PointerType pointerType, file::MapDocumen
     }
     else if(IsPointerPainting(pointerType))
     {
-        bool shouldUpdate = UpdateOnCursorDown(pointerType, mapDocument, programContext);
+        bool shouldUpdate = UpdateOnCursorDown(pointerType);
         PointerUpdate(pointerType, position, programContext);
 
         if(m_editorToolManager.NeedsRedraw() || shouldUpdate) {
