@@ -1,9 +1,28 @@
 # Win32 Map Editor
 
+## About
+
 A 2D map editor for Windows developed in **C++23** using the **Win32 API** and **SDL3**.
 
-The editor is designed for creating and editing tile-based maps. It is made for in parallel with my own sdl based sdl-game-core library which is an SDL based rendering engine and game engine.
+The editor is designed for creating and editing tile-based maps. It uses my own SDL based rendering and game engine library called [sdl-game-core](https://github.com/kbz22/sdl-game-core). These are being developed in parallel.
 
+The original design goal was to make something similar to the map editor in RPG Maker (my main influence would be RPG Maker XP) but less restricted. Most features at this point are however inspired by features in painting software but with the use of tiles. This is also my first project utilizing Win32 API which has been fun to learn but I regularly reconsider and refactor my earlier aproach as I learn things.
+
+![Screenshot of the editor](./screenshot.png)
+
+To make the example map in the screenshot I used free assets made by Cainos. Those are not bundled with any release of this software. They are available [here](https://cainos.itch.io/pixel-art-top-down-basic).
+
+## Features
+Right now there are still many features missing, incomplete or buggy but the core ability to create and edit maps is present. Currently the editor supports only my own binary file format but I consider adding an option to export to other formats.
+
+* Drawing with tiles using basic tools: brush, rectangle and fill
+* Map are stored and created in 32x32 tile chunks
+* Support for multiple layers, with ability to name and toggle visibility of each layer
+* Selection tools that allows to move, clear, copy and paste tiles
+* Ability to zoom/out
+* Ability to use mouse, pen and touch input and assign them seperately to panning and painting for touch displays
+* Ability to open multiple tilesets and maps files or package files that can bundle the map and tileset documents together
+* Support for custom shortcuts
 
 # Building
 
