@@ -139,11 +139,12 @@ void sgc_view::MapView::SetCursorTile(sgc::graphics::PixelSize2D size)
         size.x,
         size.y
     });
-    // m_cursorTile->SetColor({ 255, 255, 255, 64 });
+    SetCursorMode(CursorTileMode::Default);
 }
 
 void sgc_view::MapView::ResetCursorTile()
 {
+    m_cursorTileMode = CursorTileMode::Invisible;
     m_cursorTile.reset();
 }
 
@@ -191,6 +192,7 @@ void sgc_view::MapView::Render()
         if(layer != nullptr) {
             layer->Draw(m_renderContext);
         }
+
         if(selectionLayer != nullptr) {
             selectionLayer->Draw(m_renderContext);
         }
@@ -321,7 +323,7 @@ void sgc_view::MapView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D
             break;
         }
 
-        case CursorTileMode::RemoveChunk:        
+        case CursorTileMode::RemoveChunk:
         {
             position.x = sgc::math::FloorDiv(position.x, (sgc::data::TileChunk::Size * m_tileWidth)) * (sgc::data::TileChunk::Size * m_tileWidth);
             position.y = sgc::math::FloorDiv(position.y, (sgc::data::TileChunk::Size * m_tileHeight)) * (sgc::data::TileChunk::Size * m_tileHeight);
@@ -451,7 +453,6 @@ void sgc_view::MapView::SetCursorMode(CursorTileMode mode)
         }
 
         case CursorTileMode::RemoveChunk:
-        case CursorTileMode::RemoveTile:
         {
             m_cursorTile->SetColor({ 255, 64, 64, 255 });
             break;

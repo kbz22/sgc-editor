@@ -426,24 +426,18 @@ void sections::MapSection::SetAllowChunkCreation(bool check)
 
 void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
 {
-    m_editorToolManager.SetPaintMode(paintMode);
-
-    auto cursor = m_mapView->m_cursorTile.get();
-
-    if(cursor != nullptr) switch(paintMode)
+    switch(paintMode)
     {
         case editor_tools::PaintMode::ChunkRemover:
-        {
-            cursor->SetColor({ 255, 64, 64, 0 });            
+            m_mapView->SetCursorMode(sgc_view::CursorTileMode::RemoveChunk);
             break;
-        }
 
         default:
-        {
-            cursor->SetColor({ 255, 255, 255, 0 });
+            m_mapView->SetCursorMode(sgc_view::CursorTileMode::Default);
             break;
-        }
     }
+
+    m_editorToolManager.SetPaintMode(paintMode);
 
     Update();
 }
@@ -631,8 +625,12 @@ bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D p
         auto selection = programContext.GetSection<sections::TilesetSection>()->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
 
         switch(m_editorToolManager.GetPaintMode())
-        {                    
+        {
             case editor_tools::PaintMode::Rectangle:
+            case editor_tools::PaintMode::ChunkRemover:
+            case editor_tools::PaintMode::Select:
+            case editor_tools::PaintMode::MoveSelection:
+            case editor_tools::PaintMode::TilePicker:
                 m_mapView->SetCursorSizeInPixels({
                     tileSize.x,
                     tileSize.y

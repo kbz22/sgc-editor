@@ -22,8 +22,7 @@ namespace sgc_view
     enum class CursorTileMode {
         Invisible,
         Default,
-        RemoveTile,
-        RemoveChunk
+        RemoveChunk,
     };
 
     class MapView : public SgcView
@@ -52,7 +51,7 @@ namespace sgc_view
             MapView(HWND hwnd);
             ~MapView();
             
-            void Render() override;            
+            void Render() override;
             void Refresh(program::ProgramContext& programContext) override;
             void SetScreenSize(int width, int height) override;
 
@@ -67,7 +66,7 @@ namespace sgc_view
             void SetSelectionPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetSelectionSizeInPixels(sgc::graphics::PixelSize2D size);
             void SetCameraPositionSingles(float x, float y);
-            void SetCursorMode(CursorTileMode mode);            
+            void SetCursorMode(CursorTileMode mode);
 
             void ChangeCameraPositionSingles(float deltaX, float deltaY);
             void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
