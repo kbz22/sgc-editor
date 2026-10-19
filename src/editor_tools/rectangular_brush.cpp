@@ -29,15 +29,20 @@ void editor_tools::RectangularBrush::Execute(file::MapDocument& mapDocument, sgc
 
     std::unordered_map<sgc::math::vec2, command::TileChange> tileChanges;
     auto positionOnTileset = m_tilesetSection.GetCursorPositionInTiles();
-    auto cursorSize = m_tilesetSection.GetCursorSizeInTiles();
+    auto cursorSize = m_tilesetSection.GetCursorSizeInTiles();    
 
-    auto endPosition = sgc::tile::TilePosition2D{
-        cursorPosition.x,
-        cursorPosition.y
+    auto startPosition = sgc::tile::TilePosition2D{
+        cursorPosition.x > m_cursorOrigin->x ? m_cursorOrigin->x : cursorPosition.x,
+        cursorPosition.y > m_cursorOrigin->y ? m_cursorOrigin->y : cursorPosition.y,
     };
 
-    for(auto x = m_cursorOrigin->x; x <= endPosition.x; ++x){
-        for(auto y = m_cursorOrigin->y; y <= endPosition.y; ++y)
+    auto endPosition = sgc::tile::TilePosition2D{
+        cursorPosition.x <= m_cursorOrigin->x ? m_cursorOrigin->x : cursorPosition.x,
+        cursorPosition.y <= m_cursorOrigin->y ? m_cursorOrigin->y : cursorPosition.y,
+    };
+
+    for(auto x = startPosition.x; x <= endPosition.x; ++x){
+        for(auto y = startPosition.y; y <= endPosition.y; ++y)
         {
             auto tileId = GetTileId(
                 m_mapView.GetSgcTileset(),
