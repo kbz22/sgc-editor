@@ -255,22 +255,30 @@ void sections::TilesetSection::SetCursorTileId(sgc::tile::TileId tileId)
     }
 }
 
-std::optional<sgc::graphics::PixelPosition2D> sections::TilesetSection::GetCursorPositionInPixels() const
+sgc::graphics::PixelPosition2D sections::TilesetSection::GetCursorPositionInPixels() const
 {
-    if(m_tilesetView != nullptr) {
-        return m_tilesetView->GetCursorPositionInPixels();
-    }
-
-    return std::nullopt;
+    return m_tilesetView->GetCursorPositionInPixels();
 }
 
-std::optional<sgc::graphics::PixelSize2D> sections::TilesetSection::GetCursorSizeInPixels() const
-{
-    if(m_tilesetView != nullptr) {
-        return m_tilesetView->GetCursorSizeInPixels();
-    }
+sgc::graphics::PixelSize2D sections::TilesetSection::GetCursorSizeInPixels() const
+{   
+    return m_tilesetView->GetCursorSizeInPixels();
+}
 
-    return std::nullopt;
+sgc::tile::TileSize2D sections::TilesetSection::GetCursorSizeInTiles() const
+{
+    auto selectionSize = m_tilesetView->GetCursorSizeInPixels();
+    auto tileSize = m_tilesetView->GetTileSize();
+
+    return sgc::tile::TileSize2D{
+        selectionSize.x / tileSize.x,
+        selectionSize.y / tileSize.y
+    };
+}
+
+bool sections::TilesetSection::IsReady() const
+{
+    return m_tilesetView != nullptr;
 }
 
 sgc::tile::TileId sections::TilesetSection::GetClearTileId() const

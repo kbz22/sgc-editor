@@ -28,10 +28,7 @@ void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::
 
     auto targetTileId = currentLayer->GetTileAt(cursorPosition);
     auto clearTileId = m_tilesetSection.GetClearTileId();
-    auto positionOnTilesetOp = m_tilesetSection.GetCursorPositionInPixels();
-
-    if(!positionOnTilesetOp.has_value())
-        return; 
+    auto positionOnTileset = m_tilesetSection.GetCursorPositionInPixels();
 
     if(targetTileId == std::nullopt) 
     {
@@ -79,12 +76,11 @@ void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::
     }
 
     auto tileset = m_mapView.GetSgcTileset();
-    auto cursorPositionOnTileset = positionOnTilesetOp.value();
     auto tileSize = m_mapView.GetTileSize();
     auto cursorSize = m_mapView.GetCursorSizeInTiles();
 
-    cursorPositionOnTileset.x /= tileSize.x;
-    cursorPositionOnTileset.y /= tileSize.y;
+    positionOnTileset.x /= tileSize.x;
+    positionOnTileset.y /= tileSize.y;
 
     if(!region.empty())
     {
@@ -95,7 +91,7 @@ void editor_tools::FillTool::Execute(file::MapDocument& mapDocument, sgc::tile::
     {
         auto newTileId = GetTileId(
             tileset,
-            cursorPositionOnTileset,
+            positionOnTileset,
             cursorSize,
             pos,
             *m_cursorOrigin

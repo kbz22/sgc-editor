@@ -26,16 +26,11 @@ void editor_tools::RectangularBrush::Execute(file::MapDocument& mapDocument, sgc
     else{
         m_paintCommand->UndoTileChanges();
     }
-    
-    auto positionOnTilesetOp = m_tilesetSection.GetCursorPositionInPixels();
-
-    if(!positionOnTilesetOp.has_value())
-        return;    
 
     std::unordered_map<sgc::math::vec2, command::TileChange> tileChanges;
-    auto cursorSize = m_mapView.GetCursorSizeInTiles();
+    auto cursorSize = m_tilesetSection.GetCursorSizeInPixels(); //m_mapView.GetCursorSizeInTiles();
     auto tileSize = m_mapView.GetTileSize();
-    auto positionOnTileset = positionOnTilesetOp.value();
+    auto positionOnTileset = m_tilesetSection.GetCursorPositionInPixels();
 
     auto endPosition = sgc::tile::TilePosition2D{
         cursorPosition.x,

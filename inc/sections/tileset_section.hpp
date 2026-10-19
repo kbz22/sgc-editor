@@ -39,8 +39,11 @@ namespace sections {
             void ResetCursorSize();
             void SetCursorTileId(sgc::tile::TileId tileId);
 
-            std::optional<sgc::graphics::PixelPosition2D> GetCursorPositionInPixels() const;
-            std::optional<sgc::graphics::PixelSize2D> GetCursorSizeInPixels() const;
+            bool IsReady() const;
+
+            sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
+            sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;
+            sgc::tile::TileSize2D GetCursorSizeInTiles() const;
             sgc::tile::TileId GetClearTileId() const;
 
             void ClearTileset();

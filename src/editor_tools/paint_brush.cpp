@@ -31,15 +31,10 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
         );
     }
 
-    auto positionOnTilesetOp = m_tilesetSection.GetCursorPositionInPixels();
-
-    if(!positionOnTilesetOp.has_value())
-        return;    
-
     std::unordered_map<sgc::math::vec2, command::TileChange> tileChanges;
     auto cursorSize = m_mapView.GetCursorSizeInTiles();
     auto tileSize = m_mapView.GetTileSize();
-    auto positionOnTileset = positionOnTilesetOp.value();
+    auto positionOnTileset = m_tilesetSection.GetCursorPositionInPixels();
 
     positionOnTileset.x /= tileSize.x;
     positionOnTileset.y /= tileSize.y;

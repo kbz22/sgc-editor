@@ -620,9 +620,10 @@ bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D p
     );
 
     auto position = m_mapView->GetCursorPositionInTiles();
-    if (position.x != x_tile || position.y != y_tile) {                
-        
-        auto selection = programContext.GetSection<sections::TilesetSection>()->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
+    if (position.x != x_tile || position.y != y_tile) 
+    {        
+        // auto selection = programContext.GetSection<sections::TilesetSection>()->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
+        auto selection = programContext.GetSection<sections::TilesetSection>()->GetCursorSizeInPixels();
 
         switch(m_editorToolManager.GetPaintMode())
         {
@@ -689,14 +690,14 @@ bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::P
     auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
     auto tilesetSection = programContext.GetSection<TilesetSection>();
     auto tileSize = m_mapView->GetTileSize();
-    auto selectionSize = tilesetSection->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
+    auto selectionSize = tilesetSection->GetCursorSizeInPixels(); //.value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
     auto cursorTileSize = sgc::tile::TileSize2D{
         static_cast<sgc::math::ival>(selectionSize.x / tileSize.x),
         static_cast<sgc::math::ival>(selectionSize.y / tileSize.y)
     };
 
     auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(                
-        tilesetSection->GetCursorPositionInPixels().value_or(sgc::graphics::PixelPosition2D{0, 0})
+        tilesetSection->GetCursorPositionInPixels() //.value_or(sgc::graphics::PixelPosition2D{0, 0})
     );
 
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
