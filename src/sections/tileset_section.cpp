@@ -265,6 +265,17 @@ sgc::graphics::PixelSize2D sections::TilesetSection::GetCursorSizeInPixels() con
     return m_tilesetView->GetCursorSizeInPixels();
 }
 
+sgc::tile::TileSize2D sections::TilesetSection::GetCursorPositionInTiles() const
+{
+    auto selectionPosition = m_tilesetView->GetCursorPositionInPixels();
+    auto tileSize = m_tilesetView->GetTileSize();
+
+    return sgc::tile::TileSize2D{
+        selectionPosition.x / tileSize.x,
+        selectionPosition.y / tileSize.y
+    };
+}
+
 sgc::tile::TileSize2D sections::TilesetSection::GetCursorSizeInTiles() const
 {
     auto selectionSize = m_tilesetView->GetCursorSizeInPixels();

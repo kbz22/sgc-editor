@@ -43,6 +43,7 @@ namespace sections {
 
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;
+            sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
             sgc::tile::TileSize2D GetCursorSizeInTiles() const;
             sgc::tile::TileId GetClearTileId() const;
 
