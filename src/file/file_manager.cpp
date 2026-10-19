@@ -210,6 +210,12 @@ void file::FileManager::SaveFile(size_t index)
 
 void file::FileManager::CloseFile(size_t index)
 {
+    auto setLocation = [](DocumentLocation &location, file::IFile *file, size_t index)
+    {
+        location.file = file;
+        location.index = index;
+    };
+
     if(!m_openFiles.empty() && index < m_openFiles.size()) 
     {
         bool isActive = false;
@@ -222,41 +228,37 @@ void file::FileManager::CloseFile(size_t index)
 
         if(m_openFiles.empty())
         {
-            m_selectedDocument.file = nullptr;
-            m_selectedDocument.index = 0;
+            setLocation(m_selectedDocument, nullptr, 0);
 
             if(isActive)
             {
-                m_activeDocument.file = nullptr;
-                m_activeDocument.index = 0;
+                setLocation(m_activeDocument, nullptr, 0);
             }
         }
         else
         {
             if(index < m_openFiles.size())
             {
-                m_selectedDocument.file = m_openFiles[index].get();
-                m_selectedDocument.index = 0;
+                setLocation(m_selectedDocument, m_openFiles[index].get(), 0);
             }            
             else
             {
-                m_selectedDocument.file = m_openFiles.back().get();
-                m_selectedDocument.index = 0;
-            }            
+                setLocation(m_selectedDocument, m_openFiles.back().get(), 0);
+            }
+
+            setLocation(m_activeDocument, nullptr, 0);
 
             if(isActive)
             {
                 auto mapDocs = m_selectedDocument.file->GetMapDocuments();
-                auto indexOpt = m_selectedDocument.file->GetDocumentIndex(mapDocs[0]);
 
-                if(indexOpt.has_value())
+                if(!mapDocs.empty())
                 {
-                    m_selectedDocument.index = indexOpt.value();
-                    m_activeDocument.file = m_selectedDocument.file;
-                    m_activeDocument.index = indexOpt.value();
+                    auto indexOpt = m_selectedDocument.file->GetDocumentIndex(mapDocs[0]);
+                    setLocation(m_selectedDocument, m_selectedDocument.file, indexOpt.value());
+                    setLocation(m_activeDocument, m_selectedDocument.file, indexOpt.value());
                 }
-            }
-            
+            }            
         }
 
         UpdateSessionFile();
@@ -273,7 +275,7 @@ void file::FileManager::SelectDocument(const DocumentLocation &document)
         m_selectedDocument.index = 0;
     };
 
-    if(!document.file) 
+    if(document.file == nullptr)
     {
         clearSelection();
         return;

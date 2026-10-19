@@ -30,7 +30,8 @@ void action::CloseFileAction::Execute(program::ProgramContext& context)
         currentFile = documentLocation.file;
     }
 
-    if(currentFile != nullptr) {
+    if(currentFile != nullptr) 
+    {
         fileManager->CloseFile(fileManager->GetSelectedFileIndex());
     }
 }
