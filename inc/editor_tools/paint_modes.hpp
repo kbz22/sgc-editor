@@ -11,6 +11,7 @@ namespace editor_tools
         ChunkRemover,
         TilePicker,
         MoveSelection,
+        Scatter,
     };
 
     enum class SelectionMode

@@ -13,7 +13,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorPaintModeBrush;
             m_actionDescription.nameStringId = locale::StringId::NamePaintModeBrush;
             m_actionDescription.imageIndex = 19;
-            m_actionDescription.toolbarOrder = 1500;
+            m_actionDescription.toolbarOrder = 1501;
             m_actionDescription.menuOrder = 800;
             m_actionDescription.shortcuts = {
                 { win32_program::ShortcutModifier::None, 'B' }
@@ -27,7 +27,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorPaintModeRectangle;
             m_actionDescription.nameStringId = locale::StringId::NamePaintModeRectangle;
             m_actionDescription.imageIndex = 20;
-            m_actionDescription.toolbarOrder = 1501;
+            m_actionDescription.toolbarOrder = 1502;
             m_actionDescription.menuOrder = 801;
             m_actionDescription.shortcuts = {
                 { win32_program::ShortcutModifier::None, 'R' }
@@ -41,7 +41,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorPaintModeFill;
             m_actionDescription.nameStringId = locale::StringId::NamePaintModeFill;
             m_actionDescription.imageIndex = 22;
-            m_actionDescription.toolbarOrder = 1502;
+            m_actionDescription.toolbarOrder = 1504;
             m_actionDescription.menuOrder = 802;
             m_actionDescription.shortcuts = {
                 { win32_program::ShortcutModifier::None, 'F' }
@@ -55,7 +55,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorPaintModeSelect;
             m_actionDescription.nameStringId = locale::StringId::NamePaintModeSelect;
             m_actionDescription.imageIndex = 24;
-            m_actionDescription.toolbarOrder = 1503;
+            m_actionDescription.toolbarOrder = 1505;
             m_actionDescription.menuOrder = 803;
             m_actionDescription.shortcuts = {
                 { win32_program::ShortcutModifier::None, 'S' }
@@ -69,7 +69,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.tooltipStringId = locale::StringId::TooltipTilePicker;
             m_actionDescription.nameStringId = locale::StringId::NameTilePicker;
             m_actionDescription.imageIndex = 36;
-            m_actionDescription.toolbarOrder = 1504;
+            m_actionDescription.toolbarOrder = 1506;
             m_actionDescription.menuOrder = 804;
             m_actionDescription.shortcuts = {
                 {win32_program::ShortcutModifier::None, 'P'}
@@ -83,10 +83,25 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.tooltipStringId = locale::StringId::TooltipEditorEraseModeDeleteChunk;
             m_actionDescription.nameStringId = locale::StringId::NameEraserModeDeleteChunk;
             m_actionDescription.imageIndex = 38;
-            m_actionDescription.toolbarOrder = 1505;
+            m_actionDescription.toolbarOrder = 1507;
             m_actionDescription.menuOrder = 805;
             m_actionDescription.shortcuts = {
                 {win32_program::ShortcutModifier::Ctrl, 'D'},
+                {win32_program::ShortcutModifier::Shift, win32_program::ShortcutKey::Delete},
+            };
+            break;
+        }
+
+        case editor_tools::PaintMode::Scatter:
+        {
+            m_actionType = ActionType::PaintModeScatter;
+            m_actionDescription.tooltipStringId = locale::StringId::TooltipScatterBrush;
+            m_actionDescription.nameStringId = locale::StringId::NameScatterBrush;
+            m_actionDescription.imageIndex = 21;
+            m_actionDescription.toolbarOrder = 1503;
+            m_actionDescription.menuOrder = 805;
+            m_actionDescription.shortcuts = {
+                {win32_program::ShortcutModifier::None, 'D'},
                 {win32_program::ShortcutModifier::Shift, win32_program::ShortcutKey::Delete},
             };
             break;

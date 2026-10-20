@@ -45,6 +45,7 @@ namespace locale
         TooltipEditorSelectionMove,
         TooltipSettings,
         TooltipTilePicker,
+        TooltipScatterBrush,
 
         NameFile,
         NameEdit,
@@ -102,6 +103,7 @@ namespace locale
         NameHelpGithub,
         NameTilePicker,
         NameSaveAll,
+        NameScatterBrush,
 
         NameChangeLayerUp,
         NameChangeLayerDown,

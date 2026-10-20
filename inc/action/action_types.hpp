@@ -36,6 +36,7 @@ namespace action {
         PaintModeSelect,
         TilePickerTool,
         ChunkRemoverTool,
+        PaintModeScatter,
         
         EraseModeClearTile,
         EraseModeDeleteChunk,

@@ -91,6 +91,7 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::ExportFile,
     action::ActionType::TilePickerTool,
     action::ActionType::ChunkRemoverTool,
+    action::ActionType::PaintModeScatter,
 };
 
 void program::ProgramContext::RegisterDefaultSettings()
@@ -406,6 +407,7 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::SaveAllAction>());
     m_actionManager->Register(std::make_unique<action::HelpAboutAction>());
     m_actionManager->Register(std::make_unique<action::HelpRepositoryAction>());
+    m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Scatter));
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,
