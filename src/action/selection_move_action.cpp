@@ -17,7 +17,7 @@ action::SelectionMoveAction::SelectionMoveAction()
     m_actionDescription.nameStringId = locale::StringId::NameEditorSelectionMove;
     m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditorSelection;
     m_actionDescription.shortcuts = {
-        {win32_program::ShortcutModifier::Ctrl, 'M'}
+        {win32_program::ShortcutModifier::None, 'M'}
     };
 }
 
@@ -30,5 +30,8 @@ void action::SelectionMoveAction::Execute(program::ProgramContext &context)
     // I can't figure out what unchecks the button. When you click certain other toolbar buttons this one unchecks.
     // This makes it stay checked
     SetChecked(!canMove);
+    auto toolbarSection = context.GetSection<sections::ToolbarSection>();
+    toolbarSection->Refresh(context);
+    toolbarSection->Update();
 }
     

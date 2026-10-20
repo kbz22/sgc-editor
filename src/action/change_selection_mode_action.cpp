@@ -14,6 +14,9 @@ action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::Selec
             m_actionDescription.imageIndex = 33;
             m_actionDescription.toolbarOrder = 2500;
             m_actionDescription.menuOrder = 900;
+            m_actionDescription.shortcuts = {
+                {win32_program::ShortcutModifier::Alt, 'C'}
+            };
             break;
 
         case editor_tools::SelectionMode::AllLayers:
@@ -23,6 +26,9 @@ action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::Selec
             m_actionDescription.imageIndex = 34;
             m_actionDescription.toolbarOrder = 2510;
             m_actionDescription.menuOrder = 910;
+            m_actionDescription.shortcuts = {
+                {win32_program::ShortcutModifier::Alt, 'A'}
+            };
             break;
 
         case editor_tools::SelectionMode::VisibleLayers:
@@ -32,6 +38,9 @@ action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::Selec
             m_actionDescription.imageIndex = 35;
             m_actionDescription.toolbarOrder = 2520;
             m_actionDescription.menuOrder = 920;
+            m_actionDescription.shortcuts = {
+                {win32_program::ShortcutModifier::Alt, 'V'}
+            };
             break;
 
     }
@@ -42,6 +51,7 @@ action::ChangeSelectionModeAction::ChangeSelectionModeAction(editor_tools::Selec
     m_actionDescription.checkGroupItem = true;
     m_actionDescription.groupId = GroupId::SelectionToolsMode;
     m_actionDescription.menuId = MenuId::Edit;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditor;
 }
 
 void action::ChangeSelectionModeAction::Execute(program::ProgramContext& programContext)

@@ -18,6 +18,9 @@ action::ChangeGridModeAction::ChangeGridModeAction(program::EditorGridMode newGr
             m_actionDescription.imageIndex = 28;
             m_actionDescription.toolbarOrder = 1110;
             m_actionDescription.menuOrder = 700;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::None, 'Q' }
+            };
             break;
 
         case program::EditorGridMode::ChunkGrid:
@@ -27,6 +30,9 @@ action::ChangeGridModeAction::ChangeGridModeAction(program::EditorGridMode newGr
             m_actionDescription.imageIndex = 29;
             m_actionDescription.toolbarOrder = 1120;
             m_actionDescription.menuOrder = 710;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::None, 'W' }
+            };
             break;
 
     }
@@ -36,7 +42,8 @@ action::ChangeGridModeAction::ChangeGridModeAction(program::EditorGridMode newGr
 
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::GridMode;
-    m_actionDescription.menuId = MenuId::View;    
+    m_actionDescription.menuId = MenuId::View;
+    m_actionDescription.shortcutContext = win32_program::ShortcutContext::MapEditor;
 }
 
 void action::ChangeGridModeAction::Execute([[maybe_unused]] program::ProgramContext& context)

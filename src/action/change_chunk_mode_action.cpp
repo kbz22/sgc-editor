@@ -15,7 +15,7 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
             m_actionDescription.toolbarOrder = 1300;
             m_actionDescription.menuOrder = 501;
             m_actionDescription.shortcuts = {
-                { win32_program::ShortcutModifier::None, 'X' }
+                { win32_program::ShortcutModifier::None, 'Z' }
             };
             break;
 
@@ -27,7 +27,7 @@ action::ChangeChunkModeAction::ChangeChunkModeAction(program::EditorChunkMode ch
             m_actionDescription.toolbarOrder = 1400;
             m_actionDescription.menuOrder = 502;
             m_actionDescription.shortcuts = {
-                { win32_program::ShortcutModifier::None, 'C' }
+                { win32_program::ShortcutModifier::None, 'X' }
             };
             break;
     }
