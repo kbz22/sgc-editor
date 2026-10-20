@@ -255,6 +255,8 @@ void program::ProgramContext::Initialize()
     m_fileManager->RegisterOnMapDirtyCallback([this]([[maybe_unused]]file::MapDocument* document, [[maybe_unused]]bool dirty) 
     {
         UpdateSaving();
+        m_packageSection->UpdateTreeViewItems(*this);
+        m_packageSection->Update();
     });
 }
 
