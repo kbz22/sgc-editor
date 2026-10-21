@@ -81,13 +81,13 @@ void editor_tools::ScatterBrush::Execute(file::MapDocument& mapDocument, sgc::ti
             auto currentPosition = sgc::tile::TilePosition2D{candidate.x + x, candidate.y + y};
             auto tileId = m_mapView.GetSgcTileset().GetTileId(positionOnTileset + sgc::tile::TilePosition2D{x,y});
 
-            if(m_paintCommand->Contains(currentPosition))
+            auto checkTile = currentLayer->GetTileAt(currentPosition);
+
+            if(m_paintCommand->Contains(currentPosition) || checkTile != m_clearTileId || !checkTile.has_value())
             {
                 tileChanges.clear();
                 return;
             }
-
-            auto checkTile = currentLayer->GetTileAt(currentPosition);
 
             if( m_allowChunkCreation || checkTile.has_value()) {
 
