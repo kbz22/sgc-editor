@@ -25,3 +25,8 @@ void editor_tools::ChunkRemoverTool::Commit(file::MapDocument& mapDocument)
 {
     return;
 }
+
+editor_tools::EditorToolUpdateRestriction editor_tools::ChunkRemoverTool::GetUpdateRestriction()
+{
+    return EditorToolUpdateRestriction::Position;
+}

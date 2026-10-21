@@ -26,6 +26,8 @@ namespace editor_tools
         public:
             Brush(sgc_view::MapView &mapView, sections::TilesetSection &tilesetSection, const bool &allowChunkCreation, bool &needsRedraw);
 
+            virtual EditorToolUpdateRestriction GetUpdateRestriction() override;
+
             virtual void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition) override = 0;
             virtual void Commit(file::MapDocument& mapDocument) override;
     };

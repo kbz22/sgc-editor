@@ -218,3 +218,8 @@ void editor_tools::SelectionMoveTool::SelectionMoveTool::Commit(file::MapDocumen
     m_placeSelectionCommand.reset();
     m_bulkCommand.reset();
 }
+
+editor_tools::EditorToolUpdateRestriction editor_tools::SelectionMoveTool::GetUpdateRestriction()
+{
+    return EditorToolUpdateRestriction::Position;
+}

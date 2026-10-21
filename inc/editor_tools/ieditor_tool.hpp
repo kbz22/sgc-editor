@@ -5,10 +5,19 @@
 
 namespace editor_tools
 {
+    enum class EditorToolUpdateRestriction
+    {
+        None,       // unrestricted tool
+        Time,       // the tool is executed with specified temporal spacing
+        Position,   // the tool is executed when cursor position changes
+    };
+
     class IEditorTool
     {
         public:
             virtual ~IEditorTool() = default;
+
+            virtual EditorToolUpdateRestriction GetUpdateRestriction() = 0;
 
             virtual void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition) = 0;
             virtual void Commit(file::MapDocument& mapDocument) = 0;

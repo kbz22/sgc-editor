@@ -34,7 +34,7 @@ void editor_tools::PaintBrush::Execute(file::MapDocument& mapDocument, sgc::tile
     std::unordered_map<sgc::math::vec2, command::TileChange> tileChanges;
     auto positionOnTileset = m_tilesetSection.GetCursorPositionInTiles();
     auto cursorSize = m_tilesetSection.GetCursorSizeInTiles();
-    auto tileSize = m_mapView.GetTileSize();    
+    auto tileSize = m_mapView.GetTileSize();
 
     auto endPosition = sgc::tile::TilePosition2D{
         cursorPosition.x + cursorSize.x - 1,

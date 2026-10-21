@@ -27,3 +27,8 @@ void editor_tools::Brush::Commit(file::MapDocument& mapDocument)
     m_paintCommand.reset();
     m_cursorOrigin.reset();
 }
+
+editor_tools::EditorToolUpdateRestriction editor_tools::Brush::GetUpdateRestriction()
+{
+    return EditorToolUpdateRestriction::Position;
+}

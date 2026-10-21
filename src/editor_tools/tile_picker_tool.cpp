@@ -22,3 +22,8 @@ void editor_tools::TilePickerTool::Commit([[maybe_unused]]file::MapDocument& map
     // No commit action needed for tile picker tool
     return;
 }
+
+editor_tools::EditorToolUpdateRestriction editor_tools::TilePickerTool::GetUpdateRestriction()
+{
+    return EditorToolUpdateRestriction::Position;
+}

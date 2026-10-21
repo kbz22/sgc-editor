@@ -36,6 +36,8 @@ namespace editor_tools
         public:
             SelectionMoveTool(sgc_view::MapView &mapView, sections::MapSection &mapSection, SelectionMode &selectionMode, sgc::tile::TileId &clearTileId, bool &allowChunkCreation);
 
+            EditorToolUpdateRestriction GetUpdateRestriction() override;
+
             void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition);
             void Commit(file::MapDocument& mapDocument);
     };

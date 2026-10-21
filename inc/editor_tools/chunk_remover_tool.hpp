@@ -15,6 +15,8 @@ namespace editor_tools
         public:
             ChunkRemoverTool(bool &needsRedraw);
 
+            EditorToolUpdateRestriction GetUpdateRestriction() override;
+
             void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition) override;
             void Commit(file::MapDocument& mapDocument) override;
     };
