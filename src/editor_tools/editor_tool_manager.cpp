@@ -44,6 +44,14 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
         m_selectionMode,
         m_clearTile,
         m_allowChunkCreation
+    },
+    m_scatterBrush{
+        mapView,
+        tilesetSection,
+        m_allowChunkCreation,
+        m_needsRedraw,
+        m_clearTile,
+        4
     }
 {
     SetActiveTool();
@@ -154,6 +162,12 @@ void editor_tools::EditorToolManager::SetActiveTool()
         case PaintMode::MoveSelection:
         {
             m_activeTool = &m_selectionMoveTool;
+            break;
+        }
+
+        case PaintMode::Scatter:
+        {
+            m_activeTool = &m_scatterBrush;
             break;
         }
 

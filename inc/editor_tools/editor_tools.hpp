@@ -7,3 +7,4 @@
 #include "editor_tools/tile_picker_tool.hpp"
 #include "editor_tools/selection_tool.hpp"
 #include "editor_tools/selection_move_tool.hpp"
+#include "editor_tools/scatter_brush.hpp"

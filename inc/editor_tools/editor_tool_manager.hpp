@@ -40,6 +40,7 @@ namespace editor_tools {
             TilePickerTool m_tilePickerTool;
             SelectionTool m_selectionTool;
             SelectionMoveTool m_selectionMoveTool;
+            ScatterBrush m_scatterBrush;
 
             void SetActiveTool();
 
