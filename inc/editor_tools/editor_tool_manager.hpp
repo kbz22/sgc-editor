@@ -14,6 +14,8 @@
 #include <sgc/tile/tile.hpp>
 #include <memory>
 #include <vector>
+#include <chrono>
+#include <unordered_map>
 
 namespace sections {
     class MapSection;
@@ -42,6 +44,9 @@ namespace editor_tools {
             SelectionMoveTool m_selectionMoveTool;
             ScatterBrush m_scatterBrush;
 
+            std::unordered_map<IEditorTool*, std::chrono::milliseconds> m_toolTimeIntervals;
+            std::chrono::steady_clock::time_point m_lastCheckTimestamp;
+
             void SetActiveTool();
 
         public:
@@ -53,6 +58,7 @@ namespace editor_tools {
             bool NeedsRedraw() const;
 
             void SetPaintMode(PaintMode paintMode);
+            void SetModeDelay(PaintMode paintMode, std::chrono::milliseconds interval);
             void SetSelectionMode(SelectionMode selectionMode);
             void SetAllowChunkCreation(bool check);
 

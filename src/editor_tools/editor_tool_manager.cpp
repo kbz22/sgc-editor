@@ -94,15 +94,49 @@ void editor_tools::EditorToolManager::Execute(file::MapDocument& mapDocument, sg
     if(m_activeTool == nullptr)
         return;
 
-    if(m_lastPosition == nullptr){
-        m_lastPosition = std::make_unique<sgc::tile::TilePosition2D>(cursorPosition);
-    }
-    else if(cursorPosition == *m_lastPosition){
-        m_needsRedraw = false;
-        return;
-    }
+    switch(m_activeTool->GetUpdateRestriction())
+    {
+        case EditorToolUpdateRestriction::Position:
+        {
+            if(m_lastPosition == nullptr)
+            {
+                m_lastPosition = std::make_unique<sgc::tile::TilePosition2D>(cursorPosition);                
+            }
+            else if(cursorPosition == *m_lastPosition)
+            {
+                m_needsRedraw = false;
+                return;
+            }
 
-    *m_lastPosition = cursorPosition;
+            *m_lastPosition = cursorPosition;
+            break;
+        }
+
+        case EditorToolUpdateRestriction::Time:
+        {
+            if(!m_toolTimeIntervals.contains(m_activeTool))
+            {
+                m_toolTimeIntervals[m_activeTool] = std::chrono::milliseconds{1};
+            }
+
+            auto elapsedTime = duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now() - m_lastCheckTimestamp
+            );
+
+            if(elapsedTime < m_toolTimeIntervals[m_activeTool])
+            {                
+                m_needsRedraw = false;
+                return;
+            }
+
+            m_lastCheckTimestamp = std::chrono::steady_clock::now();
+            break;
+        }
+
+        default:
+            return;
+    }
+    
     m_clearTile = m_tilesetSection.GetClearTileId();
     m_activeTool->Execute(mapDocument, cursorPosition);
 }
@@ -177,4 +211,19 @@ void editor_tools::EditorToolManager::SetActiveTool()
             return;
         }
     }    
+}
+
+void editor_tools::EditorToolManager::SetModeDelay(PaintMode paintMode, std::chrono::milliseconds interval)
+{
+    switch(paintMode)
+    {
+        case PaintMode::Scatter:
+        {
+            m_toolTimeIntervals[&m_scatterBrush] = interval;
+            return;
+        }
+
+        default:
+            return;
+    }
 }

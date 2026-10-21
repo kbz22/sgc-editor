@@ -82,6 +82,8 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
         nullptr
     );
 
+    m_editorToolManager.SetModeDelay(editor_tools::PaintMode::Scatter, std::chrono::milliseconds{200});
+
     m_mapView->Render();    
 }
 
