@@ -72,3 +72,8 @@ void command::PaintCommand::Undo()
     UndoTileChanges();
     m_mapDocument->SetDirty(true);
 }
+
+bool command::PaintCommand::Contains(sgc::math::vec2 key)
+{
+    return m_tileChanges.contains(key);
+}

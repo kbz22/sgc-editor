@@ -30,6 +30,8 @@ namespace command {
             void UndoTileChanges();
             file::MapDocument* GetMapDocument() const;
 
+            bool Contains(sgc::math::vec2 key);
+
             void Execute() override;
             void Commit() override;
             void Undo() override;
