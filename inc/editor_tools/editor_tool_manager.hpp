@@ -56,6 +56,7 @@ namespace editor_tools {
             PaintMode GetPaintMode() const;
             SelectionMode GetSelectionMode() const;
             bool NeedsRedraw() const;
+            bool NeedsUpdatesPeriodically() const;
 
             void SetPaintMode(PaintMode paintMode);
             void SetModeDelay(PaintMode paintMode, std::chrono::milliseconds interval);

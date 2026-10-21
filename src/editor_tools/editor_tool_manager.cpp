@@ -72,6 +72,11 @@ bool editor_tools::EditorToolManager::NeedsRedraw() const
     return m_needsRedraw;
 }
 
+bool editor_tools::EditorToolManager::NeedsUpdatesPeriodically() const
+{
+    return m_activeTool->GetUpdateRestriction() == EditorToolUpdateRestriction::Time;
+}
+
 void editor_tools::EditorToolManager::SetPaintMode(PaintMode paintMode)
 {
     m_paintMode = paintMode;
