@@ -44,7 +44,7 @@ void action::HelpAboutAction::Execute(program::ProgramContext& programContext)
     }
 }
 
-INT_PTR CALLBACK HelpAboutDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK HelpAboutDialogProc(HWND hDlg, UINT msg, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
     auto &programContext = program::GetProgramContext();
 
