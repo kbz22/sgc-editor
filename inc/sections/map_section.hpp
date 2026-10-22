@@ -33,24 +33,40 @@ namespace sections {
         Painting
     };
 
-    inline bool IsMouse(PointerType pointerType) {
+    struct Pointer
+    {
+        PointerType Type = PointerType::LeftMouse;
+        uint32_t Id = 0;
+
+        bool operator==(const Pointer& other) const = default;
+    };
+
+    inline bool IsMouse(const PointerType &pointerType) {
         return pointerType == PointerType::LeftMouse ||
                pointerType == PointerType::MiddleMouse ||
                pointerType == PointerType::RightMouse;
     }
 
+    inline bool IsMouse(const Pointer &pointer) {
+        return IsMouse(pointer.Type);
+    }
+
     class PointerLock 
     {
         private:
-            PointerType m_pointerType = PointerType::LeftMouse;
+            // PointerType m_pointerType = PointerType::LeftMouse;
+            Pointer m_pointer;
             bool m_isLocked = false;
 
         public:
             bool IsLocked() const;
-            bool IsLockedBy(PointerType pointerType) const;
+            bool IsLockedBy(Pointer pointer) const;
 
-            bool Acquire(PointerType pointerType);
-            bool Release(PointerType pointerType);
+            PointerType GetPointerType() const;
+            uint32_t GetPointerId() const;
+
+            bool Acquire(Pointer pointer);
+            bool Release(Pointer pointer);
     };    
 
     class MapSection : public Section
@@ -71,23 +87,24 @@ namespace sections {
             // std::map<size_t, std::shared_ptr<sgc::data::StaticTileStorage>> m_program::SelectionMovedStorage;
             std::chrono::milliseconds m_timeBetweenUpdates = std::chrono::milliseconds(8);
             std::chrono::milliseconds m_selectionRectUpdateInterval = std::chrono::milliseconds(50);
+            std::chrono::milliseconds m_editorToolsUpdateInterval = std::chrono::milliseconds(50);
             std::chrono::steady_clock::time_point m_lastUpdateTime = std::chrono::steady_clock::now();
             
             editor_tools::EditorToolManager m_editorToolManager;
 
-            bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);            
-            bool UpdateSelectionMove(PointerType pointerType, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D pointerPosition);
-            bool UpdateDragDrawing(PointerType pointerType, program::ProgramContext& programContext);
-            bool UpdateOnCursorDown(PointerType pointerType);
-            bool UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
+            bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
+            bool UpdateSelectionMove(Pointer pointer, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D pointerPosition);
+            bool UpdateDragDrawing(Pointer pointer, program::ProgramContext& programContext);
+            bool UpdateOnCursorDown(Pointer pointer);
+            bool UpdateOnCursorUp(Pointer pointer, file::MapDocument *mapDocument, program::ProgramContext& programContext);
 
-            void PanningDown(PointerType pointerType, sgc::graphics::PixelPosition2D position);
-            void PanningUp(PointerType pointerType);
-            bool PanningUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D position);
+            void PanningDown(Pointer pointer, sgc::graphics::PixelPosition2D position);
+            void PanningUp(Pointer pointer);
+            bool PanningUpdate(Pointer pointer, sgc::graphics::PixelPosition2D position);
 
-            void PointerDown(PointerType pointerType, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext);
-            void PointerUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext);
-            void PointerUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
+            void PointerDown(Pointer pointer, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext);
+            void PointerUp(Pointer pointer, file::MapDocument *mapDocument, program::ProgramContext& programContext);
+            void PointerUpdate(Pointer pointer, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
 
             inline bool IsPointerPanning(PointerType pointerType);
             inline bool IsPointerPainting(PointerType pointerType);

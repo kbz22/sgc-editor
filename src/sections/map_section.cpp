@@ -13,7 +13,8 @@
 #include <commctrl.h>
 #include <cmath>
 
-constexpr int gc_TimerId = 1;
+constexpr int gc_SelectionRectangleTimerId = 1;
+constexpr int gc_TemporalToolTimerId = 2;
 
 sections::MapSection::MapSection(program::ProgramContext& programContext) :
     Section{
@@ -77,16 +78,25 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
 
     SetTimer(
         GetHwnd(),
-        gc_TimerId,
+        gc_SelectionRectangleTimerId,
         static_cast<int>(m_selectionRectUpdateInterval.count()),
         nullptr
     );
 
-    m_editorToolManager.SetModeDelay(editor_tools::PaintMode::Scatter, std::chrono::milliseconds{200});
+    m_editorToolManager.SetModeDelay(
+        editor_tools::PaintMode::Scatter,
+        m_editorToolsUpdateInterval
+    );    
+    SetTimer(
+        GetHwnd(),
+        gc_TemporalToolTimerId,
+        static_cast<int>(m_editorToolsUpdateInterval.count()),
+        nullptr
+    );
 
     m_mapView->Render();    
 }
-
+ 
 void sections::MapSection::Update()
 {
     auto currentTime = std::chrono::steady_clock::now();
@@ -127,17 +137,17 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
         return DefSubclassProc(hwnd, msg, wparam, lparam);
     }
 
-    auto SetCaptureHelper = [this](HWND hwnd, PointerType pointerType) {
+    auto SetCaptureHelper = [this](HWND hwnd, Pointer pointer) {
         if (!m_isCaptured.IsLocked()) {
             SetCapture(hwnd);
-            m_isCaptured.Acquire(pointerType);
+            m_isCaptured.Acquire(pointer);
         }
     };
 
-    auto ReleaseCaptureHelper = [this](PointerType pointerType) {
-        if (m_isCaptured.IsLockedBy(pointerType)) {
+    auto ReleaseCaptureHelper = [this](Pointer pointer) {
+        if (m_isCaptured.IsLockedBy(pointer)) {
             ReleaseCapture();
-            m_isCaptured.Release(pointerType);
+            m_isCaptured.Release(pointer);
         }
     };
 
@@ -165,13 +175,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {                    
-                    PointerUpdate(PointerType::Touch, pointerPosition, programContext);
+                    PointerUpdate({PointerType::Touch, pointerId}, pointerPosition, programContext);
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerUpdate(PointerType::Pen, pointerPosition, programContext);
+                    PointerUpdate({PointerType::Pen, pointerId}, pointerPosition, programContext);
                     break;
                 }
                     
@@ -211,13 +221,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
-                    PointerDown(PointerType::Touch, pointerPosition, programContext);                    
+                    PointerDown({PointerType::Touch, pointerId}, pointerPosition, programContext);                    
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerDown(PointerType::Pen, pointerPosition, programContext);
+                    PointerDown({PointerType::Pen, pointerId}, pointerPosition, programContext);
                     break;
                 }
                     
@@ -249,13 +259,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case PT_TOUCH:
                 {
-                    PointerUp(PointerType::Touch, mapDocument, programContext);
+                    PointerUp({PointerType::Touch, pointerId}, mapDocument, programContext);
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerUp(PointerType::Pen, mapDocument, programContext);
+                    PointerUp({PointerType::Pen, pointerId}, mapDocument, programContext);
                     break;
                 }
                     
@@ -282,19 +292,19 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
             if ((wparam & MK_LBUTTON))
             {
-               PointerUpdate(PointerType::LeftMouse, {x,y}, programContext);
+               PointerUpdate({PointerType::LeftMouse, 0}, {x,y}, programContext);
                noPointerUpdate = false;
             }
 
             if (wparam & MK_RBUTTON)
             {
-                PointerUpdate(PointerType::RightMouse, {x,y}, programContext);
+                PointerUpdate({PointerType::RightMouse, 0}, {x,y}, programContext);
                 noPointerUpdate = false;
             }
 
             if (wparam & MK_MBUTTON)
             {
-                PointerUpdate(PointerType::MiddleMouse, {x,y}, programContext);
+                PointerUpdate({PointerType::MiddleMouse, 0}, {x,y}, programContext);
                 noPointerUpdate = false;
             }
 
@@ -309,22 +319,22 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_LBUTTONUP:
         {
-            PointerUp(PointerType::LeftMouse, mapDocument, programContext);
-            ReleaseCaptureHelper(PointerType::LeftMouse);
+            PointerUp({PointerType::LeftMouse, 0}, mapDocument, programContext);
+            ReleaseCaptureHelper({PointerType::LeftMouse, 0});
             return 0;
         }
 
         case WM_MBUTTONUP:
         {
-            PointerUp(PointerType::MiddleMouse, mapDocument, programContext);
-            ReleaseCaptureHelper(PointerType::MiddleMouse);
+            PointerUp({PointerType::MiddleMouse, 0}, mapDocument, programContext);
+            ReleaseCaptureHelper({PointerType::MiddleMouse, 0});
             return 0;
         }
 
         case WM_RBUTTONUP:
         {
-            PointerUp(PointerType::RightMouse, mapDocument, programContext);
-            ReleaseCaptureHelper(PointerType::RightMouse);
+            PointerUp({PointerType::RightMouse, 0}, mapDocument, programContext);
+            ReleaseCaptureHelper({PointerType::RightMouse, 0});
             return 0;
         }
 
@@ -338,8 +348,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 y
             };
 
-            PointerDown(PointerType::LeftMouse, screenPosition, programContext);
-            SetCaptureHelper(hwnd, PointerType::LeftMouse);
+            PointerDown({PointerType::LeftMouse, 0}, screenPosition, programContext);
+            SetCaptureHelper(hwnd, {PointerType::LeftMouse, 0});
             return 0;
         }
 
@@ -353,8 +363,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 y
             };
 
-            PointerDown(PointerType::MiddleMouse, screenPosition, programContext);
-            SetCaptureHelper(hwnd, PointerType::MiddleMouse);
+            PointerDown({PointerType::MiddleMouse, 0}, screenPosition, programContext);
+            SetCaptureHelper(hwnd, {PointerType::MiddleMouse, 0});
             return 0;
         }
 
@@ -368,8 +378,8 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 y
             };
 
-            PointerDown(PointerType::RightMouse, screenPosition, programContext);
-            SetCaptureHelper(hwnd, PointerType::RightMouse);
+            PointerDown({PointerType::RightMouse, 0}, screenPosition, programContext);
+            SetCaptureHelper(hwnd, {PointerType::RightMouse, 0});
             return 0;
         }
 
@@ -409,11 +419,60 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
         case WM_TIMER:
         {
-            if (wparam == gc_TimerId && m_editorToolManager.GetPaintMode() == editor_tools::PaintMode::Select)
+            switch(wparam)
             {
-                m_mapView->UpdateSelectionOffset();
-                Update();                
+                case gc_SelectionRectangleTimerId:
+                {
+                    if(m_editorToolManager.GetPaintMode() == editor_tools::PaintMode::Select)
+                    {
+                        m_mapView->UpdateSelectionOffset();
+                        Update();
+                    }
+                    break;
+                }
+                
+                case gc_TemporalToolTimerId:
+                {                    
+                    POINT pos{};
+
+                    if(!m_isPainting.IsLocked())
+                        return TRUE;
+
+                    if(IsMouse(m_isPainting.GetPointerType()))
+                    {
+                        if (!GetCursorPos(&pos))
+                            return {};
+
+                        ScreenToClient(hwnd, &pos);                        
+                    }
+                    else
+                    {
+                        POINTER_INFO info{};
+
+                        if (!GetPointerInfo(m_isPainting.GetPointerId(), &info))
+                            return {};
+
+                        pos = info.ptPixelLocation;
+                        ScreenToClient(hwnd, &pos);
+                    }
+
+                    if(m_editorToolManager.NeedsUpdatesPeriodically() && m_isPainting.IsLocked() && GetCursorPos(&pos) && ScreenToClient(hwnd, &pos))
+                    {
+                        auto tileSize = m_mapView->GetTileSize();                        
+                        m_editorToolManager.Execute(
+                            *mapDocument,
+                            sgc::tile::TilePosition2D{
+                                pos.x / tileSize.x,
+                                pos.y / tileSize.y
+                            }
+                        );
+                        Update();
+                    }
+                    break;
+                }
             }
+            
+
             break;
         }
     }
@@ -659,9 +718,9 @@ bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D p
     return false;
 }
 
-bool sections::MapSection::UpdateSelectionMove(PointerType pointerType, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D pointerPosition)
+bool sections::MapSection::UpdateSelectionMove(Pointer pointer, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D pointerPosition)
 {
-    if(m_isMovingSelection.IsLockedBy(pointerType))
+    if(m_isMovingSelection.IsLockedBy(pointer))
     {
         auto screenPosition = sgc::math::fvec2{
             static_cast<float>(pointerPosition.x),
@@ -687,24 +746,24 @@ bool sections::MapSection::UpdateSelectionMove(PointerType pointerType, file::Ma
     return false;
 }
 
-bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::ProgramContext& programContext)
+bool sections::MapSection::UpdateDragDrawing(Pointer pointer, program::ProgramContext& programContext)
 {
     auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
     auto tilesetSection = programContext.GetSection<TilesetSection>();
     auto tileSize = m_mapView->GetTileSize();
-    auto selectionSize = tilesetSection->GetCursorSizeInPixels(); //.value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
+    auto selectionSize = tilesetSection->GetCursorSizeInPixels();
     auto cursorTileSize = sgc::tile::TileSize2D{
         static_cast<sgc::math::ival>(selectionSize.x / tileSize.x),
         static_cast<sgc::math::ival>(selectionSize.y / tileSize.y)
     };
 
     auto cursorTilePositionOnTileset = m_mapView->PixelsToTiles(                
-        tilesetSection->GetCursorPositionInPixels() //.value_or(sgc::graphics::PixelPosition2D{0, 0})
+        tilesetSection->GetCursorPositionInPixels()
     );
 
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
-    if(m_isPainting.IsLockedBy(pointerType)) {
+    if(m_isPainting.IsLockedBy(pointer)) {
         m_editorToolManager.Execute(*mapDocument, cursorPositionOnMap);
 
         return true;
@@ -712,8 +771,7 @@ bool sections::MapSection::UpdateDragDrawing(PointerType pointerType, program::P
     return false;
 }
 
-// bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
-bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType)
+bool sections::MapSection::UpdateOnCursorDown(Pointer pointer)
 {
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
     auto tileSize = m_mapView->GetTileSize();
@@ -726,25 +784,21 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType)
         if(cursorPositionOnMap.x >= selectionPos.x && cursorPositionOnMap.x <= selectionPos.x + selectionSize.x &&
             cursorPositionOnMap.y >= selectionPos.y && cursorPositionOnMap.y <= selectionPos.y + selectionSize.y)
         {                    
-            m_isMovingSelection.Acquire(pointerType);            
+            m_isMovingSelection.Acquire(pointer);            
             m_editorToolManager.SetPaintMode(editor_tools::PaintMode::MoveSelection);
-            //! should I pass this action to the SelectionMoveTool too?
-            // it could also clear it on its own by just iterating, so probably not
-            // programContext.GetManager<action::ActionManager>()->Find(action::ActionType::SelectionClear)->Execute(programContext);
-            // I CANNOT CLEAR IT BEFORE I COPY THE TILES OBVIOUSLY IT DIDNT TAKE ME TWO DAYS TO FIGURE OUT
         }
         else
         {
             m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);            
         }
 
-        m_isPainting.Acquire(pointerType);
+        m_isPainting.Acquire(pointer);
 
         return true;
     }
 
     if(!m_isPainting.IsLocked()) {
-        m_isPainting.Acquire(pointerType);
+        m_isPainting.Acquire(pointer);
     }
 
     if(m_editorToolManager.NeedsRedraw()) {
@@ -754,17 +808,17 @@ bool sections::MapSection::UpdateOnCursorDown(PointerType pointerType)
     return false;
 }
 
-bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
+bool sections::MapSection::UpdateOnCursorUp(Pointer pointer, file::MapDocument *mapDocument, program::ProgramContext& programContext)
 {
     auto returnFlag = false;    
 
-    if(m_isPainting.Release(pointerType)) 
+    if(m_isPainting.Release(pointer)) 
     {
         m_editorToolManager.Commit(*mapDocument);
         returnFlag = true;
     }
 
-    if(m_isMovingSelection.Release(pointerType)) 
+    if(m_isMovingSelection.Release(pointer)) 
     {        
         m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);        
         returnFlag = true;
@@ -775,24 +829,24 @@ bool sections::MapSection::UpdateOnCursorUp(PointerType pointerType, file::MapDo
     return returnFlag;
 }
 
-void sections::MapSection::PointerUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext)
+void sections::MapSection::PointerUpdate(Pointer pointer, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext)
 {    
     bool shouldUpdate = false;
 
-    if(IsPointerPanning(pointerType))
+    if(IsPointerPanning(pointer.Type))
     {
-        shouldUpdate = PanningUpdate(pointerType, pointerPosition);
+        shouldUpdate = PanningUpdate(pointer, pointerPosition);
     }    
-    else if(IsPointerPainting(pointerType))
+    else if(IsPointerPainting(pointer.Type))
     {
         auto result = UpdateCursorPosition(pointerPosition, programContext);
         shouldUpdate = result;
-        result = UpdateSelectionMove(pointerType, programContext.GetManager<file::FileManager>()->GetActiveDocument(), pointerPosition);
+        result = UpdateSelectionMove(pointer, programContext.GetManager<file::FileManager>()->GetActiveDocument(), pointerPosition);
         shouldUpdate = shouldUpdate || result;
-        result = UpdateDragDrawing(pointerType, programContext);
+        result = UpdateDragDrawing(pointer, programContext);
         shouldUpdate = shouldUpdate || result;
     }
-    else if(IsMouse(pointerType))
+    else if(IsMouse(pointer.Type))
     {
         shouldUpdate = UpdateCursorPosition(pointerPosition, programContext);
     }
@@ -806,47 +860,57 @@ bool sections::PointerLock::IsLocked() const {
     return m_isLocked;
 }
 
-bool sections::PointerLock::IsLockedBy(PointerType pointerType) const {
-    return m_isLocked && m_pointerType == pointerType;
+bool sections::PointerLock::IsLockedBy(Pointer pointer) const {
+    return m_isLocked && m_pointer == pointer;
 }
 
-bool sections::PointerLock::Acquire(PointerType pointerType) {
+bool sections::PointerLock::Acquire(Pointer pointer) {
     if(m_isLocked) {
         return false;
     }
 
-    m_pointerType = pointerType;
+    m_pointer = pointer;
     m_isLocked = true;
     return true;
 }
 
-bool sections::PointerLock::Release(PointerType pointerType) {
-    if(IsLockedBy(pointerType)) {
+bool sections::PointerLock::Release(Pointer pointer) {
+    if(IsLockedBy(pointer)) {
         m_isLocked = false;
         return true;
     }
     return false;
 }
 
-void sections::MapSection::PanningDown(PointerType pointerType, sgc::graphics::PixelPosition2D position)
+sections::PointerType sections::PointerLock::GetPointerType() const
+{
+    return m_pointer.Type;
+}
+
+uint32_t sections::PointerLock::GetPointerId() const
+{
+    return m_pointer.Id;
+}
+
+void sections::MapSection::PanningDown(Pointer pointer, sgc::graphics::PixelPosition2D position)
 {
     if(m_isPanning.IsLocked())
         return;
 
-    m_isPanning.Acquire(pointerType);
+    m_isPanning.Acquire(pointer);
 
     m_lastMousePosPan.x = position.x;
     m_lastMousePosPan.y = position.y;
 }
 
-void sections::MapSection::PanningUp(PointerType pointerType)
+void sections::MapSection::PanningUp(Pointer pointer)
 {    
-    m_isPanning.Release(pointerType);
+    m_isPanning.Release(pointer);
 }
 
-bool sections::MapSection::PanningUpdate(PointerType pointerType, sgc::graphics::PixelPosition2D position)
+bool sections::MapSection::PanningUpdate(Pointer pointer, sgc::graphics::PixelPosition2D position)
 {
-    if(!m_isPanning.IsLockedBy(pointerType))
+    if(!m_isPanning.IsLockedBy(pointer))
         return false;
     
     auto deltaX = m_mapView->ScaleForZoom(static_cast<float>(position.x - m_lastMousePosPan.x));
@@ -875,16 +939,16 @@ void sections::MapSection::SetPointerBehaviour(PointerType pointerType, PointerB
     }
 }
 
-void sections::MapSection::PointerDown(PointerType pointerType, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext)
+void sections::MapSection::PointerDown(Pointer pointer, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext)
 {
-    if(IsPointerPanning(pointerType))
+    if(IsPointerPanning(pointer.Type))
     {
-        PanningDown(pointerType, position);
+        PanningDown(pointer, position);
     }
-    else if(IsPointerPainting(pointerType))
+    else if(IsPointerPainting(pointer.Type))
     {
-        bool shouldUpdate = UpdateOnCursorDown(pointerType);
-        PointerUpdate(pointerType, position, programContext);
+        bool shouldUpdate = UpdateOnCursorDown(pointer);
+        PointerUpdate(pointer, position, programContext);
 
         if(m_editorToolManager.NeedsRedraw() || shouldUpdate) {
             Update();
@@ -892,18 +956,23 @@ void sections::MapSection::PointerDown(PointerType pointerType, sgc::graphics::P
     }
 }
 
-void sections::MapSection::PointerUp(PointerType pointerType, file::MapDocument *mapDocument, program::ProgramContext& programContext)
+void sections::MapSection::PointerUp(Pointer pointer, file::MapDocument *mapDocument, program::ProgramContext& programContext)
 {
-    if(m_isPanning.IsLockedBy(pointerType))
+    if(m_isPanning.IsLockedBy(pointer))
     {
-        PanningUp(pointerType);
+        PanningUp(pointer);
     }
 
-    if(m_isPainting.IsLockedBy(pointerType))
+    if(m_isPainting.IsLockedBy(pointer))
     {
-        UpdateOnCursorUp(pointerType, mapDocument, programContext);
+        UpdateOnCursorUp(pointer, mapDocument, programContext);
     }
 }
+
+//! for now the pointer painting/panning is decided by type alone. 
+//  With the new changes it would make sense to make it id dependent too but 
+//  I don't think it's a good idea unless mouse is also passed via the pointer API
+//  and that's a bigger refactor of every section which I don't feel like doing right now
 
 bool sections::MapSection::IsPointerPainting(PointerType pointerType)
 {
