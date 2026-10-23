@@ -6,11 +6,13 @@ locale::JsonStringLookup::JsonStringLookup()
     using namespace sections;
 
     m_pointerTypeStrings = {
-        {PointerType::LeftMouse, "left-mouse-button"},
-        {PointerType::RightMouse, "right-mouse-button"},
-        {PointerType::MiddleMouse, "middle-mouse-button"},
-        {PointerType::Pen, "pen-input"},
-        {PointerType::Touch, "touch-input"},
+        {{PointerType::Mouse, 0}, "left-mouse-button"},
+        {{PointerType::Mouse, 1}, "right-mouse-button"},
+        {{PointerType::Mouse, 2}, "middle-mouse-button"},
+        {{PointerType::Mouse, 3}, "mouse-button-1"},
+        {{PointerType::Mouse, 4}, "mouse-button-2"},
+        {{PointerType::Pen, 0}, "pen-input"},
+        {{PointerType::Touch, 0}, "touch-input"},
     };
 
     m_behaviourTypeStrings = {
@@ -28,20 +30,20 @@ locale::JsonStringLookup::JsonStringLookup()
 }
 
 template<>
-std::string locale::JsonStringLookup::Get<sections::PointerType>(sections::PointerType value)
+std::string locale::JsonStringLookup::Get<sections::PointerMapKey>(sections::PointerMapKey value)
 {
     return m_pointerTypeStrings[value];
 }
 
 template<>
-sections::PointerType locale::JsonStringLookup::Resolve<sections::PointerType>(std::string value)
+sections::PointerMapKey locale::JsonStringLookup::Resolve<sections::PointerMapKey>(std::string value)
 {
-    for(auto &[type, string] : m_pointerTypeStrings)
+    for(auto &[key, string] : m_pointerTypeStrings)
     {
         if(string == value)
-            return type;
+            return key;
     }
-    throw program::JsonStringMissing("No string for PointerType");
+    throw program::JsonStringMissing("No string for PointerMapKey");
 }
 
 template<>

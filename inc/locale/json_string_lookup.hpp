@@ -10,7 +10,7 @@ namespace locale
     {
         private:
             std::unordered_map<settings::Key, std::string> m_settingsStrings;
-            std::unordered_map<sections::PointerType, std::string> m_pointerTypeStrings;
+            std::unordered_map<sections::PointerMapKey, std::string> m_pointerTypeStrings;
             std::unordered_map<sections::PointerBehaviour, std::string> m_behaviourTypeStrings;
 
         public:

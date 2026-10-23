@@ -409,9 +409,10 @@ void SettingsMouseAndTouchRefreshPointerList(HWND hDlg)
     auto &stringLookup = programContext.GetStringLookup();
 
     std::unordered_map<PointerType, std::wstring> pointerTypeNames{
-        {PointerType::LeftMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseLeft).value_or(L"LM NAME")},
-        {PointerType::MiddleMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseMiddle).value_or(L"MM NAME")},
-        {PointerType::RightMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseRight).value_or(L"RM NAME")},
+        // {PointerType::LeftMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseLeft).value_or(L"LM NAME")},
+        // {PointerType::MiddleMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseMiddle).value_or(L"MM NAME")},
+        // {PointerType::RightMouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseRight).value_or(L"RM NAME")},
+        {PointerType::Mouse, stringLookup.Get(StringId::SettingsMouseAndTouchPointerMouseRight).value_or(L"M NAME")},
         {PointerType::Pen, stringLookup.Get(StringId::SettingsMouseAndTouchPointerPen).value_or(L"P NAME")},
         {PointerType::Touch, stringLookup.Get(StringId::SettingsMouseAndTouchPointerTouch).value_or(L"T NAME")},
     };
@@ -442,16 +443,22 @@ void SettingsMouseAndTouchRefreshPointerList(HWND hDlg)
     };
 
     auto currentBehaviour = setting->GetBehaviours();
-    for(int i = static_cast<int>(PointerType::LeftMouse); i < static_cast<int>(PointerType::Count); i++)
+    for(int i = static_cast<int>(PointerType::Mouse); i < static_cast<int>(PointerType::Count); i++)
     {
         auto type = static_cast<PointerType>(i);
-        auto behaviour = PointerBehaviour::None;
 
-        if(currentBehaviour.contains(type)){
-            behaviour = currentBehaviour[type];
+        //! Pointer API has defines for 5 buttons so we're doing 5
+        for(uint8_t i=0; i < 5; i++)
+        {
+            auto behaviour = PointerBehaviour::None;
+            PointerMapKey pointerKey{type, i};
+
+            if(currentBehaviour.contains(pointerKey)){
+                behaviour = currentBehaviour[pointerKey];
+            }
+
+            insertItem(type, behaviour);
         }
-
-        insertItem(type, behaviour);
     }
 };
 
@@ -482,10 +489,11 @@ LRESULT CALLBACK MouseAndTouchSettingsListViewProc(HWND hwnd, UINT msg, WPARAM w
                     auto listView = GetDlgItem(parentHwnd, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
                     auto listSelectedIndex = static_cast<int>(ListView_GetNextItem(listView, -1, LVNI_SELECTED));
 
-                    setting->SetBehaviour(
+                    //! fix
+                    /* setting->SetBehaviour(
                         static_cast<sections::PointerType>(listSelectedIndex),
                         sections::PointerBehaviour::None
-                    );
+                    ); */
 
                     SettingsMouseAndTouchRefreshPointerList(parentHwnd);
 
@@ -629,8 +637,8 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
                         ListView_GetItem(listView, &item);
 
                         auto comboBox = GetDlgItem(hDlg, IDC_MOUSEANDTOUCH_BEHAVIOUR_COMBOBOX);
-                        auto behaviour = setting->GetBehaviour(static_cast<sections::PointerType>(item.lParam));
-                        SendMessage(comboBox, CB_SETCURSEL, static_cast<WPARAM>(behaviour), 0);
+                        //! auto behaviour = setting->GetBehaviour(static_cast<sections::PointerType>(item.lParam));
+                        // SendMessage(comboBox, CB_SETCURSEL, static_cast<WPARAM>(behaviour), 0);
 
                         SetWindowPos(
                             comboBox,
@@ -669,10 +677,11 @@ INT_PTR CALLBACK MouseAndTouchSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wPa
                         auto comboSelectedIndex = static_cast<int>(SendMessage(comboBox, CB_GETCURSEL, 0, 0));
                         auto listSelectedIndex = static_cast<int>(ListView_GetNextItem(listView, -1, LVNI_SELECTED));
                         
-                        setting->SetBehaviour(
+                        //! fix
+                        /* setting->SetBehaviour(
                             static_cast<PointerType>(listSelectedIndex),
                             static_cast<PointerBehaviour>(comboSelectedIndex)
-                        );
+                        ); */
 
                         SettingsMouseAndTouchRefreshPointerList(hDlg);
 

@@ -4,9 +4,10 @@ settings::PointerBehaviourSetting::PointerBehaviourSetting(sections::MapSection 
     m_mapSection{mapSection}
 {}
 
-void settings::PointerBehaviourSetting::SetBehaviour(sections::PointerType pointerType, sections::PointerBehaviour behaviour)
+void settings::PointerBehaviourSetting::SetBehaviour(sections::PointerMapKey pointerKey, sections::PointerBehaviour behaviour)
 {
-    m_behaviour[pointerType] = behaviour;
+
+    m_behaviour[pointerKey] = behaviour;
 }
 
 void settings::PointerBehaviourSetting::SetBehaviours(PointerBehaviourMap map)
@@ -16,13 +17,13 @@ void settings::PointerBehaviourSetting::SetBehaviours(PointerBehaviourMap map)
 
 void settings::PointerBehaviourSetting::Commit()
 {
-    for(auto &[pointerType, pointerBehaviour] : m_behaviour)
+    for(auto &[pointerKey, pointerBehaviour] : m_behaviour)
     {
-        if(m_behaviour.contains(pointerType)){
-            m_mapSection.SetPointerBehaviour(pointerType, pointerBehaviour);
+        if(m_behaviour.contains(pointerKey)){
+            m_mapSection.SetPointerBehaviour(pointerKey, pointerBehaviour);
         }
         else {
-            m_mapSection.SetPointerBehaviour(pointerType, sections::PointerBehaviour::None);
+            m_mapSection.SetPointerBehaviour(pointerKey, sections::PointerBehaviour::None);
         }
     }
 }
@@ -32,14 +33,14 @@ settings::Key settings::PointerBehaviourSetting::GetKey() const
     return settings::Key::PointerBehaviourSetting;
 }
 
-sections::PointerBehaviour settings::PointerBehaviourSetting::GetBehaviour(sections::PointerType type)
+sections::PointerBehaviour settings::PointerBehaviourSetting::GetBehaviour(sections::PointerMapKey pointerKey)
 {
-    if(!m_behaviour.contains(type))
+    if(!m_behaviour.contains(pointerKey))
     {
         return sections::PointerBehaviour::None;
     }
     
-    return m_behaviour[type];
+    return m_behaviour[pointerKey];
 }
 
 settings::PointerBehaviourMap settings::PointerBehaviourSetting::GetBehaviours() const

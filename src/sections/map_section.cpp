@@ -171,22 +171,25 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 pointerInfo.ptPixelLocation.y
             };
             
+            std::vector<Pointer> pointers;
+            
             switch (type)
             {
                 case PT_TOUCH:
-                {                    
-                    PointerUpdate({PointerType::Touch, pointerId}, pointerPosition, programContext);
+                {
+                    pointers = BuildAllPointers(PointerType::Touch, pointerId);
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerUpdate({PointerType::Pen, pointerId}, pointerPosition, programContext);
+                    pointers = BuildAllPointers(PointerType::Pen, pointerId);
                     break;
                 }
                     
                 case PT_MOUSE:
                 {
+                    pointers = BuildAllPointers(PointerType::Mouse, pointerId);
                     break;
                 }
                         
@@ -194,6 +197,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 {
                     break;
                 }   
+            }
+
+            for(auto &pointer : pointers)
+            {
+                PointerUpdate(pointer, pointerPosition, programContext);
             }
 
             return 0;
@@ -216,23 +224,26 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 pointerInfo.ptPixelLocation.x,
                 pointerInfo.ptPixelLocation.y
             };
+
+            std::vector<Pointer> pointers;
             
             switch (type)
             {
                 case PT_TOUCH:
                 {
-                    PointerDown({PointerType::Touch, pointerId}, pointerPosition, programContext);                    
+                    pointers = BuildPointersDown(PointerType::Touch, pointerId, pointerInfo.pointerFlags);
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerDown({PointerType::Pen, pointerId}, pointerPosition, programContext);
+                    pointers = BuildPointersDown(PointerType::Pen, pointerId, pointerInfo.pointerFlags);
                     break;
                 }
                     
                 case PT_MOUSE:
                 {
+                    pointers = BuildPointersDown(PointerType::Mouse, pointerId, pointerInfo.pointerFlags);
                     break;
                 }
                         
@@ -240,6 +251,11 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 {
                     break;
                 }   
+            }
+
+            for(auto &pointer : pointers)
+            {
+                PointerDown(pointer, pointerPosition, programContext);
             }
 
             return 0;
@@ -254,23 +270,28 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 break;
 
             POINTER_INFO pointerInfo;
-            if (GetPointerInfo(pointerId, &pointerInfo))                
+            if (!GetPointerInfo(pointerId, &pointerInfo))
+                break;
+
+            std::vector<Pointer> pointers;
+            
             switch (type)
             {
                 case PT_TOUCH:
                 {
-                    PointerUp({PointerType::Touch, pointerId}, mapDocument, programContext);
+                    pointers = BuildPointersUp(PointerType::Touch, pointerId, pointerInfo.pointerFlags);
                     break;
                 }
                     
                 case PT_PEN:
                 {
-                    PointerUp({PointerType::Pen, pointerId}, mapDocument, programContext);
+                    pointers = BuildPointersUp(PointerType::Pen, pointerId, pointerInfo.pointerFlags);
                     break;
                 }
                     
                 case PT_MOUSE:
                 {
+                    pointers = BuildPointersUp(PointerType::Mouse, pointerId, pointerInfo.pointerFlags);
                     break;
                 }
                         
@@ -280,10 +301,15 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                 }   
             }
 
+            for(auto &pointer : pointers)
+            {
+                PointerUp(pointer, mapDocument, programContext);
+            }
+
             return 0;
         }        
 
-        case WM_MOUSEMOVE:
+        /* case WM_MOUSEMOVE:
         {
             bool noPointerUpdate = true;
 
@@ -315,30 +341,30 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             }
 
             return 0;
-        }
+        } */
 
-        case WM_LBUTTONUP:
+        /* case WM_LBUTTONUP:
         {
             PointerUp({PointerType::LeftMouse, 0}, mapDocument, programContext);
             ReleaseCaptureHelper({PointerType::LeftMouse, 0});
             return 0;
-        }
+        } */
 
-        case WM_MBUTTONUP:
+        /* case WM_MBUTTONUP:
         {
             PointerUp({PointerType::MiddleMouse, 0}, mapDocument, programContext);
             ReleaseCaptureHelper({PointerType::MiddleMouse, 0});
             return 0;
-        }
+        } */
 
-        case WM_RBUTTONUP:
+       /*  case WM_RBUTTONUP:
         {
             PointerUp({PointerType::RightMouse, 0}, mapDocument, programContext);
             ReleaseCaptureHelper({PointerType::RightMouse, 0});
             return 0;
-        }
+        } */
 
-        case WM_LBUTTONDOWN:
+        /* case WM_LBUTTONDOWN:
         {
             auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
             auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
@@ -351,9 +377,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             PointerDown({PointerType::LeftMouse, 0}, screenPosition, programContext);
             SetCaptureHelper(hwnd, {PointerType::LeftMouse, 0});
             return 0;
-        }
+        } */
 
-        case WM_MBUTTONDOWN:
+        /* case WM_MBUTTONDOWN:
         {
             auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
             auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
@@ -366,9 +392,9 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             PointerDown({PointerType::MiddleMouse, 0}, screenPosition, programContext);
             SetCaptureHelper(hwnd, {PointerType::MiddleMouse, 0});
             return 0;
-        }
+        } */
 
-        case WM_RBUTTONDOWN:
+        /* case WM_RBUTTONDOWN:
         {
             auto x = static_cast<sgc::math::ival>(GET_X_LPARAM(lparam));
             auto y = static_cast<sgc::math::ival>(GET_Y_LPARAM(lparam));
@@ -381,7 +407,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             PointerDown({PointerType::RightMouse, 0}, screenPosition, programContext);
             SetCaptureHelper(hwnd, {PointerType::RightMouse, 0});
             return 0;
-        }
+        } */
 
         case WM_MOUSEWHEEL:
         {
@@ -438,14 +464,14 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     if(!m_isPainting.IsLocked())
                         return TRUE;
 
-                    if(IsMouse(m_isPainting.GetPointerType()))
+                    /* if(IsMouse(m_isPainting.GetPointerType()))
                     {
                         if (!GetCursorPos(&pos))
                             return {};
 
                         ScreenToClient(hwnd, &pos);                        
                     }
-                    else
+                    else */
                     {
                         POINTER_INFO info{};
 
@@ -833,11 +859,11 @@ void sections::MapSection::PointerUpdate(Pointer pointer, sgc::graphics::PixelPo
 {    
     bool shouldUpdate = false;
 
-    if(IsPointerPanning(pointer.Type))
+    if(IsPointerPanning(pointer))
     {
         shouldUpdate = PanningUpdate(pointer, pointerPosition);
     }    
-    else if(IsPointerPainting(pointer.Type))
+    else if(IsPointerPainting(pointer))
     {
         auto result = UpdateCursorPosition(pointerPosition, programContext);
         shouldUpdate = result;
@@ -845,10 +871,6 @@ void sections::MapSection::PointerUpdate(Pointer pointer, sgc::graphics::PixelPo
         shouldUpdate = shouldUpdate || result;
         result = UpdateDragDrawing(pointer, programContext);
         shouldUpdate = shouldUpdate || result;
-    }
-    else if(IsMouse(pointer.Type))
-    {
-        shouldUpdate = UpdateCursorPosition(pointerPosition, programContext);
     }
 
     if(shouldUpdate) {
@@ -927,25 +949,25 @@ bool sections::MapSection::PanningUpdate(Pointer pointer, sgc::graphics::PixelPo
     return true;
 }
 
-void sections::MapSection::SetPointerBehaviour(PointerType pointerType, PointerBehaviour behaviour)
-{
+void sections::MapSection::SetPointerBehaviour(PointerMapKey pointerKey, PointerBehaviour behaviour)
+{    
     if(behaviour == PointerBehaviour::None)
     {
-        m_pointerBehaviour.erase(pointerType);
+        m_pointerBehaviour.erase(pointerKey);
     }
     else
     {
-        m_pointerBehaviour[pointerType] = behaviour;
+        m_pointerBehaviour[pointerKey] = behaviour;
     }
 }
 
 void sections::MapSection::PointerDown(Pointer pointer, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext)
 {
-    if(IsPointerPanning(pointer.Type))
+    if(IsPointerPanning(pointer))
     {
         PanningDown(pointer, position);
     }
-    else if(IsPointerPainting(pointer.Type))
+    else if(IsPointerPainting(pointer))
     {
         bool shouldUpdate = UpdateOnCursorDown(pointer);
         PointerUpdate(pointer, position, programContext);
@@ -974,14 +996,18 @@ void sections::MapSection::PointerUp(Pointer pointer, file::MapDocument *mapDocu
 //  I don't think it's a good idea unless mouse is also passed via the pointer API
 //  and that's a bigger refactor of every section which I don't feel like doing right now
 
-bool sections::MapSection::IsPointerPainting(PointerType pointerType)
+bool sections::MapSection::IsPointerPainting(Pointer pointer)
 {
-    return m_pointerBehaviour.contains(pointerType) && m_pointerBehaviour[pointerType] == PointerBehaviour::Painting;
+    PointerMapKey pointerKey;
+    pointerKey = pointer;
+    return m_pointerBehaviour.contains(pointerKey) && m_pointerBehaviour[pointerKey] == PointerBehaviour::Painting;
 }
 
-bool sections::MapSection::IsPointerPanning(PointerType pointerType)
+bool sections::MapSection::IsPointerPanning(Pointer pointer)
 {
-    return m_pointerBehaviour.contains(pointerType) && m_pointerBehaviour[pointerType] == PointerBehaviour::Panning;
+    PointerMapKey pointerKey;
+    pointerKey = pointer;
+    return m_pointerBehaviour.contains(pointerKey) && m_pointerBehaviour[pointerKey] == PointerBehaviour::Panning;
 }
 
 void sections::MapSection::SetSelectionMovedImage(program::SelectionMovedStorage &storageLayers)

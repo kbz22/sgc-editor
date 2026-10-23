@@ -93,6 +93,9 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES };    
         InitCommonControlsEx(&icc);
 
+        //! this may break everything or it may not
+        EnableMouseInPointer(TRUE);
+
         break;
     }
 

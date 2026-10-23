@@ -17,9 +17,7 @@ namespace program {
 namespace sections {
 
     enum class PointerType {
-        LeftMouse,
-        MiddleMouse,
-        RightMouse,
+        Mouse,
         Touch,
         Pen,
 
@@ -35,26 +33,103 @@ namespace sections {
 
     struct Pointer
     {
-        PointerType Type = PointerType::LeftMouse;
+        PointerType Type = PointerType::Mouse;
+        uint8_t Button = 0;
         uint32_t Id = 0;
 
         bool operator==(const Pointer& other) const = default;
     };
 
-    inline bool IsMouse(const PointerType &pointerType) {
-        return pointerType == PointerType::LeftMouse ||
-               pointerType == PointerType::MiddleMouse ||
-               pointerType == PointerType::RightMouse;
+    struct PointerMapKey
+    {
+        PointerType Type;
+        uint8_t Button;
+
+        bool operator==(const PointerMapKey& other) const = default;
+        bool operator==(const Pointer& other) const
+        {
+            return this->Type == other.Type && this->Button == other.Button;
+        };
+        PointerMapKey& operator=(const Pointer& other)
+        {
+            Type = other.Type;
+            Button = other.Button;
+            return *this;
+        }
+    };
+
+}
+
+namespace std {
+    template <>
+    struct hash<sections::PointerMapKey>
+    {
+        std::size_t operator()(const sections::PointerMapKey& k) const
+        {
+            return (static_cast<std::size_t>(k.Type) << 32) ^ static_cast<std::size_t>(k.Button);
+        }
+    };
+}
+
+namespace sections {
+
+    inline std::vector<Pointer> BuildPointersDown(PointerType type, uint32_t id, uint32_t flags)
+    {
+        std::vector<Pointer> pointers;
+
+        if(flags & POINTER_FLAG_FIRSTBUTTON)
+            pointers.push_back({ type, 0, id });
+
+        if(flags & POINTER_FLAG_SECONDBUTTON)
+            pointers.push_back({ type, 1, id });
+
+        if(flags & POINTER_FLAG_THIRDBUTTON)
+            pointers.push_back({ type, 2, id });
+
+        if(flags & POINTER_FLAG_FOURTHBUTTON)
+            pointers.push_back({ type, 3, id });
+
+        if(flags & POINTER_FLAG_FIFTHBUTTON)
+            pointers.push_back({ type, 4, id });
+
+        return pointers;
     }
 
-    inline bool IsMouse(const Pointer &pointer) {
-        return IsMouse(pointer.Type);
+    inline std::vector<Pointer> BuildPointersUp(PointerType type, uint32_t id, uint32_t flags)
+    {
+        std::vector<Pointer> pointers;
+
+        if(!(flags & POINTER_FLAG_FIRSTBUTTON))
+            pointers.push_back({ type, 0, id });
+
+        if(!(flags & POINTER_FLAG_SECONDBUTTON))
+            pointers.push_back({ type, 1, id });
+
+        if(!(flags & POINTER_FLAG_THIRDBUTTON))
+            pointers.push_back({ type, 2, id });
+
+        if(!(flags & POINTER_FLAG_FOURTHBUTTON))
+            pointers.push_back({ type, 3, id });
+
+        if(!(flags & POINTER_FLAG_FIFTHBUTTON))
+            pointers.push_back({ type, 4, id });
+
+        return pointers;
+    }
+
+    inline std::vector<Pointer> BuildAllPointers(PointerType type, uint32_t id)
+    {
+        std::vector<Pointer> pointers;
+
+        for(uint8_t i=0; i<5; i++)
+            pointers.push_back({ type, i, id });
+
+        return pointers;
     }
 
     class PointerLock 
     {
         private:
-            // PointerType m_pointerType = PointerType::LeftMouse;
             Pointer m_pointer;
             bool m_isLocked = false;
 
@@ -77,7 +152,7 @@ namespace sections {
             PointerLock m_isMovingSelection;
             PointerLock m_isPanning;
             PointerLock m_isCaptured;
-            std::unordered_map<PointerType, PointerBehaviour> m_pointerBehaviour;
+            std::unordered_map<PointerMapKey, PointerBehaviour> m_pointerBehaviour;
             bool m_canMoveSelection = false;
             bool m_needsRedraw = false;
             std::mutex m_needsRedrawMutex{};
@@ -106,8 +181,8 @@ namespace sections {
             void PointerUp(Pointer pointer, file::MapDocument *mapDocument, program::ProgramContext& programContext);
             void PointerUpdate(Pointer pointer, sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
 
-            inline bool IsPointerPanning(PointerType pointerType);
-            inline bool IsPointerPainting(PointerType pointerType);
+            inline bool IsPointerPanning(Pointer pointer);
+            inline bool IsPointerPainting(Pointer pointer);
 
         protected:
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
@@ -134,7 +209,7 @@ namespace sections {
             void SetSelectionPositionInTiles(sgc::tile::TilePosition2D position);
             void SetSelectionSizeInTiles(sgc::tile::TileSize2D size);
 
-            void SetPointerBehaviour(PointerType pointerType, PointerBehaviour behaviour);
+            void SetPointerBehaviour(PointerMapKey pointerKey, PointerBehaviour behaviour);
 
             void SetSelectionMovedImage(program::SelectionMovedStorage &storageLayers);
             void UpdateSelectionMovedPosition(sgc::tile::TilePosition2D positionOnMap);
