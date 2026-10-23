@@ -33,7 +33,7 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
         x, y, width, height,
         hwndParent,
         nullptr,
-        hInstance,        
+        hInstance,
         nullptr
     );
 
@@ -83,7 +83,7 @@ win32_models::LayerListControl::LayerListControl(HWND hwndParent, HINSTANCE hIns
     );
 
     m_editTextBox = std::make_unique<win32_models::EditTextBox>(m_hwnd, hInstance);
-    PostMessage(m_editTextBox->GetHwnd(), WM_SETFONT, reinterpret_cast<WPARAM>(m_hFont), TRUE);    
+    PostMessage(m_editTextBox->GetHwnd(), WM_SETFONT, reinterpret_cast<WPARAM>(m_hFont), TRUE);
 }
 
 win32_models::LayerListControl::~LayerListControl()
@@ -123,7 +123,7 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
         (index + 1) * m_rowHeight - m_scrollOffsetPixels
     };
 
-    int deltaIconHeight = (m_rowHeight - 24) / 2;   
+    int deltaIconHeight = (m_rowHeight - 24) / 2;
     m_labelTextOffsetY = (m_rowHeight - 24) / 2 + 4;
 
     RECT eyeButtonRect =
@@ -195,7 +195,7 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
             }
             else{
                 brushLabel = GetSysColorBrush(COLOR_WINDOW);
-            }            
+            }
             brushRect = GetSysColorBrush(COLOR_WINDOW);
             brushEyeButton = brushRect;
             break;
@@ -209,24 +209,24 @@ void win32_models::LayerListControl::DrawEntry(HDC hdc, int index, const RECT& r
 
     FillRect(
         hdc,
-        &row,        
+        &row,
         brushRect
     );
 
     FillRect(
         hdc,
-        &eyeButtonRect,        
+        &eyeButtonRect,
         brushEyeButton
     );
 
     FillRect(
         hdc,
-        &labelRect,        
+        &labelRect,
         brushLabel
     );
 
     row.top += 2;
-    brushEyeButton = GetSysColorBrush(COLOR_WINDOW);    
+    brushEyeButton = GetSysColorBrush(COLOR_WINDOW);
 
     ImageList_Draw(
         m_imageList,
@@ -267,7 +267,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             {
                 // Ignore layer name change unless it's a double click
                 case MouseTarget::LayerName:
-                case MouseTarget::Entry:                    
+                case MouseTarget::Entry:
                 {
                     SetSelectedLayer(m_hoveredLayerIndex);
                     break;
@@ -291,7 +291,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
                     break;
             }
 
-        InvalidateRect(hwnd, nullptr, FALSE);     
+        InvalidateRect(hwnd, nullptr, FALSE);
     };
 
     switch (msg)
@@ -303,7 +303,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             HDC hdc = BeginPaint(hwnd, &ps);
 
             RECT clientRect;
-            GetClientRect(hwnd, &clientRect);            
+            GetClientRect(hwnd, &clientRect);
 
             FillRect(
                 hdc,
@@ -313,7 +313,8 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
 
             HFONT oldFont = (HFONT)SelectObject(hdc, m_hFont);
             
-            for(int index = 0; index < static_cast<int>(m_layers.size()); ++index){                
+            for(int index = 0; index < static_cast<int>(m_layers.size()); ++index)
+            {
                 DrawEntry(hdc, index, clientRect);
             }
             // restore old font
@@ -416,7 +417,7 @@ LRESULT win32_models::LayerListControl::HandleMessage(HWND hwnd, UINT msg, WPARA
             SetHoveredIndexAtPoint(x, y);
             SetFocus(m_hwnd);
 
-            mouseOverHandler();                   
+            mouseOverHandler();
 
             return 0;
         }
@@ -565,7 +566,7 @@ HWND win32_models::LayerListControl::GetHwnd() const
 
 void win32_models::LayerListControl::SetHoveredIndexAtPoint([[maybe_unused]] int x, int y)
 {
-    int index = (y + m_scrollOffsetPixels) / m_rowHeight;    
+    int index = (y + m_scrollOffsetPixels) / m_rowHeight;
 
     if (index < 0 || index >= static_cast<int>(m_layers.size()))
     {
@@ -616,7 +617,7 @@ void win32_models::LayerListControl::UpdateLayerName(std::wstring newName, size_
     if (layerIndex < m_layers.size())
     {
         m_layers[layerIndex].name = newName;
-        m_layers[layerIndex].nameWidth = 0;        
+        m_layers[layerIndex].nameWidth = 0;
 
         m_layerNameChangeCallback(layerIndex, newName);
 
