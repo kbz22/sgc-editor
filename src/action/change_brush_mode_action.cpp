@@ -101,8 +101,7 @@ action::ChangeBrushModeAction::ChangeBrushModeAction(editor_tools::PaintMode bru
             m_actionDescription.toolbarOrder = 1503;
             m_actionDescription.menuOrder = 805;
             m_actionDescription.shortcuts = {
-                {win32_program::ShortcutModifier::None, 'D'},
-                {win32_program::ShortcutModifier::Shift, win32_program::ShortcutKey::Delete},
+                {win32_program::ShortcutModifier::None, 'D'}                
             };
             break;
         }
