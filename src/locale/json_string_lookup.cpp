@@ -12,6 +12,7 @@ locale::JsonStringLookup::JsonStringLookup()
         {{PointerType::Mouse, 3}, "mouse-button-1"},
         {{PointerType::Mouse, 4}, "mouse-button-2"},
         {{PointerType::Pen, 0}, "pen-input"},
+        {{PointerType::Pen, 1}, "pen-button"},
         {{PointerType::Touch, 0}, "touch-input"},
     };
 

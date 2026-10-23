@@ -153,8 +153,11 @@ namespace locale
         SettingsMouseAndTouchPointerMouseLeft,
         SettingsMouseAndTouchPointerMouseMiddle,
         SettingsMouseAndTouchPointerMouseRight,
+        SettingsMouseAndTouchPointerMouseButton1,
+        SettingsMouseAndTouchPointerMouseButton2,
         SettingsMouseAndTouchPointerTouch,
         SettingsMouseAndTouchPointerPen,
+        SettingsMouseAndTouchPointerPenButton,
         SettingsMouseAndTouchBehaviourPanning,
         SettingsMouseAndTouchBehaviourPainting,
 
