@@ -991,11 +991,6 @@ void sections::MapSection::PointerUp(Pointer pointer, file::MapDocument *mapDocu
     }
 }
 
-//! for now the pointer painting/panning is decided by type alone. 
-//  With the new changes it would make sense to make it id dependent too but 
-//  I don't think it's a good idea unless mouse is also passed via the pointer API
-//  and that's a bigger refactor of every section which I don't feel like doing right now
-
 bool sections::MapSection::IsPointerPainting(Pointer pointer)
 {
     PointerMapKey pointerKey;
