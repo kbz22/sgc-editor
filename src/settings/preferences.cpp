@@ -103,10 +103,9 @@ void settings::Preferences::Get<settings::PointerBehaviourSetting>(settings::Poi
         {
             try 
             {
-                //! fix
-                /* auto type = m_stringLookup.Resolve<PointerType>(typeString);
+                auto type = m_stringLookup.Resolve<PointerMapKey>(typeString);
                 auto behaviour = m_stringLookup.Resolve<PointerBehaviour>(behaviourString);
-                pointerMap[type] = behaviour; */
+                pointerMap[type] = behaviour;
             }
             catch(const program::JsonStringMissing&)
             {

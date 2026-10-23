@@ -16,7 +16,7 @@ namespace program {
 
 namespace sections {
 
-    enum class PointerType {
+    enum class PointerType : uint8_t {
         Mouse,
         Touch,
         Pen,
