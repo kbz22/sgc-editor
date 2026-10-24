@@ -1,0 +1,14 @@
+#include "symbol_config_dialog.h"
+#include <windows.h>
+
+IDD_SYMBOL_CONFIG DIALOGEX 0, 0, 200, 400
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 9, "Segoe UI"
+
+BEGIN
+    LTEXT           "Tile dialog", -1,
+                    5,
+                    3,
+                    200,
+                    12
+END

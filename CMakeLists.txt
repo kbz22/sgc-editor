@@ -101,6 +101,7 @@ add_executable(sgc-editor WIN32
     rcs/settings_dialog.rc
     rcs/settings_pages.rc
     rcs/about_dialog.rc
+    rcs/symbol_config_dialog.rc
 
     src/debug.cpp
 
@@ -163,6 +164,7 @@ add_executable(sgc-editor WIN32
     src/action/save_all_action.cpp
     src/action/help_about_action.cpp
     src/action/help_repository_action.cpp
+    src/action/symbol_configure_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp
