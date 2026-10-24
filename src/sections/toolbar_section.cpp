@@ -138,9 +138,23 @@ sections::ToolbarSection::~ToolbarSection()
 
 void sections::ToolbarSection::Update()
 {
-    for(auto widgetAction : m_widgets) {
+    for(auto widgetAction : m_widgets) 
+    {
         auto widget = widgetAction->GetWidget();
         auto commandId = widgetAction->GetType();
+
+        TBBUTTONINFO info{};
+        info.cbSize = sizeof(info);
+        info.dwMask = TBIF_SIZE;
+        info.cx = static_cast<WORD>(widget->GetWidth() + 12); //padding so the seperator doesn't clip
+
+        SendMessage(
+            m_hwndToolbar,
+            TB_SETBUTTONINFO,
+            static_cast<WPARAM>(commandId),
+            reinterpret_cast<LPARAM>(&info)
+        );
+
 
         int index = static_cast<int>(
         SendMessage(
