@@ -14,8 +14,7 @@ namespace sgc_view
             std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
             std::unique_ptr<graphics::Rectangle> m_cursorTile;
             sgc::graphics::color m_cursorColor{ 0, 128, 255, 128 };
-
-            void SetTileset(sgc::data::AssetId tilesetId) override;
+            
             void ResetTileset();
 
             void SetCursorTile(sgc::graphics::PixelPosition2D position, sgc::graphics::PixelSize2D size);
@@ -30,6 +29,7 @@ namespace sgc_view
 
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
+            void SetTileset(sgc::data::AssetId tilesetId) override;
 
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;

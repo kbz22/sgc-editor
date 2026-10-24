@@ -1,14 +1,21 @@
 #include "symbol_config_dialog.h"
 #include <windows.h>
 
-IDD_SYMBOL_CONFIG DIALOGEX 0, 0, 200, 400
+IDD_SYMBOL_CONFIG DIALOGEX 0, 0, SYMBOL_DIALOG_WIDTH, SYMBOL_DIALOG_HEIGHT
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 9, "Segoe UI"
 
 BEGIN
-    LTEXT           "Tile dialog", -1,
-                    5,
-                    3,
-                    200,
-                    12
+    LTEXT       "Tile dialog", -1,
+                SYMBOL_DIALOG_OFFSET,
+                5,
+                SYMBOL_SIDEBAR_WIDTH,
+                12
+    
+    CONTROL     "", IDC_SYMBOL_TILESET_VIEW, "SymbolTilesetControl",
+                WS_CHILD | WS_VISIBLE | WS_BORDER,
+                SYMBOL_SIDEBAR_WIDTH,
+                5,
+                TILESET_VIEW_WIDTH,
+                SYMBOL_DIALOG_HEIGHT - SYMBOL_DIALOG_OFFSET
 END
