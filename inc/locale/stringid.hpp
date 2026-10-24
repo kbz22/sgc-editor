@@ -46,6 +46,9 @@ namespace locale
         TooltipSettings,
         TooltipTilePicker,
         TooltipScatterBrush,
+        TooltipEnableSymbol,
+        TooltipSymbolCycling,
+        TooltipSymbolConfiguration,
 
         NameFile,
         NameEdit,
@@ -104,6 +107,11 @@ namespace locale
         NameTilePicker,
         NameSaveAll,
         NameScatterBrush,
+        NameSymbolDrawing,
+        NameSymbolCycling,
+        NameSymbolConfiguration,
+        NameSymbolNextSymbol,
+        NameSymbolNextGroup,        
 
         NameChangeLayerUp,
         NameChangeLayerDown,

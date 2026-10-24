@@ -43,7 +43,11 @@ namespace action {
 
         SelectSingleLayerMode,
         SelectAllLayersMode,
-        SelectVisibleLayersMode,        
+        SelectVisibleLayersMode,
+
+        EnableSymbolDrawing,
+        EnableAutomaticSymbolCycling,
+        SymbolConfiguration,        
 
         MenuMap = 3001,
         AddLayer,
@@ -72,6 +76,9 @@ namespace action {
         ChangeActiveLayerUp = 6001,
         ChangeActiveLayerDown,
         ChangeActiveLayerTop,
-        ChangeActiveLayerBottom
+        ChangeActiveLayerBottom,
+
+        NextSymbol,
+        NextSymbolGroup,
     };
 }

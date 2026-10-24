@@ -49,6 +49,11 @@ std::unordered_map<action::ActionType, std::string> locale::ActionJsonStringLook
     {action::ActionType::TilePickerTool, "tile-picker-tool"},
     {action::ActionType::ChunkRemoverTool, "chunk-remover-tool"},
     {action::ActionType::PaintModeScatter, "scatter-paint-mode"},
+    {action::ActionType::EnableSymbolDrawing, "toggle-symbol-drawing"},
+    {action::ActionType::EnableAutomaticSymbolCycling, "toggle-symbol-cycling"},
+    {action::ActionType::SymbolConfiguration, "symbol-config"},
+    {action::ActionType::NextSymbol, "next-symbol"},
+    {action::ActionType::NextSymbolGroup, "next-symbol-group"},
 };
 
 std::string locale::ActionJsonStringLookup::Get(action::ActionType actionId)

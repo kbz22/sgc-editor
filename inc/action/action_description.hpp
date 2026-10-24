@@ -35,6 +35,7 @@ namespace action {
         SelectionTools,
         SelectionToolsMode,
         ExtraEditTools,
+        SymbolTools
     };
 
     struct ActionDescription

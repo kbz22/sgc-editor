@@ -7,7 +7,7 @@ locale::StringLookup::StringLookup()
     {
         {StringId::ApplicationName, L"SGC Map Editor"},
 
-        {StringId::TooltipNewMapDocument,  L"New map"},
+        {StringId::TooltipNewMapDocument, L"New map"},
         {StringId::TooltipFileOpen, L"Open file"},
         {StringId::TooltipFileSave, L"Save file"},
         {StringId::TooltipEditUndo, L"Undo"},
@@ -42,6 +42,9 @@ locale::StringLookup::StringLookup()
         {StringId::TooltipSettings, L"Settings"},
         {StringId::TooltipTilePicker, L"Tile picker tool"},
         {StringId::TooltipScatterBrush, L"Scatter"},
+        {StringId::TooltipEnableSymbol, L"Enable painting with symbol"},
+        {StringId::TooltipSymbolCycling, L"Enable automatic symbol cycling"},
+        {StringId::TooltipSymbolConfiguration, L"Configure symbols"},
 
         {StringId::NameFile, L"File"},
         {StringId::NameEdit, L"Edit"},
@@ -104,12 +107,17 @@ locale::StringLookup::StringLookup()
         {StringId::NameZoomReset, L"Reset zoom"},
         {StringId::NameSaveAll, L"Save all"},
         {StringId::NameScatterBrush, L"Scatter brush"},
+        {StringId::NameSymbolDrawing, L"Toggle symbol painting"},
+        {StringId::NameSymbolCycling, L"Toggle automatic symbol cycling"},
+        {StringId::NameSymbolConfiguration, L"Symbol configuration"},
+        {StringId::NameSymbolNextGroup, L"Next symbol group"},
+        {StringId::NameSymbolNextSymbol, L"Next symbol"},
 
         {StringId::NameTilesetFile, L"Tileset file"},
         {StringId::NameMapFile, L"Map file"},
         {StringId::NameImageFile, L"Image file"},
         {StringId::NameAllFiles, L"All files"},
-        {StringId::NamePackageFile, L"Package file"},        
+        {StringId::NamePackageFile, L"Package file"},
 
         {StringId::ShortcutNameCtrl, L"Ctrl"},
         {StringId::ShortcutNameAlt, L"Alt"},
@@ -181,7 +189,7 @@ locale::StringLookup::StringLookup()
         {StringId::UserErrorNoMapName, L"Please provide a name for the map."},
         {StringId::UserErrorNoTileset, L"Please select a tileset."},
         {StringId::UserErrorNoPackage, L"Please select a package."},
-        {StringId::UserErrorNoPackageName, L"Please provide a name for the package."},        
+        {StringId::UserErrorNoPackageName, L"Please provide a name for the package."},
         {StringId::UserErrorNoTilesetName, L"Please provide a name for the tileset."},
         {StringId::UserErrorNoImage, L"Please select an image."},
         {StringId::UserErrorWrongTileSize, L"Tile width and height must be greater than zero."},

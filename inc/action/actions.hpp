@@ -38,3 +38,4 @@
 #include "action/save_all_action.hpp"
 #include "action/help_about_action.hpp"
 #include "action/help_repository_action.hpp"
+#include "action/symbol_configure_action.hpp"
