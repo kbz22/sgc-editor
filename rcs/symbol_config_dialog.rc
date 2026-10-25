@@ -6,7 +6,7 @@ STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 9, "Segoe UI"
 
 BEGIN
-    LTEXT       "Symbol group", -1,
+    LTEXT       "Symbol group", IDC_SYMBOL_GROUP_LABEL,
                 SYMBOL_DIALOG_OFFSET_X,
                 5,
                 SYMBOL_SIDEBAR_WIDTH,

@@ -19,7 +19,7 @@ namespace sgc_view
 
         public:
             SymbolTilesetView(HWND hwnd);
-            ~ SymbolTilesetView() = default;
+            ~SymbolTilesetView() = default;
 
             void Render() override;
             void Refresh(program::ProgramContext& programContext) override;

@@ -170,6 +170,7 @@ locale::StringLookup::StringLookup()
         {StringId::DialogCreate, L"Create"},
         {StringId::DialogCancel, L"Cancel"},
         {StringId::DialogApply, L"Apply"},
+        {StringId::DialogSave, L"Save"},
 
         {StringId::NewDialogNameName, L"Name:"},
         {StringId::NewDialogTilesetName, L"Tileset:"},
@@ -182,6 +183,12 @@ locale::StringLookup::StringLookup()
         {StringId::NewTilesetDialogTileWidthName, L"Tile width:"},
         {StringId::NewTilesetDialogTileHeightName, L"Tile height:"},
         {StringId::NewTilesetDialogIncludeInPackage, L"Include the new tileset in a package file"},
+
+        {StringId::SymbolDialogAddName, L"Add"},
+        {StringId::SymbolDialogWidthName, L"Symbol width"},
+        {StringId::SymbolDialogHeightName, L"Symbol height"},
+        {StringId::SymbolDialogSymbolGroupName, L"Symbol group"},
+        {StringId::SymbolDialogGroupSettingsName, L"Group settings"},
         
         {StringId::AboutAppDescription, LR"(A simple 2D map editor for Windows developed using the Win32 API and SDL3. The editor is designed for creating and editing tile-based maps.)"},
 
@@ -201,6 +208,7 @@ locale::StringLookup::StringLookup()
         {StringId::DialogTitleNewPackage, L"New package"},
         {StringId::DialogTitleAbout, L"About"},
         {StringId::DialogTitleSettings, L"Settings"},
+        {StringId::DialogTitleSymbolConfig, L"Configure symbol groups"},
 
         {StringId::TextMissing, L"Text missing"}
     };

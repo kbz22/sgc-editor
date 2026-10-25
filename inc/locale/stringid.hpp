@@ -173,6 +173,7 @@ namespace locale
         DialogOk,
         DialogApply,
         DialogCreate,
+        DialogSave,
 
         NewDialogNameName,
         NewDialogTilesetName,
@@ -185,6 +186,12 @@ namespace locale
         NewTilesetDialogTileWidthName,
         NewTilesetDialogTileHeightName,
         NewTilesetDialogIncludeInPackage,
+
+        SymbolDialogWidthName,
+        SymbolDialogHeightName,
+        SymbolDialogAddName,
+        SymbolDialogSymbolGroupName,
+        SymbolDialogGroupSettingsName,
 
         ErrorName,
         UserErrorNoMapName,
@@ -204,5 +211,6 @@ namespace locale
         DialogTitleNewPackage,
         DialogTitleAbout,
         DialogTitleSettings,
+        DialogTitleSymbolConfig,
     };
 }

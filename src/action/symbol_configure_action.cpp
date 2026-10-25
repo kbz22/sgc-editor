@@ -84,6 +84,26 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             tilesetView->Refresh(programContext);
             tilesetView->Render();
 
+            auto &stringLookup = programContext.GetStringLookup();
+            auto symbolGroupName = stringLookup.Get(StringId::SymbolDialogSymbolGroupName).value_or(L"GROUP NAME");
+            auto addName = stringLookup.Get(StringId::SymbolDialogAddName).value_or(L"ADD");
+            auto groupSettingsName = stringLookup.Get(StringId::SymbolDialogGroupSettingsName).value_or(L"GROUP SETTINGS NAME");
+            auto widthName = stringLookup.Get(StringId::SymbolDialogWidthName).value_or(L"WIDTH");
+            auto heightName = stringLookup.Get(StringId::SymbolDialogHeightName).value_or(L"HEIGHT");
+            auto saveName = stringLookup.Get(StringId::DialogSave).value_or(L"SAVE");
+            auto cancelName = stringLookup.Get(StringId::DialogCancel).value_or(L"CANCEL");
+
+            SetDlgItemTextW(hDlg, IDOK, saveName.c_str());
+            SetDlgItemTextW(hDlg, IDCANCEL, cancelName.c_str());
+            SetDlgItemTextW(hDlg, IDC_SYMBOL_GROUP_LABEL, symbolGroupName.c_str());
+            SetDlgItemTextW(hDlg, IDC_SYMBOL_ADD_GROUP, addName.c_str());
+            SetDlgItemTextW(hDlg, IDC_SYMBOL_GROUP_CONFIG, groupSettingsName.c_str());
+            SetDlgItemTextW(hDlg, IDC_SYMBOL_SIZE_X_LABEL, widthName.c_str());
+            SetDlgItemTextW(hDlg, IDC_SYMBOL_SIZE_Y_LABEL, heightName.c_str());            
+
+            auto title = stringLookup.Get(StringId::DialogTitleSymbolConfig).value_or(L"DIALOG TITLE");
+            SetWindowTextW(hDlg, title.c_str());
+
             return TRUE;
         }
 
@@ -148,4 +168,3 @@ LRESULT CALLBACK SymbolTilesetProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
-
