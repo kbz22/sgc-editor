@@ -1,0 +1,134 @@
+#include "sgc_view/symbol_tileset_view.hpp"
+#include "program/program.hpp"
+#include <sgc/data/statictilestorage.hpp>
+
+sgc_view::SymbolTilesetView::SymbolTilesetView(HWND hwnd) :
+    SgcView{hwnd},
+    m_symbolIndicator{std::make_unique<sgc::graphics::Rectangle>(0,0,0,0)}
+{}
+
+void sgc_view::SymbolTilesetView::Render()
+{
+    SgcView::Clear();
+    SgcView::DrawAll();
+
+    if(m_symbolIndicator != nullptr) 
+    {
+        for(auto &position : m_symbolPositions)
+        {
+           m_symbolIndicator->SetPosition(position);
+           m_symbolIndicator->Draw(m_renderContext);
+        }        
+    }
+
+    sdl::Render(m_renderContext);
+}
+
+void sgc_view::SymbolTilesetView::ResetTileset()
+{
+    m_sgcTileset.Reset();
+    m_layer.reset();
+    m_drawableImage.reset();
+
+    Render();
+}
+
+void sgc_view::SymbolTilesetView::Refresh(program::ProgramContext& programContext)
+{
+    sgc_view::SgcView::Refresh(programContext);
+    auto selectedDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
+
+    if(selectedDocument == nullptr && m_sgcTileset.IsSet()) {
+        ResetTileset();
+        return;
+    }
+
+    if(selectedDocument != nullptr && !m_sgcTileset.IsSet()) {
+        auto tilesetId = selectedDocument->GetTilesetAssetId();
+        SetTileset(tilesetId);
+    }
+
+    if(!m_sgcTileset.IsSet()) {
+        return;
+    }
+}
+
+void sgc_view::SymbolTilesetView::SetTileset(sgc::data::AssetId tilesetId)
+{
+    SgcView::SetTileset(tilesetId);
+
+    if(!m_sgcTileset.IsSet()) {
+        return;
+    }
+
+    auto tileset = m_sgcTileset.GetTileset();
+    const math::vec2 gridSize = tileset->GetSizeInTiles();
+    auto tileStorage = std::make_shared<data::StaticTileStorage>(math::vec2{gridSize.x, gridSize.y});
+
+    for (sgc::tile::TileId i = 0; i < gridSize.y * gridSize.x; ++i) {  
+        tileStorage->SetTileAt({
+            static_cast<sgc::math::ival>(i % gridSize.x),
+            static_cast<sgc::math::ival>(i / gridSize.x)
+        }, 
+            i
+    );
+    }
+
+    m_layer = std::make_shared<graphics::TiledLayer>(
+        tileset,
+        tileStorage
+    );
+
+    auto tiledImage = std::make_shared<graphics::TiledImage>(m_layer);    
+    tiledImage->SetPositionPixels(sgc::graphics::PixelPosition2D{
+        0,
+        m_sgcTileset.GetVerticalOffsetInPixels()
+    });
+    m_drawableImage = tiledImage;
+}
+
+void sgc_view::SymbolTilesetView::AddTilePosition(sgc::tile::TilePosition2D position)
+{
+    auto tileSize = GetTileSize();
+    m_symbolPositions.push_back({
+        position.x * tileSize.x,
+        position.y * tileSize.y,
+    });
+}
+
+void sgc_view::SymbolTilesetView::AddTilePosition(std::vector<sgc::tile::TilePosition2D> positions)
+{
+    auto tileSize = GetTileSize();
+    
+    for(auto &position : positions)
+    {
+        m_symbolPositions.push_back({
+            position.x * tileSize.x,
+            position.y * tileSize.y,
+        });
+    }
+}
+
+void sgc_view::SymbolTilesetView::SetSizeInTiles(sgc::tile::TileSize2D size)
+{
+    auto tileSize = GetTileSize();
+    m_symbolIndicator->SetSize({
+        size.x * tileSize.x,
+        size.y * tileSize.y,
+    });
+}
+
+void sgc_view::SymbolTilesetView::SetCursorColor(sgc::graphics::color color)
+{
+    m_cursorColor = color;
+}
+
+std::vector<sgc::tile::TilePosition2D> sgc_view::SymbolTilesetView::GetSymbolPositions() const
+{
+    return m_symbolPositions;
+}
+
+sgc::tile::TilePosition2D sgc_view::SymbolTilesetView::GetSymbolSize() const
+{
+    return m_symbolIndicator->GetSize();
+}

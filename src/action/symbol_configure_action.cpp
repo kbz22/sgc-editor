@@ -1,6 +1,6 @@
 #include "action/symbol_configure_action.hpp"
 #include "program/program.hpp"
-#include "sgc_view/tileset_view.hpp"
+#include "sgc_view/symbol_tileset_view.hpp"
 #include "symbol_config_dialog.h"
 #include <windows.h>
 #include <commdlg.h>
@@ -60,7 +60,7 @@ void action::SymbolConfigureAction::Execute(program::ProgramContext& context)
 
 INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static std::unique_ptr<sgc_view::TilesetView> tilesetView = nullptr;
+    static std::unique_ptr<sgc_view::SymbolTilesetView> tilesetView = nullptr;
     auto &programContext = program::GetProgramContext();
 
     switch (msg)
@@ -75,7 +75,7 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             RECT rect;
             GetWindowRect(hwnd, &rect);
 
-            tilesetView = std::make_unique<TilesetView>(hwnd);
+            tilesetView = std::make_unique<SymbolTilesetView>(hwnd);
             auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
             tilesetView->SetTileset(mapDocument->GetTilesetAssetId());
