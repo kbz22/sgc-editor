@@ -12,7 +12,7 @@
 #include "program/program.hpp"
 
 sgc_view::TilesetView::TilesetView(HWND hwnd) :
-    SgcView(hwnd),
+    SgcView{hwnd},
     m_cursorTile{nullptr}
 {}
 
