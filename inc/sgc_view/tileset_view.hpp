@@ -9,8 +9,6 @@ namespace sgc_view
     class TilesetView : public SgcView
     {
         private:
-            math::uval m_gridWidth = 0;
-            math::uval m_gridHeight = 0;
             std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
             std::unique_ptr<graphics::Rectangle> m_cursorTile;
             sgc::graphics::color m_cursorColor{ 0, 128, 255, 128 };
