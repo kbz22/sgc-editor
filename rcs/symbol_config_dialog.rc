@@ -55,7 +55,7 @@ BEGIN
                 ES_AUTOHSCROLL | ES_NUMBER
     
     CONTROL     "", IDC_SYMBOL_TILESET_VIEW, "SymbolTilesetControl",
-                WS_CHILD | WS_VISIBLE | WS_BORDER,
+                WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL,
                 SYMBOL_SIDEBAR_WIDTH,
                 5,
                 TILESET_VIEW_WIDTH,

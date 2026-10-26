@@ -132,3 +132,8 @@ sgc::tile::TilePosition2D sgc_view::SymbolTilesetView::GetSymbolSize() const
 {
     return m_symbolIndicator->GetSize();
 }
+
+sgc::graphics::PixelPosition2D sgc_view::SymbolTilesetView::GetImageSize() const
+{
+    return m_layer->GetTileset().GetImageSize();
+}

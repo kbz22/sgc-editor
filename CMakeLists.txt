@@ -59,6 +59,7 @@ add_executable(sgc-editor WIN32
     src/win32_helpers/create_helpers.cpp
     src/win32_helpers/load_bitmap.cpp
     src/win32_helpers/file_helpers.cpp
+    src/win32_helpers/resize_helpers.cpp
 
     src/win32_models/layer_list_control.cpp
     src/win32_models/zoom_combo_box.cpp

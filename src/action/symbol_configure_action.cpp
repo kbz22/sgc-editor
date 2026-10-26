@@ -1,4 +1,5 @@
 #include "action/symbol_configure_action.hpp"
+#include "win32_helpers/resize_helpers.hpp"
 #include "program/program.hpp"
 #include "sgc_view/symbol_tileset_view.hpp"
 #include "symbol_config_dialog.h"
@@ -70,20 +71,35 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             using namespace locale;
             using namespace sgc_view;
 
-            auto hwnd = GetDlgItem(hDlg, IDC_SYMBOL_TILESET_VIEW);
+            auto tilesetViewHwnd = GetDlgItem(hDlg, IDC_SYMBOL_TILESET_VIEW);
 
             RECT rect;
-            GetWindowRect(hwnd, &rect);
+            GetWindowRect(tilesetViewHwnd, &rect);
 
-            tilesetView = std::make_unique<SymbolTilesetView>(hwnd);
+            tilesetView = std::make_unique<SymbolTilesetView>(tilesetViewHwnd);
             auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
             tilesetView->SetTileset(mapDocument->GetTilesetAssetId());
             tilesetView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);
             tilesetView->SetCursorColor({251,192,27,255});
-            tilesetView->Refresh(programContext);
+            tilesetView->Refresh(programContext);            
+
+            auto imageSize = tilesetView->GetImageSize();
+            win32_helpers::ResizeScrollBarsForImage(
+                tilesetViewHwnd,
+                static_cast<int>(imageSize.x),
+                static_cast<int>(imageSize.y)
+            );
+
             tilesetView->Render();
 
+            SetWindowLongPtrW(
+                tilesetViewHwnd,
+                GWLP_USERDATA,
+                reinterpret_cast<LONG_PTR>(tilesetView.get())
+            );
+
+            // localized text
             auto &stringLookup = programContext.GetStringLookup();
             auto symbolGroupName = stringLookup.Get(StringId::SymbolDialogSymbolGroupName).value_or(L"GROUP NAME");
             auto addName = stringLookup.Get(StringId::SymbolDialogAddName).value_or(L"ADD");
@@ -140,6 +156,73 @@ LRESULT CALLBACK SymbolTilesetProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 {
     switch (msg)
     {
+        case WM_HSCROLL:
+        case WM_VSCROLL:
+        {
+            const bool isHorizontal = (msg == WM_HSCROLL);
+            const int bar = isHorizontal ? SB_HORZ : SB_VERT;
+
+            SCROLLINFO si{};
+            si.cbSize = sizeof(si);
+            si.fMask = SIF_ALL;
+
+            GetScrollInfo(hwnd, bar, &si);
+
+            int position = si.nPos;
+
+            switch (LOWORD(wParam))
+            {
+            case SB_LINELEFT:
+                position -= 16;
+                break;
+
+            case SB_LINERIGHT:
+                position += 16;
+                break;
+
+            case SB_PAGELEFT:
+                position -= static_cast<int>(si.nPage);
+                break;
+
+            case SB_PAGERIGHT:
+                position += static_cast<int>(si.nPage);
+                break;
+
+            case SB_THUMBTRACK:
+                position = si.nTrackPos;
+                break;
+
+            case SB_THUMBPOSITION:
+                position = si.nTrackPos;
+                break;
+
+            default:
+                return 0;
+            }
+
+            const int maxPosition = std::max(
+                si.nMin,
+                si.nMax - static_cast<int>(si.nPage) + 1
+            );
+
+            position = std::clamp(position, si.nMin, maxPosition);
+
+            si.fMask = SIF_POS;
+            si.nPos = position;
+
+            SetScrollInfo(hwnd, bar, &si, TRUE);
+
+            auto tilesetView = reinterpret_cast<sgc_view::SymbolTilesetView*>(
+                GetWindowLongPtrW(hwnd, GWLP_USERDATA)
+            );
+            tilesetView->SetCameraPositionSingles(
+                isHorizontal  ? static_cast<float>(position) : 0,
+                !isHorizontal ? static_cast<float>(position) : 0
+            );
+            tilesetView->Render();
+            
+            return 0;
+        }
         case WM_COMMAND:
         {
             auto commandId = LOWORD(wParam);

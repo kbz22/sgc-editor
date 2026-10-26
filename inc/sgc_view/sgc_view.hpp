@@ -59,12 +59,10 @@ namespace sgc_view
             virtual void Render();
             virtual void Refresh(program::ProgramContext& programContext);
             virtual void SetCameraPositionSingles(float x, float y);
-            virtual void ChangeCameraPositionSingles(float deltaX, float deltaY);            
+            virtual void ChangeCameraPositionSingles(float deltaX, float deltaY);
 
-            virtual sgc::math::fvec2 GetCameraPositionSingles() const;
             graphics::RenderContext& GetRenderContext();
-
-            // std::shared_ptr<graphics::Tileset> GetTileset() const;
+            
             sgc::graphics::PixelSize2D GetTileSize() const;
             SDL_Window* GetSdlWindow() const;
             
@@ -74,6 +72,8 @@ namespace sgc_view
 
             sgc::tile::TileId GetClearTileId() const;
             program::SgcTileset& GetSgcTileset();
+
+            sgc::math::fvec2 GetCameraPositionSingles() const;
 
             void Clear();
     };

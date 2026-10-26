@@ -79,8 +79,7 @@ namespace sgc_view
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
             sgc::tile::TilePosition2D GetCursorPositionInTiles() const;
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;
-            sgc::tile::TileSize2D GetCursorSizeInTiles() const;
-            sgc::math::fvec2 GetCameraPositionSingles() const;
+            sgc::tile::TileSize2D GetCursorSizeInTiles() const;            
             sgc::math::fvec2 GetCursorPositionSingles() const;
             sgc::graphics::View GetView() const;
             sgc::tile::TilePosition2D GetSelectionPositionInTiles() const;

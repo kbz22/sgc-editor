@@ -32,5 +32,6 @@ namespace sgc_view
 
             std::vector<sgc::tile::TilePosition2D> GetSymbolPositions() const;
             sgc::tile::TilePosition2D GetSymbolSize() const;
+            sgc::graphics::PixelPosition2D GetImageSize() const;
     };
 }
