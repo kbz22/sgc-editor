@@ -7,6 +7,7 @@ file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId) 
     name{name},
     m_layerManager{std::make_unique<program::LayerManager>()},
     m_commandManager{std::make_unique<command::CommandManager>()},
+    m_symbolManager{std::make_unique<program::TileSymbolManager>()},
     m_tilesetId{tilesetId}
 {
     m_mapAssetId = sgc::data::HashAsset(L"map."+name);
@@ -17,6 +18,7 @@ file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId, 
     name{name},
     m_layerManager{std::make_unique<program::LayerManager>()},
     m_commandManager{std::make_unique<command::CommandManager>()},
+    m_symbolManager{std::make_unique<program::TileSymbolManager>()},
     m_tilesetId{tilesetId},
     m_mapAssetId{mapAssetId}
 {
@@ -27,6 +29,7 @@ file::MapDocument::MapDocument(const MapDocument& other) :
     name{other.name},
     m_layerManager{std::make_unique<program::LayerManager>(*other.m_layerManager)},
     m_commandManager{std::make_unique<command::CommandManager>(*other.m_commandManager)},
+    m_symbolManager{std::make_unique<program::TileSymbolManager>(*other.m_symbolManager)},
     m_tilesetId{other.m_tilesetId},
     m_dirty{other.m_dirty},
     m_onSetDirtyCallback{other.m_onSetDirtyCallback},
@@ -42,6 +45,11 @@ program::LayerManager* file::MapDocument::GetLayerManager() const
 command::CommandManager* file::MapDocument::GetCommandManager() const
 {
     return m_commandManager.get();
+}
+
+program::TileSymbolManager* file::MapDocument::GetSymbolManager() const
+{
+    return m_symbolManager.get();
 }
 
 sgc::data::ITileStorage* file::MapDocument::GetCurrentLayerStorage() const

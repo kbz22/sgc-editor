@@ -1,6 +1,7 @@
 #pragma once
 
 #include "program/layer_manager.hpp"
+#include "program/tile_symbol_manager.hpp"
 #include "file/itreeviewlistable.hpp"
 #include "file/idocument.hpp"
 #include <sgc/graphics/tileset.hpp>
@@ -18,6 +19,7 @@ namespace file {
         private:
             std::unique_ptr<program::LayerManager> m_layerManager{nullptr};
             std::unique_ptr<command::CommandManager> m_commandManager{nullptr};
+            std::unique_ptr<program::TileSymbolManager> m_symbolManager{nullptr};
             sgc::data::AssetId m_tilesetId{0};
             sgc::data::AssetId m_mapAssetId{0};
             sgc::data::AssetId m_mapDocumentId{0};
@@ -32,6 +34,7 @@ namespace file {
 
             program::LayerManager* GetLayerManager() const;
             command::CommandManager* GetCommandManager() const;
+            program::TileSymbolManager* GetSymbolManager() const;
             sgc::data::ITileStorage* GetCurrentLayerStorage() const;
             sgc::data::AssetId GetTilesetAssetId() const;
             sgc::data::AssetId GetMapAssetId() const;
