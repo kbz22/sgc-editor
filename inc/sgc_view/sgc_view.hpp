@@ -58,7 +58,10 @@ namespace sgc_view
             virtual void SetScreenSize(int width, int height);
             virtual void Render();
             virtual void Refresh(program::ProgramContext& programContext);
+            virtual void SetCameraPositionSingles(float x, float y);
+            virtual void ChangeCameraPositionSingles(float deltaX, float deltaY);            
 
+            virtual sgc::math::fvec2 GetCameraPositionSingles() const;
             graphics::RenderContext& GetRenderContext();
 
             // std::shared_ptr<graphics::Tileset> GetTileset() const;

@@ -435,8 +435,7 @@ sgc::tile::TileSize2D sgc_view::MapView::GetSelectionSizeInTiles() const
 
 void sgc_view::MapView::SetCameraPositionSingles(float x, float y)
 {
-    m_renderContext.view.camera.x = x;
-    m_renderContext.view.camera.y = y;
+    SgcView::SetCameraPositionSingles(x,y);
     UpdateGridPosition(m_renderContext.view.camera);
 }
 
@@ -465,8 +464,7 @@ void sgc_view::MapView::SetCursorMode(CursorTileMode mode)
 
 void sgc_view::MapView::ChangeCameraPositionSingles(float deltaX, float deltaY)
 {
-    m_renderContext.view.camera.x -= deltaX;
-    m_renderContext.view.camera.y -= deltaY;
+    SgcView::ChangeCameraPositionSingles(deltaX, deltaY);
     UpdateGridPosition(m_renderContext.view.camera);
 }
 
@@ -498,14 +496,6 @@ void sgc_view::MapView::RegisterOnCursorPositionChangedCallback(std::function<vo
 void sgc_view::MapView::RegisterOnSelectionSizeChangedCallback(std::function<void(sgc::math::vec2)> callback)
 {
     m_onSelectionSizeChangedCallback = callback;
-}
-
-sgc::math::fvec2 sgc_view::MapView::GetCameraPositionSingles() const
-{
-    return {
-        m_renderContext.view.camera.x,
-        m_renderContext.view.camera.y
-    };
 }
 
 sgc::math::fvec2 sgc_view::MapView::GetCursorPositionSingles() const

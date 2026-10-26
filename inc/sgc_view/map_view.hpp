@@ -54,6 +54,9 @@ namespace sgc_view
             void Render() override;
             void Refresh(program::ProgramContext& programContext) override;
             void SetScreenSize(int width, int height) override;
+            void SetCameraPositionSingles(float x, float y) override;
+
+            void ChangeCameraPositionSingles(float deltaX, float deltaY) override;            
 
             void RenderToImage(std::filesystem::path outputPath);
 
@@ -64,15 +67,13 @@ namespace sgc_view
             void SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position);
             void SetCursorSizeInPixels(sgc::graphics::PixelSize2D size);
             void SetSelectionPositionInPixels(sgc::graphics::PixelPosition2D position);
-            void SetSelectionSizeInPixels(sgc::graphics::PixelSize2D size);
-            void SetCameraPositionSingles(float x, float y);
+            void SetSelectionSizeInPixels(sgc::graphics::PixelSize2D size);            
             void SetCursorMode(CursorTileMode mode);
-
-            void ChangeCameraPositionSingles(float deltaX, float deltaY);
-            void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
 
             void RegisterOnCursorPositionChangedCallback(std::function<void(sgc::math::vec2)> callback);
             void RegisterOnSelectionSizeChangedCallback(std::function<void(sgc::math::vec2)> callback);
+
+            void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
 
             float GetZoom() const;
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;

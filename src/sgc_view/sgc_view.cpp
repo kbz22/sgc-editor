@@ -173,3 +173,23 @@ program::SgcTileset& sgc_view::SgcView::GetSgcTileset()
 {
     return m_sgcTileset;
 }
+
+void sgc_view::SgcView::SetCameraPositionSingles(float x, float y)
+{
+    m_renderContext.view.camera.x = x;
+    m_renderContext.view.camera.y = y;
+}
+            
+void sgc_view::SgcView::ChangeCameraPositionSingles(float deltaX, float deltaY)
+{
+    m_renderContext.view.camera.x -= deltaX;
+    m_renderContext.view.camera.y -= deltaY;
+}
+
+sgc::math::fvec2 sgc_view::SgcView::GetCameraPositionSingles() const
+{
+    return {
+        m_renderContext.view.camera.x,
+        m_renderContext.view.camera.y
+    };
+}
