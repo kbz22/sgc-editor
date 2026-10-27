@@ -60,8 +60,6 @@ void sections::Section::SetHwnd(HWND hwnd, HWND parentHwnd)
     m_parentHwnd = parentHwnd;
 }
 
-// #include "debug.hpp"
-
 LRESULT CALLBACK sections::Section::StaticPaneProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data) 
 {
     auto *self = reinterpret_cast<Section*>(data);
@@ -71,17 +69,13 @@ LRESULT CALLBACK sections::Section::StaticPaneProc(HWND hwnd, UINT msg, WPARAM w
     {
         if(msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK || msg == WM_RBUTTONDOWN || msg == WM_RBUTTONDBLCLK)
         {
-            SetFocus(hwnd);
-            // programContext.activeSection = self;
+            SetFocus(hwnd);            
             programContext.SetActiveSection(self);
-            // debug::DebugLog(L"Active section set to: %p", self);
-            
         }
         else if(msg == WM_KILLFOCUS)
         {
             if(programContext.GetActiveSection() == self) {
                 programContext.SetActiveSection(nullptr);
-                // debug::DebugLog(L"Active section cleared.");
             }
         }
         
