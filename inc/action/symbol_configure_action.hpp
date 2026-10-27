@@ -1,14 +1,12 @@
 #pragma once
 
 #include "action/action.hpp"
+#include <memory>
 
 namespace action
 {
     class SymbolConfigureAction : public Action
     {
-        private:
-            static bool m_registered;
-
         public:
             SymbolConfigureAction();
 
