@@ -87,25 +87,42 @@ void sgc_view::SymbolTilesetView::SetTileset(sgc::data::AssetId tilesetId)
     m_drawableImage = tiledImage;
 }
 
+bool IsValid(sgc::math::vec4 area, program::SgcTileset &sgcTileset)
+{    
+    for(auto x = area.x; x<area.z; x++){
+        for(auto y = area.y; y<area.w; y++)
+        {
+            if(!sgcTileset.IsValid({x,y}))
+                return false;
+        }
+    }
+    return true;
+}
+
 void sgc_view::SymbolTilesetView::AddTilePosition(sgc::tile::TilePosition2D position)
 {
     auto tileSize = GetTileSize();
-    m_symbolPositions.push_back({
-        position.x * tileSize.x,
-        position.y * tileSize.y,
-    });
-}
-
-void sgc_view::SymbolTilesetView::AddTilePosition(std::vector<sgc::tile::TilePosition2D> positions)
-{
-    auto tileSize = GetTileSize();
+    auto symbolSize = GetSymbolSize();
     
-    for(auto &position : positions)
+    bool isValid = IsValid(
+        {position.x, position.y, position.x + symbolSize.x, position.y + symbolSize.y},
+        m_sgcTileset
+    );
+
+    if(isValid)
     {
         m_symbolPositions.push_back({
             position.x * tileSize.x,
             position.y * tileSize.y,
         });
+    }
+}
+
+void sgc_view::SymbolTilesetView::AddTilePosition(std::vector<sgc::tile::TilePosition2D> &positions)
+{    
+    for(auto &position : positions)
+    {
+        AddTilePosition(position);
     }
 }
 
@@ -120,7 +137,7 @@ void sgc_view::SymbolTilesetView::SetSizeInTiles(sgc::tile::TileSize2D size)
 
 void sgc_view::SymbolTilesetView::SetCursorColor(sgc::graphics::color color)
 {
-    m_cursorColor = color;
+    m_symbolIndicator->SetColor(color);
 }
 
 std::vector<sgc::tile::TilePosition2D> sgc_view::SymbolTilesetView::GetSymbolPositions() const
@@ -130,10 +147,20 @@ std::vector<sgc::tile::TilePosition2D> sgc_view::SymbolTilesetView::GetSymbolPos
 
 sgc::tile::TilePosition2D sgc_view::SymbolTilesetView::GetSymbolSize() const
 {
-    return m_symbolIndicator->GetSize();
+    auto tileSize = m_sgcTileset.GetTileSize();    
+    auto indicatorSize = m_symbolIndicator->GetSize();
+    return {
+        indicatorSize.x / tileSize.x,
+        indicatorSize.y / tileSize.y
+    };
 }
 
 sgc::graphics::PixelPosition2D sgc_view::SymbolTilesetView::GetImageSize() const
 {
     return m_layer->GetTileset().GetImageSize();
+}
+
+sgc::graphics::PixelPosition2D sgc_view::SymbolTilesetView::GetTilesetImageSize() const
+{
+    return m_sgcTileset.GetTilesetImageSize();
 }

@@ -26,12 +26,13 @@ namespace sgc_view
             void SetTileset(sgc::data::AssetId tilesetId) override;
 
             void AddTilePosition(sgc::tile::TilePosition2D position);
-            void AddTilePosition(std::vector<sgc::tile::TilePosition2D> positions);
+            void AddTilePosition(std::vector<sgc::tile::TilePosition2D> &positions);
             void SetSizeInTiles(sgc::tile::TileSize2D size);
             void SetCursorColor(sgc::graphics::color color);
 
             std::vector<sgc::tile::TilePosition2D> GetSymbolPositions() const;
             sgc::tile::TilePosition2D GetSymbolSize() const;
             sgc::graphics::PixelPosition2D GetImageSize() const;
+            sgc::graphics::PixelPosition2D GetTilesetImageSize() const;
     };
 }
