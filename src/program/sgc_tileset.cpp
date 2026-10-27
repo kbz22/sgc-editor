@@ -166,3 +166,18 @@ sgc::tile::TilePosition2D program::SgcTileset::GetTilePosition(sgc::tile::TileId
 
     return tilePosition;
 }
+
+sgc::graphics::PixelSize2D program::SgcTileset::GetTilesetImageSize() const
+{
+    auto sizeInTiles = GetSizeInTiles();
+    auto tileSize = GetTileSize();
+    return {
+        sizeInTiles.x * tileSize.x,
+        sizeInTiles.y * tileSize.y
+    };
+}
+
+sgc::graphics::PixelSize2D program::SgcTileset::GetImageSize() const
+{
+    return m_tileset->GetImageSize();
+}

@@ -30,7 +30,7 @@ namespace program
 
             bool IsSet() const;
             bool IsValid(sgc::tile::TileId tileId) const;
-            bool IsValid(sgc::tile::TilePosition2D positionOnTileset) const;
+            bool IsValid(sgc::tile::TilePosition2D positionOnTileset) const;            
             bool IsSpecial(sgc::tile::TileId tileId) const;
             bool IsSpecial(sgc::tile::TilePosition2D positionOnTileset) const;
 
@@ -40,5 +40,7 @@ namespace program
             sgc::tile::TileSize2D GetSizeInTiles() const;
             sgc::graphics::PixelSize2D GetTileSize() const;
             sgc::tile::TilePosition2D GetTilePosition(sgc::tile::TileId tileId) const;
+            sgc::graphics::PixelSize2D GetImageSize() const;
+            sgc::graphics::PixelSize2D GetTilesetImageSize() const;
     };
 }
