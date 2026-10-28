@@ -83,6 +83,7 @@ add_executable(sgc-editor WIN32
     src/program/sgc_tileset.cpp    
     src/program/tile_symbol_group.cpp
     src/program/tile_symbol_manager.cpp
+    src/program/pointer_manager.cpp
 
     src/sections/section.cpp
     src/sections/tileset_section.cpp
