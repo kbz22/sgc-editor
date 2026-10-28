@@ -62,9 +62,9 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             auto tilesetViewHwnd = GetDlgItem(hDlg, IDC_SYMBOL_TILESET_VIEW);
             auto tilesetViewControl = reinterpret_cast<SymbolTilesetControl*>(lParam);
 
-            tilesetViewControl->Init(tilesetViewHwnd, programContext);
+            tilesetViewControl->Init(tilesetViewHwnd, programContext);            
             tilesetViewControl->Refresh(programContext);
-            tilesetViewControl->Update();
+            tilesetViewControl->Update();            
 
             // localized text
             auto &stringLookup = programContext.GetStringLookup();
@@ -75,6 +75,7 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             auto heightName = stringLookup.Get(StringId::SymbolDialogHeightName).value_or(L"HEIGHT");
             auto saveName = stringLookup.Get(StringId::DialogSave).value_or(L"SAVE");
             auto cancelName = stringLookup.Get(StringId::DialogCancel).value_or(L"CANCEL");
+            auto resetName = stringLookup.Get(StringId::SymbolDialogResetSymbols).value_or(L"RESET");
 
             SetDlgItemTextW(hDlg, IDOK, saveName.c_str());
             SetDlgItemTextW(hDlg, IDCANCEL, cancelName.c_str());
@@ -82,7 +83,8 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             SetDlgItemTextW(hDlg, IDC_SYMBOL_ADD_GROUP, addName.c_str());
             SetDlgItemTextW(hDlg, IDC_SYMBOL_GROUP_CONFIG, groupSettingsName.c_str());
             SetDlgItemTextW(hDlg, IDC_SYMBOL_SIZE_X_LABEL, widthName.c_str());
-            SetDlgItemTextW(hDlg, IDC_SYMBOL_SIZE_Y_LABEL, heightName.c_str());            
+            SetDlgItemTextW(hDlg, IDC_SYMBOL_SIZE_Y_LABEL, heightName.c_str());
+            SetDlgItemTextW(hDlg, IDC_SYMBOL_RESTORE_DEFAULTS, resetName.c_str());
 
             auto title = stringLookup.Get(StringId::DialogTitleSymbolConfig).value_or(L"DIALOG TITLE");
             SetWindowTextW(hDlg, title.c_str());

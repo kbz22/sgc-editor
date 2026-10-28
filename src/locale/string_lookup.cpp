@@ -189,6 +189,7 @@ locale::StringLookup::StringLookup()
         {StringId::SymbolDialogHeightName, L"Symbol height"},
         {StringId::SymbolDialogSymbolGroupName, L"Symbol group"},
         {StringId::SymbolDialogGroupSettingsName, L"Group settings"},
+        {StringId::SymbolDialogResetSymbols, L"Reset symbols"},
         
         {StringId::AboutAppDescription, LR"(A simple 2D map editor for Windows developed using the Win32 API and SDL3. The editor is designed for creating and editing tile-based maps.)"},
 

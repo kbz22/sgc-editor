@@ -111,7 +111,7 @@ namespace locale
         NameSymbolCycling,
         NameSymbolConfiguration,
         NameSymbolNextSymbol,
-        NameSymbolNextGroup,        
+        NameSymbolNextGroup,
 
         NameChangeLayerUp,
         NameChangeLayerDown,
@@ -192,6 +192,7 @@ namespace locale
         SymbolDialogAddName,
         SymbolDialogSymbolGroupName,
         SymbolDialogGroupSettingsName,
+        SymbolDialogResetSymbols,
 
         ErrorName,
         UserErrorNoMapName,

@@ -1,15 +1,18 @@
 #pragma once
 
-#define SYMBOL_DIALOG_WIDTH             320
-#define SYMBOL_DIALOG_HEIGHT            180
+#define SYMBOL_DIALOG_WIDTH             360
+#define SYMBOL_DIALOG_HEIGHT            320
 #define SYMBOL_DIALOG_OFFSET_X          10
 #define SYMBOL_DIALOG_GROUP_OFFSET_X    8
-#define TILESET_VIEW_WIDTH              180
+#define TILESET_VIEW_WIDTH              220
 #define SYMBOL_SIDEBAR_WIDTH            SYMBOL_DIALOG_WIDTH - TILESET_VIEW_WIDTH - 3*SYMBOL_DIALOG_OFFSET
 #define SYMBOL_SIDE_LABEL_WIDTH         85
 #define SYMBOL_DIALOG_OFFSET_X_SIDE     SYMBOL_SIDE_LABEL_WIDTH + 2*SYMBOL_DIALOG_OFFSET_X + 12
 #define SYMBOL_ADD_WIDTH                30
 #define SYMBOL_OK_BUTTON_HEIGHT         14
+#define SYMBOL_GROUP_Y                  36
+#define SYMBOL_GROUP_OFFSET_Y           6
+#define SYMBOL_GROUP_HEIGHT             80
 
 #define IDD_SYMBOL_CONFIG           28000
 
@@ -22,3 +25,4 @@
 #define IDC_SYMBOL_GROUP_COMBO      28007
 #define IDC_SYMBOL_GROUP_CONFIG     28008
 #define IDC_SYMBOL_GROUP_LABEL      28009
+#define IDC_SYMBOL_RESTORE_DEFAULTS 28010
