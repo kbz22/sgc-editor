@@ -35,4 +35,3 @@ uint32_t win32_program::PointerLock::GetPointerId() const
 {
     return m_pointer.Id;
 }
-

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "sgc_view/symbol_tileset_view.hpp"
+#include "win32_program/pointer_lock.hpp"
+#include "program/pointer_manager.hpp"
 
 namespace win32_models
 {
@@ -8,7 +10,13 @@ namespace win32_models
     {
         private:
             HWND m_hwnd;
+            sgc::tile::TilePosition2D m_pointerOrigin;
             std::unique_ptr<sgc_view::SymbolTilesetView> m_tilesetView;
+            program::PointerManager &m_pointerManager;
+
+            win32_program::PointerLock m_isSelecting;
+            win32_program::PointerLock m_isPanning;
+
             static bool m_classRegistered;
 
             static LRESULT CALLBACK SymbolTilesetViewStaticProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, UINT_PTR id, DWORD_PTR data);
@@ -20,6 +28,8 @@ namespace win32_models
             void Init(HWND hwnd, program::ProgramContext &programContext);
             void Update();
             void Refresh(program::ProgramContext &programContext);
+
+            void SetSize(sgc::tile::TileSize2D size);
 
     };
 }

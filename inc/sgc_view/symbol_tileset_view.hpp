@@ -9,11 +9,13 @@ namespace sgc_view
 {
     class SymbolTilesetView : public SgcView
     {
-        private:        
+        private:
             std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
             std::unique_ptr<graphics::Rectangle> m_symbolIndicator = nullptr;
+            std::unique_ptr<graphics::Rectangle> m_cursor = nullptr;                        
             std::vector<sgc::graphics::PixelPosition2D> m_symbolPositions{};
             sgc::graphics::color m_cursorColor{ 251, 192, 27, 255 };
+            bool m_cursorVisible = false;
 
             void ResetTileset();
 
@@ -29,10 +31,17 @@ namespace sgc_view
             void AddTilePosition(std::vector<sgc::tile::TilePosition2D> &positions);
             void SetSizeInTiles(sgc::tile::TileSize2D size);
             void SetCursorColor(sgc::graphics::color color);
+            void SetIndicatorColor(sgc::graphics::color color);
+            void ClearSymbolPositions();
+            void ShowCursor(bool value);
+            void SetCursorPosition(sgc::tile::TilePosition2D position);
 
             std::vector<sgc::tile::TilePosition2D> GetSymbolPositions() const;
+            sgc::tile::TilePosition2D GetCursorPosition() const;
             sgc::tile::TilePosition2D GetSymbolSize() const;
             sgc::graphics::PixelPosition2D GetImageSize() const;
             sgc::graphics::PixelPosition2D GetTilesetImageSize() const;
+
+            bool Empty();
     };
 }

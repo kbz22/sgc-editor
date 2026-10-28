@@ -4,7 +4,8 @@
 
 sgc_view::SymbolTilesetView::SymbolTilesetView(HWND hwnd) :
     SgcView{hwnd},
-    m_symbolIndicator{std::make_unique<sgc::graphics::Rectangle>(0,0,0,0)}
+    m_symbolIndicator{std::make_unique<sgc::graphics::Rectangle>(0,0,0,0)},
+    m_cursor{std::make_unique<sgc::graphics::Rectangle>(0,0,0,0)}
 {}
 
 void sgc_view::SymbolTilesetView::Render()
@@ -19,6 +20,11 @@ void sgc_view::SymbolTilesetView::Render()
            m_symbolIndicator->SetPosition(position);
            m_symbolIndicator->Draw(m_renderContext);
         }        
+    }
+
+    if(m_cursor != nullptr && m_cursorVisible)
+    {
+        m_cursor->Draw(m_renderContext);
     }
 
     sdl::Render(m_renderContext);
@@ -103,7 +109,7 @@ void sgc_view::SymbolTilesetView::AddTilePosition(sgc::tile::TilePosition2D posi
 {
     auto tileSize = GetTileSize();
     auto symbolSize = GetSymbolSize();
-    
+
     bool isValid = IsValid(
         {position.x, position.y, position.x + symbolSize.x, position.y + symbolSize.y},
         m_sgcTileset
@@ -131,18 +137,44 @@ void sgc_view::SymbolTilesetView::SetSizeInTiles(sgc::tile::TileSize2D size)
     auto tileSize = GetTileSize();
     m_symbolIndicator->SetSize({
         size.x * tileSize.x,
-        size.y * tileSize.y,
+        size.y * tileSize.y
     });
+    m_cursor->SetSize({
+        size.x * tileSize.x,
+        size.y * tileSize.y
+    });
+
+    // remove all invalid positions
+    auto positions = GetSymbolPositions();
+    ClearSymbolPositions();
+    AddTilePosition(positions);
 }
 
 void sgc_view::SymbolTilesetView::SetCursorColor(sgc::graphics::color color)
 {
+    m_cursor->SetColor(color);
+}
+
+void sgc_view::SymbolTilesetView::SetIndicatorColor(sgc::graphics::color color)
+{
     m_symbolIndicator->SetColor(color);
 }
 
+
 std::vector<sgc::tile::TilePosition2D> sgc_view::SymbolTilesetView::GetSymbolPositions() const
 {
-    return m_symbolPositions;
+    std::vector<sgc::tile::TilePosition2D> returnPositions;
+    auto tileSize = GetTileSize();
+
+    for(auto &position : m_symbolPositions)
+    {
+        returnPositions.push_back({
+            position.x / tileSize.x,
+            position.y / tileSize.y
+        });
+    }
+
+    return returnPositions;
 }
 
 sgc::tile::TilePosition2D sgc_view::SymbolTilesetView::GetSymbolSize() const
@@ -163,4 +195,38 @@ sgc::graphics::PixelPosition2D sgc_view::SymbolTilesetView::GetImageSize() const
 sgc::graphics::PixelPosition2D sgc_view::SymbolTilesetView::GetTilesetImageSize() const
 {
     return m_sgcTileset.GetTilesetImageSize();
+}
+
+void sgc_view::SymbolTilesetView::ClearSymbolPositions()
+{
+    m_symbolPositions.clear();
+}
+
+bool sgc_view::SymbolTilesetView::Empty()
+{
+    return m_symbolPositions.empty();
+}
+
+void sgc_view::SymbolTilesetView::ShowCursor(bool value)
+{
+    m_cursorVisible = value;
+}
+
+void sgc_view::SymbolTilesetView::SetCursorPosition(sgc::tile::TilePosition2D position)
+{
+    auto tileSize = GetTileSize();
+    m_cursor->SetPosition({
+        position.x * tileSize.x,
+        position.y * tileSize.y
+    });
+}
+
+sgc::tile::TilePosition2D sgc_view::SymbolTilesetView::GetCursorPosition() const
+{
+    auto tileSize = GetTileSize();
+    auto cursorPxPos = m_cursor->GetPosition();
+    return {
+        cursorPxPos.x / tileSize.x,
+        cursorPxPos.y / tileSize.y
+    };
 }

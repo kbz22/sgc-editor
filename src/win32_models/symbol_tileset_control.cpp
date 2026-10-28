@@ -6,7 +6,8 @@
 bool win32_models::SymbolTilesetControl::m_classRegistered = false;
 const wchar_t* g_className = L"SymbolTilesetControl";
 
-win32_models::SymbolTilesetControl::SymbolTilesetControl(program::ProgramContext &programContext)
+win32_models::SymbolTilesetControl::SymbolTilesetControl(program::ProgramContext &programContext) :
+    m_pointerManager{*programContext.GetManager<program::PointerManager>()}
 {
     if(!m_classRegistered) 
     {
@@ -39,7 +40,12 @@ void win32_models::SymbolTilesetControl::Init(HWND hwnd, program::ProgramContext
 
     m_tilesetView->SetScreenSize(rect.right - rect.left, rect.bottom - rect.top);
     m_tilesetView->SetTileset(mapDocument->GetTilesetAssetId());
-    m_tilesetView->SetCursorColor({251,192,27,255});
+
+    m_tilesetView->SetIndicatorColor({251,192,27,255});
+    m_tilesetView->SetCursorColor({251,224,147,255});
+    m_tilesetView->ShowCursor(true);
+
+    SetSize({1,1});
 }
 
 LRESULT CALLBACK win32_models::SymbolTilesetControl::SymbolTilesetViewStaticProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data) 
@@ -59,8 +65,25 @@ LRESULT CALLBACK win32_models::SymbolTilesetControl::SymbolTilesetViewStaticProc
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
+sgc::tile::TilePosition2D GetTilePointerPosition(POINT pointerPosition, sgc::tile::TileSize2D tileSize, sgc::graphics::View view)
+{
+    auto worldPointerPosition = sgc::coordinates::ScreenToWorld(sgc::math::fvec2{
+            static_cast<float>(pointerPosition.x),
+            static_cast<float>(pointerPosition.y)
+        },
+            view
+    );
+
+    return sgc::tile::TilePosition2D{
+        static_cast<sgc::math::ival>(worldPointerPosition.x) / tileSize.x,
+        static_cast<sgc::math::ival>(worldPointerPosition.y) / tileSize.y
+    };
+}
+
 LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+    using win32_program::Pointer, win32_program::PointerType, win32_program::PointerBehaviour;
+
     switch (msg)
     {
         case WM_HSCROLL:
@@ -154,11 +177,6 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
             break;
         }
 
-        case WM_POINTERUPDATE:
-        {            
-            return TRUE;
-        }
-
         case WM_POINTERDOWN:
         {
             const auto pointerId = GET_POINTERID_WPARAM(wparam);            
@@ -171,34 +189,271 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
             if (!GetPointerInfo(pointerId, &pointerInfo))
                 break;
 
-            ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
-            
-            auto pointerPosition = sgc::graphics::PixelPosition2D{
-                pointerInfo.ptPixelLocation.x,
-                pointerInfo.ptPixelLocation.y
-            };
+            std::vector<Pointer> pointers;            
+            switch (type)
+            {
+                case PT_TOUCH:
+                {
+                    pointers = BuildPointersDown(PointerType::Touch, pointerId, pointerInfo.pointerFlags);
+                    break;
+                }
+                    
+                case PT_PEN:
+                {
+                    pointers = BuildPointersDown(PointerType::Pen, pointerId, pointerInfo.pointerFlags);
+                    break;
+                }
+                    
+                case PT_MOUSE:
+                {
+                    pointers = BuildPointersDown(PointerType::Mouse, pointerId, pointerInfo.pointerFlags);
+                    break;
+                }
+                        
+                default:
+                {
+                    break;
+                }   
+            }
 
-            auto position = sgc::coordinates::ScreenToWorld(sgc::math::fvec2{
-                    static_cast<float>(pointerPosition.x),
-                    static_cast<float>(pointerPosition.y)
-                },
-                    m_tilesetView->GetRenderContext().view
+            ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
+            auto tilePosition = GetTilePointerPosition(
+                pointerInfo.ptPixelLocation,
+                m_tilesetView->GetTileSize(),
+                m_tilesetView->GetRenderContext().view
+            );
+           
+            bool needsUpdate = false;
+
+            for(auto &pointer : pointers)
+            {
+                if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting) && m_isSelecting.Acquire(pointer))
+                {
+                    m_tilesetView->AddTilePosition(tilePosition);
+                    needsUpdate = true;
+                }
+            }
+
+            if(needsUpdate){
+                Update();
+            }
+            
+            return TRUE;
+        }
+
+        case WM_POINTERUPDATE:
+        {
+            const auto pointerId = GET_POINTERID_WPARAM(wparam);            
+
+            POINTER_INPUT_TYPE type;
+            if (!GetPointerType(pointerId, &type))
+                break;
+
+            POINTER_INFO pointerInfo;
+            if (!GetPointerInfo(pointerId, &pointerInfo))
+                break;
+
+            std::vector<Pointer> pointers;            
+            switch (type)
+            {
+                case PT_TOUCH:
+                {
+                    pointers = BuildAllPointers(PointerType::Touch, pointerId);
+                    break;
+                }
+                    
+                case PT_PEN:
+                {
+                    pointers = BuildAllPointers(PointerType::Pen, pointerId);
+                    break;
+                }
+                    
+                case PT_MOUSE:
+                {
+                    pointers = BuildAllPointers(PointerType::Mouse, pointerId);
+                    break;
+                }
+                        
+                default:
+                {
+                    break;
+                }   
+            }
+            
+            ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
+            auto tilePosition = GetTilePointerPosition(
+                pointerInfo.ptPixelLocation,
+                m_tilesetView->GetTileSize(),
+                m_tilesetView->GetRenderContext().view
             );
 
-            auto tileSize = m_tilesetView->GetTileSize();
-            m_tilesetView->AddTilePosition({
-                static_cast<sgc::math::ival>(position.x) / tileSize.x,
-                static_cast<sgc::math::ival>(position.y) / tileSize.y
-            });
-            m_tilesetView->SetSizeInTiles({1,1});
-            
-            Update();
-            break;
+            auto previousTilePosition = m_tilesetView->GetCursorPosition();
+
+            if(previousTilePosition != tilePosition)
+            {
+                for(auto &pointer : pointers)
+                {
+                    if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
+                    {
+                        m_tilesetView->SetCursorPosition(tilePosition);
+                        Update();
+                        break;
+                    }
+                }
+            }
+
+            return TRUE;
         }
 
         case WM_POINTERUP:
         {
-            break;
+            const auto pointerId = GET_POINTERID_WPARAM(wparam);            
+
+            POINTER_INPUT_TYPE type;
+            if (!GetPointerType(pointerId, &type))
+                break;
+
+            POINTER_INFO pointerInfo;
+            if (!GetPointerInfo(pointerId, &pointerInfo))
+                break;
+
+            std::vector<Pointer> pointers;            
+            switch (type)
+            {
+                case PT_TOUCH:
+                {
+                    pointers = BuildPointersUp(PointerType::Touch, pointerId, pointerInfo.pointerFlags);
+                    break;
+                }
+                    
+                case PT_PEN:
+                {
+                    pointers = BuildPointersUp(PointerType::Pen, pointerId, pointerInfo.pointerFlags);
+                    break;
+                }
+                    
+                case PT_MOUSE:
+                {
+                    pointers = BuildPointersUp(PointerType::Mouse, pointerId, pointerInfo.pointerFlags);
+                    break;
+                }
+                        
+                default:
+                {
+                    break;
+                }   
+            }
+
+            for(auto &pointer : pointers)
+            {
+                m_isSelecting.Release(pointer);
+            }
+            
+            return TRUE;
+        }
+
+        case WM_POINTERLEAVE:
+        {
+            const auto pointerId = GET_POINTERID_WPARAM(wparam);            
+
+            POINTER_INPUT_TYPE type;
+            if (!GetPointerType(pointerId, &type))
+                break;
+
+            POINTER_INFO pointerInfo;
+            if (!GetPointerInfo(pointerId, &pointerInfo))
+                break;
+
+            std::vector<Pointer> pointers;            
+            switch (type)
+            {
+                case PT_TOUCH:
+                {
+                    pointers = BuildAllPointers(PointerType::Touch, pointerId);
+                    break;
+                }
+                    
+                case PT_PEN:
+                {
+                    pointers = BuildAllPointers(PointerType::Pen, pointerId);
+                    break;
+                }
+                    
+                case PT_MOUSE:
+                {
+                    pointers = BuildAllPointers(PointerType::Mouse, pointerId);
+                    break;
+                }
+                        
+                default:
+                {
+                    break;
+                }   
+            }
+
+            for(auto &pointer : pointers)
+            {
+                if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
+                {
+                    m_tilesetView->ShowCursor(false);
+                    Update();
+                    break;
+                }
+            }
+
+            return TRUE;
+        }
+
+        case WM_POINTERENTER:
+        {
+            const auto pointerId = GET_POINTERID_WPARAM(wparam);            
+
+            POINTER_INPUT_TYPE type;
+            if (!GetPointerType(pointerId, &type))
+                break;
+
+            POINTER_INFO pointerInfo;
+            if (!GetPointerInfo(pointerId, &pointerInfo))
+                break;
+
+            std::vector<Pointer> pointers;            
+            switch (type)
+            {
+                case PT_TOUCH:
+                {
+                    pointers = BuildAllPointers(PointerType::Touch, pointerId);
+                    break;
+                }
+                    
+                case PT_PEN:
+                {
+                    pointers = BuildAllPointers(PointerType::Pen, pointerId);
+                    break;
+                }
+                    
+                case PT_MOUSE:
+                {
+                    pointers = BuildAllPointers(PointerType::Mouse, pointerId);
+                    break;
+                }
+                        
+                default:
+                {
+                    break;
+                }   
+            }
+
+            for(auto &pointer : pointers)
+            {
+                if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
+                {
+                    m_tilesetView->ShowCursor(true);
+                    Update();
+                    break;
+                }
+            }
+
+            return TRUE;
         }
     }
 
@@ -220,4 +475,9 @@ void win32_models::SymbolTilesetControl::Refresh(program::ProgramContext &progra
         static_cast<int>(imageSize.x),
         static_cast<int>(imageSize.y)
     );
+}
+
+void win32_models::SymbolTilesetControl::SetSize(sgc::tile::TileSize2D size)
+{
+    m_tilesetView->SetSizeInTiles({1,1});
 }
