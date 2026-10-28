@@ -3,7 +3,7 @@
 
 locale::JsonStringLookup::JsonStringLookup()
 {
-    using namespace sections;
+    using win32_program::PointerType, win32_program::PointerBehaviour;
 
     m_pointerTypeStrings = {
         {{PointerType::Mouse, 0}, "left-mouse-button"},

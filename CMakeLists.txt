@@ -71,7 +71,8 @@ add_executable(sgc-editor WIN32
     src/win32_program/layout_manager.cpp
     src/win32_program/shortcut_manager.cpp
     src/win32_program/map_selection_serializer.cpp
-    src/win32_program/dpi_manager.cpp    
+    src/win32_program/dpi_manager.cpp
+    src/win32_program/pointer_lock.cpp
 
     src/program/program.cpp
     src/program/layer_manager.cpp

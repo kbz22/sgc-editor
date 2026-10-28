@@ -1,32 +1,32 @@
 #pragma once
 
 #include "settings/isetting.hpp"
+#include "win32_program/pointer_lock.hpp"
 #include "sections/map_section.hpp"
 #include <unordered_map>
 
 namespace settings
 {    
-    using PointerBehaviourMap = std::unordered_map<sections::PointerMapKey, sections::PointerBehaviour>;
+    using win32_program::PointerType, win32_program::PointerBehaviour, win32_program::PointerMapKey;
+    using PointerBehaviourMap = std::unordered_map<PointerMapKey, PointerBehaviour>;    
 
     class PointerBehaviourSetting : public ISetting
     {
         private:
             sections::MapSection &m_mapSection;
             PointerBehaviourMap m_behaviour{
-                // {sections::PointerType::LeftMouse, sections::PointerBehaviour::Painting},
-                // {sections::PointerType::MiddleMouse, sections::PointerBehaviour::Panning},
-                {{sections::PointerType::Mouse, 0}, sections::PointerBehaviour::Painting},
-                {{sections::PointerType::Mouse, 2}, sections::PointerBehaviour::Panning},
-                {{sections::PointerType::Touch, 0}, sections::PointerBehaviour::Panning},
-                {{sections::PointerType::Pen, 0}, sections::PointerBehaviour::Painting},
+                {{PointerType::Mouse, 0}, PointerBehaviour::Painting},
+                {{PointerType::Mouse, 2}, PointerBehaviour::Panning},
+                {{PointerType::Touch, 0}, PointerBehaviour::Panning},
+                {{PointerType::Pen, 0}, PointerBehaviour::Painting},
             };
 
         public:
             PointerBehaviourSetting(sections::MapSection &mapSection);
 
-            void SetBehaviour(sections::PointerMapKey pointerKey, sections::PointerBehaviour behaviour);
+            void SetBehaviour(PointerMapKey pointerKey, PointerBehaviour behaviour);
             void SetBehaviours(PointerBehaviourMap map);
-            sections::PointerBehaviour GetBehaviour(sections::PointerMapKey pointerKey);
+            PointerBehaviour GetBehaviour(PointerMapKey pointerKey);
             PointerBehaviourMap GetBehaviours() const;
 
             void Commit() override;

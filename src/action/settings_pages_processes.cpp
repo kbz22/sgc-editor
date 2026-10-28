@@ -397,7 +397,7 @@ INT_PTR CALLBACK ShortcutsSettingsDialogProc(HWND hDlg, UINT msg, WPARAM wParam,
 
 int GetIndexFromPointer(sections::PointerMapKey pointer)
 {
-    using namespace sections;
+    using win32_program::PointerType;
 
     //! if you mess with the order of PointerType this will break
     auto index = 0;
@@ -410,7 +410,7 @@ int GetIndexFromPointer(sections::PointerMapKey pointer)
 
 sections::PointerMapKey GetPointerMapKeyFromIndex(int index)
 {
-    using namespace sections;    
+    using win32_program::PointerType;
 
     if(index < 5)
     {
@@ -431,7 +431,7 @@ sections::PointerMapKey GetPointerMapKeyFromIndex(int index)
 void SettingsMouseAndTouchRefreshPointerList(HWND hDlg)
 {
     using namespace locale;
-    using namespace sections;
+    using namespace win32_program;
 
     auto &programContext = program::GetProgramContext();
     auto setting = programContext.GetManager<settings::SettingsManager>()->GetSetting<settings::PointerBehaviourSetting>();
@@ -552,8 +552,7 @@ LRESULT CALLBACK MouseAndTouchSettingsListViewProc(HWND hwnd, UINT msg, WPARAM w
                     auto listView = GetDlgItem(parentHwnd, IDC_MOUSEANDTOUCH_BEHAVIOUR_LISTVIEW);
                     auto listSelectedIndex = static_cast<int>(ListView_GetNextItem(listView, -1, LVNI_SELECTED));
                     
-                    setting->SetBehaviour(
-                        // static_cast<sections::PointerType>(listSelectedIndex),
+                    setting->SetBehaviour(                        
                         GetPointerMapKeyFromIndex(listSelectedIndex),
                         sections::PointerBehaviour::None
                     );

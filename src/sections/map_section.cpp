@@ -129,6 +129,8 @@ void sections::MapSection::HandleSectionResize()
 
 LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 { 
+    using win32_program::PointerType;
+
     program::ProgramContext& programContext = program::GetProgramContext();
     auto mapDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
 
@@ -776,42 +778,6 @@ void sections::MapSection::PointerUpdate(Pointer pointer, sgc::graphics::PixelPo
     if(shouldUpdate) {
         Update();
     }
-}
-
-bool sections::PointerLock::IsLocked() const {
-    return m_isLocked;
-}
-
-bool sections::PointerLock::IsLockedBy(Pointer pointer) const {
-    return m_isLocked && m_pointer == pointer;
-}
-
-bool sections::PointerLock::Acquire(Pointer pointer) {
-    if(m_isLocked) {
-        return false;
-    }
-
-    m_pointer = pointer;
-    m_isLocked = true;
-    return true;
-}
-
-bool sections::PointerLock::Release(Pointer pointer) {
-    if(IsLockedBy(pointer)) {
-        m_isLocked = false;
-        return true;
-    }
-    return false;
-}
-
-sections::PointerType sections::PointerLock::GetPointerType() const
-{
-    return m_pointer.Type;
-}
-
-uint32_t sections::PointerLock::GetPointerId() const
-{
-    return m_pointer.Id;
 }
 
 void sections::MapSection::PanningDown(Pointer pointer, sgc::graphics::PixelPosition2D position)
