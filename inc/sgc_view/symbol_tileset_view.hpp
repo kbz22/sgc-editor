@@ -12,7 +12,7 @@ namespace sgc_view
         private:
             std::shared_ptr<graphics::TiledLayer> m_layer = nullptr;
             std::unique_ptr<graphics::Rectangle> m_symbolIndicator = nullptr;
-            std::unique_ptr<graphics::Rectangle> m_cursor = nullptr;                        
+            std::unique_ptr<graphics::Rectangle> m_cursor = nullptr;            
             std::vector<sgc::graphics::PixelPosition2D> m_symbolPositions{};
             sgc::graphics::color m_cursorColor{ 251, 192, 27, 255 };
             bool m_cursorVisible = false;

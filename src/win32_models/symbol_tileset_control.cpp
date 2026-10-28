@@ -1,6 +1,7 @@
 #include "win32_models/symbol_tileset_control.hpp"
 #include "win32_helpers/resize_helpers.hpp"
 #include "program/program.hpp"
+#include <algorithm>
 #include <sgc/coordinates/screenworld.hpp>
 
 bool win32_models::SymbolTilesetControl::m_classRegistered = false;
@@ -227,9 +228,17 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
 
             for(auto &pointer : pointers)
             {
-                if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting) && m_isSelecting.Acquire(pointer))
+                if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
                 {
-                    m_tilesetView->AddTilePosition(tilePosition);
+                    if(m_tilesetView->Empty() && m_isSelecting.Acquire(pointer))
+                    {
+                        m_pointerOrigin = tilePosition;                        
+                    }
+                    else
+                    {
+                        m_tilesetView->AddTilePosition(tilePosition);                        
+                    }
+
                     needsUpdate = true;
                 }
             }
@@ -302,8 +311,36 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
                 {
                     if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
                     {
-                        m_tilesetView->SetCursorPosition(tilePosition);
-                        needsUpdate = true;
+                        if(m_isSelecting.IsLockedBy(pointer))
+                        {
+                            auto sizeInTiles = m_tilesetView->GetSgcTileset().GetSizeInTiles();
+
+                            tilePosition.x = std::min(tilePosition.x, sizeInTiles.x - 1);
+                            tilePosition.y = std::min(tilePosition.y, sizeInTiles.y - 1);
+
+                            sgc::math::vec2 minTile = {
+                                std::min(m_pointerOrigin.x, tilePosition.x),
+                                std::min(m_pointerOrigin.y, tilePosition.y)
+                            };
+
+                            sgc::math::vec2 maxTile = {
+                                std::max(m_pointerOrigin.x, tilePosition.x),
+                                std::max(m_pointerOrigin.y, tilePosition.y)
+                            };
+
+                            m_tilesetView->SetSizeInTiles({
+                                maxTile.x - minTile.x + 1,
+                                maxTile.y - minTile.y + 1
+                            });
+
+                            m_tilesetView->SetCursorPosition(m_pointerOrigin);
+                        }
+                        else
+                        {
+                            m_tilesetView->SetCursorPosition(tilePosition);
+                        }
+                        
+                        needsUpdate = true;                        
                         break;
                     }
                 }
@@ -356,9 +393,21 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
                 }   
             }
 
+            ScreenToClient(hwnd, &pointerInfo.ptPixelLocation);
+            auto tilePosition = GetTilePointerPosition(
+                pointerInfo.ptPixelLocation,
+                m_tilesetView->GetTileSize(),
+                m_tilesetView->GetRenderContext().view
+            );
+
             for(auto &pointer : pointers)
             {
-                m_isSelecting.Release(pointer);
+                if(m_isSelecting.Release(pointer))
+                {
+                    m_tilesetView->AddTilePosition(m_pointerOrigin);
+                    Update();
+                    break;
+                }
             }
             
             return TRUE;

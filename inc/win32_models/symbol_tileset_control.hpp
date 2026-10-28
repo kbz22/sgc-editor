@@ -10,7 +10,7 @@ namespace win32_models
     {
         private:
             HWND m_hwnd;
-            sgc::tile::TilePosition2D m_pointerOrigin;
+            sgc::tile::TilePosition2D m_pointerOrigin = {0,0};
             std::unique_ptr<sgc_view::SymbolTilesetView> m_tilesetView;
             program::PointerManager &m_pointerManager;
 
