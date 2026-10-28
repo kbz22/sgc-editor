@@ -43,7 +43,7 @@ void win32_models::SymbolTilesetControl::Init(HWND hwnd, program::ProgramContext
 
     m_tilesetView->SetIndicatorColor({251,192,27,255});
     m_tilesetView->SetCursorColor({251,224,147,255});
-    m_tilesetView->ShowCursor(true);
+    m_tilesetView->ShowCursor(false);
 
     SetSize({1,1});
 }
@@ -288,6 +288,13 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
             );
 
             auto previousTilePosition = m_tilesetView->GetCursorPosition();
+            bool needsUpdate = false;
+
+            if(!m_tilesetView->IsCursorVisible())
+            {
+                m_tilesetView->ShowCursor(true);
+                needsUpdate = true;
+            }            
 
             if(previousTilePosition != tilePosition)
             {
@@ -296,10 +303,15 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
                     if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
                     {
                         m_tilesetView->SetCursorPosition(tilePosition);
-                        Update();
+                        needsUpdate = true;
                         break;
                     }
                 }
+            }
+
+            if(needsUpdate)
+            {
+                Update();  
             }
 
             return TRUE;
@@ -396,58 +408,6 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
                 if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
                 {
                     m_tilesetView->ShowCursor(false);
-                    Update();
-                    break;
-                }
-            }
-
-            return TRUE;
-        }
-
-        case WM_POINTERENTER:
-        {
-            const auto pointerId = GET_POINTERID_WPARAM(wparam);            
-
-            POINTER_INPUT_TYPE type;
-            if (!GetPointerType(pointerId, &type))
-                break;
-
-            POINTER_INFO pointerInfo;
-            if (!GetPointerInfo(pointerId, &pointerInfo))
-                break;
-
-            std::vector<Pointer> pointers;            
-            switch (type)
-            {
-                case PT_TOUCH:
-                {
-                    pointers = BuildAllPointers(PointerType::Touch, pointerId);
-                    break;
-                }
-                    
-                case PT_PEN:
-                {
-                    pointers = BuildAllPointers(PointerType::Pen, pointerId);
-                    break;
-                }
-                    
-                case PT_MOUSE:
-                {
-                    pointers = BuildAllPointers(PointerType::Mouse, pointerId);
-                    break;
-                }
-                        
-                default:
-                {
-                    break;
-                }   
-            }
-
-            for(auto &pointer : pointers)
-            {
-                if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
-                {
-                    m_tilesetView->ShowCursor(true);
                     Update();
                     break;
                 }

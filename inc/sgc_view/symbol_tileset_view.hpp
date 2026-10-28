@@ -43,5 +43,6 @@ namespace sgc_view
             sgc::graphics::PixelPosition2D GetTilesetImageSize() const;
 
             bool Empty();
+            bool IsCursorVisible();
     };
 }

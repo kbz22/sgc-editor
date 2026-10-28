@@ -207,6 +207,11 @@ bool sgc_view::SymbolTilesetView::Empty()
     return m_symbolPositions.empty();
 }
 
+bool sgc_view::SymbolTilesetView::IsCursorVisible()
+{
+    return m_cursorVisible;
+}
+
 void sgc_view::SymbolTilesetView::ShowCursor(bool value)
 {
     m_cursorVisible = value;

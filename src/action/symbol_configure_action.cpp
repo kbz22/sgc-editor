@@ -62,9 +62,9 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             auto tilesetViewHwnd = GetDlgItem(hDlg, IDC_SYMBOL_TILESET_VIEW);
             auto tilesetViewControl = reinterpret_cast<SymbolTilesetControl*>(lParam);
 
-            tilesetViewControl->Init(tilesetViewHwnd, programContext);            
+            tilesetViewControl->Init(tilesetViewHwnd, programContext);
             tilesetViewControl->Refresh(programContext);
-            tilesetViewControl->Update();            
+            tilesetViewControl->Update();
 
             // localized text
             auto &stringLookup = programContext.GetStringLookup();
