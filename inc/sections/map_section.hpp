@@ -5,6 +5,7 @@
 #include "command/paint_command.hpp"
 #include "editor_tools/editor_tool_manager.hpp"
 #include "program/selection_moved_storage.hpp"
+#include "program/pointer_manager.hpp"
 #include "win32_program/pointer_lock.hpp"
 #include <sgc/data/statictilestorage.hpp>
 #include <functional>
@@ -24,8 +25,8 @@ namespace sections
             PointerLock m_isPainting;
             PointerLock m_isMovingSelection;
             PointerLock m_isPanning;
-            PointerLock m_isCaptured;
-            std::unordered_map<PointerMapKey, PointerBehaviour> m_pointerBehaviour;
+            PointerLock m_isCaptured;            
+            // std::unordered_map<PointerMapKey, PointerBehaviour> m_pointerBehaviour;
             bool m_canMoveSelection = false;
             bool m_needsRedraw = false;
             std::mutex m_needsRedrawMutex{};
@@ -37,6 +38,7 @@ namespace sections
             std::chrono::milliseconds m_selectionRectUpdateInterval = std::chrono::milliseconds(50);
             std::chrono::milliseconds m_editorToolsUpdateInterval = std::chrono::milliseconds(50);
             std::chrono::steady_clock::time_point m_lastUpdateTime = std::chrono::steady_clock::now();
+            program::PointerManager &m_pointerManager;
             
             editor_tools::EditorToolManager m_editorToolManager;
 
@@ -82,7 +84,7 @@ namespace sections
             void SetSelectionPositionInTiles(sgc::tile::TilePosition2D position);
             void SetSelectionSizeInTiles(sgc::tile::TileSize2D size);
 
-            void SetPointerBehaviour(PointerMapKey pointerKey, PointerBehaviour behaviour);
+            // void SetPointerBehaviour(PointerMapKey pointerKey, PointerBehaviour behaviour);
 
             void SetSelectionMovedImage(program::SelectionMovedStorage &storageLayers);
             void UpdateSelectionMovedPosition(sgc::tile::TilePosition2D positionOnMap);

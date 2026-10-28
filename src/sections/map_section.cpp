@@ -23,11 +23,16 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
         programContext.GetMainWindowHandle(),
         programContext.GetHInstance()
     },
-    m_mapView{std::make_unique<sgc_view::MapView>(GetHwnd())},
+    m_mapView{
+        std::make_unique<sgc_view::MapView>(GetHwnd())
+    },
     m_editorToolManager{
         *m_mapView,
         *this,
         *programContext.GetSection<sections::TilesetSection>()
+    },
+    m_pointerManager{
+        *programContext.GetManager<program::PointerManager>()
     }
 {
     AttachView(*m_mapView);
@@ -815,18 +820,6 @@ bool sections::MapSection::PanningUpdate(Pointer pointer, sgc::graphics::PixelPo
     return true;
 }
 
-void sections::MapSection::SetPointerBehaviour(PointerMapKey pointerKey, PointerBehaviour behaviour)
-{    
-    if(behaviour == PointerBehaviour::None)
-    {
-        m_pointerBehaviour.erase(pointerKey);
-    }
-    else
-    {
-        m_pointerBehaviour[pointerKey] = behaviour;
-    }
-}
-
 void sections::MapSection::PointerDown(Pointer pointer, sgc::graphics::PixelPosition2D position, program::ProgramContext& programContext)
 {
     if(IsPointerPanning(pointer))
@@ -859,16 +852,12 @@ void sections::MapSection::PointerUp(Pointer pointer, file::MapDocument *mapDocu
 
 bool sections::MapSection::IsPointerPainting(Pointer pointer)
 {
-    PointerMapKey pointerKey;
-    pointerKey = pointer;
-    return m_pointerBehaviour.contains(pointerKey) && m_pointerBehaviour[pointerKey] == PointerBehaviour::Painting;
+    return m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting);
 }
 
 bool sections::MapSection::IsPointerPanning(Pointer pointer)
 {
-    PointerMapKey pointerKey;
-    pointerKey = pointer;
-    return m_pointerBehaviour.contains(pointerKey) && m_pointerBehaviour[pointerKey] == PointerBehaviour::Panning;
+    return m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Panning);
 }
 
 void sections::MapSection::SetSelectionMovedImage(program::SelectionMovedStorage &storageLayers)

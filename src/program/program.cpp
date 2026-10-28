@@ -111,7 +111,7 @@ void program::ProgramContext::RegisterDefaultSettings()
     );
     m_settingsManager->RegisterSetting<settings::PointerBehaviourSetting>(
         static_cast<unsigned>(settings::Key::PointerBehaviourSetting),
-        std::make_unique<settings::PointerBehaviourSetting>(*m_mapSection)
+        std::make_unique<settings::PointerBehaviourSetting>(*m_pointerManager)
     );
 }
 
@@ -120,6 +120,7 @@ void program::ProgramContext::Initialize()
     m_assetManager = std::make_unique<file::AssetManager>();
     m_fileManager = std::make_unique<file::FileManager>();
     m_settingsManager = std::make_unique<settings::SettingsManager>();
+    m_pointerManager = std::make_unique<program::PointerManager>();
 
     m_actionManager->ActionSetEnabled(g_activeEditorButtons, false);
 
@@ -561,6 +562,12 @@ template<>
 win32_program::DpiManager* program::ProgramContext::GetManager<win32_program::DpiManager>() const
 {
     return m_dpiManager.get();
+}
+
+template<>
+program::PointerManager* program::ProgramContext::GetManager<program::PointerManager>() const
+{
+    return m_pointerManager.get();
 }
 
 HWND program::ProgramContext::GetMainWindowHandle() const

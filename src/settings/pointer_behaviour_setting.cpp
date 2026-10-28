@@ -1,12 +1,11 @@
 #include "settings/pointer_behaviour_setting.hpp"
 
-settings::PointerBehaviourSetting::PointerBehaviourSetting(sections::MapSection &mapSection) :
-    m_mapSection{mapSection}
+settings::PointerBehaviourSetting::PointerBehaviourSetting(program::PointerManager &pointerManager) :
+    m_pointerManager{pointerManager}
 {}
 
-void settings::PointerBehaviourSetting::SetBehaviour(sections::PointerMapKey pointerKey, sections::PointerBehaviour behaviour)
+void settings::PointerBehaviourSetting::SetBehaviour(win32_program::PointerMapKey pointerKey, win32_program::PointerBehaviour behaviour)
 {
-
     m_behaviour[pointerKey] = behaviour;
 }
 
@@ -20,10 +19,10 @@ void settings::PointerBehaviourSetting::Commit()
     for(auto &[pointerKey, pointerBehaviour] : m_behaviour)
     {
         if(m_behaviour.contains(pointerKey)){
-            m_mapSection.SetPointerBehaviour(pointerKey, pointerBehaviour);
+            m_pointerManager.SetPointerBehaviour(pointerKey, pointerBehaviour);
         }
         else {
-            m_mapSection.SetPointerBehaviour(pointerKey, sections::PointerBehaviour::None);
+            m_pointerManager.SetPointerBehaviour(pointerKey, win32_program::PointerBehaviour::None);
         }
     }
 }
@@ -33,11 +32,11 @@ settings::Key settings::PointerBehaviourSetting::GetKey() const
     return settings::Key::PointerBehaviourSetting;
 }
 
-sections::PointerBehaviour settings::PointerBehaviourSetting::GetBehaviour(sections::PointerMapKey pointerKey)
+win32_program::PointerBehaviour settings::PointerBehaviourSetting::GetBehaviour(win32_program::PointerMapKey pointerKey)
 {
     if(!m_behaviour.contains(pointerKey))
     {
-        return sections::PointerBehaviour::None;
+        return win32_program::PointerBehaviour::None;
     }
     
     return m_behaviour[pointerKey];

@@ -23,6 +23,7 @@
 #include "file/map_document.hpp"
 #include "file/asset_manager.hpp"
 #include "program/editor_mode.hpp"
+#include "program/pointer_manager.hpp"
 
 #include <sgc/graphics/rectangle.hpp>
 #include <commctrl.h>
@@ -57,6 +58,7 @@ namespace program {
             std::unique_ptr<win32_program::ShortcutManager> m_shortcutManager{};
             std::unique_ptr<settings::SettingsManager> m_settingsManager{};
             std::unique_ptr<win32_program::DpiManager> m_dpiManager{};
+            std::unique_ptr<program::PointerManager> m_pointerManager{};
 
             static bool m_win32Set;
             static HINSTANCE m_hInstance;

@@ -2,7 +2,7 @@
 
 #include "settings/isetting.hpp"
 #include "win32_program/pointer_lock.hpp"
-#include "sections/map_section.hpp"
+#include "program/pointer_manager.hpp"
 #include <unordered_map>
 
 namespace settings
@@ -13,7 +13,7 @@ namespace settings
     class PointerBehaviourSetting : public ISetting
     {
         private:
-            sections::MapSection &m_mapSection;
+            program::PointerManager &m_pointerManager;
             PointerBehaviourMap m_behaviour{
                 {{PointerType::Mouse, 0}, PointerBehaviour::Painting},
                 {{PointerType::Mouse, 2}, PointerBehaviour::Panning},
@@ -22,7 +22,7 @@ namespace settings
             };
 
         public:
-            PointerBehaviourSetting(sections::MapSection &mapSection);
+            PointerBehaviourSetting(program::PointerManager &pointerManager);
 
             void SetBehaviour(PointerMapKey pointerKey, PointerBehaviour behaviour);
             void SetBehaviours(PointerBehaviourMap map);
