@@ -184,7 +184,7 @@ locale::StringLookup::StringLookup()
         {StringId::NewTilesetDialogTileHeightName, L"Tile height:"},
         {StringId::NewTilesetDialogIncludeInPackage, L"Include the new tileset in a package file"},
 
-        {StringId::SymbolDialogAddName, L"Add"},
+        {StringId::SymbolDialogAddName, L"Add group"},
         {StringId::SymbolDialogWidthName, L"Symbol width"},
         {StringId::SymbolDialogHeightName, L"Symbol height"},
         {StringId::SymbolDialogSymbolGroupName, L"Symbol group"},
