@@ -3,6 +3,7 @@
 #include "sgc_view/symbol_tileset_view.hpp"
 #include "win32_program/pointer_lock.hpp"
 #include "program/pointer_manager.hpp"
+#include <functional>
 
 namespace win32_models
 {
@@ -13,6 +14,7 @@ namespace win32_models
             sgc::tile::TilePosition2D m_pointerOrigin = {0,0};
             std::unique_ptr<sgc_view::SymbolTilesetView> m_tilesetView;
             program::PointerManager &m_pointerManager;
+            std::function<void(sgc::tile::TileSize2D)> m_sizeChangedCallback;
 
             win32_program::PointerLock m_isSelecting;
             win32_program::PointerLock m_isPanning;
@@ -30,6 +32,7 @@ namespace win32_models
             void Refresh(program::ProgramContext &programContext);
 
             void SetSize(sgc::tile::TileSize2D size);
+            void RegisterOnSizeChangedCallback(std::function<void(sgc::tile::TileSize2D)> sizeChangedCallback);
 
     };
 }

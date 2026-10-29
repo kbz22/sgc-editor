@@ -328,7 +328,12 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
                                 std::max(m_pointerOrigin.y, tilePosition.y)
                             };
 
-                            m_tilesetView->SetSizeInTiles({
+                            // m_tilesetView->SetSizeInTiles({
+                            //     maxTile.x - minTile.x + 1,
+                            //     maxTile.y - minTile.y + 1
+                            // });
+
+                            SetSize({
                                 maxTile.x - minTile.x + 1,
                                 maxTile.y - minTile.y + 1
                             });
@@ -488,5 +493,13 @@ void win32_models::SymbolTilesetControl::Refresh(program::ProgramContext &progra
 
 void win32_models::SymbolTilesetControl::SetSize(sgc::tile::TileSize2D size)
 {
-    m_tilesetView->SetSizeInTiles({1,1});
+    m_tilesetView->SetSizeInTiles(size);
+    if(m_sizeChangedCallback){
+        m_sizeChangedCallback(size);
+    }
+}
+
+void win32_models::SymbolTilesetControl::RegisterOnSizeChangedCallback(std::function<void(sgc::tile::TileSize2D)> sizeChangedCallback)
+{
+    m_sizeChangedCallback = sizeChangedCallback;
 }

@@ -66,6 +66,18 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             tilesetViewControl->Refresh(programContext);
             tilesetViewControl->Update();
 
+            tilesetViewControl->RegisterOnSizeChangedCallback([hDlg](sgc::tile::TileSize2D size)
+            {
+                std::wstring width = std::to_wstring(size.x);
+                std::wstring height = std::to_wstring(size.y);
+                
+                SetDlgItemText(hDlg, IDC_SYMBOL_SIZE_X, width.c_str());
+                SetDlgItemText(hDlg, IDC_SYMBOL_SIZE_Y, height.c_str());
+            });
+
+            SetDlgItemText(hDlg, IDC_SYMBOL_SIZE_X, L"0");
+            SetDlgItemText(hDlg, IDC_SYMBOL_SIZE_Y, L"0");
+
             // localized text
             auto &stringLookup = programContext.GetStringLookup();
             auto symbolGroupName = stringLookup.Get(StringId::SymbolDialogSymbolGroupName).value_or(L"GROUP NAME");
