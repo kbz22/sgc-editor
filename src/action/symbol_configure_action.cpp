@@ -61,6 +61,7 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 
             auto tilesetViewHwnd = GetDlgItem(hDlg, IDC_SYMBOL_TILESET_VIEW);
             auto tilesetViewControl = reinterpret_cast<SymbolTilesetControl*>(lParam);
+            SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
             tilesetViewControl->Init(tilesetViewHwnd, programContext);
             tilesetViewControl->Refresh(programContext);
@@ -119,6 +120,18 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                 case IDCANCEL:
                 {
                     EndDialog(hDlg, IDCANCEL);
+                    return TRUE;
+                }
+
+                case IDC_SYMBOL_RESTORE_DEFAULTS:
+                {
+                    auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
+                        GetWindowLongPtr(hDlg, DWLP_USER)
+                    );
+
+                    tilesetViewControl->ResetCurrentView();
+                    tilesetViewControl->SetSize({1,1});
+                    tilesetViewControl->Update();
                     return TRUE;
                 }
 

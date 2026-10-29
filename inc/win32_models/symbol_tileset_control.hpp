@@ -30,6 +30,7 @@ namespace win32_models
             void Init(HWND hwnd, program::ProgramContext &programContext);
             void Update();
             void Refresh(program::ProgramContext &programContext);
+            void ResetCurrentView();
 
             void SetSize(sgc::tile::TileSize2D size);
             void RegisterOnSizeChangedCallback(std::function<void(sgc::tile::TileSize2D)> sizeChangedCallback);
