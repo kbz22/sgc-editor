@@ -31,11 +31,11 @@ namespace sgc_view
             void AddTilePosition(std::vector<sgc::tile::TilePosition2D> &positions);
             void SetSizeInTiles(sgc::tile::TileSize2D size);
             void SetCursorColor(sgc::graphics::color color);
-            void SetIndicatorColor(sgc::graphics::color color);
-            void ClearSymbolPositions();
+            void SetIndicatorColor(sgc::graphics::color color);            
             void ShowCursor(bool value);
             void SetCursorPosition(sgc::tile::TilePosition2D position);
 
+            std::vector<sgc::tile::TilePosition2D> ClearSymbolPositions();
             std::vector<sgc::tile::TilePosition2D> GetSymbolPositions() const;
             sgc::tile::TilePosition2D GetCursorPosition() const;
             sgc::tile::TilePosition2D GetSymbolSize() const;

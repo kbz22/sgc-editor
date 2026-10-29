@@ -197,9 +197,12 @@ sgc::graphics::PixelPosition2D sgc_view::SymbolTilesetView::GetTilesetImageSize(
     return m_sgcTileset.GetTilesetImageSize();
 }
 
-void sgc_view::SymbolTilesetView::ClearSymbolPositions()
+std::vector<sgc::tile::TilePosition2D> sgc_view::SymbolTilesetView::ClearSymbolPositions()
 {
+    auto symbolPositions = GetSymbolPositions();
     m_symbolPositions.clear();
+
+    return symbolPositions;
 }
 
 bool sgc_view::SymbolTilesetView::Empty()
