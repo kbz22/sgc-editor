@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <commdlg.h>
 #include <sgc/coordinates/screenworld.hpp>
+#include <algorithm>
 
 action::SymbolConfigureAction::SymbolConfigureAction()
 {
@@ -63,9 +64,7 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             auto tilesetViewControl = reinterpret_cast<SymbolTilesetControl*>(lParam);
             SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
-            tilesetViewControl->Init(tilesetViewHwnd, programContext);
-            tilesetViewControl->Refresh(programContext);
-            tilesetViewControl->Update();
+            auto defaultSymbolSize = sgc::tile::TileSize2D{1,1};
 
             tilesetViewControl->RegisterOnSizeChangedCallback([hDlg](sgc::tile::TileSize2D size)
             {
@@ -76,8 +75,10 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                 SetDlgItemText(hDlg, IDC_SYMBOL_SIZE_Y, height.c_str());
             });
 
-            SetDlgItemText(hDlg, IDC_SYMBOL_SIZE_X, L"0");
-            SetDlgItemText(hDlg, IDC_SYMBOL_SIZE_Y, L"0");
+            tilesetViewControl->Init(tilesetViewHwnd, programContext);
+            tilesetViewControl->SetSymbolSize(defaultSymbolSize);
+            tilesetViewControl->Refresh(programContext);
+            tilesetViewControl->Update();
 
             // localized text
             auto &stringLookup = programContext.GetStringLookup();
@@ -109,11 +110,42 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
         {
             auto commandId = LOWORD(wParam);
 
+            auto handleUserResize = [hDlg](int value, bool isX)
+            {
+                auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
+                    GetWindowLongPtr(hDlg, DWLP_USER)
+                );
+
+                auto currentSize = tilesetViewControl->GetSymbolSize();
+                auto maxSize = tilesetViewControl->GetMaxSymbolSize();
+
+                value = std::min(
+                    static_cast<sgc::math::ival>(value),
+                    isX ? maxSize.x : maxSize.y
+                );
+
+                tilesetViewControl->SetSymbolSize({
+                    isX  ? value : currentSize.x,
+                    !isX ? value : currentSize.y
+                });
+                tilesetViewControl->Update();
+            };
+
             switch (commandId)
             {
                 case IDOK:
                 {
-                    EndDialog(hDlg, IDCANCEL);
+                    HWND focused = GetFocus();
+
+                    if (focused == GetDlgItem(hDlg, IDC_SYMBOL_SIZE_X) || focused == GetDlgItem(hDlg, IDC_SYMBOL_SIZE_Y))
+                    {                        
+                        SetFocus(hDlg);
+                    }
+                    else
+                    {
+                        EndDialog(hDlg, IDCANCEL);
+                    }
+                    
                     return TRUE;
                 }
 
@@ -130,8 +162,48 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                     );
 
                     tilesetViewControl->ResetCurrentView();
-                    tilesetViewControl->SetSize({1,1});
+                    tilesetViewControl->SetSymbolSize({1,1});
                     tilesetViewControl->Update();
+                    return TRUE;
+                }
+
+                case IDC_SYMBOL_SIZE_X:
+                {
+                    if (HIWORD(wParam) == EN_KILLFOCUS)
+                    {
+                        wchar_t buffer[32];
+                        GetDlgItemText(hDlg, IDC_SYMBOL_SIZE_X, buffer, 32);
+
+                        try
+                        {
+                            int value = std::stoi(buffer);
+                            handleUserResize(value, true);
+                        }
+                        catch (std::exception const&)
+                        {
+                            // Invalid input
+                        }
+                    }
+                    return TRUE;
+                }
+
+                case IDC_SYMBOL_SIZE_Y:
+                {
+                    if (HIWORD(wParam) == EN_KILLFOCUS)
+                    {
+                        wchar_t buffer[32];
+                        GetDlgItemText(hDlg, IDC_SYMBOL_SIZE_Y, buffer, 32);
+
+                        try
+                        {
+                            int value = std::stoi(buffer);
+                            handleUserResize(value, false);
+                        }
+                        catch (std::exception const&)
+                        {
+                            // Invalid input
+                        }
+                    }
                     return TRUE;
                 }
 

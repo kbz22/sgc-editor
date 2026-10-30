@@ -32,8 +32,11 @@ namespace win32_models
             void Refresh(program::ProgramContext &programContext);
             void ResetCurrentView();
 
-            void SetSize(sgc::tile::TileSize2D size);
+            void SetSymbolSize(sgc::tile::TileSize2D size);
             void RegisterOnSizeChangedCallback(std::function<void(sgc::tile::TileSize2D)> sizeChangedCallback);
+
+            sgc::tile::TileSize2D GetSymbolSize() const;
+            sgc::tile::TileSize2D GetMaxSymbolSize() const;
 
     };
 }

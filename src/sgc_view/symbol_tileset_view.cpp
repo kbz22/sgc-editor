@@ -2,6 +2,8 @@
 #include "program/program.hpp"
 #include <sgc/data/statictilestorage.hpp>
 
+bool IsValid(sgc::math::vec4 area, program::SgcTileset &sgcTileset);
+
 sgc_view::SymbolTilesetView::SymbolTilesetView(HWND hwnd) :
     SgcView{hwnd},
     m_symbolIndicator{std::make_unique<sgc::graphics::Rectangle>(0,0,0,0)},
@@ -56,6 +58,22 @@ void sgc_view::SymbolTilesetView::Refresh(program::ProgramContext& programContex
 
     if(!m_sgcTileset.IsSet()) {
         return;
+    }
+
+    auto currentPositions = GetSymbolPositions();
+    auto newSize = GetSymbolSize();
+    for(auto &position : currentPositions)
+    {
+        auto areaVector = sgc::math::vec4{
+            position.x,
+            position.y,
+            position.x+newSize.x,
+            position.y+newSize.y
+        };
+
+        if(IsValid(areaVector, m_sgcTileset)){
+            m_symbolPositions.push_back(position);
+        }
     }
 }
 
@@ -184,6 +202,16 @@ sgc::tile::TilePosition2D sgc_view::SymbolTilesetView::GetSymbolSize() const
     return {
         indicatorSize.x / tileSize.x,
         indicatorSize.y / tileSize.y
+    };
+}
+
+sgc::tile::TileSize2D sgc_view::SymbolTilesetView::GetMaxSymbolSize() const
+{
+    auto tileSize = m_sgcTileset.GetTileSize();    
+    auto imageSize = m_sgcTileset.GetImageSize();
+    return {
+        imageSize.x / tileSize.x,
+        imageSize.y / tileSize.y
     };
 }
 

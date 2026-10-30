@@ -45,8 +45,7 @@ void win32_models::SymbolTilesetControl::Init(HWND hwnd, program::ProgramContext
     m_tilesetView->SetIndicatorColor({251,192,27,255});
     m_tilesetView->SetCursorColor({251,224,147,255});
     m_tilesetView->ShowCursor(false);
-
-    SetSize({1,1});
+    SetSymbolSize({1,1});
 }
 
 LRESULT CALLBACK win32_models::SymbolTilesetControl::SymbolTilesetViewStaticProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam, [[maybe_unused]]UINT_PTR id, DWORD_PTR data) 
@@ -328,7 +327,7 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
                                 std::max(m_pointerOrigin.y, tilePosition.y)
                             };
 
-                            SetSize({
+                            SetSymbolSize({
                                 maxTile.x - minTile.x + 1,
                                 maxTile.y - minTile.y + 1
                             });
@@ -486,12 +485,22 @@ void win32_models::SymbolTilesetControl::Refresh(program::ProgramContext &progra
     );
 }
 
-void win32_models::SymbolTilesetControl::SetSize(sgc::tile::TileSize2D size)
+void win32_models::SymbolTilesetControl::SetSymbolSize(sgc::tile::TileSize2D size)
 {
     m_tilesetView->SetSizeInTiles(size);
     if(m_sizeChangedCallback){
         m_sizeChangedCallback(size);
     }
+}
+
+sgc::tile::TileSize2D win32_models::SymbolTilesetControl::GetSymbolSize() const
+{
+    return m_tilesetView->GetSymbolSize();
+}
+
+sgc::tile::TileSize2D win32_models::SymbolTilesetControl::GetMaxSymbolSize() const
+{
+    return m_tilesetView->GetMaxSymbolSize();
 }
 
 void win32_models::SymbolTilesetControl::RegisterOnSizeChangedCallback(std::function<void(sgc::tile::TileSize2D)> sizeChangedCallback)
