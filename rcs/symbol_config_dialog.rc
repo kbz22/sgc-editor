@@ -10,43 +10,50 @@ BEGIN
                 SYMBOL_DIALOG_BORDER_X_OFFSET,
                 SYMBOL_DIALOG_BORDER_Y_OFFSET,
                 SYMBOL_DIALOG_GROUP_WIDTH,
-                32
+                36 + SYMBOL_DIALOG_BUTTON_HEIGHT
 
     COMBOBOX    IDC_SYMBOL_GROUP_COMBO,
                 SYMBOL_DIALOG_ITEM_X,
-                20,
+                SYMBOL_DIALOG_BORDER_Y_OFFSET + 14,
                 SYMBOL_DIALOG_GROUP_INNER_WIDTH,
-                80,
+                0,
                 CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+    PUSHBUTTON  "Newe",
+                IDC_SYMBOL_NEW_GROUP,
+                SYMBOL_DIALOG_ADD_X_OFFSET,
+                SYMBOL_DIALOG_BORDER_Y_OFFSET + 30,
+                44,
+                SYMBOL_DIALOG_BUTTON_HEIGHT
 
     GROUPBOX    "Group settings", IDC_SYMBOL_GROUP_CONFIG,
                 SYMBOL_DIALOG_BORDER_X_OFFSET,
-                46,
+                SYMBOL_DIALOG_GROUP2_Y_OFFSET,
                 SYMBOL_DIALOG_GROUP_WIDTH,
                 80
 
     LTEXT       "Symbol width:", IDC_SYMBOL_SIZE_X_LABEL,
                 SYMBOL_DIALOG_ITEM_X,
-                61,
+                SYMBOL_DIALOG_GROUP2_Y_OFFSET + 14,
                 80,
                 10
 
     EDITTEXT    IDC_SYMBOL_SIZE_X,
                 SYMBOL_DIALOG_EDIT_X_OFFSET,
-                59,
+                SYMBOL_DIALOG_GROUP2_Y_OFFSET + 12,
                 30,
                 13,
                 ES_AUTOHSCROLL | ES_NUMBER
 
     LTEXT       "Symbol height:", IDC_SYMBOL_SIZE_Y_LABEL,
                 SYMBOL_DIALOG_ITEM_X,
-                77,
+                SYMBOL_DIALOG_GROUP2_Y_OFFSET + 30,
                 80,
                 10
 
     EDITTEXT    IDC_SYMBOL_SIZE_Y,
                 SYMBOL_DIALOG_EDIT_X_OFFSET
-                75,
+                SYMBOL_DIALOG_GROUP2_Y_OFFSET + 28,
                 30,
                 13,
                 ES_AUTOHSCROLL | ES_NUMBER
@@ -60,14 +67,14 @@ BEGIN
 
     PUSHBUTTON      "Restore defaults", IDC_SYMBOL_RESTORE_DEFAULTS,
                     SYMBOL_DIALOG_ITEM_X,
-                    46 + 72 - SYMBOL_DIALOG_BUTTON_HEIGHT,
+                    SYMBOL_DIALOG_GROUP2_Y_OFFSET + 72 - SYMBOL_DIALOG_BUTTON_HEIGHT,
                     58,
                     SYMBOL_DIALOG_BUTTON_HEIGHT
     
     PUSHBUTTON      "Add",
-                    IDC_SYMBOL_ADD_GROUP,
+                    IDC_SYMBOL_SAVE_GROUP,
                     SYMBOL_DIALOG_ADD_X_OFFSET,
-                    46 + 72 - SYMBOL_DIALOG_BUTTON_HEIGHT,
+                    SYMBOL_DIALOG_GROUP2_Y_OFFSET + 72 - SYMBOL_DIALOG_BUTTON_HEIGHT,
                     44,
                     SYMBOL_DIALOG_BUTTON_HEIGHT
 

@@ -508,7 +508,12 @@ void win32_models::SymbolTilesetControl::RegisterOnSizeChangedCallback(std::func
     m_sizeChangedCallback = sizeChangedCallback;
 }
 
-void win32_models::SymbolTilesetControl::ResetCurrentView()
+std::vector<sgc::tile::TilePosition2D> win32_models::SymbolTilesetControl::ResetCurrentView()
 {
-    m_tilesetView->ClearSymbolPositions();
+    return m_tilesetView->ClearSymbolPositions();
+}
+
+bool win32_models::SymbolTilesetControl::Empty() const
+{
+    return m_tilesetView->Empty();
 }

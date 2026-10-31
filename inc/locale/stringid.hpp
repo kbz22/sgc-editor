@@ -174,6 +174,8 @@ namespace locale
         DialogApply,
         DialogCreate,
         DialogSave,
+        DialogYes,
+        DialogNo,
 
         NewDialogNameName,
         NewDialogTilesetName,
@@ -193,6 +195,7 @@ namespace locale
         SymbolDialogSymbolGroupName,
         SymbolDialogGroupSettingsName,
         SymbolDialogResetSymbols,
+        SymbolDialogNewGroup,
 
         ErrorName,
         UserErrorNoMapName,
@@ -202,6 +205,11 @@ namespace locale
         UserErrorNoTilesetName,
         UserErrorNoImage,
         UserErrorWrongTileSize,
+        UserErrorNoSymbolGroupName,
+        UserErrorSymbolGroupEmpty,
+
+        WarningSymbolGroupAlreadyExistsTitle,
+        WarningSymbolGroupAlreadyExistsMessage,
 
         EditorErrorFailedToRestoreSession,
 
@@ -213,5 +221,6 @@ namespace locale
         DialogTitleAbout,
         DialogTitleSettings,
         DialogTitleSymbolConfig,
+        DialogTitleNewSymbolGroup,
     };
 }

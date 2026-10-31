@@ -171,6 +171,8 @@ locale::StringLookup::StringLookup()
         {StringId::DialogCancel, L"Cancel"},
         {StringId::DialogApply, L"Apply"},
         {StringId::DialogSave, L"Save"},
+        {StringId::DialogYes, L"Yes"},
+        {StringId::DialogNo, L"No"},
 
         {StringId::NewDialogNameName, L"Name:"},
         {StringId::NewDialogTilesetName, L"Tileset:"},
@@ -184,12 +186,13 @@ locale::StringLookup::StringLookup()
         {StringId::NewTilesetDialogTileHeightName, L"Tile height:"},
         {StringId::NewTilesetDialogIncludeInPackage, L"Include the new tileset in a package file"},
 
-        {StringId::SymbolDialogAddName, L"Add group"},
+        {StringId::SymbolDialogAddName, L"Save group"},
         {StringId::SymbolDialogWidthName, L"Symbol width"},
         {StringId::SymbolDialogHeightName, L"Symbol height"},
         {StringId::SymbolDialogSymbolGroupName, L"Symbol group"},
         {StringId::SymbolDialogGroupSettingsName, L"Group settings"},
         {StringId::SymbolDialogResetSymbols, L"Clear group"},
+        {StringId::SymbolDialogNewGroup, L"New group"},
         
         {StringId::AboutAppDescription, LR"(A simple 2D map editor for Windows developed using the Win32 API and SDL3. The editor is designed for creating and editing tile-based maps.)"},
 
@@ -201,6 +204,8 @@ locale::StringLookup::StringLookup()
         {StringId::UserErrorNoTilesetName, L"Please provide a name for the tileset."},
         {StringId::UserErrorNoImage, L"Please select an image."},
         {StringId::UserErrorWrongTileSize, L"Tile width and height must be greater than zero."},
+        {StringId::UserErrorNoSymbolGroupName, L"Please provide a name for the symbol group."},
+        {StringId::UserErrorSymbolGroupEmpty, L"You cannot save an empty group."},
 
         {StringId::EditorErrorFailedToRestoreSession, L"The program failed to open some files from last session."},
 
@@ -210,6 +215,9 @@ locale::StringLookup::StringLookup()
         {StringId::DialogTitleAbout, L"About"},
         {StringId::DialogTitleSettings, L"Settings"},
         {StringId::DialogTitleSymbolConfig, L"Configure symbol groups"},
+        {StringId::DialogTitleNewSymbolGroup, L"Enter a name"},
+        {StringId::WarningSymbolGroupAlreadyExistsTitle, L"Group already exists"},
+        {StringId::WarningSymbolGroupAlreadyExistsMessage, L"Symbol group with this name already exists. Do you want to replace it?"},
 
         {StringId::TextMissing, L"Text missing"}
     };

@@ -5,7 +5,7 @@
 #define IDC_PACKAGE_NAME        22001
 #define IDC_PACKAGE_LABEL_NAME  22002
 
-// I don't want to rewrite the package action
+//! I don't want to rewrite the package action
 // but this is really just a textbox and I want to reuse it
 
 #define IDD_TEXTBOX_DIALOG      IDD_NEW_PACKAGE_DIALOG
