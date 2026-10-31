@@ -102,7 +102,7 @@ add_executable(sgc-editor WIN32
     rcs/new_map_dialog.rc
     rcs/new_tileset_dialog.rc
     rcs/editor_graphics.rc
-    rcs/new_package_dialog.rc
+    rcs/textbox_dialog.rc
     rcs/settings_dialog.rc
     rcs/settings_pages.rc
     rcs/about_dialog.rc

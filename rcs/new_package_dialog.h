@@ -1,6 +1,0 @@
-#pragma once
-
-#define IDD_NEW_PACKAGE_DIALOG  22000
-
-#define IDC_PACKAGE_NAME        22001
-#define IDC_PACKAGE_LABEL_NAME  22002
