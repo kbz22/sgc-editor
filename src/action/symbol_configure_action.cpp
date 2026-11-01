@@ -51,11 +51,33 @@ void action::SymbolConfigureAction::Execute(program::ProgramContext& context)
     }
 }
 
+struct SymbolGroupData
+{
+    sgc::tile::TileSize2D size;
+    std::vector<sgc::tile::TilePosition2D> positions;
+};
+
 INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    using PositionsPointer = std::unique_ptr<std::vector<sgc::tile::TilePosition2D>>;
-    static std::unordered_map<std::wstring, PositionsPointer> symbolGroups{};
+    static std::unordered_map<std::wstring, std::unique_ptr<SymbolGroupData>> symbolGroups{};
     auto &programContext = program::GetProgramContext();
+
+    auto setupForPosition = [](HWND hCombo, win32_models::SymbolTilesetControl &tilesetViewControl)
+    {
+        auto selectedIndex = SendMessage(hCombo, CB_GETCURSEL, 0, 0);
+
+        if(selectedIndex == -1)
+        {
+            return;
+        }
+
+        auto symbolGroup = reinterpret_cast<SymbolGroupData*>(
+            SendMessage(hCombo, CB_GETITEMDATA, selectedIndex, 0)
+        );
+
+        tilesetViewControl.SetCurrentView(symbolGroup->positions, symbolGroup->size);
+        tilesetViewControl.Update();
+    };
 
     switch (msg)
     {
@@ -222,7 +244,8 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                     auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
                         GetWindowLongPtr(hDlg, DWLP_USER)
                     );
-                    auto hInstance = programContext.GetHInstance();
+                    auto hCombo = GetDlgItem(hDlg, IDC_SYMBOL_GROUP_COMBO);
+                    auto hInstance = programContext.GetHInstance();                    
                     auto &stringLookup = programContext.GetStringLookup();
 
                     auto errorMsg = stringLookup.Get(StringId::UserErrorSymbolGroupEmpty).value_or(L"GROUP EMPTY");
@@ -235,13 +258,30 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                     }
 
                     std::wstring groupName;
-                    auto result = DialogBoxParam(
-                        hInstance,
-                        MAKEINTRESOURCE(IDD_TEXTBOX_DIALOG),
-                        hDlg,
-                        AddGroupDialogProc,
-                        reinterpret_cast<LPARAM>(&groupName)
-                    );
+                    auto selectedIndex = SendMessage(hCombo, CB_GETCURSEL, 0, 0);                    
+                    INT_PTR result = IDOK;
+
+                    if(selectedIndex != -1)
+                    {
+                        auto length = SendMessage(hCombo, CB_GETLBTEXTLEN, selectedIndex, 0);
+                        groupName.resize(length + 1);
+                        result = SendMessage(
+                            hCombo,
+                            CB_GETLBTEXT,
+                            selectedIndex,
+                            reinterpret_cast<LPARAM>(groupName.data())
+                        );
+                    }
+                    else
+                    {
+                        result = DialogBoxParam(
+                            hInstance,
+                            MAKEINTRESOURCE(IDD_TEXTBOX_DIALOG),
+                            hDlg,
+                            AddGroupDialogProc,
+                            reinterpret_cast<LPARAM>(&groupName)
+                        );
+                    }
 
                     if(result == IDOK)
                     {
@@ -264,22 +304,43 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 
                         if(result == IDYES)
                         {
-                            auto positions = tilesetViewControl->ResetCurrentView();
-                            symbolGroups[groupName] = std::make_unique<std::vector<sgc::tile::TilePosition2D>>(positions);
+                            symbolGroups[groupName] = std::make_unique<SymbolGroupData>(
+                                tilesetViewControl->GetSymbolSize(),
+                                tilesetViewControl->ResetCurrentView()
+                            );
+                                                        
+                            SendMessage(hCombo, CB_RESETCONTENT, 0, 0);
 
-                            auto groupCombo = GetDlgItem(hDlg, IDC_SYMBOL_GROUP_COMBO);
-                            
-                            for (const auto &[_groupName, _positions] : symbolGroups)
+                            for (const auto &[_groupName, _symbolGroup] : symbolGroups)
                             {
-                                auto index = SendMessage(groupCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(_groupName.c_str()));
-                                SendMessage(groupCombo, CB_SETITEMDATA, index, reinterpret_cast<LPARAM>(_positions.get()));
+                                auto index = SendMessage(hCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(_groupName.c_str()));
+                                SendMessage(hCombo, CB_SETITEMDATA, index, reinterpret_cast<LPARAM>(_symbolGroup.get()));
+
+                                if(groupName == _groupName)
+                                {
+                                    SendMessage(hCombo, CB_SETCURSEL, index, 0);
+                                }
                             }
 
-                            tilesetViewControl->Update();
+                            setupForPosition(hCombo, *tilesetViewControl);
                         }
                     }
 
                     return TRUE;
+                }
+
+                case IDC_SYMBOL_GROUP_COMBO:
+                {
+                    if (HIWORD(wParam) == CBN_SELCHANGE)
+                    {
+                        auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
+                            GetWindowLongPtr(hDlg, DWLP_USER)
+                        );
+                        auto hCombo = GetDlgItem(hDlg, IDC_SYMBOL_GROUP_COMBO);
+                            
+                        setupForPosition(hCombo, *tilesetViewControl);
+                    }
+                    break;
                 }
 
                 default:

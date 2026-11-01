@@ -487,7 +487,7 @@ void win32_models::SymbolTilesetControl::Refresh(program::ProgramContext &progra
 
 void win32_models::SymbolTilesetControl::SetSymbolSize(sgc::tile::TileSize2D size)
 {
-    m_tilesetView->SetSizeInTiles(size);
+    m_tilesetView->SetSymbolSizeInTiles(size);
     if(m_sizeChangedCallback){
         m_sizeChangedCallback(size);
     }
@@ -516,4 +516,11 @@ std::vector<sgc::tile::TilePosition2D> win32_models::SymbolTilesetControl::Reset
 bool win32_models::SymbolTilesetControl::Empty() const
 {
     return m_tilesetView->Empty();
+}
+
+void win32_models::SymbolTilesetControl::SetCurrentView(std::vector<sgc::tile::TilePosition2D> &positions, sgc::tile::TileSize2D size)
+{
+    m_tilesetView->AddTilePosition(positions);
+    SetSymbolSize(size);
+    Update();
 }

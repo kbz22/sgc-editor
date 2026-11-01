@@ -31,6 +31,7 @@ namespace win32_models
             void Update();
             void Refresh(program::ProgramContext &programContext);
             std::vector<sgc::tile::TilePosition2D> ResetCurrentView();
+            void SetCurrentView(std::vector<sgc::tile::TilePosition2D> &positions, sgc::tile::TileSize2D size);
 
             void SetSymbolSize(sgc::tile::TileSize2D size);
             void RegisterOnSizeChangedCallback(std::function<void(sgc::tile::TileSize2D)> sizeChangedCallback);
