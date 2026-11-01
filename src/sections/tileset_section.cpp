@@ -296,3 +296,8 @@ sgc::tile::TileId sections::TilesetSection::GetClearTileId() const
 {
     return m_tilesetView->GetClearTileId();
 }
+
+program::SgcTileset& sections::TilesetSection::GetSgcTileset()
+{
+    return m_tilesetView->GetSgcTileset();
+}

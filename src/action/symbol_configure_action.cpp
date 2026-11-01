@@ -28,6 +28,20 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 LRESULT CALLBACK SymbolTilesetProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK AddGroupDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
+struct SymbolGroupData
+{
+    sgc::tile::TileSize2D size;
+    std::vector<sgc::tile::TilePosition2D> positions;
+};
+
+using SymbolGroupsMap = std::unordered_map<std::wstring, std::unique_ptr<SymbolGroupData>>;
+
+struct SymbolConfigureData
+{
+    SymbolGroupsMap groups;
+    std::unique_ptr<win32_models::SymbolTilesetControl> tilesetViewControl;
+};
+
 void action::SymbolConfigureAction::Execute(program::ProgramContext& context)
 {
     if(context.GetSection<sections::TilesetSection>() != nullptr) 
@@ -36,36 +50,48 @@ void action::SymbolConfigureAction::Execute(program::ProgramContext& context)
         auto hInstance = context.GetHInstance();
         if(hMainWindow != nullptr)
         {
-            auto tilesetViewControl = std::make_unique<win32_models::SymbolTilesetControl>(context);
+            // auto tilesetViewControl = std::make_unique<win32_models::SymbolTilesetControl>(context);
+            auto symbolConfigureData = std::make_unique<SymbolConfigureData>(SymbolConfigureData{
+                {},
+                std::make_unique<win32_models::SymbolTilesetControl>(context)
+            });
 
             DialogBoxParam(
                 hInstance,            
                 MAKEINTRESOURCE(IDD_SYMBOL_CONFIG),
                 hMainWindow,
                 SymbolConfigureDialogProc,
-                reinterpret_cast<LPARAM>(tilesetViewControl.get())
+                reinterpret_cast<LPARAM>(symbolConfigureData.get())
             );
 
-            tilesetViewControl.reset();
+            auto mapDocument = context.GetManager<file::FileManager>()->GetActiveDocument();
+            auto symbolManager = mapDocument->GetSymbolManager();
+            auto &sgcTileset = context.GetSection<sections::TilesetSection>()->GetSgcTileset();
+
+            for(auto &[groupName, groupData] : symbolConfigureData->groups)
+            {
+                symbolManager->CreateSymbolGroup(
+                    groupName,
+                    sgcTileset,
+                    groupData->size,
+                    groupData->positions
+                );
+            }
+
+            symbolConfigureData.reset();
         }
     }
 }
 
-struct SymbolGroupData
-{
-    sgc::tile::TileSize2D size;
-    std::vector<sgc::tile::TilePosition2D> positions;
-};
-
 INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    static std::unordered_map<std::wstring, std::unique_ptr<SymbolGroupData>> symbolGroups{};
+{    
     auto &programContext = program::GetProgramContext();
 
     auto setupForPosition = [](HWND hCombo, win32_models::SymbolTilesetControl &tilesetViewControl)
     {
         auto selectedIndex = SendMessage(hCombo, CB_GETCURSEL, 0, 0);
-        SymbolGroupData defaultSymbolGroup{
+        SymbolGroupData defaultSymbolGroup
+        {
             {1,1},
             {}
         };
@@ -89,10 +115,10 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
             using namespace locale;
             using namespace win32_models;
 
-            symbolGroups.clear();
-
             auto tilesetViewHwnd = GetDlgItem(hDlg, IDC_SYMBOL_TILESET_VIEW);
-            auto tilesetViewControl = reinterpret_cast<SymbolTilesetControl*>(lParam);
+            // auto tilesetViewControl = reinterpret_cast<SymbolTilesetControl*>(lParam);
+            auto symbolConfigureData = reinterpret_cast<SymbolConfigureData*>(lParam);
+            auto tilesetViewControl = symbolConfigureData->tilesetViewControl.get();
             SetWindowLongPtr(hDlg, DWLP_USER, lParam);
 
             auto defaultSymbolSize = sgc::tile::TileSize2D{1,1};
@@ -190,9 +216,9 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 
                 case IDC_SYMBOL_RESTORE_DEFAULTS:
                 {
-                    auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
+                    auto tilesetViewControl = reinterpret_cast<SymbolConfigureData*>(
                         GetWindowLongPtr(hDlg, DWLP_USER)
-                    );
+                    )->tilesetViewControl.get();
 
                     tilesetViewControl->ResetCurrentView();
                     tilesetViewControl->SetSymbolSize({1,1});
@@ -244,9 +270,11 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                 {
                     using namespace locale;
 
-                    auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
+                    auto symbolConfigureData = reinterpret_cast<SymbolConfigureData*>(
                         GetWindowLongPtr(hDlg, DWLP_USER)
                     );
+                    auto tilesetViewControl = symbolConfigureData->tilesetViewControl.get();
+                    auto &symbolGroups = symbolConfigureData->groups;
                     auto hCombo = GetDlgItem(hDlg, IDC_SYMBOL_GROUP_COMBO);
                     auto hInstance = programContext.GetHInstance();                    
                     auto &stringLookup = programContext.GetStringLookup();
@@ -336,9 +364,9 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                 {
                     if (HIWORD(wParam) == CBN_SELCHANGE)
                     {
-                        auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
+                        auto tilesetViewControl = reinterpret_cast<SymbolConfigureData*>(
                             GetWindowLongPtr(hDlg, DWLP_USER)
-                        );
+                        )->tilesetViewControl.get();
                         auto hCombo = GetDlgItem(hDlg, IDC_SYMBOL_GROUP_COMBO);
                             
                         setupForPosition(hCombo, *tilesetViewControl);
@@ -348,9 +376,9 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 
                 case IDC_SYMBOL_NEW_GROUP:
                 {
-                    auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
+                    auto tilesetViewControl = reinterpret_cast<SymbolConfigureData*>(
                         GetWindowLongPtr(hDlg, DWLP_USER)
-                    );
+                    )->tilesetViewControl.get();
                     auto hCombo = GetDlgItem(hDlg, IDC_SYMBOL_GROUP_COMBO);
 
                     SendMessage(hCombo, CB_SETCURSEL, -1, 0); // empty entry

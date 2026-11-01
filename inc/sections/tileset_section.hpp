@@ -47,6 +47,8 @@ namespace sections {
             sgc::tile::TileSize2D GetCursorSizeInTiles() const;
             sgc::tile::TileId GetClearTileId() const;
 
+            program::SgcTileset& GetSgcTileset();
+
             void ClearTileset();
     };
 
