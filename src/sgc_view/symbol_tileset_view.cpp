@@ -150,7 +150,7 @@ void sgc_view::SymbolTilesetView::AddTilePosition(std::vector<sgc::tile::TilePos
     }
 }
 
-void sgc_view::SymbolTilesetView::SetSizeInTiles(sgc::tile::TileSize2D size)
+void sgc_view::SymbolTilesetView::SetSymbolSizeInTiles(sgc::tile::TileSize2D size)
 {
     auto tileSize = GetTileSize();
     m_symbolIndicator->SetSize({
