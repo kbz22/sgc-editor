@@ -520,7 +520,8 @@ bool win32_models::SymbolTilesetControl::Empty() const
 
 void win32_models::SymbolTilesetControl::SetCurrentView(std::vector<sgc::tile::TilePosition2D> &positions, sgc::tile::TileSize2D size)
 {
-    m_tilesetView->AddTilePosition(positions);
+    m_tilesetView->ClearSymbolPositions();
     SetSymbolSize(size);
+    m_tilesetView->AddTilePosition(positions);    
     Update();
 }
