@@ -65,15 +65,18 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
     auto setupForPosition = [](HWND hCombo, win32_models::SymbolTilesetControl &tilesetViewControl)
     {
         auto selectedIndex = SendMessage(hCombo, CB_GETCURSEL, 0, 0);
+        SymbolGroupData defaultSymbolGroup{
+            {1,1},
+            {}
+        };
+        SymbolGroupData *symbolGroup = &defaultSymbolGroup;
 
-        if(selectedIndex == -1)
+        if(selectedIndex != -1)
         {
-            return;
+            symbolGroup = reinterpret_cast<SymbolGroupData*>(
+                SendMessage(hCombo, CB_GETITEMDATA, selectedIndex, 0)
+            );
         }
-
-        auto symbolGroup = reinterpret_cast<SymbolGroupData*>(
-            SendMessage(hCombo, CB_GETITEMDATA, selectedIndex, 0)
-        );
 
         tilesetViewControl.SetCurrentView(symbolGroup->positions, symbolGroup->size);
         tilesetViewControl.Update();
@@ -341,6 +344,17 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                         setupForPosition(hCombo, *tilesetViewControl);
                     }
                     break;
+                }
+
+                case IDC_SYMBOL_NEW_GROUP:
+                {
+                    auto tilesetViewControl = reinterpret_cast<win32_models::SymbolTilesetControl*>(
+                        GetWindowLongPtr(hDlg, DWLP_USER)
+                    );
+                    auto hCombo = GetDlgItem(hDlg, IDC_SYMBOL_GROUP_COMBO);
+
+                    SendMessage(hCombo, CB_SETCURSEL, -1, 0); // empty entry
+                    setupForPosition(hCombo, *tilesetViewControl);
                 }
 
                 default:
