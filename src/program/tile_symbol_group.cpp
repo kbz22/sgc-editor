@@ -24,6 +24,11 @@ sgc::tile::TileSize2D program::TileSymbolGroup::GetSize() const
     return m_symbolSize;
 }
 
+std::vector<sgc::tile::TilePosition2D> program::TileSymbolGroup::GetPositions() const
+{
+    return m_tileSymbols;
+}
+
 std::vector<sgc::tile::TileId> program::TileSymbolGroup::PeekSymbol() const
 {
     if(m_currentSymbolIndex >= m_tileSymbols.size())

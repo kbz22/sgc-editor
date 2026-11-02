@@ -22,6 +22,7 @@ namespace program
             void ClearSymbols();
 
             sgc::tile::TileSize2D GetSize() const;
+            std::vector<sgc::tile::TilePosition2D> GetPositions() const;
 
             std::vector<sgc::tile::TileId> PeekSymbol() const;
             std::vector<sgc::tile::TileId> NextSymbol();

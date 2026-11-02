@@ -26,3 +26,21 @@ program::TileSymbolGroup* program::TileSymbolManager::NextSymbolGroup()
     m_currentGroupIndex = (m_currentGroupIndex + 1) % m_tileSymbolGroups.size();
     return returnValue;
 }
+
+std::vector<program::TileSymbolEntry> program::TileSymbolManager::ClearSymbolGroups()
+{
+    auto returnValue = m_tileSymbolGroups;
+    m_tileSymbolGroups.clear();
+    m_currentGroupIndex = 0;
+    return returnValue;
+}
+
+bool program::TileSymbolManager::IsEmpty() const
+{
+    return m_tileSymbolGroups.empty();
+}
+
+std::vector<program::TileSymbolEntry> program::TileSymbolManager::GetSymbolGroups() const
+{
+    return m_tileSymbolGroups;
+}
