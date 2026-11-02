@@ -345,14 +345,16 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
 
                     if(selectedIndex != -1)
                     {
-                        auto length = SendMessage(
+                        auto length = SendMessage(hCombo, CB_GETLBTEXTLEN, selectedIndex, 0);
+                        groupName.resize(length);
+
+                        result = SendMessage(
                             hCombo,
                             CB_GETLBTEXT,
                             selectedIndex,
                             reinterpret_cast<LPARAM>(groupName.data())
                         );
-                        groupName.resize(length + 1);
-                        result = length > 0 ? IDOK : IDCANCEL;
+                        result = result > 0 ? IDOK : IDCANCEL;
                     }
                     else
                     {
@@ -389,20 +391,8 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                             symbolGroups[groupName] = std::make_unique<SymbolGroupData>(
                                 tilesetViewControl->GetSymbolSize(),
                                 tilesetViewControl->ResetCurrentView()
-                            );                              
-                            
-                            /* SendMessage(hCombo, CB_RESETCONTENT, 0, 0);
+                            );
 
-                            for (const auto &[_groupName, _symbolGroup] : symbolGroups)
-                            {
-                                auto index = SendMessage(hCombo, CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(_groupName.c_str()));
-                                SendMessage(hCombo, CB_SETITEMDATA, index, reinterpret_cast<LPARAM>(_symbolGroup.get()));
-
-                                if(groupName == _groupName)
-                                {
-                                    SendMessage(hCombo, CB_SETCURSEL, index, 0);
-                                }
-                            } */
                             refreshComboBox(hCombo, symbolGroups, groupName);
                             setupForPosition(hCombo, *tilesetViewControl);
                         }
