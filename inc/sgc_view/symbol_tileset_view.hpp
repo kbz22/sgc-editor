@@ -29,6 +29,8 @@ namespace sgc_view
 
             void AddTilePosition(sgc::tile::TilePosition2D position);
             void AddTilePosition(std::vector<sgc::tile::TilePosition2D> &positions);
+            bool RemoveTilePosition(sgc::tile::TilePosition2D position);
+            bool RemoveSymbolAtPosition(sgc::tile::TilePosition2D position);
             void SetSymbolSizeInTiles(sgc::tile::TileSize2D size);
             void SetCursorColor(sgc::graphics::color color);
             void SetIndicatorColor(sgc::graphics::color color);            
@@ -45,5 +47,6 @@ namespace sgc_view
 
             bool Empty();
             bool IsCursorVisible();
+            bool Contains(sgc::tile::TilePosition2D position) const;
     };
 }

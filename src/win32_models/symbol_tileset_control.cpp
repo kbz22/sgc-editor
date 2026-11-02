@@ -229,13 +229,16 @@ LRESULT win32_models::SymbolTilesetControl::HandleMessage(HWND hwnd, UINT msg, W
             {
                 if(m_pointerManager.CheckPointerBehaviour(pointer, PointerBehaviour::Painting))
                 {
-                    if(m_tilesetView->Empty() && m_isSelecting.Acquire(pointer))
+                    if(!m_tilesetView->RemoveSymbolAtPosition(tilePosition))
                     {
-                        m_pointerOrigin = tilePosition;                        
-                    }
-                    else
-                    {
-                        m_tilesetView->AddTilePosition(tilePosition);                        
+                        if(m_tilesetView->Empty() && m_isSelecting.Acquire(pointer))
+                        {
+                            m_pointerOrigin = tilePosition;                        
+                        }
+                        else
+                        {
+                            m_tilesetView->AddTilePosition(tilePosition);
+                        }
                     }
 
                     needsUpdate = true;

@@ -266,3 +266,65 @@ sgc::tile::TilePosition2D sgc_view::SymbolTilesetView::GetCursorPosition() const
         cursorPxPos.y / tileSize.y
     };
 }
+
+bool sgc_view::SymbolTilesetView::Contains(sgc::tile::TilePosition2D position) const
+{
+    auto tileSize = GetTileSize();
+    auto symbolPositions = GetSymbolPositions();
+
+    for(auto &symbolPosition : symbolPositions)
+    {
+        auto positionPx = sgc::graphics::PixelPosition2D{
+            symbolPosition.x * tileSize.x,
+            symbolPosition.y * tileSize.y
+        };
+        
+        if(symbolPosition == positionPx)
+            return true;
+    }
+
+    return false;
+}
+
+bool sgc_view::SymbolTilesetView::RemoveTilePosition(sgc::tile::TilePosition2D position)
+{
+    auto tileSize = GetTileSize();
+    auto positionPx = sgc::graphics::PixelPosition2D{
+        position.x * tileSize.x,
+        position.y * tileSize.y
+    };
+
+    auto it = std::find(m_symbolPositions.begin(), m_symbolPositions.end(), positionPx);
+    if(it != m_symbolPositions.end())
+    {
+        m_symbolPositions.erase(it);
+        return true;
+    }
+
+    return false;
+}
+
+bool sgc_view::SymbolTilesetView::RemoveSymbolAtPosition(sgc::tile::TilePosition2D position)
+{
+    auto tileSize = GetTileSize();
+    auto positionPx = sgc::graphics::PixelPosition2D{
+        position.x * tileSize.x,
+        position.y * tileSize.y
+    };
+    auto symbolSize = GetSymbolSize();
+
+    for(auto &symbolPosition : m_symbolPositions)
+    {
+        if(positionPx.x >= symbolPosition.x && positionPx.x < symbolPosition.x + symbolSize.x * tileSize.x &&
+           positionPx.y >= symbolPosition.y && positionPx.y < symbolPosition.y + symbolSize.y * tileSize.y)
+        {
+            RemoveTilePosition({
+                symbolPosition.x / tileSize.x,
+                symbolPosition.y / tileSize.y
+            });
+            return true;
+        }
+    }
+
+    return false;
+}
