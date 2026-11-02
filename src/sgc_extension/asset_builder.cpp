@@ -30,7 +30,7 @@ sgc::asset::MapAsset sgc::asset::AssetBuilder<sgc::asset::MapAsset, file::MapDoc
 file::MapDocumentInfo sgc::asset::AssetBuilder<file::MapDocumentInfo, file::MapDocument>::Build(const file::MapDocument& document)
 {
     file::MapDocumentInfo documentInfo = {
-        file::DocumentType::Map,
+        file::EditorDataType::Map,
         document.GetName(),
         document.GetMapAssetId()
     };
@@ -41,11 +41,33 @@ file::MapDocumentInfo sgc::asset::AssetBuilder<file::MapDocumentInfo, file::MapD
 file::TilesetDocumentInfo sgc::asset::AssetBuilder<file::TilesetDocumentInfo, file::TilesetDocument>::Build(const file::TilesetDocument& document)
 {
     file::TilesetDocumentInfo documentInfo = {
-        file::DocumentType::Tileset,
+        file::EditorDataType::Tileset,
         document.GetName(),
         document.GetImageAssetId(),
         document.GetTilesetAssetId()
     };
+
+    return documentInfo;
+}
+
+file::SymbolGroupsInfo sgc::asset::AssetBuilder<file::SymbolGroupsInfo, file::MapDocument>::Build(const file::MapDocument& document)
+{
+    file::SymbolGroupsInfo documentInfo = {
+        file::EditorDataType::SymbolGroups,
+        {}
+    };
+
+    file::SymbolGroupInfo groupInfo;
+    auto symbolGroups = document.GetSymbolManager()->GetSymbolGroups();
+
+    for(auto &group : symbolGroups) 
+    {
+        groupInfo.groupName = group.groupName;
+        groupInfo.symbolSize = group.group.GetSize();
+        groupInfo.positions = group.group.GetPositions();
+
+        documentInfo.groups.push_back(groupInfo);
+    }
 
     return documentInfo;
 }

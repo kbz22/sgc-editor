@@ -103,21 +103,21 @@ void file::PackageFile::Open()
             case sgc::data::AssetType::External:
             {
                 auto entryData = package.ReadAssetData(id);
-                auto externalType = static_cast<file::DocumentType>(entryData[0]);
+                auto externalType = static_cast<file::EditorDataType>(entryData[0]);
 
                 switch(externalType)
                 {
                     default:
                         throw program::AssetLoadException("Unknown external document type: " + std::to_string(static_cast<int>(externalType)));
 
-                    case file::DocumentType::Map:
+                    case file::EditorDataType::Map:
                     {
                         mapDocumentInfos.push_back(
                             sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Deserialize(entryData)
                         );
                         break;
                     }
-                    case file::DocumentType::Tileset:
+                    case file::EditorDataType::Tileset:
                     {
                         tilesetDocumentInfos.push_back(
                             sgc::asset::AssetDeserializer<file::TilesetDocumentInfo>::Deserialize(entryData)

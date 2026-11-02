@@ -14,4 +14,9 @@ namespace sgc::asset {
     struct AssetDeserializer<file::TilesetDocumentInfo> {
         static file::TilesetDocumentInfo Deserialize(const std::vector<uint8_t>& data);
     };
+
+    template<>
+    struct AssetDeserializer<file::SymbolGroupsInfo> {
+        static file::SymbolGroupsInfo Deserialize(const std::vector<uint8_t>& data);
+    };
 }

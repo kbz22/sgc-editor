@@ -24,3 +24,25 @@ std::vector<uint8_t> sgc::asset::AssetSerializer<file::TilesetDocumentInfo>::Ser
 
     return std::move(writer.buffer);
 }
+
+std::vector<uint8_t> sgc::asset::AssetSerializer<file::SymbolGroupsInfo>::Serialize(const file::SymbolGroupsInfo& documentInfo)
+{
+    sgc::data::BinaryWriter writer;
+
+    writer.Write(documentInfo.type);
+    writer.Write(documentInfo.groups.size());
+
+    for(auto &group : documentInfo.groups) 
+    {
+        writer.WriteString(group.groupName);
+        writer.Write(group.symbolSize);
+        writer.Write(group.positions.size());
+
+        for(auto &symbol : group.positions)
+        {
+            writer.Write(symbol);
+        }
+    }
+
+    return std::move(writer.buffer);
+}

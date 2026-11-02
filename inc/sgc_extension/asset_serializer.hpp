@@ -16,4 +16,10 @@ namespace sgc::asset {
     {
         static std::vector<uint8_t> Serialize(const file::TilesetDocumentInfo& document);
     };
+
+    template<>
+    struct AssetSerializer<file::SymbolGroupsInfo>
+    {
+        static std::vector<uint8_t> Serialize(const file::SymbolGroupsInfo& document);
+    };
 }

@@ -26,4 +26,10 @@ namespace sgc::asset {
     {
         static file::TilesetDocumentInfo Build(const file::TilesetDocument& document);        
     };
+
+    template<>
+    struct AssetBuilder<file::SymbolGroupsInfo, file::MapDocument>
+    {
+        static file::SymbolGroupsInfo Build(const file::MapDocument& document);        
+    };
 }

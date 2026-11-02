@@ -2,6 +2,7 @@
 
 #include "program/tile_symbol_gorup.hpp"
 #include "program/sgc_tileset.hpp"
+#include "file/document_info.hpp"
 #include <map>
 #include <string>
 
@@ -20,7 +21,8 @@ namespace program
             size_t m_currentGroupIndex;
 
         public:
-            void CreateSymbolGroup(std::wstring groupName, SgcTileset &sgcTileset, const sgc::tile::TileSize2D &symbolSize, const std::vector<sgc::tile::TilePosition2D> &positions);            
+            void CreateSymbolGroup(std::wstring groupName, SgcTileset &sgcTileset, const sgc::tile::TileSize2D &symbolSize, const std::vector<sgc::tile::TilePosition2D> &positions);
+            void LoadSymbolGroups(const file::SymbolGroupsInfo &symbolGroupsInfo, SgcTileset &sgcTileset);
             std::vector<TileSymbolEntry> ClearSymbolGroups();
 
             std::vector<TileSymbolEntry> GetSymbolGroups() const;

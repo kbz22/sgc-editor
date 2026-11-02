@@ -44,3 +44,11 @@ std::vector<program::TileSymbolEntry> program::TileSymbolManager::GetSymbolGroup
 {
     return m_tileSymbolGroups;
 }
+
+void program::TileSymbolManager::LoadSymbolGroups(const file::SymbolGroupsInfo &symbolGroupsInfo, SgcTileset &sgcTileset)
+{
+    for(auto &groupInfo : symbolGroupsInfo.groups) 
+    {
+        CreateSymbolGroup(groupInfo.groupName, sgcTileset, groupInfo.symbolSize, groupInfo.positions);
+    }
+}
