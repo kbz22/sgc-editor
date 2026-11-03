@@ -15,7 +15,7 @@ namespace program
     class SgcTileset
     {
         private:
-            std::shared_ptr<sgc::graphics::Tileset> m_tileset{nullptr};            
+            std::shared_ptr<sgc::graphics::Tileset> m_tileset{nullptr};
             std::vector<std::wstring> m_paddedTiles{
                 L"Empty"
             };

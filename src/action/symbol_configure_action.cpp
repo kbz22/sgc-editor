@@ -93,7 +93,6 @@ void action::SymbolConfigureAction::Execute(program::ProgramContext& context)
             {
                 symbolManager->CreateSymbolGroup(
                     groupName,
-                    sgcTileset,
                     groupData->size,
                     groupData->positions
                 );

@@ -21,8 +21,8 @@ namespace program
             size_t m_currentGroupIndex;
 
         public:
-            void CreateSymbolGroup(std::wstring groupName, SgcTileset &sgcTileset, const sgc::tile::TileSize2D &symbolSize, const std::vector<sgc::tile::TilePosition2D> &positions);
-            void LoadSymbolGroups(const file::SymbolGroupsInfo &symbolGroupsInfo, SgcTileset &sgcTileset);
+            void CreateSymbolGroup(std::wstring groupName, const sgc::tile::TileSize2D &symbolSize, const std::vector<sgc::tile::TilePosition2D> &positions);
+            void LoadSymbolGroups(const file::SymbolGroupsInfo &symbolGroupsInfo);
             std::vector<TileSymbolEntry> ClearSymbolGroups();
 
             std::vector<TileSymbolEntry> GetSymbolGroups() const;

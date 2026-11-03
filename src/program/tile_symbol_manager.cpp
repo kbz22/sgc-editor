@@ -1,8 +1,8 @@
 #include "program/tile_symbol_manager.hpp"
 
-void program::TileSymbolManager::CreateSymbolGroup(std::wstring groupName, SgcTileset &sgcTileset, const sgc::tile::TileSize2D &symbolSize, const std::vector<sgc::tile::TilePosition2D> &positions)
+void program::TileSymbolManager::CreateSymbolGroup(std::wstring groupName, const sgc::tile::TileSize2D &symbolSize, const std::vector<sgc::tile::TilePosition2D> &positions)
 {
-    m_tileSymbolGroups.push_back({groupName, {sgcTileset}});
+    m_tileSymbolGroups.push_back({groupName, {}});
 
     auto &newGroup = m_tileSymbolGroups.back();
 
@@ -45,10 +45,10 @@ std::vector<program::TileSymbolEntry> program::TileSymbolManager::GetSymbolGroup
     return m_tileSymbolGroups;
 }
 
-void program::TileSymbolManager::LoadSymbolGroups(const file::SymbolGroupsInfo &symbolGroupsInfo, SgcTileset &sgcTileset)
+void program::TileSymbolManager::LoadSymbolGroups(const file::SymbolGroupsInfo &symbolGroupsInfo)
 {
     for(auto &groupInfo : symbolGroupsInfo.groups) 
     {
-        CreateSymbolGroup(groupInfo.groupName, sgcTileset, groupInfo.symbolSize, groupInfo.positions);
+        CreateSymbolGroup(groupInfo.groupName, groupInfo.symbolSize, groupInfo.positions);
     }
 }
