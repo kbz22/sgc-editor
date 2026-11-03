@@ -48,6 +48,7 @@ void file::MapFile::Open(){
 
     sgc::data::AssetId mapAssetId = 0;
     sgc::data::AssetId mapDocId = 0;
+    sgc::data::AssetId symbolGroupsId = 0;
 
     for(auto &[id, entry] : package) {
         switch(entry.type)
@@ -55,9 +56,30 @@ void file::MapFile::Open(){
             case sgc::data::AssetType::Map:
                 mapAssetId = id;
                 break;
+
             case sgc::data::AssetType::External:
-                mapDocId = id;
+            {                
+                // mapDocId = id;
+
+                auto entryData = package.ReadAssetData(id);
+                auto externalType = static_cast<file::EditorDataType>(entryData[0]);
+
+                switch(externalType)
+                {
+                    case file::EditorDataType::Map:
+                        mapDocId = id;
+                        break;
+
+                    case file::EditorDataType::SymbolGroups:
+                        symbolGroupsId = id;
+                        break;
+
+                    default:
+                        break;
+                }
                 break;
+            }
+
             default:
                 break;
         }
@@ -81,10 +103,29 @@ void file::MapFile::Open(){
         docInfoBytes
     );
 
-    m_document = sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
-        docInfo,
-        mapAsset
-    );
+    if(symbolGroupsId == 0) 
+    {
+        // no symbol group were found in the package 
+        // use old method of building the document without symbol groups
+        m_document = sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
+            docInfo,
+            mapAsset
+        );
+    }
+    else
+    {
+        // build with symbol groups
+        auto symbolGroupsBytes = package.ReadAssetData(symbolGroupsId);
+        auto symbolGroupsInfo = sgc::asset::AssetDeserializer<file::SymbolGroupsInfo>::Deserialize(
+            symbolGroupsBytes
+        );
+
+        m_document = sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
+            docInfo,
+            mapAsset,
+            symbolGroupsInfo
+        );
+    }
 
     return;
 }
@@ -114,6 +155,14 @@ void file::MapFile::Save(){
         sgc::asset::AssetSerializer<file::MapDocumentInfo>::Serialize(
             sgc::asset::AssetBuilder<file::MapDocumentInfo, file::MapDocument>::Build(*m_document)
     ));
+
+    packageBuilder.AddAsset(
+        m_document->GetSymbolGroupsAssetId(),
+        sgc::data::AssetType::External,
+        sgc::asset::AssetSerializer<file::SymbolGroupsInfo>::Serialize(
+            sgc::asset::AssetBuilder<file::SymbolGroupsInfo, file::MapDocument>::Build(*m_document)
+        )
+    );
 
     auto packageData = packageBuilder.Build();
 
