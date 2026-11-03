@@ -12,6 +12,7 @@ namespace sgc::asset {
     struct RuntimeBuilder<file::MapDocument> 
     {
         static std::unique_ptr<file::MapDocument> Build(const file::MapDocumentInfo& info, const sgc::asset::MapAsset& asset);
+        static std::unique_ptr<file::MapDocument> Build(const file::MapDocumentInfo& info, const sgc::asset::MapAsset& asset, const file::SymbolGroupsInfo& symbolGroups);
     };
 
     template<>

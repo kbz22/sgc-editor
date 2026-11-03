@@ -23,6 +23,7 @@ namespace file {
             sgc::data::AssetId m_tilesetId{0};
             sgc::data::AssetId m_mapAssetId{0};
             sgc::data::AssetId m_mapDocumentId{0};
+            sgc::data::AssetId m_symbolGroupsId{0};
             std::wstring name;
             bool m_dirty{false};
             std::function<void(MapDocument*, bool)> m_onSetDirtyCallback{nullptr};
@@ -30,6 +31,7 @@ namespace file {
         public:
             MapDocument(std::wstring name, sgc::data::AssetId tilesetId);
             MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId);
+            MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId, sgc::data::AssetId symbolGroupsId);
             MapDocument(const MapDocument&);
 
             program::LayerManager* GetLayerManager() const;
@@ -39,6 +41,7 @@ namespace file {
             sgc::data::AssetId GetTilesetAssetId() const;
             sgc::data::AssetId GetMapAssetId() const;
             sgc::data::AssetId GetMapDocumentAssetId() const;
+            sgc::data::AssetId GetSymbolGroupsAssetId() const;
 
             bool IsContainer() const override;            
             bool IsDirty() const override;

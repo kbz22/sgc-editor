@@ -12,6 +12,7 @@ file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId) 
 {
     m_mapAssetId = sgc::data::HashAsset(L"map."+name);
     m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+name);
+    m_symbolGroupsId = sgc::data::HashAsset(L"map.symbols."+name);
 }
 
 file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId) :
@@ -21,6 +22,19 @@ file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId, 
     m_symbolManager{std::make_unique<program::TileSymbolManager>()},
     m_tilesetId{tilesetId},
     m_mapAssetId{mapAssetId}
+{
+    m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+name);
+    m_symbolGroupsId = sgc::data::HashAsset(L"map.symbols."+name);
+}
+
+file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId, sgc::data::AssetId symbolGroupsId) :
+    name{name},
+    m_layerManager{std::make_unique<program::LayerManager>()},
+    m_commandManager{std::make_unique<command::CommandManager>()},
+    m_symbolManager{std::make_unique<program::TileSymbolManager>()},
+    m_tilesetId{tilesetId},
+    m_mapAssetId{mapAssetId},
+    m_symbolGroupsId{symbolGroupsId}
 {
     m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+name);
 }
@@ -77,6 +91,11 @@ sgc::data::AssetId file::MapDocument::GetMapAssetId() const
 sgc::data::AssetId file::MapDocument::GetMapDocumentAssetId() const
 {
     return m_mapDocumentId;
+}
+
+sgc::data::AssetId file::MapDocument::GetSymbolGroupsAssetId() const
+{
+    return m_symbolGroupsId;
 }
 
 bool file::MapDocument::IsEditable() const
