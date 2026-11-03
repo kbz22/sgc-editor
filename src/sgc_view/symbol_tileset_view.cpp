@@ -271,14 +271,13 @@ bool sgc_view::SymbolTilesetView::Contains(sgc::tile::TilePosition2D position) c
 {
     auto tileSize = GetTileSize();
     auto symbolPositions = GetSymbolPositions();
+    auto positionPx = sgc::graphics::PixelPosition2D{
+        position.x * tileSize.x,
+        position.y * tileSize.y
+    };
 
     for(auto &symbolPosition : symbolPositions)
-    {
-        auto positionPx = sgc::graphics::PixelPosition2D{
-            symbolPosition.x * tileSize.x,
-            symbolPosition.y * tileSize.y
-        };
-        
+    {   
         if(symbolPosition == positionPx)
             return true;
     }
