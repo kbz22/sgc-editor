@@ -287,7 +287,10 @@ sgc::tile::TilePosition2D sections::TilesetSection::GetCursorPositionInTiles() c
 {
     if(m_symbolDrawingEnabled)
     {
-        auto symbolPosition = m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
+        // auto symbolPosition = m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
+        auto symbolPosition = m_symbolCycleThroughEnabled ?
+            m_tileSymbolManager->PeekSymbolGroup()->NextSymbol(m_tilesetView->GetSgcTileset()) :
+            m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
 
         if(symbolPosition.has_value())
         {

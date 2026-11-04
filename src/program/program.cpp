@@ -412,6 +412,7 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::ChangeBrushModeAction>(editor_tools::PaintMode::Scatter));
     m_actionManager->Register(std::make_unique<action::SymbolConfigureAction>());
     m_actionManager->Register(std::make_unique<action::SymbolDrawingEnableAction>());
+    m_actionManager->Register(std::make_unique<action::SymbolAutoCycleAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,
