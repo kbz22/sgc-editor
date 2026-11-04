@@ -99,6 +99,7 @@ void action::SymbolConfigureAction::Execute(program::ProgramContext& context)
             }
 
             symbolConfigureData.reset();
+            mapDocument->SetDirty(true);
         }
     }
 }

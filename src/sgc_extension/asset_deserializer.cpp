@@ -12,6 +12,7 @@ file::MapDocumentInfo sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Dese
     reader.Read<file::EditorDataType>();
     info.name = reader.ReadString();
     info.mapAssetId = reader.Read<sgc::data::AssetId>();
+    info.symbolGroupsAssetId = reader.Read<sgc::data::AssetId>();
 
     return info;
 }

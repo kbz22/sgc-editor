@@ -9,6 +9,7 @@ std::vector<uint8_t> sgc::asset::AssetSerializer<file::MapDocumentInfo>::Seriali
     writer.Write(documentInfo.type);
     writer.WriteString(documentInfo.name);
     writer.Write(documentInfo.mapAssetId);
+    writer.Write(documentInfo.symbolGroupsAssetId);
 
     return std::move(writer.buffer);
 }

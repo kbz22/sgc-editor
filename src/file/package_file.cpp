@@ -53,6 +53,7 @@ void file::PackageFile::Open()
 
     std::vector<file::MapDocumentInfo> mapDocumentInfos{};
     std::vector<file::TilesetDocumentInfo> tilesetDocumentInfos{};
+    std::vector<file::SymbolGroupsInfo> symbolGroupsInfos{};
 
     for(auto &[id, entry] : package) 
     {
@@ -117,10 +118,19 @@ void file::PackageFile::Open()
                         );
                         break;
                     }
+
                     case file::EditorDataType::Tileset:
                     {
                         tilesetDocumentInfos.push_back(
                             sgc::asset::AssetDeserializer<file::TilesetDocumentInfo>::Deserialize(entryData)
+                        );
+                        break;
+                    }
+
+                    case file::EditorDataType::SymbolGroups:
+                    {
+                        symbolGroupsInfos.push_back(
+                            sgc::asset::AssetDeserializer<file::SymbolGroupsInfo>::Deserialize(entryData)
                         );
                         break;
                     }
@@ -136,11 +146,28 @@ void file::PackageFile::Open()
 
     for(const auto& mapDocInfo : mapDocumentInfos) 
     {
-        AddMapDocument(
-            sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
-                mapDocInfo,
-                *m_assetManager.GetAsset<sgc::asset::MapAsset>(mapDocInfo.mapAssetId)
-        ));
+        if(mapDocInfo.symbolGroupsAssetId != 0)
+        {
+            auto symbolGroupsBytes = package.ReadAssetData(mapDocInfo.symbolGroupsAssetId);
+            auto symbolGroupsInfo = sgc::asset::AssetDeserializer<file::SymbolGroupsInfo>::Deserialize(
+                symbolGroupsBytes
+            );
+
+            AddMapDocument(
+                sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
+                    mapDocInfo,
+                    *m_assetManager.GetAsset<sgc::asset::MapAsset>(mapDocInfo.mapAssetId),
+                    symbolGroupsInfo
+            ));
+        }
+        else
+        {
+            AddMapDocument(
+                sgc::asset::RuntimeBuilder<file::MapDocument>::Build(
+                    mapDocInfo,
+                    *m_assetManager.GetAsset<sgc::asset::MapAsset>(mapDocInfo.mapAssetId)
+            ));
+        }      
     }
 
     for(const auto& tilesetDocInfo : tilesetDocumentInfos) 
@@ -174,6 +201,13 @@ void file::PackageFile::Save()
             sgc::data::AssetType::External,
             sgc::asset::AssetSerializer<file::MapDocumentInfo>::Serialize(
                 sgc::asset::AssetBuilder<file::MapDocumentInfo, file::MapDocument>::Build(*mapDoc)
+        ));
+           
+        packageBuilder.AddAsset(
+            mapDoc->GetSymbolGroupsAssetId(),
+            sgc::data::AssetType::External,
+            sgc::asset::AssetSerializer<file::SymbolGroupsInfo>::Serialize(
+                sgc::asset::AssetBuilder<file::SymbolGroupsInfo, file::MapDocument>::Build(*mapDoc)
         ));
     }
 

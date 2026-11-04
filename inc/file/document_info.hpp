@@ -18,7 +18,7 @@ namespace file {
         const EditorDataType type = EditorDataType::Map;
         std::wstring name;
         sgc::data::AssetId mapAssetId;
-        sgc::data::AssetId symbolGroupsAssetId;
+        sgc::data::AssetId symbolGroupsAssetId = 0;
     };
 
     struct TilesetDocumentInfo

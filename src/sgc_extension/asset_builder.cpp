@@ -32,7 +32,8 @@ file::MapDocumentInfo sgc::asset::AssetBuilder<file::MapDocumentInfo, file::MapD
     file::MapDocumentInfo documentInfo = {
         file::EditorDataType::Map,
         document.GetName(),
-        document.GetMapAssetId()
+        document.GetMapAssetId(),
+        document.GetSymbolGroupsAssetId()
     };
 
     return documentInfo;
