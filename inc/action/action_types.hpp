@@ -47,7 +47,7 @@ namespace action {
 
         EnableSymbolDrawing,
         EnableAutomaticSymbolCycling,
-        SymbolConfiguration,        
+        SymbolConfiguration,
 
         MenuMap = 3001,
         AddLayer,
