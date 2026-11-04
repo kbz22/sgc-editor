@@ -28,7 +28,7 @@ std::vector<sgc::tile::TilePosition2D> program::TileSymbolGroup::GetPositions() 
     return m_tileSymbols;
 }
 
-std::vector<sgc::tile::TileId> program::TileSymbolGroup::PeekSymbol(const SgcTileset &sgcTileset) const
+/* std::vector<sgc::tile::TileId> program::TileSymbolGroup::PeekSymbol(const SgcTileset &sgcTileset) const
 {
     if(m_currentSymbolIndex >= m_tileSymbols.size())
         return {};
@@ -50,6 +50,21 @@ std::vector<sgc::tile::TileId> program::TileSymbolGroup::PeekSymbol(const SgcTil
 }
 
 std::vector<sgc::tile::TileId> program::TileSymbolGroup::NextSymbol(const SgcTileset &sgcTileset)
+{
+    auto returnValue = PeekSymbol(sgcTileset);
+    m_currentSymbolIndex = (m_currentSymbolIndex + 1) % m_tileSymbols.size();
+    return returnValue;
+} */
+
+std::optional<sgc::tile::TilePosition2D> program::TileSymbolGroup::PeekSymbol(const SgcTileset &sgcTileset) const
+{
+    if(m_currentSymbolIndex >= m_tileSymbols.size())
+        return std::nullopt;
+
+    return m_tileSymbols[m_currentSymbolIndex];
+}
+
+std::optional<sgc::tile::TilePosition2D> program::TileSymbolGroup::NextSymbol(const SgcTileset &sgcTileset)
 {
     auto returnValue = PeekSymbol(sgcTileset);
     m_currentSymbolIndex = (m_currentSymbolIndex + 1) % m_tileSymbols.size();

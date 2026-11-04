@@ -3,6 +3,7 @@
 #include "program/sgc_tileset.hpp"
 #include <sgc/tile/tile.hpp>
 #include <vector>
+#include <optional>
 
 namespace program
 {
@@ -23,8 +24,10 @@ namespace program
             sgc::tile::TileSize2D GetSize() const;
             std::vector<sgc::tile::TilePosition2D> GetPositions() const;
 
-            std::vector<sgc::tile::TileId> PeekSymbol(const SgcTileset &sgcTileset) const;
-            std::vector<sgc::tile::TileId> NextSymbol(const SgcTileset &sgcTileset);
+            // std::vector<sgc::tile::TileId> PeekSymbol(const SgcTileset &sgcTileset) const;
+            // std::vector<sgc::tile::TileId> NextSymbol(const SgcTileset &sgcTileset);
+            std::optional<sgc::tile::TilePosition2D> PeekSymbol(const SgcTileset &sgcTileset) const;
+            std::optional<sgc::tile::TilePosition2D> NextSymbol(const SgcTileset &sgcTileset);
 
     };
 }
