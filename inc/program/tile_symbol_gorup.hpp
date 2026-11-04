@@ -12,11 +12,9 @@ namespace program
         private:
             std::vector<sgc::tile::TilePosition2D> m_tileSymbols{};
             sgc::tile::TileSize2D m_symbolSize = {0,0};
-            size_t m_currentSymbolIndex;
+            size_t m_currentSymbolIndex = 0;
 
         public:
-            TileSymbolGroup();
-
             void SetSize(sgc::tile::TileSize2D symbolSize);
             void AddSymbol(sgc::tile::TilePosition2D positionOnTileset);
             void ClearSymbols();
@@ -24,8 +22,6 @@ namespace program
             sgc::tile::TileSize2D GetSize() const;
             std::vector<sgc::tile::TilePosition2D> GetPositions() const;
 
-            // std::vector<sgc::tile::TileId> PeekSymbol(const SgcTileset &sgcTileset) const;
-            // std::vector<sgc::tile::TileId> NextSymbol(const SgcTileset &sgcTileset);
             std::optional<sgc::tile::TilePosition2D> PeekSymbol(const SgcTileset &sgcTileset) const;
             std::optional<sgc::tile::TilePosition2D> NextSymbol(const SgcTileset &sgcTileset);
 
