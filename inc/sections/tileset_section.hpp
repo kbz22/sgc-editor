@@ -1,15 +1,14 @@
 #pragma once
 
-#include <filesystem>
 #include <memory>
 #include <windows.h>
 #include <sgc/math/vector.hpp>
 #include <sgc/tile/tile.hpp>
-#include <sgc/graphics/rendercontext.hpp>
 #include <optional>
 
 #include "sections/section.hpp"
 #include "sgc_view/tileset_view.hpp"
+#include "program/tile_symbol_manager.hpp"
 
 namespace program {
     class ProgramContext;
@@ -24,6 +23,10 @@ namespace sections {
 
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
             bool m_selectionActive = false;
+            bool m_symbolDrawingEnabled = false;
+            bool m_symbolCycleThroughEnabled = false;
+            program::TileSymbolManager* m_tileSymbolManager;
+
             sgc::math::vec2 m_selectionTileStart = { 0, 0 };
             sgc::math::vec2 m_selectionTileSize = { 0, 0 };
 
@@ -38,8 +41,14 @@ namespace sections {
 
             void ResetCursorSize();
             void SetCursorTileId(sgc::tile::TileId tileId);
+            void EnableSymbolDrawing(bool enable = true);
+            void EnableSymbolCycleThrough(bool enable = true);
+            void NextSymbolGroup();
+            void NextSymbol();
 
             bool IsReady() const;
+            bool IsDrawingWithSymbols() const;
+            bool IsSymbolCycleThroughEnabled() const;
 
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;

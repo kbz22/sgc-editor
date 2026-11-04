@@ -6,9 +6,16 @@
 
 sections::TilesetSection::TilesetSection(program::ProgramContext& programContext) :
     Section{L"TilesetView", win32_program::ControlId::TilesetView, programContext.GetMainWindowHandle(), programContext.GetHInstance()},
-    m_tilesetView{std::make_unique<sgc_view::TilesetView>(GetHwnd())}
+    m_tilesetView{std::make_unique<sgc_view::TilesetView>(
+        GetHwnd(),
+        m_symbolDrawingEnabled,
+        nullptr
+    )},
+    m_tileSymbolManager{m_tilesetView->m_symbolManager}
 {
-    AttachView(*m_tilesetView);    
+    AttachView(*m_tilesetView);
+    m_tilesetView->SetSymbolColor({251,192,27,255});
+    m_tilesetView->SetSymbolCursorColor({251,224,147,255});
 }
 
 void sections::TilesetSection::UpdateStatusBar(sgc::math::vec2 position, std::optional<sgc::tile::TileId> tileId, sgc::math::vec2 size)
@@ -62,9 +69,20 @@ void sections::TilesetSection::HandleSectionResize()
 }
 
 void sections::TilesetSection::Refresh(program::ProgramContext& programContext)
-{
+{    
     if (m_tilesetView != nullptr) {
         m_tilesetView->Refresh(programContext);
+    }
+
+    auto selectedDocument = programContext.GetManager<file::FileManager>()->GetActiveDocument();
+
+    if(selectedDocument != nullptr)
+    {
+        m_tileSymbolManager = selectedDocument->GetSymbolManager();
+    }
+    else
+    {
+        m_tileSymbolManager = nullptr;
     }
 }
 
@@ -265,8 +283,18 @@ sgc::graphics::PixelSize2D sections::TilesetSection::GetCursorSizeInPixels() con
     return m_tilesetView->GetCursorSizeInPixels();
 }
 
-sgc::tile::TileSize2D sections::TilesetSection::GetCursorPositionInTiles() const
+sgc::tile::TilePosition2D sections::TilesetSection::GetCursorPositionInTiles() const
 {
+    if(m_symbolDrawingEnabled)
+    {
+        auto symbolPosition = m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
+
+        if(symbolPosition.has_value())
+        {
+            return symbolPosition.value();
+        }
+    }
+
     auto selectionPosition = m_tilesetView->GetCursorPositionInPixels();
     auto tileSize = m_tilesetView->GetTileSize();
 
@@ -278,6 +306,12 @@ sgc::tile::TileSize2D sections::TilesetSection::GetCursorPositionInTiles() const
 
 sgc::tile::TileSize2D sections::TilesetSection::GetCursorSizeInTiles() const
 {
+    if(m_symbolDrawingEnabled)
+    {
+        auto symbolSize = m_tileSymbolManager->PeekSymbolGroup()->GetSize();
+        return symbolSize;
+    }
+
     auto selectionSize = m_tilesetView->GetCursorSizeInPixels();
     auto tileSize = m_tilesetView->GetTileSize();
 
@@ -300,4 +334,40 @@ sgc::tile::TileId sections::TilesetSection::GetClearTileId() const
 program::SgcTileset& sections::TilesetSection::GetSgcTileset()
 {
     return m_tilesetView->GetSgcTileset();
+}
+
+void sections::TilesetSection::EnableSymbolDrawing(bool enable)
+{
+    m_symbolDrawingEnabled = enable;
+}
+
+void sections::TilesetSection::EnableSymbolCycleThrough(bool enable)
+{
+    m_symbolCycleThroughEnabled = enable;
+}
+
+void sections::TilesetSection::NextSymbolGroup()
+{
+    if(m_tileSymbolManager != nullptr)
+    {
+        m_tileSymbolManager->NextSymbolGroup();
+    }
+}
+
+void sections::TilesetSection::NextSymbol()
+{
+    if(m_tileSymbolManager != nullptr)
+    {
+        m_tileSymbolManager->PeekSymbolGroup()->NextSymbol(m_tilesetView->GetSgcTileset());
+    }
+}
+
+bool sections::TilesetSection::IsDrawingWithSymbols() const
+{
+    return m_symbolDrawingEnabled;
+}
+
+bool sections::TilesetSection::IsSymbolCycleThroughEnabled() const
+{
+    return m_symbolCycleThroughEnabled;
 }

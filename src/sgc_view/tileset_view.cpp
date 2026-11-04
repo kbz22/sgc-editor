@@ -1,19 +1,15 @@
 #include "sgc_view/tileset_view.hpp"
-
-#include <sgc/data/statictilestorage.hpp>
-
-#include <windows.h>
-#include <windowsx.h>
-#include <commctrl.h>
-#include <algorithm>
-#include <stdexcept>
-
-#include "debug.hpp"
 #include "program/program.hpp"
+#include <sgc/data/statictilestorage.hpp>
+#include <windows.h>
 
-sgc_view::TilesetView::TilesetView(HWND hwnd) :
+sgc_view::TilesetView::TilesetView(HWND hwnd, bool &symbolMode, program::TileSymbolManager* symbolManager) :
     SgcView{hwnd},
-    m_cursorTile{nullptr}
+    m_symbolMode{symbolMode},
+    m_symbolManager{symbolManager},
+    m_cursorTile{nullptr},
+    m_symbolTile{std::make_unique<sgc::graphics::Rectangle>(0,0,0,0)},
+    m_symbolCursor{std::make_unique<sgc::graphics::Rectangle>(0,0,0,0)}
 {}
 
 void sgc_view::TilesetView::SetCursorTile(sgc::graphics::PixelPosition2D position, sgc::graphics::PixelSize2D size)
@@ -45,7 +41,45 @@ void sgc_view::TilesetView::Render()
     SgcView::Clear();
     SgcView::DrawAll();
 
-    if(m_cursorTile != nullptr) {
+    if(m_symbolMode && m_symbolManager != nullptr && !m_symbolManager->IsEmpty())
+    {
+        auto group = m_symbolManager->PeekSymbolGroup();
+        auto tileSize = GetTileSize();
+        auto symbolSize = group->GetSize();
+        auto positions = group->GetPositions();
+        auto currentSymbol = group->PeekSymbol(m_sgcTileset).value();
+        
+        m_symbolTile->SetSize({
+            symbolSize.x * tileSize.x,
+            symbolSize.y * tileSize.y
+        });
+
+        for(auto &symbolPosition : positions)
+        {
+            if(symbolPosition == currentSymbol)
+            {
+                m_symbolCursor->SetSize({
+                    symbolSize.x * tileSize.x,
+                    symbolSize.y * tileSize.y
+                });
+                m_symbolCursor->SetPosition({
+                    symbolPosition.x * tileSize.x,
+                    symbolPosition.y * tileSize.y
+                });
+                m_symbolCursor->Draw(m_renderContext);
+            }
+            else
+            {
+                m_symbolTile->SetPosition({
+                    symbolPosition.x * tileSize.x,
+                    symbolPosition.y * tileSize.y
+                });
+                m_symbolTile->Draw(m_renderContext);
+            }            
+        }
+    }
+    else if(m_cursorTile != nullptr) 
+    {
         m_cursorTile->Draw(m_renderContext);
     }
 
@@ -88,7 +122,6 @@ void sgc_view::TilesetView::SetTileset(sgc::data::AssetId tilesetId)
 
 void sgc_view::TilesetView::ResetTileset()
 {
-    // m_tileset.reset();
     m_sgcTileset.Reset();
     m_layer.reset();
     m_drawableImage.reset();
@@ -117,7 +150,7 @@ void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
         return;
     }
 
-    auto tileSize = GetTileSize();
+    auto tileSize = GetTileSize();    
 
     if(m_cursorTile == nullptr) {
         SetCursorTile({
@@ -128,11 +161,23 @@ void sgc_view::TilesetView::Refresh(program::ProgramContext& programContext)
             static_cast<sgc::math::ival>(tileSize.y)
         });
     }
+
+    m_symbolManager = selectedDocument->GetSymbolManager();
 }
 
 void sgc_view::TilesetView::SetCursorColor(sgc::graphics::color color)
 {
     m_cursorColor = color;
+}
+
+void sgc_view::TilesetView::SetSymbolColor(sgc::graphics::color color)
+{
+    m_symbolTile->SetColor(color);
+}
+
+void sgc_view::TilesetView::SetSymbolCursorColor(sgc::graphics::color color)
+{
+    m_symbolCursor->SetColor(color);
 }
 
 void sgc_view::TilesetView::SetCursorPositionInPixels(sgc::graphics::PixelPosition2D position)
