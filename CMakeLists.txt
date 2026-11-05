@@ -172,6 +172,7 @@ add_executable(sgc-editor WIN32
     src/action/symbol_configure_action.cpp
     src/action/symbol_drawing_enable_action.cpp
     src/action/symbol_auto_cycle_action.cpp
+    src/action/symbol_change_action.cpp
 
     src/file/map_file.cpp
     src/file/map_document.cpp

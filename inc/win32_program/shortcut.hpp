@@ -30,6 +30,7 @@ namespace win32_program {
         ArrowDown = VK_DOWN,
         ArrowLeft = VK_LEFT,
         ArrowRight = VK_RIGHT,
+        Tab = VK_TAB,
     };
 
     enum class ShortcutContext : uint32_t
