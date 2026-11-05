@@ -54,6 +54,11 @@ editor_tools::EditorToolManager::EditorToolManager(sgc_view::MapView &mapView, s
         4
     }
 {
+    m_symbolToolsProperties[&m_paintBrush] = {SymbolToolProperties::OnCommit};
+    m_symbolToolsProperties[&m_rectangularBrush] = {SymbolToolProperties::OnCommit};
+    m_symbolToolsProperties[&m_fillTool] = {SymbolToolProperties::OnCommit};
+    m_symbolToolsProperties[&m_scatterBrush] = {SymbolToolProperties::OnPaint};
+
     SetActiveTool();
 }
 
@@ -144,6 +149,12 @@ void editor_tools::EditorToolManager::Execute(file::MapDocument& mapDocument, sg
     
     m_clearTile = m_tilesetSection.GetClearTileId();
     m_activeTool->Execute(mapDocument, cursorPosition);
+
+    if(m_symbolCycleThrough && m_symbolToolsProperties.contains(m_activeTool) && m_symbolToolsProperties[m_activeTool].updateType == SymbolToolProperties::OnPaint)
+    {
+        m_tilesetSection.NextSymbol();
+        m_needsRedraw = true;
+    }
 }
 
 void editor_tools::EditorToolManager::Commit(file::MapDocument &mapDocument)
@@ -153,7 +164,13 @@ void editor_tools::EditorToolManager::Commit(file::MapDocument &mapDocument)
 
     m_lastPosition.reset();
 
-    m_activeTool->Commit(mapDocument);    
+    m_activeTool->Commit(mapDocument);
+
+    if(m_symbolCycleThrough && m_symbolToolsProperties.contains(m_activeTool) && m_symbolToolsProperties[m_activeTool].updateType == SymbolToolProperties::OnCommit)
+    {
+        m_tilesetSection.NextSymbol();
+        m_needsRedraw = true;
+    }
 }
 
 void editor_tools::EditorToolManager::SetActiveTool()
@@ -231,4 +248,14 @@ void editor_tools::EditorToolManager::SetModeDelay(PaintMode paintMode, std::chr
         default:
             return;
     }
+}
+
+void editor_tools::EditorToolManager::SetSymbolCycleThrough(bool value)
+{
+    m_symbolCycleThrough = value;
+}
+
+bool editor_tools::EditorToolManager::IsSymbolCycleThroughEnabled() const
+{
+    return m_symbolCycleThrough;
 }

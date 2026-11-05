@@ -20,10 +20,11 @@ action::SymbolAutoCycleAction::SymbolAutoCycleAction()
 void action::SymbolAutoCycleAction::Execute(program::ProgramContext& context)
 {
     auto tilesetSection = context.GetSection<sections::TilesetSection>();
+    auto mapSection =   context.GetSection<sections::MapSection>();
     auto toolbarSection = context.GetSection<sections::ToolbarSection>();
-    bool newState = !tilesetSection->IsSymbolCycleThroughEnabled();
+    bool newState = !mapSection->GetSymbolCycleThrough();
 
-    tilesetSection->EnableSymbolCycleThrough(newState);
+    mapSection->SetSymbolCycleThrough(newState);
     SetChecked(newState);
 
     tilesetSection->Update();

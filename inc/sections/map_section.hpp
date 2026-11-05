@@ -80,11 +80,10 @@ namespace sections
             void SetPaintMode(editor_tools::PaintMode paintMode);
             void SetSelectionMode(editor_tools::SelectionMode selectionMode);
             void SetSelectionMoveMode(bool canMoveSelection);
+            void SetSymbolCycleThrough(bool symbolCycleThrough);
 
             void SetSelectionPositionInTiles(sgc::tile::TilePosition2D position);
             void SetSelectionSizeInTiles(sgc::tile::TileSize2D size);
-
-            // void SetPointerBehaviour(PointerMapKey pointerKey, PointerBehaviour behaviour);
 
             void SetSelectionMovedImage(program::SelectionMovedStorage &storageLayers);
             void UpdateSelectionMovedPosition(sgc::tile::TilePosition2D positionOnMap);
@@ -96,6 +95,7 @@ namespace sections
             float GetZoom() const;
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;
             bool GetSelectionMoveMode() const;
+            bool GetSymbolCycleThrough() const;
             
             sgc::tile::TilePosition2D GetSelectionRectanglePositionTiles() const;
             sgc::tile::TileSize2D GetSelectionRectangleSizeTiles() const;

@@ -23,12 +23,22 @@ namespace sections {
 
 namespace editor_tools {
 
+    struct SymbolToolProperties
+    {
+        enum {
+            OnCommit,
+            OnPaint,
+        } updateType;        
+    };
+
     class EditorToolManager
     {
         private:
             PaintMode m_paintMode{PaintMode::Brush};
             SelectionMode m_selectionMode{SelectionMode::SingleLayer};
             bool m_allowChunkCreation = false;
+            bool m_symbolCycleThrough = false;
+            std::unordered_map<IEditorTool*, SymbolToolProperties> m_symbolToolsProperties{};
             sgc::tile::TileId m_clearTile = 0;
             bool m_needsRedraw = false;
             std::unique_ptr<sgc::tile::TilePosition2D> m_lastPosition{nullptr};
@@ -57,11 +67,13 @@ namespace editor_tools {
             SelectionMode GetSelectionMode() const;
             bool NeedsRedraw() const;
             bool NeedsUpdatesPeriodically() const;
+            bool IsSymbolCycleThroughEnabled() const;
 
             void SetPaintMode(PaintMode paintMode);
             void SetModeDelay(PaintMode paintMode, std::chrono::milliseconds interval);
             void SetSelectionMode(SelectionMode selectionMode);
             void SetAllowChunkCreation(bool check);
+            void SetSymbolCycleThrough(bool value = true);
 
             void Execute(file::MapDocument& mapDocument, sgc::tile::TilePosition2D cursorPosition);
             void Commit(file::MapDocument& mapDocument);

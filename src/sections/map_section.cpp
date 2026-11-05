@@ -807,9 +807,9 @@ void sections::MapSection::PointerDown(Pointer pointer, sgc::graphics::PixelPosi
         bool shouldUpdate = UpdateOnCursorDown(pointer);
         PointerUpdate(pointer, position, programContext);
 
-        if(m_editorToolManager.NeedsRedraw() || shouldUpdate) {
-            Update();
-            programContext.GetSection<sections::TilesetSection>()->Update(); //! I think I need to handle this differently.
+        if(m_editorToolManager.NeedsRedraw() || shouldUpdate) 
+        {
+            Update();            
         }
     }
 }
@@ -875,4 +875,14 @@ void sections::MapSection::UpdateSelectionMovedPosition(sgc::tile::TilePosition2
         positionOnMap.x * tileSize.x,
         positionOnMap.y * tileSize.y
     });
+}
+
+void sections::MapSection::SetSymbolCycleThrough(bool symbolCycleThrough)
+{
+    m_editorToolManager.SetSymbolCycleThrough(symbolCycleThrough);
+}
+
+bool sections::MapSection::GetSymbolCycleThrough() const
+{
+    return m_editorToolManager.IsSymbolCycleThroughEnabled();
 }

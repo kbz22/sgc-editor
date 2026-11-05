@@ -23,8 +23,7 @@ namespace sections {
 
             LRESULT HandleMessages(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
             bool m_selectionActive = false;
-            bool m_symbolDrawingEnabled = false;
-            bool m_symbolCycleThroughEnabled = false;
+            bool m_symbolDrawingEnabled = false;            
             program::TileSymbolManager* m_tileSymbolManager;
 
             sgc::math::vec2 m_selectionTileStart = { 0, 0 };
@@ -41,14 +40,12 @@ namespace sections {
 
             void ResetCursorSize();
             void SetCursorTileId(sgc::tile::TileId tileId);
-            void EnableSymbolDrawing(bool enable = true);
-            void EnableSymbolCycleThrough(bool enable = true);
+            void EnableSymbolDrawing(bool enable = true);            
             void NextSymbolGroup();
             void NextSymbol();
 
             bool IsReady() const;
-            bool IsDrawingWithSymbols() const;
-            bool IsSymbolCycleThroughEnabled() const;
+            bool IsDrawingWithSymbols() const;            
 
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;
             sgc::graphics::PixelSize2D GetCursorSizeInPixels() const;

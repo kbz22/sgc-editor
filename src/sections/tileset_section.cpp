@@ -287,9 +287,10 @@ sgc::tile::TilePosition2D sections::TilesetSection::GetCursorPositionInTiles() c
 {
     if(m_symbolDrawingEnabled)
     {
-        auto symbolPosition = m_symbolCycleThroughEnabled ?
-            m_tileSymbolManager->PeekSymbolGroup()->NextSymbol(m_tilesetView->GetSgcTileset()) :
-            m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
+        // auto symbolPosition = m_symbolCycleThroughEnabled ?
+        //     m_tileSymbolManager->PeekSymbolGroup()->NextSymbol(m_tilesetView->GetSgcTileset()) :
+        //     m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
+        auto symbolPosition = m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
 
         if(symbolPosition.has_value())
         {
@@ -343,11 +344,6 @@ void sections::TilesetSection::EnableSymbolDrawing(bool enable)
     m_symbolDrawingEnabled = enable;
 }
 
-void sections::TilesetSection::EnableSymbolCycleThrough(bool enable)
-{
-    m_symbolCycleThroughEnabled = enable;
-}
-
 void sections::TilesetSection::NextSymbolGroup()
 {
     if(m_tileSymbolManager != nullptr)
@@ -367,9 +363,4 @@ void sections::TilesetSection::NextSymbol()
 bool sections::TilesetSection::IsDrawingWithSymbols() const
 {
     return m_symbolDrawingEnabled;
-}
-
-bool sections::TilesetSection::IsSymbolCycleThroughEnabled() const
-{
-    return m_symbolCycleThroughEnabled;
 }
