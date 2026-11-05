@@ -67,8 +67,7 @@ void editor_tools::ScatterBrush::Execute(file::MapDocument& mapDocument, sgc::ti
     sgc::tile::TilePosition2D candidate = cursorPosition + m_candidateOffsets[candidateIndex(g_rng)];
 
     auto positionOnTileset = m_tilesetSection.GetCursorPositionInTiles();
-    auto cursorSize = m_tilesetSection.GetCursorSizeInTiles();
-    auto tileSize = m_mapView.GetTileSize();
+    auto cursorSize = m_tilesetSection.GetCursorSizeInTiles();    
 
     auto endPosition = sgc::tile::TilePosition2D{
         cursorSize.x - 1,
@@ -83,7 +82,7 @@ void editor_tools::ScatterBrush::Execute(file::MapDocument& mapDocument, sgc::ti
 
             auto checkTile = currentLayer->GetTileAt(currentPosition);
 
-            if(m_paintCommand->Contains(currentPosition) || checkTile != m_clearTileId || !checkTile.has_value())
+            if(m_paintCommand->Contains(currentPosition) || (!checkTile.has_value() && !m_allowChunkCreation))
             {
                 tileChanges.clear();
                 return;
