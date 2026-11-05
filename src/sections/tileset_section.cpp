@@ -275,11 +275,33 @@ void sections::TilesetSection::SetCursorTileId(sgc::tile::TileId tileId)
 
 sgc::graphics::PixelPosition2D sections::TilesetSection::GetCursorPositionInPixels() const
 {
+    if(m_symbolDrawingEnabled)
+    {
+        auto symbolPosition = GetCursorPositionInTiles();
+        auto tileSize = m_tilesetView->GetTileSize();
+
+        return {
+            symbolPosition.x * tileSize.x,
+            symbolPosition.y * tileSize.y,
+        };
+    }
+    
     return m_tilesetView->GetCursorPositionInPixels();
 }
 
 sgc::graphics::PixelSize2D sections::TilesetSection::GetCursorSizeInPixels() const
-{   
+{
+    if(m_symbolDrawingEnabled)
+    {
+        auto symbolSize = GetCursorSizeInTiles();
+        auto tileSize = m_tilesetView->GetTileSize();
+
+        return {
+            symbolSize.x * tileSize.x,
+            symbolSize.y * tileSize.y,
+        };
+    }
+    
     return m_tilesetView->GetCursorSizeInPixels();
 }
 
@@ -287,9 +309,6 @@ sgc::tile::TilePosition2D sections::TilesetSection::GetCursorPositionInTiles() c
 {
     if(m_symbolDrawingEnabled)
     {
-        // auto symbolPosition = m_symbolCycleThroughEnabled ?
-        //     m_tileSymbolManager->PeekSymbolGroup()->NextSymbol(m_tilesetView->GetSgcTileset()) :
-        //     m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
         auto symbolPosition = m_tileSymbolManager->PeekSymbolGroup()->PeekSymbol(m_tilesetView->GetSgcTileset());
 
         if(symbolPosition.has_value())
