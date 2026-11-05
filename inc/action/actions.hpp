@@ -42,3 +42,4 @@
 #include "action/symbol_drawing_enable_action.hpp"
 #include "action/symbol_auto_cycle_action.hpp"
 #include "action/symbol_change_action.hpp"
+#include "action/symbol_change_group_action.hpp"

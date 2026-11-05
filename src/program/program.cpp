@@ -414,6 +414,7 @@ void program::ProgramContext::RegisterActions()
     m_actionManager->Register(std::make_unique<action::SymbolDrawingEnableAction>());
     m_actionManager->Register(std::make_unique<action::SymbolAutoCycleAction>());
     m_actionManager->Register(std::make_unique<action::SymbolChangeAction>());
+    m_actionManager->Register(std::make_unique<action::SymbolChangeGroupAction>());
 
     reinterpret_cast<action::NewDocumentAction*>(newDocAction)->SetItems({
         newMapAction,
