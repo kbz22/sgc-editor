@@ -144,20 +144,6 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
         return DefSubclassProc(hwnd, msg, wparam, lparam);
     }
 
-    auto SetCaptureHelper = [this](HWND hwnd, Pointer pointer) {
-        if (!m_isCaptured.IsLocked()) {
-            SetCapture(hwnd);
-            m_isCaptured.Acquire(pointer);
-        }
-    };
-
-    auto ReleaseCaptureHelper = [this](Pointer pointer) {
-        if (m_isCaptured.IsLockedBy(pointer)) {
-            ReleaseCapture();
-            m_isCaptured.Release(pointer);
-        }
-    };
-
     switch (msg)
     {
         case WM_POINTERUPDATE:
@@ -371,23 +357,13 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     if(!m_isPainting.IsLocked())
                         return TRUE;
 
-                    /* if(IsMouse(m_isPainting.GetPointerType()))
-                    {
-                        if (!GetCursorPos(&pos))
-                            return {};
+                    POINTER_INFO info{};
 
-                        ScreenToClient(hwnd, &pos);                        
-                    }
-                    else */
-                    {
-                        POINTER_INFO info{};
+                    if (!GetPointerInfo(m_isPainting.GetPointerId(), &info))
+                        return {};
 
-                        if (!GetPointerInfo(m_isPainting.GetPointerId(), &info))
-                            return {};
-
-                        pos = info.ptPixelLocation;
-                        ScreenToClient(hwnd, &pos);
-                    }
+                    pos = info.ptPixelLocation;
+                    ScreenToClient(hwnd, &pos);
 
                     if(m_editorToolManager.NeedsUpdatesPeriodically() && m_isPainting.IsLocked() && GetCursorPos(&pos) && ScreenToClient(hwnd, &pos))
                     {
@@ -833,6 +809,7 @@ void sections::MapSection::PointerDown(Pointer pointer, sgc::graphics::PixelPosi
 
         if(m_editorToolManager.NeedsRedraw() || shouldUpdate) {
             Update();
+            programContext.GetSection<sections::TilesetSection>()->Update(); //! I think I need to handle this differently.
         }
     }
 }
