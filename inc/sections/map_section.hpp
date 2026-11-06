@@ -40,7 +40,8 @@ namespace sections
             std::chrono::steady_clock::time_point m_lastUpdateTime = std::chrono::steady_clock::now();
             program::PointerManager &m_pointerManager;
             
-            editor_tools::EditorToolManager m_editorToolManager;
+            // editor_tools::EditorToolManager m_editorToolManager;
+            std::unique_ptr<editor_tools::EditorToolManager> m_editorToolManager;
 
             bool UpdateCursorPosition(sgc::graphics::PixelPosition2D pointerPosition, program::ProgramContext& programContext);
             bool UpdateSelectionMove(Pointer pointer, file::MapDocument *mapDocument, sgc::graphics::PixelPosition2D pointerPosition);
@@ -96,6 +97,7 @@ namespace sections
             sgc::math::fvec2 GetScreenCenterWorldPosition() const;
             bool GetSelectionMoveMode() const;
             bool GetSymbolCycleThrough() const;
+            editor_tools::EditorToolManager* GetEditorToolManager() const;
             
             sgc::tile::TilePosition2D GetSelectionRectanglePositionTiles() const;
             sgc::tile::TileSize2D GetSelectionRectangleSizeTiles() const;

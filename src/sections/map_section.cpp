@@ -26,11 +26,11 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
     m_mapView{
         std::make_unique<sgc_view::MapView>(GetHwnd())
     },
-    m_editorToolManager{
+    m_editorToolManager{std::make_unique<editor_tools::EditorToolManager>(
         *m_mapView,
         *this,
         *programContext.GetSection<sections::TilesetSection>()
-    },
+    )},
     m_pointerManager{
         *programContext.GetManager<program::PointerManager>()
     }
@@ -88,7 +88,7 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
         nullptr
     );
 
-    m_editorToolManager.SetModeDelay(
+    m_editorToolManager->SetModeDelay(
         editor_tools::PaintMode::Scatter,
         m_editorToolsUpdateInterval
     );    
@@ -342,7 +342,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
             {
                 case gc_SelectionRectangleTimerId:
                 {
-                    if(m_editorToolManager.GetPaintMode() == editor_tools::PaintMode::Select)
+                    if(m_editorToolManager->GetPaintMode() == editor_tools::PaintMode::Select)
                     {
                         m_mapView->UpdateSelectionOffset();
                         Update();
@@ -365,10 +365,10 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
                     pos = info.ptPixelLocation;
                     ScreenToClient(hwnd, &pos);
 
-                    if(m_editorToolManager.NeedsUpdatesPeriodically() && m_isPainting.IsLocked() && GetCursorPos(&pos) && ScreenToClient(hwnd, &pos))
+                    if(m_editorToolManager->NeedsUpdatesPeriodically() && m_isPainting.IsLocked() && GetCursorPos(&pos) && ScreenToClient(hwnd, &pos))
                     {
                         auto tileSize = m_mapView->GetTileSize();                        
-                        m_editorToolManager.Execute(
+                        m_editorToolManager->Execute(
                             *mapDocument,
                             sgc::tile::TilePosition2D{
                                 pos.x / tileSize.x,
@@ -391,7 +391,7 @@ LRESULT sections::MapSection::HandleMessages(HWND hwnd, UINT msg, WPARAM wparam,
 
 void sections::MapSection::SetAllowChunkCreation(bool check)
 {
-    m_editorToolManager.SetAllowChunkCreation(check);
+    m_editorToolManager->SetAllowChunkCreation(check);
 }
 
 void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
@@ -407,24 +407,24 @@ void sections::MapSection::SetPaintMode(editor_tools::PaintMode paintMode)
             break;
     }
 
-    m_editorToolManager.SetPaintMode(paintMode);
+    m_editorToolManager->SetPaintMode(paintMode);
 
     Update();
 }
 
 void sections::MapSection::SetSelectionMode(editor_tools::SelectionMode selectionMode)
 {
-    m_editorToolManager.SetSelectionMode(selectionMode);
+    m_editorToolManager->SetSelectionMode(selectionMode);
 }
 
 editor_tools::PaintMode sections::MapSection::GetPaintMode() const
 {
-    return m_editorToolManager.GetPaintMode();
+    return m_editorToolManager->GetPaintMode();
 }
 
 editor_tools::SelectionMode sections::MapSection::GetSelectionMode() const
 {
-    return m_editorToolManager.GetSelectionMode();
+    return m_editorToolManager->GetSelectionMode();
 }
 
 void sections::MapSection::SetSelectionMoveMode(bool canMoveSelection)
@@ -595,7 +595,7 @@ bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D p
         // auto selection = programContext.GetSection<sections::TilesetSection>()->GetCursorSizeInPixels().value_or(sgc::graphics::PixelSize2D{tileSize.x, tileSize.y});
         auto selection = programContext.GetSection<sections::TilesetSection>()->GetCursorSizeInPixels();
 
-        switch(m_editorToolManager.GetPaintMode())
+        switch(m_editorToolManager->GetPaintMode())
         {
             case editor_tools::PaintMode::Rectangle:
             case editor_tools::PaintMode::ChunkRemover:
@@ -648,7 +648,7 @@ bool sections::MapSection::UpdateSelectionMove(Pointer pointer, file::MapDocumen
             std::floor(worldPosition.y / tileSize.y)
         );
 
-        m_editorToolManager.Execute(*mapDocument, {x_tile, y_tile});
+        m_editorToolManager->Execute(*mapDocument, {x_tile, y_tile});
         return true;
     }
     
@@ -673,7 +673,7 @@ bool sections::MapSection::UpdateDragDrawing(Pointer pointer, program::ProgramCo
     auto cursorPositionOnMap = m_mapView->GetCursorPositionInTiles();
 
     if(m_isPainting.IsLockedBy(pointer)) {
-        m_editorToolManager.Execute(*mapDocument, cursorPositionOnMap);
+        m_editorToolManager->Execute(*mapDocument, cursorPositionOnMap);
 
         return true;
     }
@@ -694,11 +694,11 @@ bool sections::MapSection::UpdateOnCursorDown(Pointer pointer)
             cursorPositionOnMap.y >= selectionPos.y && cursorPositionOnMap.y <= selectionPos.y + selectionSize.y)
         {                    
             m_isMovingSelection.Acquire(pointer);            
-            m_editorToolManager.SetPaintMode(editor_tools::PaintMode::MoveSelection);
+            m_editorToolManager->SetPaintMode(editor_tools::PaintMode::MoveSelection);
         }
         else
         {
-            m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);            
+            m_editorToolManager->SetPaintMode(editor_tools::PaintMode::Select);            
         }
 
         m_isPainting.Acquire(pointer);
@@ -710,7 +710,7 @@ bool sections::MapSection::UpdateOnCursorDown(Pointer pointer)
         m_isPainting.Acquire(pointer);
     }
 
-    if(m_editorToolManager.NeedsRedraw()) {
+    if(m_editorToolManager->NeedsRedraw()) {
         return true;
     }
     
@@ -723,13 +723,13 @@ bool sections::MapSection::UpdateOnCursorUp(Pointer pointer, file::MapDocument *
 
     if(m_isPainting.Release(pointer)) 
     {
-        m_editorToolManager.Commit(*mapDocument);
+        m_editorToolManager->Commit(*mapDocument);
         returnFlag = true;
     }
 
     if(m_isMovingSelection.Release(pointer)) 
     {        
-        m_editorToolManager.SetPaintMode(editor_tools::PaintMode::Select);        
+        m_editorToolManager->SetPaintMode(editor_tools::PaintMode::Select);        
         returnFlag = true;
     }
     
@@ -807,7 +807,7 @@ void sections::MapSection::PointerDown(Pointer pointer, sgc::graphics::PixelPosi
         bool shouldUpdate = UpdateOnCursorDown(pointer);
         PointerUpdate(pointer, position, programContext);
 
-        if(m_editorToolManager.NeedsRedraw() || shouldUpdate) 
+        if(m_editorToolManager->NeedsRedraw() || shouldUpdate) 
         {
             Update();            
         }
@@ -879,10 +879,15 @@ void sections::MapSection::UpdateSelectionMovedPosition(sgc::tile::TilePosition2
 
 void sections::MapSection::SetSymbolCycleThrough(bool symbolCycleThrough)
 {
-    m_editorToolManager.SetSymbolCycleThrough(symbolCycleThrough);
+    m_editorToolManager->SetSymbolCycleThrough(symbolCycleThrough);
 }
 
 bool sections::MapSection::GetSymbolCycleThrough() const
 {
-    return m_editorToolManager.IsSymbolCycleThroughEnabled();
+    return m_editorToolManager->IsSymbolCycleThroughEnabled();
+}
+
+editor_tools::EditorToolManager* sections::MapSection::GetEditorToolManager() const
+{
+    return m_editorToolManager.get();
 }
