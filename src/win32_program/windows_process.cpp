@@ -23,14 +23,13 @@ win32_program::LayoutManager& GetLayoutManager()
     return layoutManager;
 }
 
-void HandleResize(HWND hwnd, LPARAM lParam)
+void HandleResize(HWND hwnd)
 {
     auto& layoutManager = GetLayoutManager();
     auto& programContext = program::GetProgramContext();    
 
     layoutManager.HandleResize(
-        hwnd,
-        lParam
+        hwnd
     );
 
     for(auto section : programContext.GetSections()) {
@@ -46,34 +45,6 @@ void UpdateAllSections()
         section->Update();
     }
 }
-
-/* void SetupImageLists()
-{
-    auto& programContext = program::GetProgramContext();
-
-    programContext.toolbarIcons = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
-    programContext.toolbarIconsDisabled = ImageList_Create(24, 24, ILC_COLOR32, 10, 0);
-    programContext.listViewIcons = ImageList_Create(16, 16, ILC_COLOR32, 10, 0);
-
-    auto hInstance = programContext.mainWindowContext->hInstance;
-    auto hBmp = win32_helpers::LoadBitmapFromResource(
-        hInstance,
-        IDB_TOOLBARICONS
-    );
-    auto hBmpDisabled = win32_helpers::LoadBitmapFromResource(
-        hInstance,
-        IDB_TOOLBARICONS_DISABLED
-    );
-    auto hBmpPackageIcons = win32_helpers::LoadBitmapFromResource(
-        hInstance,
-        // IDB_PACKAGEVIEWICONS
-        IDB_LISTVIEWICONS
-    );
-
-    ImageList_Add(programContext.toolbarIcons, hBmp, NULL);
-    ImageList_Add(programContext.toolbarIconsDisabled, hBmpDisabled, NULL);
-    ImageList_Add(programContext.listViewIcons, hBmpPackageIcons, NULL);
-} */
 
 LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {    
@@ -113,7 +84,7 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
     
     case WM_SIZE:
     {    
-        HandleResize(hwnd, lParam);
+        HandleResize(hwnd);
         UpdateAllSections();
         return TRUE;
     }
@@ -207,8 +178,8 @@ LRESULT CALLBACK win32_program::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 
         if (draggedSplitter != DraggedSplitter::None && capturedMouse)
         {
-            layoutManager.HandleDragging(hwnd, lParam);
-            HandleResize(hwnd, lParam);
+            layoutManager.HandleDragging(lParam);
+            HandleResize(hwnd);
             UpdateAllSections();
         }
 

@@ -43,15 +43,15 @@ namespace win32_program {
 
             program::ProgramContext& m_programContext; 
             
-            void UpdateRebarLayout(HWND hwnd, int width);
+            void UpdateRebarLayout(int width);
 
         public:
             LayoutManager(program::ProgramContext& programContext = program::GetProgramContext());
 
             DraggedSplitter GetDraggedSplitter(HWND hwnd, LPARAM lParam);
             void ResetDraggedSplitter();
-            void HandleResize(HWND hwnd, LPARAM lParam);
-            void HandleDragging(HWND hwnd, LPARAM lParam);
+            void HandleResize(HWND hwnd);
+            void HandleDragging(LPARAM lParam);
             SIZE GetMinimumSize() const;            
     };
 

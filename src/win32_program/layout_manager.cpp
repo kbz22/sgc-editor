@@ -55,7 +55,7 @@ win32_program::LayoutManager::LayoutManager(program::ProgramContext& programCont
 // them avoids fighting the rebar's layout logic.
 // chat gpt wrote this for me isn't he nice :)
 
-void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPARAM lParam)
+void win32_program::LayoutManager::HandleResize(HWND hwnd)
 {
     auto defer = [](HDWP dwp, HWND handle, int x, int y, int w, int h){
         return DeferWindowPos(
@@ -79,7 +79,7 @@ void win32_program::LayoutManager::HandleResize(HWND hwnd, [[maybe_unused]] LPAR
     auto hRebarTop = menuSection->GetHwnd();
     auto hRebarBottom = toolbarSection->GetHwnd();  
     
-    UpdateRebarLayout(hwnd, rc.right); // this is important to do before relaying the sections
+    UpdateRebarLayout(rc.right); // this is important to do before relaying the sections
 
     int hTop = m_menuBarHeight;
     int hBottom = m_toolbarHeight;
@@ -153,7 +153,7 @@ void win32_program::LayoutManager::ResetDraggedSplitter()
     m_draggedSplitter = DraggedSplitter::None;
 }
 
-void win32_program::LayoutManager::HandleDragging([[maybe_unused]] HWND hwnd, LPARAM lParam)
+void win32_program::LayoutManager::HandleDragging(LPARAM lParam)
 {
     const int x = GET_X_LPARAM(lParam);
     const int y = GET_Y_LPARAM(lParam);
@@ -206,7 +206,7 @@ void win32_program::LayoutManager::HandleDragging([[maybe_unused]] HWND hwnd, LP
     m_layersMapViewRatio = static_cast<float>(topHeight) / clientHeight;
 }
 
-void win32_program::LayoutManager::UpdateRebarLayout([[maybe_unused]] HWND hwnd, int width)
+void win32_program::LayoutManager::UpdateRebarLayout(int width)
 {
     HDWP hdwp = BeginDeferWindowPos(2);
 
