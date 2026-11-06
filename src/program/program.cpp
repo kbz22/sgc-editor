@@ -146,6 +146,9 @@ void program::ProgramContext::Initialize()
     m_statusSection = std::make_unique<sections::StatusSection>(*this);
     m_sections.push_back(m_statusSection.get());
 
+    m_toolPropertiesSection = std::make_unique<sections::ToolPropertiesSection>(*this);
+    m_sections.push_back(m_toolPropertiesSection.get());
+
     m_layersSection->RegisterSelectedLayerChangeCallback([this](size_t index) {
         auto document = m_fileManager->GetActiveDocument();
         if(document != nullptr) {
@@ -530,6 +533,12 @@ template<>
 sections::StatusSection* program::ProgramContext::GetSection<sections::StatusSection>() const
 {
     return m_statusSection.get();
+}
+
+template<>
+sections::ToolPropertiesSection* program::ProgramContext::GetSection<sections::ToolPropertiesSection>() const
+{
+    return m_toolPropertiesSection.get();
 }
 
 template<>

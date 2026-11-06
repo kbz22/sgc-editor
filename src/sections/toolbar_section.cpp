@@ -4,8 +4,6 @@
 #include "program/program.hpp"
 #include "action/widget_action.hpp"
 #include "win32_models/toolbarbutton.hpp"
-
-#include <windowsx.h>
 #include <commctrl.h>
 
 sections::ToolbarSection::ToolbarSection(program::ProgramContext& programContext)
@@ -198,8 +196,7 @@ HWND sections::ToolbarSection::GetHwndToolbar() const
 }
 
 void sections::ToolbarSection::Refresh(program::ProgramContext& programContext)
-{
-    
+{    
     auto toolbarActions = programContext.GetManager<action::ActionManager>()->GetToolbarActions();
 
     for (const auto& action : toolbarActions)

@@ -93,6 +93,7 @@ add_executable(sgc-editor WIN32
     src/sections/layers_section.cpp
     src/sections/package_section.cpp
     src/sections/status_section.cpp
+    src/sections/tool_properties_section.cpp
 
     src/sgc_view/sgc_view.cpp    
     src/sgc_view/tileset_view.cpp

@@ -10,6 +10,7 @@
 #include "sections/layers_section.hpp"
 #include "sections/package_section.hpp"
 #include "sections/status_section.hpp"
+#include "sections/tool_properties_section.hpp"
 
 #include "locale/string_lookup.hpp"
 
@@ -27,7 +28,7 @@
 
 #include <sgc/graphics/rectangle.hpp>
 #include <commctrl.h>
-#include <string>
+
 
 namespace program {
 
@@ -48,6 +49,7 @@ namespace program {
             std::unique_ptr<sections::LayersSection> m_layersSection;
             std::unique_ptr<sections::PackageSection> m_packageSection;
             std::unique_ptr<sections::StatusSection> m_statusSection;
+            std::unique_ptr<sections::ToolPropertiesSection> m_toolPropertiesSection;
 
             std::vector<sections::Section*> m_sections;
             sections::Section* m_activeSection = nullptr;
