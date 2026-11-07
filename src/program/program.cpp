@@ -93,6 +93,8 @@ std::vector<action::ActionType> g_activeEditorButtons {
     action::ActionType::ChunkRemoverTool,
     action::ActionType::PaintModeScatter,
     action::ActionType::SymbolConfiguration,
+    action::ActionType::EnableAutomaticSymbolCycling,
+    action::ActionType::EnableSymbolDrawing,
 };
 
 void program::ProgramContext::RegisterDefaultSettings()
