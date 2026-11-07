@@ -445,7 +445,7 @@ void file::FileManager::UpdateSessionFile()
 
 void file::FileManager::RestoreLastSession(file::AssetManager *assetManager)
 {
-    m_sessionJson.Load();
+    // m_sessionJson.Load(); // ProgramContext now manages loading the last session
     auto sessionFilesPaths = m_sessionJson.GetSessionPaths();
     auto activeFilePath = m_sessionJson.GetActiveDocumentPath();
     DocumentLocation location = {nullptr, m_sessionJson.GetActiveDocumentIndex()};
