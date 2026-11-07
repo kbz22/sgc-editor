@@ -117,8 +117,9 @@ void program::ProgramContext::RegisterDefaultSettings()
 
 void program::ProgramContext::Initialize()
 {
+    m_sessionJson = std::make_unique<program::Session>();
     m_assetManager = std::make_unique<file::AssetManager>();
-    m_fileManager = std::make_unique<file::FileManager>();
+    m_fileManager = std::make_unique<file::FileManager>(*m_sessionJson);
     m_settingsManager = std::make_unique<settings::SettingsManager>();
     m_pointerManager = std::make_unique<program::PointerManager>();
 
@@ -691,3 +692,4 @@ void program::ProgramContext::UpdateCanUndoRedo()
         m_toolbarSection->Update();
     }
 }
+

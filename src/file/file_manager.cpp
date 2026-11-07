@@ -6,6 +6,10 @@
 #include "file/package_file.hpp"
 #include <sgc/data/helpers.hpp>
 
+file::FileManager::FileManager(program::Session &sessionJson) :
+    m_sessionJson{sessionJson}
+{}
+
 sgc::data::AssetId LoadImageAsset(std::wstring name, const std::filesystem::path& path)
 {
     auto &programContext = program::GetProgramContext();

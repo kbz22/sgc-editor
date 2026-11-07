@@ -25,10 +25,10 @@
 #include "file/asset_manager.hpp"
 #include "program/editor_mode.hpp"
 #include "program/pointer_manager.hpp"
+#include "program/session.hpp"
 
 #include <sgc/graphics/rectangle.hpp>
 #include <commctrl.h>
-
 
 namespace program {
 
@@ -61,6 +61,7 @@ namespace program {
             std::unique_ptr<settings::SettingsManager> m_settingsManager{};
             std::unique_ptr<win32_program::DpiManager> m_dpiManager{};
             std::unique_ptr<program::PointerManager> m_pointerManager{};
+            std::unique_ptr<program::Session> m_sessionJson{};
 
             static bool m_win32Set;
             static HINSTANCE m_hInstance;
@@ -72,7 +73,7 @@ namespace program {
 
             program::EditorLayerMode m_editorLayerMode = program::EditorLayerMode::MultiLayer;
             program::EditorChunkMode m_editorChunkMode = program::EditorChunkMode::FixedChunks;
-            program::EditorGridMode m_editorGridMode = program::EditorGridMode::NoGrid;
+            program::EditorGridMode m_editorGridMode = program::EditorGridMode::NoGrid;            
 
             void RegisterActions();
             void RegisterDefaultSettings();

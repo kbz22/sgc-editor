@@ -23,12 +23,12 @@ namespace file
             std::function<void(DocumentLocation)> m_onActiveDocumentChangedCallback{nullptr};
             std::function<void(IFile*)> m_onFileUpdatedCallback{nullptr};
             std::function<void(MapDocument*, bool)> m_onMapDirtyCallback{nullptr};
-            program::Session m_sessionJson{};
+            program::Session &m_sessionJson;
 
             void UpdateSessionFile();
 
         public:
-            FileManager() = default;
+            FileManager(program::Session &sessionJson);
             ~FileManager() = default;
 
             void NewMapFile(std::wstring name, sgc::data::AssetId tilesetId);
