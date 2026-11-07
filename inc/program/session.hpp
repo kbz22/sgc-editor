@@ -16,6 +16,10 @@ namespace program
             const std::string m_openedFilesString = "open-files";
             const std::string m_activeDocumentFileString = "active-document-file";
             const std::string m_activeDocumentIndexString = "active-document-index";
+            const std::string m_windowPositionX = "window-position-x";
+            const std::string m_windowPositionY = "window-position-y";
+            const std::string m_windowWidth = "window-width";
+            const std::string m_windowHeight = "window-height";
 
         public:
             void Load();
@@ -23,6 +27,9 @@ namespace program
 
             void RebuildFileList(std::vector<std::unique_ptr<file::IFile>> const &files);
             std::vector<std::filesystem::path> GetSessionPaths();
+
+            void SetWindowPositionAndSize(int x, int y, int width, int height);
+            void GetWindowPositionAndSize(int &x, int &y, int &width, int &height);
 
             void SetActiveDocument(file::DocumentLocation &location);
             std::filesystem::path GetActiveDocumentPath();

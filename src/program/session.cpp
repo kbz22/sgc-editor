@@ -62,3 +62,23 @@ std::filesystem::path program::Session::GetActiveDocumentPath()
 {
     return m_json[m_activeDocumentFileString].get<std::filesystem::path>();
 }
+
+void program::Session::SetWindowPositionAndSize(int x, int y, int width, int height)
+{
+    m_json[m_windowPositionX] = x;
+    m_json[m_windowPositionY] = y;
+    m_json[m_windowWidth] = width;
+    m_json[m_windowHeight] = height;
+
+    return;
+}
+
+void program::Session::GetWindowPositionAndSize(int &x, int &y, int &width, int &height)
+{
+    x = m_json[m_windowPositionX];
+    y = m_json[m_windowPositionY];
+    width = m_json[m_windowWidth];
+    height = m_json[m_windowHeight];
+
+    return;
+}
