@@ -12,4 +12,6 @@ namespace win32_program
 
     void SetTitle(HWND hwnd, const std::wstring& title);
 
+    void SetWindowPositionAndSize(HWND hwnd, int x, int y, int width, int height);
+
 }

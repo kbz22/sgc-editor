@@ -35,6 +35,16 @@ void HandleResize(HWND hwnd)
     for(auto section : programContext.GetSections()) {
         section->HandleSectionResize();        
     }
+
+    RECT rect;
+    GetWindowRect(hwnd, &rect);
+
+    programContext.SaveWindowPositionAndSize(
+        rect.left,
+        rect.top,
+        rect.right - rect.left,
+        rect.bottom - rect.top
+    );
 }
 
 void UpdateAllSections()

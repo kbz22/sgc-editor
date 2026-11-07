@@ -62,6 +62,8 @@ namespace program {
             std::unique_ptr<win32_program::DpiManager> m_dpiManager{};
             std::unique_ptr<program::PointerManager> m_pointerManager{};
             std::unique_ptr<program::Session> m_sessionJson{};
+            
+            bool m_sessionRestored = false;
 
             static bool m_win32Set;
             static HINSTANCE m_hInstance;
@@ -96,6 +98,9 @@ namespace program {
             void UpdateEditorSelectionTools();
             void UpdateCanUndoRedo();
             void UpdateSaving();
+
+            bool RestoreLastSession();
+            void SaveWindowPositionAndSize(int x, int y, int width, int height);            
             
             void EnableFileActions(bool enable);            
             

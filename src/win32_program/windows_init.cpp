@@ -121,7 +121,7 @@ void win32_program::Init(HINSTANCE hInstance)
 
     program::ProgramContext programContext(hwnd, hInstance);
 
-    CenterWindow(hwnd);
+    // CenterWindow(hwnd);
 
     auto windowTitle = programContext.GetStringLookup().Get(locale::StringId::ApplicationName);
 
@@ -142,4 +142,9 @@ void win32_program::Init(HINSTANCE hInstance)
 void win32_program::SetTitle(HWND hwnd, const std::wstring& title)
 {
     SetWindowText(hwnd, title.c_str());
+}
+
+void win32_program::SetWindowPositionAndSize(HWND hwnd, int x, int y, int width, int height)
+{
+    MoveWindow(hwnd, x, y, width, height, TRUE);
 }

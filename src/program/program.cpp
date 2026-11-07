@@ -26,7 +26,7 @@ program::ProgramContext::ProgramContext(HWND hMainWindow, HINSTANCE hInstance)
 
     m_hInstance = hInstance;
     m_mainWindowHandle = hMainWindow;
-    m_stringLookup = std::make_unique<locale::StringLookup>(); // for default text
+    m_stringLookup = std::make_unique<locale::StringLookup>(); // for default text    
     m_win32Set = true;
 }
 
@@ -116,7 +116,7 @@ void program::ProgramContext::RegisterDefaultSettings()
 }
 
 void program::ProgramContext::Initialize()
-{
+{    
     m_sessionJson = std::make_unique<program::Session>();
     m_assetManager = std::make_unique<file::AssetManager>();
     m_fileManager = std::make_unique<file::FileManager>(*m_sessionJson);
@@ -280,21 +280,9 @@ void program::ProgramContext::Begin()
     }
 
     RegisterDefaultSettings();
-    m_settingsManager->LoadValuesFromPreferences();
+    m_settingsManager->LoadValuesFromPreferences();    
 
-    if(m_settingsManager->GetSetting<settings::AutoRestoreFilesSetting>()->GetValue())
-    {
-        try
-        {
-            m_fileManager->RestoreLastSession(m_assetManager.get());
-        }
-        catch(const SessionRestoreException&)
-        {
-            auto errorName = m_stringLookup->Get(locale::StringId::ErrorName).value_or(L"ERROR NAME");
-            auto errorMssg = m_stringLookup->Get(locale::StringId::EditorErrorFailedToRestoreSession).value_or(L"RESTORE FAILED MESSAGE");
-            MessageBox(m_mainWindowHandle, errorMssg.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
-        }
-    }
+    RestoreLastSession();
 }
 
 void RedrawAllSections(program::ProgramContext& programContext)
@@ -693,3 +681,52 @@ void program::ProgramContext::UpdateCanUndoRedo()
     }
 }
 
+void program::ProgramContext::SaveWindowPositionAndSize(int x, int y, int width, int height)
+{
+    win32_program::SetWindowPositionAndSize(m_mainWindowHandle, x, y, width, height);
+    m_sessionJson->SetWindowPositionAndSize(x,y,width,height);
+
+    if(m_sessionRestored)
+    {
+        m_sessionJson->Save();
+    }
+}
+
+bool program::ProgramContext::RestoreLastSession()
+{
+    m_sessionJson->Load();
+    m_sessionRestored = true;
+
+    bool success = true;
+
+    if(m_settingsManager->GetSetting<settings::AutoRestoreFilesSetting>()->GetValue())
+    {
+        try
+        {
+            m_fileManager->RestoreLastSession(m_assetManager.get());
+        }
+        catch(const SessionRestoreException&)
+        {
+            auto errorName = m_stringLookup->Get(locale::StringId::ErrorName).value_or(L"ERROR NAME");
+            auto errorMssg = m_stringLookup->Get(locale::StringId::EditorErrorFailedToRestoreSession).value_or(L"RESTORE FAILED MESSAGE");
+            MessageBox(m_mainWindowHandle, errorMssg.c_str(), errorName.c_str(), MB_OK | MB_ICONERROR);
+        }
+        catch(std::exception&)
+        {
+            success = false;
+        }
+    }
+
+    int x,y,w,h;
+    try
+    {
+        m_sessionJson->GetWindowPositionAndSize(x,y,w,h);
+        win32_program::SetWindowPositionAndSize(m_mainWindowHandle, x, y, w, h);
+    }
+    catch(std::exception&)
+    {
+        success = false;
+    }
+
+    return success;
+}
