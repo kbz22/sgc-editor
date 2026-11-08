@@ -4,7 +4,6 @@
 #include "action/action_description.hpp"
 #include "action/popup_menu_action.hpp"
 #include <windows.h>
-#include <commctrl.h>
 #include <algorithm>
 
 sections::MenuSection::MenuSection(program::ProgramContext& programContext)    

@@ -9,7 +9,7 @@ action::SymbolAutoCycleAction::SymbolAutoCycleAction()
 
     m_actionDescription.imageIndex = 42;
     m_actionDescription.toolbarOrder = 2900;
-    m_actionDescription.menuOrder = 900;
+    m_actionDescription.menuOrder = 1200;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::SymbolTools;
     m_actionDescription.menuId = MenuId::Edit;

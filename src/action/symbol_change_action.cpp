@@ -9,7 +9,7 @@ action::SymbolChangeAction::SymbolChangeAction()
 
     m_actionDescription.imageIndex = -1;
     m_actionDescription.toolbarOrder = -1;
-    m_actionDescription.menuOrder = 1100;
+    m_actionDescription.menuOrder = 1400;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::SymbolTools;
     m_actionDescription.menuId = MenuId::Edit;

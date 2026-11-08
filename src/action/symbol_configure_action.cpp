@@ -16,7 +16,7 @@ action::SymbolConfigureAction::SymbolConfigureAction()
 
     m_actionDescription.imageIndex = 39;
     m_actionDescription.toolbarOrder = 3000;
-    m_actionDescription.menuOrder = 1000;
+    m_actionDescription.menuOrder = 1600;
     m_actionDescription.checkGroupItem = false;
     m_actionDescription.groupId = GroupId::SymbolTools;
     m_actionDescription.menuId = MenuId::Edit;
