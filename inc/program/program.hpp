@@ -115,6 +115,7 @@ namespace program {
             T* GetManager() const;
 
             locale::StringLookup& GetStringLookup() const;
+            Session& GetSessionJson() const;
             
             HIMAGELIST GetImageList(ImageListType type) const;
             void SetImageList(ImageListType type, HIMAGELIST imageList);

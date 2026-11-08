@@ -3,6 +3,7 @@
 #include "sgc_view/sgc_view.hpp"
 #include "program/layer_manager.hpp"
 #include "sgc_extension/marching_ants_rectangle.hpp"
+#include "program/session.hpp"
 
 #include <sgc/math/vector.hpp>
 #include <sgc/data/chunkedtilestorage.hpp>
@@ -40,6 +41,7 @@ namespace sgc_view
             float m_zoom = 1.0f;
             std::chrono::steady_clock::time_point m_lastSelectionOffsetUpdateTime;
             float m_offset = 0.0f;
+            program::Session &m_sessionJson;
 
             void SetTileset(sgc::data::AssetId tilesetId) override;
             void ResetTileset();
@@ -48,13 +50,13 @@ namespace sgc_view
             void ResetCursorTile();
 
         public:
-            MapView(HWND hwnd);
+            MapView(HWND hwnd, program::Session &sessionJson);
             ~MapView();
             
             void Render() override;
             void Refresh(program::ProgramContext& programContext) override;
             void SetScreenSize(int width, int height) override;
-            void SetCameraPositionSingles(float x, float y) override;
+            void SetCameraPositionSingles(float x, float y) override;            
 
             void ChangeCameraPositionSingles(float deltaX, float deltaY) override;            
 
@@ -74,6 +76,8 @@ namespace sgc_view
             void RegisterOnSelectionSizeChangedCallback(std::function<void(sgc::math::vec2)> callback);
 
             void ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta);
+
+            void RestoreView();
 
             float GetZoom() const;
             sgc::graphics::PixelPosition2D GetCursorPositionInPixels() const;

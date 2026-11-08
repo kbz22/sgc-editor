@@ -23,9 +23,10 @@ sections::MapSection::MapSection(program::ProgramContext& programContext) :
         programContext.GetMainWindowHandle(),
         programContext.GetHInstance()
     },
-    m_mapView{
-        std::make_unique<sgc_view::MapView>(GetHwnd())
-    },
+    m_mapView{std::make_unique<sgc_view::MapView>(
+        GetHwnd(),
+        programContext.GetSessionJson()
+    )},
     m_editorToolManager{std::make_unique<editor_tools::EditorToolManager>(
         *m_mapView,
         *this,
@@ -890,4 +891,10 @@ bool sections::MapSection::GetSymbolCycleThrough() const
 editor_tools::EditorToolManager* sections::MapSection::GetEditorToolManager() const
 {
     return m_editorToolManager.get();
+}
+
+void sections::MapSection::RestoreView()
+{
+    m_mapView->RestoreView();
+    m_onZoomChangedCallback(GetZoom());
 }

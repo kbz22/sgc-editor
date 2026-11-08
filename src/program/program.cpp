@@ -723,7 +723,25 @@ bool program::ProgramContext::RestoreLastSession()
     try
     {
         m_sessionJson->GetWindowPositionAndSize(x,y,w,h);
-        win32_program::SetWindowPositionAndSize(m_mainWindowHandle, x, y, w, h);
+
+        RECT currentView = {x,y,x+w,y+h};
+
+        // only change to the saved position if it is still viable
+        HMONITOR mon = MonitorFromRect(&currentView, MONITOR_DEFAULTTONULL);
+        if (mon) 
+        {
+            win32_program::SetWindowPositionAndSize(m_mainWindowHandle, x, y, w, h);
+        }
+    }
+    catch(std::exception&)
+    {
+        success = false;
+    }
+
+    try
+    {
+        m_mapSection->RestoreView();
+        m_actionManager->Find(action::ActionType::SelectZoom)->Execute(*this);
     }
     catch(std::exception&)
     {
@@ -731,4 +749,9 @@ bool program::ProgramContext::RestoreLastSession()
     }
 
     return success;
+}
+
+program::Session& program::ProgramContext::GetSessionJson() const
+{
+    return *m_sessionJson;
 }

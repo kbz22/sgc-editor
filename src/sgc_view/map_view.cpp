@@ -9,9 +9,10 @@
 #include <sgc/graphics/drawablecontainer.hpp>
 #include <sgc/math/value.hpp>
 
-sgc_view::MapView::MapView(HWND hwnd) :
+sgc_view::MapView::MapView(HWND hwnd, program::Session &sessionJson) :
     SgcView(hwnd),
-    m_cursorTile{nullptr}
+    m_cursorTile{nullptr},
+    m_sessionJson{sessionJson}
 {
     m_tileGrid = std::make_shared<graphics::LineGrid>(
         0, 0,
@@ -75,6 +76,9 @@ bool sgc_view::MapView::SetZoom(float zoom)
         ScaleForZoom(static_cast<float>(m_renderContext.view.screen.w)),
         ScaleForZoom(static_cast<float>(m_renderContext.view.screen.h))
     };
+
+    m_sessionJson.SetZoom(zoom);
+    m_sessionJson.Save();
     
     return true;
 }
@@ -152,9 +156,6 @@ void sgc_view::MapView::SetTileset(sgc::data::AssetId tilesetId)
 {
     SgcView::SetTileset(tilesetId);
 
-    /* if(m_tileset == nullptr) {
-        return;
-    } */
     if(!m_sgcTileset.IsSet())
     {
         return;
@@ -437,6 +438,9 @@ void sgc_view::MapView::SetCameraPositionSingles(float x, float y)
 {
     SgcView::SetCameraPositionSingles(x,y);
     UpdateGridPosition(m_renderContext.view.camera);
+
+    m_sessionJson.SetCameraPosition(x,y);
+    m_sessionJson.Save();
 }
 
 void sgc_view::MapView::SetCursorMode(CursorTileMode mode)
@@ -466,6 +470,9 @@ void sgc_view::MapView::ChangeCameraPositionSingles(float deltaX, float deltaY)
 {
     SgcView::ChangeCameraPositionSingles(deltaX, deltaY);
     UpdateGridPosition(m_renderContext.view.camera);
+
+    m_sessionJson.SetCameraPosition(m_renderContext.view.camera.x, m_renderContext.view.camera.y);
+    m_sessionJson.Save();
 }
 
 void sgc_view::MapView::ChangeCursorPositionInPixels(sgc::graphics::PixelPosition2D delta)
@@ -516,4 +523,17 @@ sgc::graphics::View sgc_view::MapView::GetView() const
 sgc::graphics::DrawableLayers* sgc_view::MapView::GetSelectionLayers() const
 {
     return m_selectionLayers.get();
+}
+
+void sgc_view::MapView::RestoreView()
+{
+    float x,y,zoom;
+
+    if(m_sessionJson.GetCameraPosition(x,y) && m_sessionJson.GetZoom(zoom))
+    {
+        SetCameraPositionSingles(x,y);
+        SetZoom(zoom);
+    }
+    
+    return;    
 }

@@ -74,6 +74,7 @@ namespace sections
             void RenderToImage(std::filesystem::path outputPath);
 
             void ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomValue);
+            void RestoreView();
 
             void ResetSelection();
             
