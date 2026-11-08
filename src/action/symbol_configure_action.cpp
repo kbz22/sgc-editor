@@ -86,8 +86,6 @@ void action::SymbolConfigureAction::Execute(program::ProgramContext& context)
             {
                 return;
             }
-            
-            auto &sgcTileset = context.GetSection<sections::TilesetSection>()->GetSgcTileset();
 
             for(auto &[groupName, groupData] : symbolConfigureData->groups)
             {
