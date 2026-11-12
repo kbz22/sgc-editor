@@ -36,8 +36,10 @@ sgc::data::AssetId LoadTilesetAsset(std::wstring name, sgc::data::AssetId imageI
 
     auto tilesetAsset = sgc::asset::TilesetAsset{
         imageId,
-        static_cast<sgc::math::ival>(tileWidth),
-        static_cast<sgc::math::ival>(tileHeight)
+        {
+            static_cast<sgc::math::ival>(tileWidth),
+            static_cast<sgc::math::ival>(tileHeight)
+        }
     };
 
     auto tilesetId = sgc::data::HashAsset(hashableName);
