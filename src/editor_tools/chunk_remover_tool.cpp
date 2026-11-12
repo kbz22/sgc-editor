@@ -21,7 +21,7 @@ void editor_tools::ChunkRemoverTool::Execute(file::MapDocument& mapDocument, sgc
     }
 }
 
-void editor_tools::ChunkRemoverTool::Commit(file::MapDocument& mapDocument)
+void editor_tools::ChunkRemoverTool::Commit([[maybe_unused]] file::MapDocument& mapDocument)
 {
     return;
 }

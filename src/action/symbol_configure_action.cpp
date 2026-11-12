@@ -420,7 +420,13 @@ INT_PTR CALLBACK SymbolConfigureDialogProc(HWND hDlg, UINT msg, WPARAM wParam, L
                     )->tilesetViewControl.get();
                     auto hCombo = GetDlgItem(hDlg, IDC_SYMBOL_GROUP_COMBO);
 
-                    SendMessage(hCombo, CB_SETCURSEL, -1, 0); // empty entry
+                    // empty entry
+                    SendMessage(
+                        hCombo,
+                        CB_SETCURSEL,
+                        static_cast<WPARAM>(-1),
+                        static_cast<LPARAM>(0)
+                    );
                     setupForPosition(hCombo, *tilesetViewControl);
                 }
 
