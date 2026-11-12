@@ -470,7 +470,7 @@ sgc::math::fvec2 sections::MapSection::GetScreenCenterWorldPosition() const
         };
         
         auto view = m_mapView->GetView();
-        return sgc::coordinates::ScreenToWorld(centerScreenPos, view);
+        return sgc::coordinates::ToWorld(centerScreenPos, view);
     }
     return sgc::math::fvec2{0.0f, 0.0f};
 }
@@ -480,7 +480,7 @@ void sections::MapSection::ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomV
     auto view = m_mapView->GetView();
 
     auto worldPosBeforeZoom =
-        sgc::coordinates::ScreenToWorld(anchorPoint, view);
+        sgc::coordinates::ToWorld(anchorPoint, view);
 
     if(!m_mapView->SetZoom(zoomValue))
     {
@@ -490,7 +490,7 @@ void sections::MapSection::ExecuteZoom(sgc::math::fvec2 anchorPoint, float zoomV
     view = m_mapView->GetView();
 
     auto worldPosAfterZoom =
-        sgc::coordinates::ScreenToWorld(anchorPoint, view);
+        sgc::coordinates::ToWorld(anchorPoint, view);
 
     auto cameraDelta =
         worldPosBeforeZoom - worldPosAfterZoom;
@@ -579,7 +579,7 @@ bool sections::MapSection::UpdateCursorPosition(sgc::graphics::PixelPosition2D p
     };
 
     auto view = m_mapView->GetView();
-    auto worldPosition = sgc::coordinates::ScreenToWorld(screenPosition, view);
+    auto worldPosition = sgc::coordinates::ToWorld(screenPosition, view);
 
     auto tileSize = m_mapView->GetTileSize();
     auto x_tile = static_cast<sgc::math::ival>(
@@ -638,7 +638,7 @@ bool sections::MapSection::UpdateSelectionMove(Pointer pointer, file::MapDocumen
         };
 
         auto view = m_mapView->GetView();
-        auto worldPosition = sgc::coordinates::ScreenToWorld(screenPosition, view);
+        auto worldPosition = sgc::coordinates::ToWorld(screenPosition, view);
 
         auto tileSize = m_mapView->GetTileSize();
         auto x_tile = static_cast<sgc::math::ival>(

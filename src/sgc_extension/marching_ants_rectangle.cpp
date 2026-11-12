@@ -49,10 +49,10 @@ void sgc::graphics::MarchingAntsRectangle::Draw(const RenderContext& context)
 {    
     constexpr int numPoints = 4;
     sgc::math::fvec2 points[numPoints] = {
-        sgc::coordinates::WorldToScreen(m_position, context.view),
-        sgc::coordinates::WorldToScreen(m_position + sgc::math::fvec2{ m_size.x, 0.0f }, context.view),
-        sgc::coordinates::WorldToScreen(m_position + m_size, context.view),
-        sgc::coordinates::WorldToScreen(m_position + sgc::math::fvec2{ 0.0f, m_size.y }, context.view)
+        sgc::coordinates::ToScreen(m_position, context.view),
+        sgc::coordinates::ToScreen(m_position + sgc::math::fvec2{ m_size.x, 0.0f }, context.view),
+        sgc::coordinates::ToScreen(m_position + m_size, context.view),
+        sgc::coordinates::ToScreen(m_position + sgc::math::fvec2{ 0.0f, m_size.y }, context.view)
     };
 
     auto drawStrippedLine = [&](sgc::math::fvec2 start, sgc::math::fvec2 end, sgc::graphics::color color1, sgc::graphics::color color2) {
