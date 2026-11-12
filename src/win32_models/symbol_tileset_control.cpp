@@ -65,7 +65,7 @@ LRESULT CALLBACK win32_models::SymbolTilesetControl::SymbolTilesetViewStaticProc
     return DefSubclassProc(hwnd, msg, wparam, lparam);
 }
 
-sgc::tile::TilePosition2D GetTilePointerPosition(POINT pointerPosition, sgc::tile::TileSize2D tileSize, sgc::graphics::View view)
+sgc::tile::TilePosition2D GetTilePointerPosition(POINT pointerPosition, sgc::graphics::PixelSize2D tileSize, sgc::graphics::View view)
 {
     auto worldPointerPosition = sgc::coordinates::ScreenToWorld(sgc::math::fvec2{
             static_cast<float>(pointerPosition.x),

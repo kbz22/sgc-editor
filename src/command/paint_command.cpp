@@ -21,7 +21,7 @@ void command::PaintCommand::ExecuteTileChange(const TileChange &tileChange)
     layerManager->GetLayers()[m_activeLayerIndex].storage->SetTileAt(tileChange.position, tileChange.newTileId);
 }
 
-void command::PaintCommand::ExecuteTileChange(const std::unordered_map<sgc::math::vec2, TileChange> &tileChanges)
+void command::PaintCommand::ExecuteTileChange(const std::unordered_map<sgc::tile::TilePosition2D, TileChange> &tileChanges)
 {
     m_tileChanges.reserve(m_tileChanges.size() + tileChanges.size());
     auto layerManager = m_mapDocument->GetLayerManager();
@@ -73,7 +73,7 @@ void command::PaintCommand::Undo()
     m_mapDocument->SetDirty(true);
 }
 
-bool command::PaintCommand::Contains(sgc::math::vec2 key)
+bool command::PaintCommand::Contains(sgc::tile::TilePosition2D key)
 {
     return m_tileChanges.contains(key);
 }

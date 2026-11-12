@@ -56,9 +56,10 @@ void action::SelectionPasteAction::Execute(program::ProgramContext &context)
         {
             auto x = i % copiedSelection.size.x;
             auto y = i / copiedSelection.size.x;
-            auto tilePos = sgc::tile::TilePosition2D{x,y} + currentSelectionPosition;
+            auto tilePos = sgc::tile::TilePosition2D{sgc::tile::TilePosition2D{x,y} + currentSelectionPosition};
 
-            tileChanges[pastedLayerIndex][tilePos] = {
+            tileChanges[pastedLayerIndex][tilePos] = 
+            {
                 pastedLayerIndex,
                 tilePos,
                 layer->GetTileAt(tilePos),

@@ -7,7 +7,7 @@
 namespace command {
 
     struct TileChange {
-        sgc::math::vec2 position;
+        sgc::tile::TilePosition2D position;
         std::optional<sgc::tile::TileId> previousTileId;
         std::optional<sgc::tile::TileId> newTileId;
     };

@@ -96,7 +96,7 @@ void sgc_view::TilesetView::SetTileset(sgc::data::AssetId tilesetId)
 
     auto tileset = m_sgcTileset.GetTileset();
     const math::vec2 gridSize = tileset->GetSizeInTiles();
-    auto tileStorage = std::make_shared<data::StaticTileStorage>(math::vec2{gridSize.x, gridSize.y});
+    auto tileStorage = std::make_shared<data::StaticTileStorage>(tile::TileSize2D{gridSize.x, gridSize.y});
 
     for (sgc::tile::TileId i = 0; i < gridSize.y * gridSize.x; ++i) {  
         tileStorage->SetTileAt({

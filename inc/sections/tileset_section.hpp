@@ -26,8 +26,8 @@ namespace sections {
             bool m_symbolDrawingEnabled = false;            
             program::TileSymbolManager* m_tileSymbolManager;
 
-            sgc::math::vec2 m_selectionTileStart = { 0, 0 };
-            sgc::math::vec2 m_selectionTileSize = { 0, 0 };
+            sgc::tile::TilePosition2D m_selectionTileStart = { 0, 0 };
+            sgc::tile::TilePosition2D m_selectionTileSize = { 0, 0 };
 
             void UpdateStatusBar(sgc::math::vec2 position, std::optional<sgc::tile::TileId> tileId, sgc::math::vec2 size);
         

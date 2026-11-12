@@ -105,8 +105,8 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             int y = GET_Y_LPARAM(lparam);
 
             auto tileset = m_tilesetView->m_sgcTileset.GetTileset();
-            sgc::math::vec2 tileSize = tileset->GetTileSize();
-            sgc::math::vec2 tilePosition = {
+            auto tileSize = tileset->GetTileSize();
+            sgc::tile::TilePosition2D tilePosition = {
                 static_cast<sgc::math::ival>(x / tileSize.x),
                 static_cast<sgc::math::ival>(y / tileSize.y)
             };
@@ -116,7 +116,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             }
 
             m_selectionTileStart = tilePosition;
-            m_selectionTileSize = { 1, 1 };
+            m_selectionTileSize = sgc::tile::TileSize2D{ 1, 1 };
 
             m_tilesetView->SetCursorPositionInPixels({
                 static_cast<sgc::math::ival>(tilePosition.x * tileSize.x),
@@ -146,7 +146,7 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
 
             auto tileSize = m_tilesetView->GetTileSize();
             
-            sgc::math::vec2 currentTile = {
+            sgc::tile::TilePosition2D currentTile = {
                 x / tileSize.x,
                 y / tileSize.y
             };
@@ -171,17 +171,17 @@ LRESULT sections::TilesetSection::HandleMessages([[maybe_unused]] HWND hwnd, [[m
             currentTile.x = std::min(currentTile.x, tileCount.x - 1);
             currentTile.y = std::min(currentTile.y, tileCount.y - 1);
 
-            sgc::math::vec2 minTile = {
+            sgc::tile::TilePosition2D minTile = {
                 std::min(m_selectionTileStart.x, currentTile.x),
                 std::min(m_selectionTileStart.y, currentTile.y)
             };
 
-            sgc::math::vec2 maxTile = {
+            sgc::tile::TilePosition2D maxTile = {
                 std::max(m_selectionTileStart.x, currentTile.x),
                 std::max(m_selectionTileStart.y, currentTile.y)
             };          
 
-            m_selectionTileSize = {
+            m_selectionTileSize = sgc::tile::TilePosition2D{
                 maxTile.x - minTile.x + 1,
                 maxTile.y - minTile.y + 1
             };
@@ -320,7 +320,7 @@ sgc::tile::TilePosition2D sections::TilesetSection::GetCursorPositionInTiles() c
     auto selectionPosition = m_tilesetView->GetCursorPositionInPixels();
     auto tileSize = m_tilesetView->GetTileSize();
 
-    return sgc::tile::TileSize2D{
+    return sgc::tile::TilePosition2D{
         selectionPosition.x / tileSize.x,
         selectionPosition.y / tileSize.y
     };
