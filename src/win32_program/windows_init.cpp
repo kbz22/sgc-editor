@@ -8,7 +8,6 @@
 
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
-#include <windowsx.h>
 #include <algorithm>
 #include <stdexcept>
 

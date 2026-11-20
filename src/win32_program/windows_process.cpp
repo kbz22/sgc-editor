@@ -1,8 +1,6 @@
 #include "win32_program/windows_process.hpp"
 #include "win32_program/windows_init.hpp"
 
-#include "win32_program/windows_controls.hpp"
-
 #undef CreateWindow // avoid macro name conflict with sdl::CreateWindow
 
 #include "program/program.hpp"
@@ -11,8 +9,6 @@
 
 #include <windows.h>
 #include <CommCtrl.h>
-
-#include "editor_graphics.h"
 
 win32_program::LayoutManager& GetLayoutManager()
 {

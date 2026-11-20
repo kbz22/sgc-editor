@@ -75,7 +75,7 @@ sections::MenuSection::MenuSection(program::ProgramContext& programContext)
         btn.idCommand = static_cast<int>(menuAction->GetType());
         btn.fsState = menuAction->IsEnabled() ? TBSTATE_ENABLED : 0;
         btn.fsStyle = BTNS_BUTTON | BTNS_SHOWTEXT;
-        btn.iString = strIndex;        
+        btn.iString = strIndex;
 
         tbButtons.push_back(btn);
 
