@@ -61,17 +61,16 @@ INT_PTR CALLBACK NewTilesetFileDialogProc([[maybe_unused]] HWND hDlg, [[maybe_un
             SendMessage(packageCombo, CB_SETITEMDATA, index, reinterpret_cast<LPARAM>(package));
         }
 
-        HWND hPackageCombo = GetDlgItem(hDlg, IDC_TILESET_PACKAGE_COMBO);
         bool includePackage = (IsDlgButtonChecked(hDlg, IDC_TILESET_INCLUDE_PACKAGE_CHECKBOX) == BST_CHECKED);
-        bool hasPackages = (SendMessage(hPackageCombo, CB_GETCOUNT, 0, 0) > 0);
-        auto selectedPackageIndex = SendMessage(hPackageCombo, CB_GETCURSEL, 0, 0);
+        bool hasPackages = (SendMessage(packageCombo, CB_GETCOUNT, 0, 0) > 0);
+        auto selectedPackageIndex = SendMessage(packageCombo, CB_GETCURSEL, 0, 0);
         
         if(selectedPackageIndex == -1){
-            SendMessage(hPackageCombo, CB_SETCURSEL, 0, 0);
+            SendMessage(packageCombo, CB_SETCURSEL, 0, 0);
         }
 
         EnableWindow(GetDlgItem(hDlg, IDC_TILESET_NEW_PACKAGE_BUTTON), includePackage);
-        EnableWindow(hPackageCombo, includePackage && hasPackages);
+        EnableWindow(packageCombo, includePackage && hasPackages);
     };
 
     switch (msg)
