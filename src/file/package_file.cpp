@@ -55,7 +55,7 @@ void file::PackageFile::Open()
     std::vector<file::TilesetDocumentInfo> tilesetDocumentInfos{};
     std::vector<file::SymbolGroupsInfo> symbolGroupsInfos{};
 
-    for(auto &[id, entry] : package) 
+    for(auto &[id, entry] : package)
     {
         switch(entry.type)
         {

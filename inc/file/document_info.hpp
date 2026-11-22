@@ -6,11 +6,11 @@
 
 namespace file {
 
-    enum class EditorDataType : uint8_t
+    enum class EditorDataType : uint16_t
     {
-        Map,
-        Tileset,
-        SymbolGroups,
+        Map = 1,
+        Tileset = 2,
+        SymbolGroups = 3,
     };
 
     struct MapDocumentInfo
