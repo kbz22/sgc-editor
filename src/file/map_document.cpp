@@ -4,31 +4,33 @@
 #include <sgc/data/asset.hpp>
 
 file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId) :
-    name{name},
+    m_name{name},
     m_layerManager{std::make_unique<program::LayerManager>()},
     m_commandManager{std::make_unique<command::CommandManager>()},
     m_symbolManager{std::make_unique<program::TileSymbolManager>()},
     m_tilesetId{tilesetId}
 {
-    m_mapAssetId = sgc::data::HashAsset(L"map."+name);
-    m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+name);
-    m_symbolGroupsId = sgc::data::HashAsset(L"map.symbols."+name);
+    m_mapAssetId = sgc::data::HashAsset(L"map."+m_name);
+    m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+m_name);
+    m_symbolGroupsId = sgc::data::HashAsset(L"map.symbols."+m_name);
+    m_metadataAssetId = sgc::data::HashAsset(L"map.meta."+m_name);
 }
 
 file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId) :
-    name{name},
+    m_name{name},
     m_layerManager{std::make_unique<program::LayerManager>()},
     m_commandManager{std::make_unique<command::CommandManager>()},
     m_symbolManager{std::make_unique<program::TileSymbolManager>()},
     m_tilesetId{tilesetId},
     m_mapAssetId{mapAssetId}
 {
-    m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+name);
-    m_symbolGroupsId = sgc::data::HashAsset(L"map.symbols."+name);
+    m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+m_name);
+    m_symbolGroupsId = sgc::data::HashAsset(L"map.symbols."+m_name);
+    m_metadataAssetId = sgc::data::HashAsset(L"map.meta."+m_name);
 }
 
 file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId, sgc::data::AssetId symbolGroupsId) :
-    name{name},
+    m_name{name},
     m_layerManager{std::make_unique<program::LayerManager>()},
     m_commandManager{std::make_unique<command::CommandManager>()},
     m_symbolManager{std::make_unique<program::TileSymbolManager>()},
@@ -36,11 +38,25 @@ file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId, 
     m_mapAssetId{mapAssetId},
     m_symbolGroupsId{symbolGroupsId}
 {
-    m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+name);
+    m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+m_name);
+    m_metadataAssetId = sgc::data::HashAsset(L"map.meta."+m_name);
+}
+
+file::MapDocument::MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId, sgc::data::AssetId symbolGroupsId, sgc::data::AssetId metadataId) :
+    m_name{name},
+    m_layerManager{std::make_unique<program::LayerManager>()},
+    m_commandManager{std::make_unique<command::CommandManager>()},
+    m_symbolManager{std::make_unique<program::TileSymbolManager>()},
+    m_tilesetId{tilesetId},
+    m_mapAssetId{mapAssetId},
+    m_metadataAssetId{metadataId},
+    m_symbolGroupsId{symbolGroupsId}
+{
+    m_mapDocumentId = sgc::data::HashAsset(L"map.doc."+m_name);    
 }
 
 file::MapDocument::MapDocument(const MapDocument& other) :
-    name{other.name},
+    m_name{other.m_name},
     m_layerManager{std::make_unique<program::LayerManager>(*other.m_layerManager)},
     m_commandManager{std::make_unique<command::CommandManager>(*other.m_commandManager)},
     m_symbolManager{std::make_unique<program::TileSymbolManager>(*other.m_symbolManager)},
@@ -98,6 +114,11 @@ sgc::data::AssetId file::MapDocument::GetSymbolGroupsAssetId() const
     return m_symbolGroupsId;
 }
 
+sgc::data::AssetId file::MapDocument::GetMetadataAssetId() const
+{
+    return m_metadataAssetId;
+}
+
 bool file::MapDocument::IsEditable() const
 {
     program::ProgramContext& programContext = program::GetProgramContext();
@@ -124,7 +145,7 @@ void file::MapDocument::RegisterOnSetDirtyCallback(std::function<void(MapDocumen
 
 const std::wstring& file::MapDocument::GetName() const
 {
-    return name;
+    return m_name;
 }
 
 bool file::MapDocument::IsContainer() const
@@ -140,4 +161,18 @@ bool file::MapDocument::IsActivable() const
 file::ListableType file::MapDocument::GetListableType() const
 {
     return ListableType::MapDocument;
+}
+
+sgc::asset::AssetMetadata file::MapDocument::GenerateMetadataAsset() const
+{
+    using sgc::asset::AssetMetadata, sgc::asset::MetadataType;
+
+    AssetMetadata asset;
+
+    asset.data[m_mapAssetId][MetadataType::Name]      = m_name + L".map";
+    asset.data[m_mapDocumentId][MetadataType::Name]   = m_name + L".doc";
+    asset.data[m_symbolGroupsId][MetadataType::Name]  = m_name + L".symbols";
+    asset.data[m_metadataAssetId][MetadataType::Name] = m_name + L".meta";
+
+    return asset;
 }

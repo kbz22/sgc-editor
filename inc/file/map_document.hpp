@@ -7,12 +7,15 @@
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/data/itilestorage.hpp>
 #include <sgc/data/asset.hpp>
+#include <sgc/asset/metadataasset.hpp>
 #include "command/command_manager.hpp"
 
 #include <memory>
 #include <functional>
 
-namespace file {
+namespace file
+{
+    using sgc::asset::AssetMetadata;
 
     class MapDocument : public IDocument
     {
@@ -24,7 +27,8 @@ namespace file {
             sgc::data::AssetId m_mapAssetId{0};
             sgc::data::AssetId m_mapDocumentId{0};
             sgc::data::AssetId m_symbolGroupsId{0};
-            std::wstring name;
+            sgc::data::AssetId m_metadataAssetId{0};
+            std::wstring m_name;
             bool m_dirty{false};
             std::function<void(MapDocument*, bool)> m_onSetDirtyCallback{nullptr};
 
@@ -32,6 +36,7 @@ namespace file {
             MapDocument(std::wstring name, sgc::data::AssetId tilesetId);
             MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId);
             MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId, sgc::data::AssetId symbolGroupsId);
+            MapDocument(std::wstring name, sgc::data::AssetId tilesetId, sgc::data::AssetId mapAssetId, sgc::data::AssetId symbolGroupsId, sgc::data::AssetId metadataAssetId);
             MapDocument(const MapDocument&);
 
             program::LayerManager* GetLayerManager() const;
@@ -42,6 +47,9 @@ namespace file {
             sgc::data::AssetId GetMapAssetId() const;
             sgc::data::AssetId GetMapDocumentAssetId() const;
             sgc::data::AssetId GetSymbolGroupsAssetId() const;
+            sgc::data::AssetId GetMetadataAssetId() const;
+
+            AssetMetadata GenerateMetadataAsset() const;
 
             bool IsContainer() const override;            
             bool IsDirty() const override;

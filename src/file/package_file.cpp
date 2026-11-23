@@ -12,6 +12,7 @@
 #include <sgc/asset/assetheader.hpp>
 #include <sgc/data/package.hpp>
 #include <sgc/data/packagebuilder.hpp>
+#include <sgc/asset/metadataasset.hpp>
 #include <fstream>
 
 file::PackageFile::PackageFile(std::wstring name, AssetManager& assetManager) :
@@ -244,7 +245,7 @@ void file::PackageFile::Save()
 {
     std::vector<uint8_t> bytes{};
 
-    sgc::data::PackageBuilder packageBuilder{};
+    sgc::data::PackageBuilder packageBuilder{};    
     
     for(const auto& mapDoc : m_mapDocuments) 
     {
@@ -268,6 +269,19 @@ void file::PackageFile::Save()
             sgc::asset::AssetSerializer<file::SymbolGroupsInfo>::Serialize(
                 sgc::asset::AssetBuilder<file::SymbolGroupsInfo, file::MapDocument>::Build(*mapDoc)
         ));
+
+        //! When I tried to serialize the asset directly like above this would crash
+        // with the BinaryWriter being corrupted(?) - it contained data before being intiialized
+        // Doing it like this seems to work, so I leave it to investigate later
+        auto metaAsset = mapDoc->GenerateMetadataAsset();
+        auto serializedAsset = sgc::asset::AssetSerializer<sgc::asset::AssetMetadata>::Serialize(
+                metaAsset
+        );
+        packageBuilder.AddAsset(
+            mapDoc->GetMetadataAssetId(),
+            sgc::data::AssetType::Metadata,
+            serializedAsset
+        );
     }
 
     for(const auto& tilesetDoc : m_tilesetDocuments) 
@@ -298,6 +312,16 @@ void file::PackageFile::Save()
             sgc::asset::AssetSerializer<file::TilesetDocumentInfo>::Serialize(
                 sgc::asset::AssetBuilder<file::TilesetDocumentInfo, file::TilesetDocument>::Build(*tilesetDoc)
         ));
+
+        auto metaAsset = tilesetDoc->GenerateMetadataAsset();
+        auto serializedAsset = sgc::asset::AssetSerializer<sgc::asset::AssetMetadata>::Serialize(
+                metaAsset
+        );
+        packageBuilder.AddAsset(
+            tilesetDoc->GetMetadataAssetId(),
+            sgc::data::AssetType::Metadata,
+            serializedAsset
+        );
     }
 
     auto packageData = packageBuilder.Build();
@@ -318,7 +342,7 @@ void file::PackageFile::Save()
 
 void file::PackageFile::Close()
 {
-    //! as above
+    //! I don't think PackageFile needs to do anything on close. I'm not even sure if this method is necessary for any file?
 }
 
 std::wstring file::PackageFile::GetExtension() const
@@ -384,11 +408,6 @@ void file::PackageFile::SetFilePath(const std::filesystem::path& path)
 
 std::vector<file::MapDocument*> file::PackageFile::GetMapDocuments()
 {
-    /* std::vector<MapDocument*> mapDocs{};
-    for(const auto& doc : m_mapDocuments) {
-        mapDocs.push_back(doc.get());
-    }
-    return mapDocs; */
     return m_mapDocuments;
 }
 
@@ -402,17 +421,11 @@ std::optional<file::MapDocument*> file::PackageFile::GetMapDocument(size_t index
 
 std::vector<file::TilesetDocument*> file::PackageFile::GetTilesetDocuments()
 {
-    /* std::vector<TilesetDocument*> tilesetDocs{};
-    for(const auto& doc : m_tilesetDocuments) {
-        tilesetDocs.push_back(doc.get());
-    }
-    return tilesetDocs; */
     return m_tilesetDocuments;
 }
 
 std::optional<file::TilesetDocument*> file::PackageFile::GetTilesetDocument(size_t index)
 {
-    // index -= m_mapDocuments.size(); // Adjust index to account for map documents and the package file itself
     // I'm refactoring this out and using generic interface for global indexes now, which makes sense not sure why I decided not to do that from the get-go
     if(index < m_tilesetDocuments.size() && index >= 0) {
         return m_tilesetDocuments[index];
