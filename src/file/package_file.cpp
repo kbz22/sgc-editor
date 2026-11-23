@@ -55,92 +55,151 @@ void file::PackageFile::Open()
     std::vector<file::TilesetDocumentInfo> tilesetDocumentInfos{};
     std::vector<file::SymbolGroupsInfo> symbolGroupsInfos{};
 
+    auto handleMapAsset = [&](sgc::data::AssetId id)
+    {
+        auto mapAsset = sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
+            package.ReadAssetData(id)
+        );
+
+        m_assetManager.AddAsset<sgc::asset::MapAsset>(
+            id,
+            std::make_shared<sgc::asset::MapAsset>(std::move(mapAsset))
+        );
+    };
+
+    auto handleTilesetAsset = [&](sgc::data::AssetId id)
+    {
+        auto tilesetAsset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Deserialize(
+            package.ReadAssetData(id)
+        );
+
+        m_assetManager.AddAsset<sgc::asset::TilesetAsset>(
+            id,
+            std::make_shared<sgc::asset::TilesetAsset>(std::move(tilesetAsset))
+        );
+    };
+
+    auto handleTextureAsset = [&](sgc::data::AssetId id)
+    {
+        auto imageAsset = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Deserialize(
+            package.ReadAssetData(id)
+        );
+
+        m_assetManager.AddAsset<sgc::asset::ImageAsset>(
+            id,
+            std::make_shared<sgc::asset::ImageAsset>(std::move(imageAsset))
+        );
+    };
+
+    auto handleExternalAsset = [&](file::EditorDataType editorDataType, std::vector<uint8_t> &entryData)
+    {
+        switch(editorDataType)
+        {
+            default:
+                throw program::AssetLoadException("Unknown external document type: " + std::to_string(static_cast<int>(editorDataType)));
+
+            case file::EditorDataType::Map:
+            {
+                mapDocumentInfos.push_back(
+                    sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Deserialize(entryData)
+                );
+                break;
+            }
+
+            case file::EditorDataType::Tileset:
+            {
+                tilesetDocumentInfos.push_back(
+                    sgc::asset::AssetDeserializer<file::TilesetDocumentInfo>::Deserialize(entryData)
+                );
+                break;
+            }
+
+            case file::EditorDataType::SymbolGroups:
+            {
+                symbolGroupsInfos.push_back(
+                    sgc::asset::AssetDeserializer<file::SymbolGroupsInfo>::Deserialize(entryData)
+                );
+                break;
+            }
+        }
+    };
+
+    sgc::asset::PackageVersionDependent::packageVersion = package.GetVersion();    
+
     for(auto &[id, entry] : package)
     {
-        switch(entry.type)
+        switch(sgc::asset::PackageVersionDependent::packageVersion)
         {
-            case sgc::data::AssetType::Map:
+            case 1:
             {
-                auto mapAsset = sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
-                    package.ReadAssetData(id)
-                );
-
-                m_assetManager.AddAsset<sgc::asset::MapAsset>(
-                    id,
-                    std::make_shared<sgc::asset::MapAsset>(std::move(mapAsset))
-                );
-
-                break;
-            }
-
-            case sgc::data::AssetType::Tileset:
-            {
-                auto tilesetAsset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Deserialize(
-                    package.ReadAssetData(id)
-                );
-
-                m_assetManager.AddAsset<sgc::asset::TilesetAsset>(
-                    id,
-                    std::make_shared<sgc::asset::TilesetAsset>(std::move(tilesetAsset))
-                );
-
-                break;
-            }
-
-            case sgc::data::AssetType::Texture:
-            {
-                auto imageAsset = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Deserialize(
-                    package.ReadAssetData(id)
-                );
-
-                m_assetManager.AddAsset<sgc::asset::ImageAsset>(
-                    id,
-                    std::make_shared<sgc::asset::ImageAsset>(std::move(imageAsset))
-                );
-
-                break;
-            }
-                
-            case sgc::data::AssetType::External:
-            {
-                auto entryData = package.ReadAssetData(id);
-                auto externalType = static_cast<file::EditorDataType>(entryData[0]);
-
-                switch(externalType)
+                switch(entry.type)
                 {
+                    case sgc::data::AssetType::Map:
+                    {
+                        handleMapAsset(id);
+                        break;
+                    }
+
+                    case sgc::data::AssetType::Tileset:
+                    {
+                        handleTilesetAsset(id);
+                        break;
+                    }
+
+                    case sgc::data::AssetType::Texture:
+                    {
+                        handleTextureAsset(id);
+                        break;
+                    }
+                        
+                    case static_cast<sgc::data::AssetType>(4U): // old value for external
+                    {
+                        auto entryData = package.ReadAssetData(id);
+                        auto externalType = static_cast<file::EditorDataType>(entryData[0] + 1);
+                        handleExternalAsset(externalType, entryData);
+                        break;
+                    }
+
                     default:
-                        throw program::AssetLoadException("Unknown external document type: " + std::to_string(static_cast<int>(externalType)));
-
-                    case file::EditorDataType::Map:
-                    {
-                        mapDocumentInfos.push_back(
-                            sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Deserialize(entryData)
-                        );
-                        break;
-                    }
-
-                    case file::EditorDataType::Tileset:
-                    {
-                        tilesetDocumentInfos.push_back(
-                            sgc::asset::AssetDeserializer<file::TilesetDocumentInfo>::Deserialize(entryData)
-                        );
-                        break;
-                    }
-
-                    case file::EditorDataType::SymbolGroups:
-                    {
-                        symbolGroupsInfos.push_back(
-                            sgc::asset::AssetDeserializer<file::SymbolGroupsInfo>::Deserialize(entryData)
-                        );
-                        break;
-                    }
+                        continue;                
                 }
-
                 break;
             }
 
             default:
-                continue;                
+            {
+                switch(entry.type)
+                {
+                    case sgc::data::AssetType::Map:
+                    {
+                        handleMapAsset(id);
+                        break;
+                    }
+
+                    case sgc::data::AssetType::Tileset:
+                    {
+                        handleTilesetAsset(id);
+                        break;
+                    }
+
+                    case sgc::data::AssetType::Texture:
+                    {
+                        handleTextureAsset(id);
+                        break;
+                    }
+                        
+                    case sgc::data::AssetType::External:
+                    {
+                        auto entryData = package.ReadAssetData(id);
+                        auto externalType = static_cast<file::EditorDataType>( (static_cast<uint16_t>(entryData[1]) << 8) | static_cast<uint16_t>(entryData[0]) );
+                        handleExternalAsset(externalType, entryData);
+                        break;
+                    }
+
+                    default:
+                        continue;                
+                }
+            }
         }
     }
 

@@ -9,7 +9,17 @@ file::MapDocumentInfo sgc::asset::AssetDeserializer<file::MapDocumentInfo>::Dese
     };
     file::MapDocumentInfo info;
     
-    reader.Read<file::EditorDataType>();
+    switch(packageVersion)
+    {
+        case 1:
+            reader.Read<uint8_t>();
+            break;
+
+        default:
+            reader.Read<file::EditorDataType>();
+            break;
+    }
+    
     info.name = reader.ReadString();
     info.mapAssetId = reader.Read<sgc::data::AssetId>();
     info.symbolGroupsAssetId = reader.Read<sgc::data::AssetId>();
@@ -25,7 +35,17 @@ file::TilesetDocumentInfo sgc::asset::AssetDeserializer<file::TilesetDocumentInf
     };
     file::TilesetDocumentInfo info;
 
-    reader.Read<file::EditorDataType>();
+    switch(packageVersion)
+    {
+        case 1:
+            reader.Read<uint8_t>();
+            break;
+
+        default:
+            reader.Read<file::EditorDataType>();
+            break;
+    }
+
     info.name = reader.ReadString();    
     info.imageAssetId = reader.Read<sgc::data::AssetId>();
     info.tilesetAssetId = reader.Read<sgc::data::AssetId>();
@@ -41,7 +61,17 @@ file::SymbolGroupsInfo sgc::asset::AssetDeserializer<file::SymbolGroupsInfo>::De
     };
     file::SymbolGroupsInfo info;
 
-    reader.Read<file::EditorDataType>();
+    switch(packageVersion)
+    {
+        case 1:
+            reader.Read<uint8_t>();
+            break;
+
+        default:
+            reader.Read<file::EditorDataType>();
+            break;
+    }
+
     auto groupCount = reader.Read<size_t>();
 
     for(size_t i = 0; i < groupCount; ++i) 
@@ -61,4 +91,11 @@ file::SymbolGroupsInfo sgc::asset::AssetDeserializer<file::SymbolGroupsInfo>::De
     }
 
     return info;
+}
+
+uint32_t sgc::asset::PackageVersionDependent::packageVersion = data::c_packageVersion;
+
+void sgc::asset::PackageVersionDependent::SetDefaultVersion()
+{
+    packageVersion = data::c_packageVersion;
 }
