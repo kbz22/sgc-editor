@@ -12,7 +12,11 @@ std::unique_ptr<file::MapDocument> sgc::asset::RuntimeBuilder<file::MapDocument>
     );
 
     auto layerManager = document->GetLayerManager();
-    for(const auto &layerAsset : mapAsset.layers) 
+    auto layers = std::vector<sgc::asset::MapLayerAsset>(
+        mapAsset.layers.rbegin(),
+        mapAsset.layers.rend()
+    );    
+    for(const auto &layerAsset : layers)
     {
         std::shared_ptr<sgc::data::ITileStorage> tileStorage;
 
