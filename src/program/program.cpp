@@ -696,7 +696,15 @@ void program::ProgramContext::SaveWindowPositionAndSize(int x, int y, int width,
 
 bool program::ProgramContext::RestoreLastSession()
 {
-    m_sessionJson->Load();
+    try
+    {
+        m_sessionJson->Load();
+    }
+    catch(JsonLoadFailure&)
+    {
+        return false;
+    }
+    
     m_sessionRestored = true;
 
     bool success = true;
