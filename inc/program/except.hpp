@@ -65,6 +65,18 @@ namespace program
             JsonStringMissing(const std::string& message) : std::runtime_error(message) {}
     };
 
+    class JsonLoadFailure : public std::runtime_error
+    {
+        public:
+            JsonLoadFailure(const std::string& message) : std::runtime_error(message) {}
+    };
+
+    class JsonSaveFailure : public std::runtime_error
+    {
+        public:
+            JsonSaveFailure(const std::string& message) : std::runtime_error(message) {}
+    };
+
     class OpenRepositoryFailure : public std::runtime_error
     {
         public:

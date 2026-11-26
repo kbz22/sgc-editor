@@ -1,4 +1,5 @@
 #include "program/session.hpp"
+#include "program/except.hpp"
 #include "win32_helpers/file_helpers.hpp"
 #include <fstream>
 
@@ -10,7 +11,7 @@ void program::Session::Load()
 
     if (!file)
     {
-        throw std::runtime_error("Failed to open preferences file for reading");
+        throw program::JsonLoadFailure("Failed to open preferences file for reading");
     }
     
     file >> m_json;
@@ -24,7 +25,7 @@ void program::Session::Save()
 
     if (!file)
     {
-        throw std::runtime_error("Failed to open preferences file for writing");
+        throw program::JsonSaveFailure("Failed to open preferences file for writing");
     }
 
     file << m_json.dump(4);
