@@ -12,6 +12,20 @@ action::LayerMoveAction::LayerMoveAction(int moveCount) :
     switch(moveCount) 
     {
         case -1:
+        {   
+            m_actionType = ActionType::MoveLayerUp;
+            m_actionDescription.imageIndex = 10;
+            m_actionDescription.toolbarOrder = 810;
+            m_actionDescription.menuOrder = 400;
+            m_actionDescription.tooltipStringId = locale::StringId::TooltipLayerMoveUp;
+            m_actionDescription.nameStringId = locale::StringId::NameMoveLayerUp;
+            m_actionDescription.shortcuts = {
+                { win32_program::ShortcutModifier::Shift, win32_program::ShortcutKey::PageDown }
+            };
+            break;
+        }
+
+        case 1:
         {
             m_actionType = ActionType::MoveLayerDown;
             m_actionDescription.imageIndex = 9;
@@ -21,20 +35,6 @@ action::LayerMoveAction::LayerMoveAction(int moveCount) :
             m_actionDescription.nameStringId = locale::StringId::NameMoveLayerDown;
             m_actionDescription.shortcuts = {
                 { win32_program::ShortcutModifier::Shift, win32_program::ShortcutKey::PageUp }
-            };
-            break;
-        }
-
-        case 1:
-        {
-            m_actionType = ActionType::MoveLayerUp;
-            m_actionDescription.imageIndex = 10;
-            m_actionDescription.toolbarOrder = 810;
-            m_actionDescription.menuOrder = 400;
-            m_actionDescription.tooltipStringId = locale::StringId::TooltipLayerMoveUp;
-            m_actionDescription.nameStringId = locale::StringId::NameMoveLayerUp;
-            m_actionDescription.shortcuts = {
-                { win32_program::ShortcutModifier::Shift, win32_program::ShortcutKey::PageDown }
             };
             break;
         }
