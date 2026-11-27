@@ -55,7 +55,7 @@ void file::FileManager::NewMapFile(std::wstring name, sgc::data::AssetId tileset
         NewMapDocument(name, tilesetId)
     );
 
-    DocumentLocation selectedDoc{ newFile.get(), 0 };    
+    DocumentLocation selectedDoc{ newFile.get(), 0 };
 
     m_openFiles.push_back(std::move(newFile));
     SetActiveDocument(selectedDoc);
@@ -115,14 +115,14 @@ void file::FileManager::NewPackageFile(std::wstring name, std::vector<MapDocumen
     }
 
     newFile->RegisterOnSetDirtyCallback(m_onMapDirtyCallback);
-    if(topDoc != nullptr) {        
+    if(topDoc != nullptr) {
         SetActiveDocument({newFile.get(), 0});
     }    
 
     m_openFiles.push_back(std::move(newFile));
 
     m_onFileUpdatedCallback(m_openFiles.back().get());
-    UpdateSessionFile();    
+    UpdateSessionFile();
 
     return;
 }
@@ -135,7 +135,6 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
     if(extension == defaults::MapFileExtension.data())
     {
         auto newFile = std::make_unique<MapFile>();
-        // auto newFilePtr = newFile.get();
         newFile->SetFilePath(filePath);
         newFile->Open();
 
@@ -143,7 +142,7 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
 
         m_openFiles.push_back(std::move(newFile));
 
-        openedDoc.file = m_openFiles.back().get();        
+        openedDoc.file = m_openFiles.back().get();
         SetActiveDocument(openedDoc);
         m_onFileUpdatedCallback(newFile.get());
     }
@@ -187,8 +186,8 @@ void file::FileManager::OpenFile(std::filesystem::path filePath, AssetManager *a
             }
         }
 
-        m_openFiles.push_back(std::move(newFile));        
-        m_onFileUpdatedCallback(m_openFiles.back().get());        
+        m_openFiles.push_back(std::move(newFile));
+        m_onFileUpdatedCallback(m_openFiles.back().get());
     }
     else
     {
@@ -209,7 +208,7 @@ void file::FileManager::SaveFile(size_t index)
         m_onFileUpdatedCallback(m_openFiles[index].get());
         // There's no real way for FileManager to know if a new file was saved for the first time
         // after being created, so an update is required
-        UpdateSessionFile();        
+        UpdateSessionFile();
     }
     return;
 }
@@ -268,7 +267,7 @@ void file::FileManager::CloseFile(size_t index)
         }
 
         UpdateSessionFile();
-        m_onFileUpdatedCallback(nullptr);        
+        m_onFileUpdatedCallback(nullptr);
     }
 
     return;
@@ -328,7 +327,7 @@ void file::FileManager::SetActiveDocument(const DocumentLocation &document)
 
     m_sessionJson.SetActiveDocument(m_activeDocument);
     m_sessionJson.Save();
-    m_onActiveDocumentChangedCallback(m_activeDocument);    
+    m_onActiveDocumentChangedCallback(m_activeDocument);
 }
 
 file::MapDocument* file::FileManager::GetActiveDocument() const

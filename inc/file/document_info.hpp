@@ -4,7 +4,8 @@
 #include <sgc/data/asset.hpp>
 #include <sgc/tile/tile.hpp>
 
-namespace file {
+namespace file 
+{
 
     enum class EditorDataType : uint16_t
     {

@@ -47,10 +47,9 @@ void action::OpenFileAction::Execute(program::ProgramContext& programContext)
 
     auto fileManager = programContext.GetManager<file::FileManager>();
     auto assetManager = programContext.GetManager<file::AssetManager>();
-    if(filePath.has_value()) {
+    if(filePath.has_value()) 
+    {
         fileManager->OpenFile(filePath.value(), assetManager);
-        // program::RefreshEditor();
-        // refresh is now handled by the file manager's on file updated callback
     }
    return;
 }

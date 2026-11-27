@@ -7,12 +7,9 @@
 #include "sgc_extension/asset_deserializer.hpp"
 #include <sgc/graphics/tileset.hpp>
 #include <sgc/graphics/image.hpp>
-#include <sgc/asset/tilesetasset.hpp>
-#include <sgc/asset/imageasset.hpp>
-#include <sgc/asset/assetheader.hpp>
+#include <sgc/asset/assets.hpp>
 #include <sgc/data/package.hpp>
 #include <sgc/data/packagebuilder.hpp>
-#include <sgc/asset/metadataasset.hpp>
 #include <fstream>
 
 file::PackageFile::PackageFile(std::wstring name, AssetManager& assetManager) :
@@ -43,61 +40,41 @@ void file::PackageFile::AddTilesetDocument(std::unique_ptr<TilesetDocument> tile
     m_fileAdded = true;
 }
 
+template<class AssetT>
+void handleAsset(sgc::data::Package &package, file::AssetManager &assetManager, sgc::asset::AssetId id)
+{
+    auto asset = sgc::asset::AssetDeserializer<AssetT>::Deserialize(
+        package.ReadAssetData(id)
+    );
+
+    assetManager.AddAsset<AssetT>(
+        id,
+        std::make_shared<AssetT>(std::move(asset))
+    );
+};
+
 void file::PackageFile::Open()
 {
-    sgc::data::Package package{};
-
-    if(!package.Open(m_filePath))
+    if(m_package == nullptr)
     {
-        throw program::AssetLoadException("Failed to open package file: " + m_filePath.string());
+        m_package = std::make_unique<sgc::data::Package>();
+    }
+
+    if(!m_package->Open(m_filePath))
+    {
+        throw program::AssetLoadException("PackageFile::Open(): failed to open package file: " + m_filePath.string());
     }
 
     std::vector<file::MapDocumentInfo> mapDocumentInfos{};
     std::vector<file::TilesetDocumentInfo> tilesetDocumentInfos{};
     std::vector<file::SymbolGroupsInfo> symbolGroupsInfos{};
 
-    auto handleMapAsset = [&](sgc::data::AssetId id)
-    {
-        auto mapAsset = sgc::asset::AssetDeserializer<sgc::asset::MapAsset>::Deserialize(
-            package.ReadAssetData(id)
-        );
-
-        m_assetManager.AddAsset<sgc::asset::MapAsset>(
-            id,
-            std::make_shared<sgc::asset::MapAsset>(std::move(mapAsset))
-        );
-    };
-
-    auto handleTilesetAsset = [&](sgc::data::AssetId id)
-    {
-        auto tilesetAsset = sgc::asset::AssetDeserializer<sgc::asset::TilesetAsset>::Deserialize(
-            package.ReadAssetData(id)
-        );
-
-        m_assetManager.AddAsset<sgc::asset::TilesetAsset>(
-            id,
-            std::make_shared<sgc::asset::TilesetAsset>(std::move(tilesetAsset))
-        );
-    };
-
-    auto handleTextureAsset = [&](sgc::data::AssetId id)
-    {
-        auto imageAsset = sgc::asset::AssetDeserializer<sgc::asset::ImageAsset>::Deserialize(
-            package.ReadAssetData(id)
-        );
-
-        m_assetManager.AddAsset<sgc::asset::ImageAsset>(
-            id,
-            std::make_shared<sgc::asset::ImageAsset>(std::move(imageAsset))
-        );
-    };
-
     auto handleExternalAsset = [&](file::EditorDataType editorDataType, std::vector<uint8_t> &entryData)
     {
         switch(editorDataType)
         {
             default:
-                throw program::AssetLoadException("Unknown external document type: " + std::to_string(static_cast<int>(editorDataType)));
+                return false;
 
             case file::EditorDataType::Map:
             {
@@ -123,11 +100,13 @@ void file::PackageFile::Open()
                 break;
             }
         }
+
+        return true;
     };
 
-    sgc::asset::PackageVersionDependent::packageVersion = package.GetVersion();    
+    sgc::asset::PackageVersionDependent::packageVersion = m_package->GetVersion();    
 
-    for(auto &[id, entry] : package)
+    for(auto &[id, entry] : *m_package)
     {
         switch(sgc::asset::PackageVersionDependent::packageVersion)
         {
@@ -137,32 +116,37 @@ void file::PackageFile::Open()
                 {
                     case sgc::data::AssetType::Map:
                     {
-                        handleMapAsset(id);
+                        handleAsset<sgc::asset::MapAsset>(*m_package, m_assetManager, id);
                         break;
                     }
 
                     case sgc::data::AssetType::Tileset:
                     {
-                        handleTilesetAsset(id);
+                        handleAsset<sgc::asset::TilesetAsset>(*m_package, m_assetManager, id);
                         break;
                     }
 
                     case sgc::data::AssetType::Texture:
                     {
-                        handleTextureAsset(id);
+                        handleAsset<sgc::asset::ImageAsset>(*m_package, m_assetManager, id);
                         break;
                     }
                         
                     case static_cast<sgc::data::AssetType>(4U): // old value for external
                     {
-                        auto entryData = package.ReadAssetData(id);
-                        auto externalType = static_cast<file::EditorDataType>(entryData[0] + 1);
-                        handleExternalAsset(externalType, entryData);
+                        auto entryData = m_package->ReadAssetData(id);
+                        auto externalType = static_cast<file::EditorDataType>(entryData[0] + 1); // editor data type used to start at 0 but I changed it to 1
+                        if(!handleExternalAsset(externalType, entryData))
+                        {
+                            handleAsset<sgc::asset::BinaryAsset>(*m_package, m_assetManager, id);   
+                        }
                         break;
                     }
 
                     default:
-                        continue;                
+                    {
+                        handleAsset<sgc::asset::BinaryAsset>(*m_package, m_assetManager, id);
+                    }
                 }
                 break;
             }
@@ -173,25 +157,31 @@ void file::PackageFile::Open()
                 {
                     case sgc::data::AssetType::Map:
                     {
-                        handleMapAsset(id);
+                        handleAsset<sgc::asset::MapAsset>(*m_package, m_assetManager, id);
                         break;
                     }
 
                     case sgc::data::AssetType::Tileset:
                     {
-                        handleTilesetAsset(id);
+                        handleAsset<sgc::asset::TilesetAsset>(*m_package, m_assetManager, id);
                         break;
                     }
 
                     case sgc::data::AssetType::Texture:
                     {
-                        handleTextureAsset(id);
+                        handleAsset<sgc::asset::ImageAsset>(*m_package, m_assetManager, id);
+                        break;
+                    }
+
+                    case sgc::data::AssetType::Metadata:
+                    {
+                        handleAsset<sgc::asset::AssetMetadata>(*m_package, m_assetManager, id);
                         break;
                     }
                         
                     case sgc::data::AssetType::External:
                     {
-                        auto entryData = package.ReadAssetData(id);
+                        auto entryData = m_package->ReadAssetData(id);
                         auto externalType = static_cast<file::EditorDataType>( (static_cast<uint16_t>(entryData[1]) << 8) | static_cast<uint16_t>(entryData[0]) );
                         handleExternalAsset(externalType, entryData);
                         break;
@@ -208,7 +198,7 @@ void file::PackageFile::Open()
     {
         if(mapDocInfo.symbolGroupsAssetId != 0)
         {
-            auto symbolGroupsBytes = package.ReadAssetData(mapDocInfo.symbolGroupsAssetId);
+            auto symbolGroupsBytes = m_package->ReadAssetData(mapDocInfo.symbolGroupsAssetId);
             auto symbolGroupsInfo = sgc::asset::AssetDeserializer<file::SymbolGroupsInfo>::Deserialize(
                 symbolGroupsBytes
             );
@@ -245,7 +235,9 @@ void file::PackageFile::Save()
 {
     std::vector<uint8_t> bytes{};
 
-    sgc::data::PackageBuilder packageBuilder{};    
+    sgc::data::PackageBuilder packageBuilder = (m_package == nullptr) ?
+        sgc::data::PackageBuilder{} :
+        sgc::data::PackageBuilder{*m_package};
     
     for(const auto& mapDoc : m_mapDocuments) 
     {

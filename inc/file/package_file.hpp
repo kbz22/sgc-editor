@@ -4,6 +4,8 @@
 #include "file/itreeviewlistable.hpp"
 #include "file/asset_manager.hpp"
 #include <functional>
+#include <memory>
+#include <sgc/data/package.hpp>
 
 namespace file {
 
@@ -17,7 +19,8 @@ namespace file {
             std::vector<std::unique_ptr<IDocument>> m_documents{};
             std::vector<MapDocument*> m_mapDocuments{};
             std::vector<TilesetDocument*> m_tilesetDocuments{};
-            file::AssetManager& m_assetManager;            
+            file::AssetManager& m_assetManager;
+            std::unique_ptr<sgc::data::Package> m_package{nullptr};
             bool m_fileAdded{false};
 
         public:
