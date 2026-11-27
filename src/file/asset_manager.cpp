@@ -50,63 +50,6 @@ std::shared_ptr<sgc::graphics::Tileset> file::AssetManager::MakeTileset(
     return std::make_shared<Tileset>(image, tilesetAsset->tileSize);
 }
 
-template<>
-void file::AssetManager::AddAsset<sgc::asset::ImageAsset>(
-    sgc::data::AssetId assetId,
-    std::shared_ptr<sgc::asset::ImageAsset> imageAsset
-)
-{
-    m_cache[assetId] = imageAsset;
-}
-
-template<>
-void file::AssetManager::AddAsset<sgc::asset::TilesetAsset>(
-    sgc::data::AssetId assetId,
-    std::shared_ptr<sgc::asset::TilesetAsset> tilesetAsset
-)
-{
-    m_cache[assetId] = tilesetAsset;
-}
-
-template<>
-void file::AssetManager::AddAsset<sgc::asset::MapAsset>(
-    sgc::data::AssetId assetId,
-    std::shared_ptr<sgc::asset::MapAsset> mapAsset
-)
-{
-    m_cache[assetId] = mapAsset;
-}
-
-template<>
-std::shared_ptr<sgc::asset::MapAsset> file::AssetManager::GetAsset<sgc::asset::MapAsset>(sgc::data::AssetId assetId) const
-{
-    if(m_cache.find(assetId) == m_cache.end()) {
-        throw program::AssetCacheException("Map asset not found in the cache.");
-    }
-
-    return std::get<std::shared_ptr<sgc::asset::MapAsset>>(m_cache.at(assetId));
-}
-
-template<>
-std::shared_ptr<sgc::asset::ImageAsset> file::AssetManager::GetAsset<sgc::asset::ImageAsset>(sgc::data::AssetId assetId) const
-{
-    if(m_cache.find(assetId) == m_cache.end()) {
-        throw program::AssetCacheException("Image asset not found in the cache.");
-    }
-
-    return std::get<std::shared_ptr<sgc::asset::ImageAsset>>(m_cache.at(assetId));
-}
-
-template<>
-std::shared_ptr<sgc::asset::TilesetAsset> file::AssetManager::GetAsset<sgc::asset::TilesetAsset>(sgc::data::AssetId assetId) const
-{
-    if(m_cache.find(assetId) == m_cache.end()) {
-        throw program::AssetCacheException("Tileset asset not found in the cache.");
-    }
-
-    return std::get<std::shared_ptr<sgc::asset::TilesetAsset>>(m_cache.at(assetId));
-}
-
 bool file::AssetManager::RemoveAsset(sgc::data::AssetId assetId)
 {
     if(m_cache.find(assetId) == m_cache.end()) {
